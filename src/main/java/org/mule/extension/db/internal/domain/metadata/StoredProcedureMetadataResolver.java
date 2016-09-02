@@ -6,27 +6,21 @@
  */
 package org.mule.extension.db.internal.domain.metadata;
 
-import static org.mule.metadata.api.model.MetadataFormat.JAVA;
-import org.mule.metadata.api.builder.BaseTypeBuilder;
-import org.mule.metadata.api.builder.DictionaryTypeBuilder;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.metadata.MetadataContext;
 import org.mule.runtime.api.metadata.MetadataResolvingException;
 import org.mule.runtime.api.metadata.resolving.MetadataOutputResolver;
 
-public class SelectOutputResolver implements MetadataOutputResolver {
-
-  private BaseTypeBuilder typeBuilder = BaseTypeBuilder.create(JAVA);
+public class StoredProcedureMetadataResolver extends BaseDbMetadataResolver implements MetadataOutputResolver<String> {
 
   @Override
-  public MetadataType getOutputMetadata(MetadataContext context, Object key)
+  public MetadataType getOutputMetadata(MetadataContext context, String query)
       throws MetadataResolvingException, ConnectionException {
 
-    DictionaryTypeBuilder dictionaryTypeBuilder = typeBuilder.dictionaryType();
-    dictionaryTypeBuilder.ofKey().stringType();
-    dictionaryTypeBuilder.ofValue().anyType();
-
-    return typeBuilder.arrayType().of(dictionaryTypeBuilder.build()).build();
+    return typeBuilder.dictionaryType()
+        .ofKey(typeBuilder.stringType())
+        .ofValue(typeBuilder.anyType())
+        .build();
   }
 }

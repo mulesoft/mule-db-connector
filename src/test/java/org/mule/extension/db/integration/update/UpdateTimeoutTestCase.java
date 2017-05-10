@@ -6,7 +6,7 @@
  */
 package org.mule.extension.db.integration.update;
 
-import static org.mule.test.allure.AllureConstants.DbFeature.DB_EXTENSION;
+import static org.mule.extension.db.AllureConstants.DbFeature.DB_EXTENSION;
 
 import org.mule.extension.db.integration.AbstractQueryTimeoutTestCase;
 

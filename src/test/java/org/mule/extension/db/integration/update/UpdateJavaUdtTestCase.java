@@ -8,7 +8,7 @@ package org.mule.extension.db.integration.update;
 
 import static org.mule.extension.db.integration.TestDbConfig.getOracleResource;
 import static org.mule.extension.db.integration.model.RegionManager.SOUTHWEST_MANAGER;
-import static org.mule.test.allure.AllureConstants.DbFeature.DB_EXTENSION;
+import static org.mule.extension.db.AllureConstants.DbFeature.DB_EXTENSION;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 

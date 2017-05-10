@@ -12,7 +12,7 @@ import static org.mule.extension.db.integration.TestRecordUtil.assertRecords;
 import static org.mule.extension.db.integration.model.Planet.EARTH;
 import static org.mule.extension.db.integration.model.Planet.MARS;
 import static org.mule.extension.db.integration.model.Planet.VENUS;
-import static org.mule.test.allure.AllureConstants.DbFeature.DB_EXTENSION;
+import static org.mule.extension.db.AllureConstants.DbFeature.DB_EXTENSION;
 import static java.sql.Statement.SUCCESS_NO_INFO;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.equalTo;

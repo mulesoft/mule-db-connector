@@ -6,22 +6,21 @@
  */
 package org.mule.extension.db.integration.update;
 
+import static org.mule.extension.db.AllureConstants.DbFeature.DB_EXTENSION;
 import static org.mule.extension.db.integration.DbTestUtil.selectData;
 import static org.mule.extension.db.integration.TestRecordUtil.assertRecords;
-import static org.mule.test.allure.AllureConstants.DbFeature.DB_EXTENSION;
-
 import org.mule.extension.db.api.StatementResult;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.Field;
 import org.mule.extension.db.integration.model.Record;
 import org.mule.runtime.api.message.Message;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Test;
 import ru.yandex.qatools.allure.annotations.Features;
 import ru.yandex.qatools.allure.annotations.Stories;
+
+import java.util.List;
+import java.util.Map;
 
 @Features(DB_EXTENSION)
 @Stories("Update Statement")

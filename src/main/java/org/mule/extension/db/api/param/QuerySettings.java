@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Parameters to configure queries
  *
- * @since 4.0
+ * @since 1.0
  */
 public class QuerySettings {
 

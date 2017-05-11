@@ -24,7 +24,7 @@ import java.sql.SQLException;
 /**
  * Operations to manipulate data definitions in a relational Database
  *
- * @since 4.0
+ * @since 1.0
  */
 public class DdlOperations extends BaseDbOperations {
 

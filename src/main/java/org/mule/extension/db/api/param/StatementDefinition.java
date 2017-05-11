@@ -24,7 +24,7 @@ import java.util.List;
  * Base class containing common attributes for a statement.
  *
  * @param <T> the generic type of the implementing type
- * @since 4.0
+ * @since 1.0
  */
 public abstract class StatementDefinition<T extends StatementDefinition> extends QuerySettings {
 

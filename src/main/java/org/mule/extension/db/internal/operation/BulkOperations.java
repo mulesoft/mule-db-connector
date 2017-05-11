@@ -44,7 +44,7 @@ import java.util.Map;
 /**
  * Contains a set of operations for performing bulk DML operations from a single statement.
  *
- * @since 4.0
+ * @since 1.0
  */
 public class BulkOperations extends BaseDbOperations {
 

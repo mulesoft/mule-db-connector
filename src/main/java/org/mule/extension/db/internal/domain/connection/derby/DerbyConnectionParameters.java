@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * {@link DataSourceConfig} implementation for Derby databases.
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class DerbyConnectionParameters extends BaseDbConnectionParameters implements DataSourceConfig {
 

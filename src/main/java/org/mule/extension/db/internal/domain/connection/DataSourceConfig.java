@@ -15,7 +15,7 @@ import javax.sql.DataSource;
 /**
  * Contract for DataSource Configurations that are used to build {@link DataSource} instances
  *
- * @since 4.0
+ * @since 1.0
  */
 public interface DataSourceConfig {
 

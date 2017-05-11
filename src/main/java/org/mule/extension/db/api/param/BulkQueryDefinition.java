@@ -9,7 +9,7 @@ package org.mule.extension.db.api.param;
 /**
  * The definition of a bulk operations defined around one single SQL command
  *
- * @since 4.0
+ * @since 1.0
  */
 public class BulkQueryDefinition extends StatementDefinition<BulkQueryDefinition> {
 

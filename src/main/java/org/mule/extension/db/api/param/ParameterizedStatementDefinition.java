@@ -24,7 +24,7 @@ import java.util.Map;
  * Base class for {@link StatementDefinition} implementations which have a {@link Map} of input parameters.
  *
  * @param <T> the generic type of the implementing type
- * @since 4.0
+ * @since 1.0
  */
 public abstract class ParameterizedStatementDefinition<T extends ParameterizedStatementDefinition>
     extends StatementDefinition<T> {

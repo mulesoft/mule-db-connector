@@ -31,7 +31,7 @@ import java.util.Optional;
 /**
  * Creates connections to a MySQL database.
  *
- * @since 4.0
+ * @since 1.0
  */
 @DisplayName("MySQL Connection")
 @Alias("my-sql")

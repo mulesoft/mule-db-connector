@@ -14,7 +14,7 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
  * Interface to extract the common {@link ArtifactClassLoaderRunnerConfig} for all DB Test Cases without the
  * need of extend of a unique abstract test case.
  *
- * @since 4.0
+ * @since 1.0
  */
 @ArtifactClassLoaderRunnerConfig(
     exportPluginClasses = {DbConnectionProvider.class, StatementStreamingResultSetCloser.class},

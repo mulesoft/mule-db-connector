@@ -19,7 +19,7 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
  *
  * You can either configure a standard type or a custom one.
  *
- * @since 4.0
+ * @since 1.0
  */
 @ExclusiveOptionals
 public class TypeClassifier {

@@ -18,7 +18,7 @@ import static org.mule.extension.db.api.param.DbNameConstants.SQL_QUERY_TEXT;
 /**
  * Parameters to configure an operation which executes a SQL script
  *
- * @since 4.0
+ * @since 1.0
  */
 @ExclusiveOptionals(isOneRequired = true)
 public class BulkScript {

@@ -15,7 +15,7 @@ import static java.util.Optional.empty;
 /**
  * Contract for classes considered as database connection parameter
  *
- * @since 4.0
+ * @since 1.0
  */
 public interface DbConnectionParameters {
 

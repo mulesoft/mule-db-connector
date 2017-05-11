@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Parameters to configure if and how should keys be auto generated
  *
- * @since 4.0
+ * @since 1.0
  */
 public class AutoGenerateKeysAttributes {
 

@@ -14,7 +14,7 @@ import javax.sql.XADataSource;
 /**
  * Groups DataSource related parameters
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class DataSourceConnectionSettings {
 

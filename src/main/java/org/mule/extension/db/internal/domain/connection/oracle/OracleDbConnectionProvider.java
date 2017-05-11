@@ -36,7 +36,7 @@ import javax.sql.DataSource;
 /**
  * Creates connections to a Oracle database
  *
- * @since 4.0
+ * @since 1.0
  */
 @DisplayName("Oracle Connection")
 @Alias("oracle")

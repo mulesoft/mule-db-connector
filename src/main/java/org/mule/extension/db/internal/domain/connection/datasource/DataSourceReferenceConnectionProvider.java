@@ -24,7 +24,7 @@ import javax.sql.DataSource;
  * {@link ConnectionProvider} implementation which creates DB connections from a referenced {@link
  * DataSource}
  *
- * @since 4.0
+ * @since 1.0
  */
 @DisplayName("Data Source Reference Connection")
 @Alias("data-source")

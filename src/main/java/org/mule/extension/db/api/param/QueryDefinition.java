@@ -9,7 +9,7 @@ package org.mule.extension.db.api.param;
 /**
  * The definition for a DML query
  *
- * @since 4.0
+ * @since 1.0
  */
 public class QueryDefinition extends ParameterizedStatementDefinition<QueryDefinition> {
 

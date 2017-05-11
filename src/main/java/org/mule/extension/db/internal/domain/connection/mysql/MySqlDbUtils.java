@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Utility class for MySQL Connection
  *
- * @since 4.0
+ * @since 1.0
  */
 final class MySqlDbUtils {
 

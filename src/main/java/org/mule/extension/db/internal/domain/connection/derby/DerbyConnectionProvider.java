@@ -29,7 +29,7 @@ import java.util.Optional;
 /**
  * Creates connections to a Derby database
  *
- * @since 4.0
+ * @since 1.0
  */
 @DisplayName("Derby Connection")
 @Alias("derby")

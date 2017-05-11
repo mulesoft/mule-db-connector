@@ -57,7 +57,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Contains a set of operations for performing single statement DML operations
  *
- * @since 4.0
+ * @since 1.0
  */
 public class DmlOperations extends BaseDbOperations {
 

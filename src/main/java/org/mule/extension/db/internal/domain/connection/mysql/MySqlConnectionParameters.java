@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * {@link DataSourceConfig} implementation for MySQL databases.
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class MySqlConnectionParameters extends BaseDbConnectionParameters implements DataSourceConfig {
 

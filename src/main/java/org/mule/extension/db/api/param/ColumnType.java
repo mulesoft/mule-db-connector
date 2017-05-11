@@ -14,7 +14,7 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 /**
  * A user defined JDBC type
  *
- * @since 4.0
+ * @since 1.0
  */
 public class ColumnType {
 

@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Closes a {@link ResultSet} once it has been processed
  *
- * @since 4.0
+ * @since 1.0
  */
 public class StatementStreamingResultSetCloser {
 

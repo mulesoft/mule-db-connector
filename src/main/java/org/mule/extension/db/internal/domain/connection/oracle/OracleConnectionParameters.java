@@ -17,7 +17,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
  * /**
  * {@link DataSourceConfig} implementation for Oracle databases.
  *
- * @since 4.0
+ * @since 1.0
  */
 public class OracleConnectionParameters extends BaseDbConnectionParameters implements DataSourceConfig {
 

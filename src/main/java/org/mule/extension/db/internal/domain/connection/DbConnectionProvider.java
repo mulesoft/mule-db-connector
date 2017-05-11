@@ -60,7 +60,7 @@ import org.slf4j.Logger;
 /**
  * Creates a generic DB connection through an URL
  *
- * @since 4.0
+ * @since 1.0
  */
 public abstract class DbConnectionProvider implements ConnectionProvider<DbConnection>, Initialisable, Disposable {
 

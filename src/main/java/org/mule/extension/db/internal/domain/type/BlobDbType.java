@@ -19,7 +19,7 @@ import java.sql.SQLException;
 /**
  * Defines a Blob data type that was resolved for a database instance.
  *
- * @since 4.0
+ * @since 1.0
  */
 public class BlobDbType extends ResolvedDbType {
 

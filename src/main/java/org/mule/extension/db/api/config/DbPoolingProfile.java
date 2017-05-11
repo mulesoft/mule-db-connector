@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Pooling configuration for JDBC Data Sources capable of pooling connections
  *
- * @since 4.0
+ * @since 1.0
  */
 @Alias("pooling-profile")
 public class DbPoolingProfile implements DatabasePoolingProfile {

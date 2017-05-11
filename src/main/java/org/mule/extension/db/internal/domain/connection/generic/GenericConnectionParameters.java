@@ -16,7 +16,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 /**
  *  {@link DbConnectionParameters} for the {@link GenericConnectionProvider}
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class GenericConnectionParameters extends BaseDbConnectionParameters implements DataSourceConfig {
 

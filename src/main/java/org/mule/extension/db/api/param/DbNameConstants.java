@@ -9,7 +9,7 @@ package org.mule.extension.db.api.param;
 /**
  * Utility to reuse names across the DB connector
  *
- * @since 4.0
+ * @since 1.0
  */
 public final class DbNameConstants {
 

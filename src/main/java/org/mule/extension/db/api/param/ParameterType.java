@@ -16,7 +16,7 @@ import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 /**
  * Allows specifying the type of a given parameter
  *
- * @since 4.0
+ * @since 1.0
  */
 public class ParameterType {
 

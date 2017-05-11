@@ -9,7 +9,7 @@ package org.mule.extension.db.api.param;
 /**
  * An output parameter to be used in the context of a stored procedure call
  *
- * @since 4.0
+ * @since 1.0
  */
 public class OutputParameter extends ParameterType {
 

@@ -15,7 +15,7 @@ import java.util.Optional;
 /**
  * Errors definitions for {@link DbConnector}
  *
- * @since 4.0
+ * @since 1.0
  */
 public enum DbError implements ErrorTypeDefinition<DbError> {
   CONNECTIVITY(MuleErrors.CONNECTIVITY), INVALID_CREDENTIALS(CONNECTIVITY), INVALID_DATABASE(CONNECTIVITY), CANNOT_REACH(

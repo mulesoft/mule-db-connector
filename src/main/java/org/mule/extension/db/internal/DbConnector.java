@@ -39,7 +39,7 @@ import java.util.List;
 /**
  * Connector for connecting to relation Databases through the JDBC API
  *
- * @since 4.0
+ * @since 1.0
  */
 @Extension(name = "Database", description = "Connector for connecting to relation Databases through the JDBC API")
 @Operations({DmlOperations.class, DdlOperations.class, BulkOperations.class})

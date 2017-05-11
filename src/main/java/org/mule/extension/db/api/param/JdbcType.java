@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Defines {@link DbType} for JDBC types defined in {@link Types}
  *
- * @since 4.0
+ * @since 1.0
  */
 public enum JdbcType {
 

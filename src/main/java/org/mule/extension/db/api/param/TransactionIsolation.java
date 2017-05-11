@@ -15,7 +15,7 @@ import static java.sql.Connection.TRANSACTION_SERIALIZABLE;
 /**
  * The transaction isolation levels that can be set on the JDBC driver when connecting to the database.
  *
- * @since 4.0
+ * @since 1.0
  */
 public enum TransactionIsolation {
   NONE(TRANSACTION_NONE), READ_COMMITTED(TRANSACTION_READ_COMMITTED), READ_UNCOMMITTED(

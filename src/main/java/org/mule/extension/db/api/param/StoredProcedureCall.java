@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * The definition of the invocation to a stored procedure
  *
- * @since 4.0
+ * @since 1.0
  */
 public class StoredProcedureCall extends ParameterizedStatementDefinition<StoredProcedureCall> {
 

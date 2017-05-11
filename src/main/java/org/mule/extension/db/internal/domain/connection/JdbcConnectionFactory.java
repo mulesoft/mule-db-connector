@@ -22,7 +22,7 @@ import javax.sql.DataSource;
 /**
  * A factor for JDBC {@link Connection}s
  *
- * @since 4.0
+ * @since 1.0
  */
 public class JdbcConnectionFactory {
 

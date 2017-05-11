@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 /**
  * Base class with common functionality for Database operations
  *
- * @since 4.0
+ * @since 1.0
  */
 abstract class BaseDbOperations {
 

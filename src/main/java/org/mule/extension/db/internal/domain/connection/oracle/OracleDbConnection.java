@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * {@link DefaultDbConnection} implementation for Oracle databases
  *
- * @since 4.0
+ * @since 1.0
  */
 public class OracleDbConnection extends DefaultDbConnection {
 

@@ -19,15 +19,11 @@ public class ConnectionCreationException extends ConnectionException {
     super(message);
   }
 
-  public ConnectionCreationException(Throwable throwable) {
-    super(throwable);
-  }
-
   public ConnectionCreationException(String message, Throwable throwable) {
     super(message, throwable);
   }
 
   public ConnectionCreationException(String message, Throwable throwable, DbError dbError) {
-    super(message, new ModuleException(throwable, dbError));
+    super(message, new ModuleException(dbError, throwable));
   }
 }

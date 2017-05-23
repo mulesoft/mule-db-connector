@@ -18,6 +18,7 @@ import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Text;
+import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
 import java.sql.SQLException;
 
@@ -41,14 +42,15 @@ public class DdlOperations extends BaseDbOperations {
   public int executeDdl(@DisplayName(SQL_QUERY_TEXT) @Text String sql,
                         @ParameterGroup(name = QUERY_SETTINGS) QuerySettings settings,
                         @Config DbConnector connector,
-                        @Connection DbConnection connection)
+                        @Connection DbConnection connection,
+                        StreamingHelper streamingHelper)
       throws SQLException {
 
     QueryDefinition query = new QueryDefinition();
     query.setSql(sql);
     query.copyInto(settings);
 
-    final Query resolvedQuery = resolveQuery(query, connector, connection, DDL);
+    final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, DDL);
     return executeUpdate(query, null, connection, resolvedQuery).getAffectedRows();
   }
 }

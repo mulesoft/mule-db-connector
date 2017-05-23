@@ -15,6 +15,7 @@ import static org.mule.extension.db.internal.domain.query.QueryType.STORE_PROCED
 import static org.mule.extension.db.internal.domain.query.QueryType.TRUNCATE;
 import static org.mule.extension.db.internal.domain.query.QueryType.UPDATE;
 import static org.mule.extension.db.internal.operation.AutoGenerateKeysAttributes.AUTO_GENERATE_KEYS;
+import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 import org.mule.extension.db.api.StatementResult;
 import org.mule.extension.db.api.param.QueryDefinition;
@@ -44,8 +45,10 @@ import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.runtime.operation.FlowListener;
 import org.mule.runtime.extension.api.runtime.streaming.PagingProvider;
+import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
 import java.io.IOException;
+import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -78,7 +81,8 @@ public class DmlOperations extends BaseDbOperations {
   public PagingProvider<DbConnection, Map<String, Object>> select(
                                                                   @ParameterGroup(name = QUERY_GROUP) @Placement(
                                                                       tab = ADVANCED_TAB) QueryDefinition query,
-                                                                  @Config DbConnector connector)
+                                                                  @Config DbConnector connector,
+                                                                  StreamingHelper streamingHelper)
       throws SQLException {
 
     return new PagingProvider<DbConnection, Map<String, Object>>() {
@@ -93,7 +97,7 @@ public class DmlOperations extends BaseDbOperations {
         final int fetchSize = getFetchSize(query);
         final List<Map<String, Object>> page = new ArrayList<>(fetchSize);
         for (int i = 0; i < fetchSize && iterator.hasNext(); i++) {
-          page.add(iterator.next());
+          page.add(resolveResultStreams(iterator.next(), streamingHelper));
         }
 
         return page;
@@ -112,7 +116,7 @@ public class DmlOperations extends BaseDbOperations {
       private ResultSetIterator getIterator(DbConnection connection) {
         if (initialised.compareAndSet(false, true)) {
           resultSetCloser = new StatementStreamingResultSetCloser(connection);
-          final Query resolvedQuery = resolveQuery(query, connector, connection, SELECT, STORE_PROCEDURE_CALL);
+          final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, SELECT, STORE_PROCEDURE_CALL);
 
           QueryStatementFactory statementFactory = getStatementFactory(query);
           InsensitiveMapRowHandler recordHandler = new InsensitiveMapRowHandler();
@@ -149,10 +153,11 @@ public class DmlOperations extends BaseDbOperations {
   public StatementResult insert(@ParameterGroup(name = QUERY_GROUP) @Placement(tab = ADVANCED_TAB) QueryDefinition query,
                                 @ParameterGroup(name = AUTO_GENERATE_KEYS) AutoGenerateKeysAttributes autoGenerateKeysAttributes,
                                 @Config DbConnector connector,
-                                @Connection DbConnection connection)
+                                @Connection DbConnection connection,
+                                StreamingHelper streamingHelper)
       throws SQLException {
 
-    final Query resolvedQuery = resolveQuery(query, connector, connection, INSERT);
+    final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, INSERT);
     return executeUpdate(query, autoGenerateKeysAttributes, connection, resolvedQuery);
   }
 
@@ -169,10 +174,12 @@ public class DmlOperations extends BaseDbOperations {
   public StatementResult update(@ParameterGroup(name = QUERY_GROUP) QueryDefinition query,
                                 @ParameterGroup(name = AUTO_GENERATE_KEYS) AutoGenerateKeysAttributes autoGenerateKeysAttributes,
                                 @Config DbConnector connector,
-                                @Connection DbConnection connection)
+                                @Connection DbConnection connection,
+                                StreamingHelper streamingHelper)
       throws SQLException {
 
-    final Query resolvedQuery = resolveQuery(query, connector, connection, UPDATE, TRUNCATE, MERGE, STORE_PROCEDURE_CALL);
+    final Query resolvedQuery =
+        resolveQuery(query, connector, connection, streamingHelper, UPDATE, TRUNCATE, MERGE, STORE_PROCEDURE_CALL);
     return executeUpdate(query, autoGenerateKeysAttributes, connection, resolvedQuery);
   }
 
@@ -187,10 +194,11 @@ public class DmlOperations extends BaseDbOperations {
    */
   public int delete(@ParameterGroup(name = QUERY_GROUP) QueryDefinition query,
                     @Config DbConnector connector,
-                    @Connection DbConnection connection)
+                    @Connection DbConnection connection,
+                    StreamingHelper streamingHelper)
       throws SQLException {
 
-    final Query resolvedQuery = resolveQuery(query, connector, connection, DELETE);
+    final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, DELETE);
     return executeUpdate(query, null, connection, resolvedQuery).getAffectedRows();
   }
 
@@ -213,34 +221,53 @@ public class DmlOperations extends BaseDbOperations {
                                                  name = AUTO_GENERATE_KEYS) AutoGenerateKeysAttributes autoGenerateKeysAttributes,
                                              @Config DbConnector connector,
                                              @Connection DbConnection connection,
+                                             StreamingHelper streamingHelper,
                                              FlowListener flowListener)
       throws SQLException {
 
-    final Query resolvedQuery = resolveQuery(call, connector, connection, STORE_PROCEDURE_CALL);
+    final Query resolvedQuery = resolveQuery(call, connector, connection, streamingHelper, STORE_PROCEDURE_CALL);
 
     QueryStatementFactory statementFactory = getStatementFactory(call);
 
     InsensitiveMapRowHandler recordHandler = new InsensitiveMapRowHandler();
 
     StatementStreamingResultSetCloser resultSetCloser = new StatementStreamingResultSetCloser(connection);
+    flowListener.onError(e -> resultSetCloser.closeResultSets());
+
     StatementResultHandler resultHandler =
         new StreamingStatementResultHandler(new IteratorResultSetHandler(recordHandler, resultSetCloser));
 
     Map<String, Object> result = (Map<String, Object>) new StoredProcedureExecutor(statementFactory, resultHandler)
         .execute(connection, resolvedQuery, getAutoGeneratedKeysStrategy(autoGenerateKeysAttributes));
 
-    flowListener.onError(e -> resultSetCloser.closeResultSets());
-    return result;
+    return resolveResultStreams(result, streamingHelper);
   }
 
 
   protected Query resolveQuery(StoredProcedureCall call,
                                DbConnector connector,
                                DbConnection connection,
+                               StreamingHelper streamingHelper,
                                QueryType... validTypes) {
-    final Query resolvedQuery = storedProcedureResolver.resolve(call, connector, connection);
+
+    final Query resolvedQuery = storedProcedureResolver.resolve(call, connector, connection, streamingHelper);
     validateQueryType(resolvedQuery.getQueryTemplate(), asList(validTypes));
 
     return resolvedQuery;
+  }
+
+  private Map<String, Object> resolveResultStreams(Map<String, Object> map, StreamingHelper streamingHelper) {
+    for (Map.Entry<String, Object> entry : map.entrySet()) {
+      Object v = entry.getValue();
+      if (v instanceof Blob) {
+        try {
+          entry.setValue(((Blob) v).getBinaryStream());
+        } catch (Exception e) {
+          throw new MuleRuntimeException(createStaticMessage("Could not open BLOB stream"), e);
+        }
+      }
+    }
+
+    return streamingHelper.resolveCursorProviders(map, true);
   }
 }

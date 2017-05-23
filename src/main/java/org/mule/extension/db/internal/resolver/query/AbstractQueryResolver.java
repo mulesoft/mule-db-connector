@@ -34,6 +34,7 @@ import org.mule.extension.db.internal.resolver.param.GenericParamTypeResolverFac
 import org.mule.extension.db.internal.resolver.param.ParamTypeResolverFactory;
 import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.i18n.I18nMessageFactory;
+import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -51,14 +52,15 @@ abstract class AbstractQueryResolver<T extends StatementDefinition> implements Q
   private QueryTemplateParser queryTemplateParser = new SimpleQueryTemplateParser();
 
   @Override
-  public Query resolve(T statementDefinition, DbConnector connector, DbConnection connection) {
+  public Query resolve(T statementDefinition, DbConnector connector, DbConnection connection, StreamingHelper streamingHelper) {
     checkArgument(!isBlank(statementDefinition.getSql()), "sql query cannot be blank");
 
     QueryTemplate queryTemplate = getQueryTemplate(connector, connection, statementDefinition);
-    return new Query(queryTemplate, resolveParams(statementDefinition, queryTemplate));
+    return new Query(queryTemplate, resolveParams(statementDefinition, queryTemplate, streamingHelper));
   }
 
-  protected abstract List<QueryParamValue> resolveParams(T statementDefinition, QueryTemplate template);
+  protected abstract List<QueryParamValue> resolveParams(T statementDefinition, QueryTemplate template,
+                                                         StreamingHelper streamingHelper);
 
   protected QueryTemplate createQueryTemplate(T statementDefinition, DbConnector connector, DbConnection connection) {
     if (isBlank(statementDefinition.getSql())) {

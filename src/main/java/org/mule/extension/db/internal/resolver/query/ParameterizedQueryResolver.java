@@ -11,6 +11,7 @@ import static java.util.stream.Collectors.toList;
 import org.mule.extension.db.api.param.ParameterizedStatementDefinition;
 import org.mule.extension.db.internal.domain.query.QueryParamValue;
 import org.mule.extension.db.internal.domain.query.QueryTemplate;
+import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,12 +19,12 @@ import java.util.Optional;
 public class ParameterizedQueryResolver<T extends ParameterizedStatementDefinition> extends AbstractQueryResolver<T> {
 
   @Override
-  protected List<QueryParamValue> resolveParams(T statementDefinition, QueryTemplate template) {
+  protected List<QueryParamValue> resolveParams(T statementDefinition, QueryTemplate template, StreamingHelper streamingHelper) {
     return template.getInputParams().stream()
         .map(p -> {
           final String parameterName = p.getName();
 
-          Optional<Object> parameterValue = getInputParameter(statementDefinition, parameterName);
+          Optional<Object> parameterValue = getStreamingAwareParameter(statementDefinition, parameterName, streamingHelper);
           if (parameterValue.isPresent()) {
             return new QueryParamValue(parameterName, parameterValue.get());
           } else {
@@ -31,6 +32,11 @@ public class ParameterizedQueryResolver<T extends ParameterizedStatementDefiniti
                                                       parameterName, statementDefinition.getSql()));
           }
         }).collect(toList());
+  }
+
+  private Optional<Object> getStreamingAwareParameter(T statementDefinition, String parameterName,
+                                                      StreamingHelper streamingHelper) {
+    return getInputParameter(statementDefinition, parameterName).map(streamingHelper::resolveCursor);
   }
 
   protected Optional<Object> getInputParameter(T statementDefinition, String parameterName) {

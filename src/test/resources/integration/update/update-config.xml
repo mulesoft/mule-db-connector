@@ -13,10 +13,10 @@
 
     <flow name="updateDynamic">
         <set-variable variableName="data" value="Mercury"/>
-        <set-variable variableName="type" value="4"/>
+        <set-variable variableName="position" value="4"/>
 
         <db:update config-ref="dbConfig">
-            <db:sql>#["update PLANET set NAME='$(data)' where POSITION=$(type)"]</db:sql>
+            <db:sql>#["update PLANET set NAME='$(data)' where POSITION=$(position)"]</db:sql>
         </db:update>
     </flow>
 

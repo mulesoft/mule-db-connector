@@ -11,6 +11,7 @@ import org.mule.extension.db.api.param.StatementDefinition;
 import org.mule.extension.db.internal.DbConnector;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.query.Query;
+import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
 /**
  * Resolves a {@link Query}
@@ -23,7 +24,9 @@ public interface QueryResolver<T extends StatementDefinition> {
    * @param statementDefinition
    * @param connector
    * @param connection connection to the database. not null
+   *                   @param streamingHelper
    * @return query resolved for the given event
    */
-  Query resolve(T statementDefinition, DbConnector connector, DbConnection connection) throws QueryResolutionException;
+  Query resolve(T statementDefinition, DbConnector connector, DbConnection connection, StreamingHelper streamingHelper)
+      throws QueryResolutionException;
 }

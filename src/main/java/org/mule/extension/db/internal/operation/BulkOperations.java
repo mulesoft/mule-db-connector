@@ -36,6 +36,7 @@ import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
+import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -55,7 +56,7 @@ public class BulkOperations extends BaseDbOperations {
    * Database statement, which has performance advantages compared to executing one single update operation various times.
    *
    * @param query a {@link BulkQueryDefinition} as a parameter group
-   * @param parameterValues A {@link List} of {@link Map}s in which every list item represents a row to be inserted, and the map
+   * @param inputParameters A {@link List} of {@link Map}s in which every list item represents a row to be inserted, and the map
    *        contains the parameter names as keys and the value the parameter is bound to.
    * @param connector the acting connector
    * @param connection the acting connection
@@ -64,13 +65,14 @@ public class BulkOperations extends BaseDbOperations {
    * @throws SQLException if an error is produced
    */
   public int[] bulkInsert(@Content @Placement(
-      order = 1) @TypeResolver(DbBulkInputMetadataResolver.class) List<Map<String, Object>> parameterValues,
+      order = 1) @TypeResolver(DbBulkInputMetadataResolver.class) List<Map<String, Object>> inputParameters,
                           @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
                           @Config DbConnector connector,
-                          @Connection DbConnection connection)
+                          @Connection DbConnection connection,
+                          StreamingHelper streamingHelper)
       throws SQLException {
 
-    return singleQueryBulk(query, parameterValues, INSERT, connector, connection);
+    return singleQueryBulk(query, inputParameters, INSERT, connector, connection, streamingHelper);
   }
 
   /**
@@ -78,7 +80,7 @@ public class BulkOperations extends BaseDbOperations {
    * Database statement, which has performance advantages compared to executing one single update operation various times.
    *
    * @param query a {@link BulkQueryDefinition} as a parameter group
-   * @param parameterValues A {@link List} of {@link Map}s in which every list item represents a row to be inserted, and the map
+   * @param inputParameters A {@link List} of {@link Map}s in which every list item represents a row to be inserted, and the map
    *        contains the parameter names as keys and the value the parameter is bound to.
    * @param connector the acting connector
    * @param connection the acting connection
@@ -87,13 +89,14 @@ public class BulkOperations extends BaseDbOperations {
    * @throws SQLException if an error is produced
    */
   public int[] bulkUpdate(@Content @Placement(
-      order = 1) @TypeResolver(DbBulkInputMetadataResolver.class) List<Map<String, Object>> parameterValues,
+      order = 1) @TypeResolver(DbBulkInputMetadataResolver.class) List<Map<String, Object>> inputParameters,
                           @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
                           @Config DbConnector connector,
-                          @Connection DbConnection connection)
+                          @Connection DbConnection connection,
+                          StreamingHelper streamingHelper)
       throws SQLException {
 
-    return singleQueryBulk(query, parameterValues, UPDATE, connector, connection);
+    return singleQueryBulk(query, inputParameters, UPDATE, connector, connection, streamingHelper);
   }
 
   /**
@@ -101,7 +104,7 @@ public class BulkOperations extends BaseDbOperations {
    * Database statement, which has performance advantages compared to executing one single delete operation various times.
    *
    * @param query a {@link BulkQueryDefinition} as a parameter group
-   * @param parameterValues A {@link List} of {@link Map}s in which every list item represents a row to be inserted, and the map
+   * @param inputParameters A {@link List} of {@link Map}s in which every list item represents a row to be inserted, and the map
    *        contains the parameter names as keys and the value the parameter is bound to.
    * @param connector the acting connector
    * @param connection the acting connection
@@ -110,13 +113,14 @@ public class BulkOperations extends BaseDbOperations {
    * @throws SQLException if an error is produced
    */
   public int[] bulkDelete(@Content @Placement(
-      order = 1) @TypeResolver(DbBulkInputMetadataResolver.class) List<Map<String, Object>> parameterValues,
+      order = 1) @TypeResolver(DbBulkInputMetadataResolver.class) List<Map<String, Object>> inputParameters,
                           @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
                           @Config DbConnector connector,
-                          @Connection DbConnection connection)
+                          @Connection DbConnection connection,
+                          StreamingHelper streamingHelper)
       throws SQLException {
 
-    return singleQueryBulk(query, parameterValues, DELETE, connector, connection);
+    return singleQueryBulk(query, inputParameters, DELETE, connector, connection, streamingHelper);
   }
 
   /**
@@ -157,10 +161,11 @@ public class BulkOperations extends BaseDbOperations {
                                 List<Map<String, Object>> values,
                                 QueryType queryType,
                                 DbConnector connector,
-                                DbConnection connection)
+                                DbConnection connection,
+                                StreamingHelper streamingHelper)
       throws SQLException {
 
-    final Query resolvedQuery = resolveQuery(query, connector, connection, queryType);
+    final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, queryType);
 
     List<List<QueryParamValue>> paramSets = resolveParamSets(values);
 
@@ -169,8 +174,12 @@ public class BulkOperations extends BaseDbOperations {
     return (int[]) bulkUpdateExecutor.execute(connection, resolvedQuery, paramSets);
   }
 
-  private Query resolveQuery(BulkQueryDefinition query, DbConnector connector, DbConnection connection, QueryType... validTypes) {
-    final Query resolvedQuery = bulkQueryResolver.resolve(query, connector, connection);
+  private Query resolveQuery(BulkQueryDefinition query,
+                             DbConnector connector,
+                             DbConnection connection,
+                             StreamingHelper streamingHelper,
+                             QueryType... validTypes) {
+    final Query resolvedQuery = bulkQueryResolver.resolve(query, connector, connection, streamingHelper);
     validateQueryType(resolvedQuery.getQueryTemplate(), asList(validTypes));
     validateNoParameterTypeIsUnused(resolvedQuery, query.getParameterTypes());
     return resolvedQuery;

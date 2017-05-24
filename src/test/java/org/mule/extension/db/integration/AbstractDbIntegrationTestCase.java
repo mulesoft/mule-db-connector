@@ -235,7 +235,7 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
     MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata = getMetadata(flow, query);
     assertThat(metadata.isSuccess(), is(true));
     return metadata.get().getModel().getAllParameterModels().stream()
-        .filter(p -> p.getName().equals("parameterValues")).findFirst().get().getType();
+        .filter(p -> p.getName().equals("inputParameters")).findFirst().get().getType();
   }
 
 }

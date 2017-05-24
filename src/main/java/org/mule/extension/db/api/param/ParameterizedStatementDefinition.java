@@ -46,13 +46,6 @@ public abstract class ParameterizedStatementDefinition<T extends ParameterizedSt
   protected Map<String, Object> inputParameters = new LinkedHashMap<>();
 
   /**
-   * Returns a {@link Map} which keys are the names of the input parameters and the values are its values
-   */
-  public Map<String, Object> getParameterValues() {
-    return unmodifiableMap(getInputParameters());
-  }
-
-  /**
    * Optionally returns a parameter of the given {@code name}
    *
    * @param name the name of the searched parameter

@@ -18,6 +18,7 @@ import org.mule.extension.db.internal.domain.query.BulkQuery;
 import org.mule.extension.db.internal.domain.query.Query;
 import org.mule.extension.db.internal.domain.query.QueryParamValue;
 import org.mule.extension.db.internal.domain.query.QueryTemplate;
+import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -29,8 +30,9 @@ import java.util.Optional;
 public class BulkQueryResolver extends AbstractQueryResolver<BulkQueryDefinition> {
 
   @Override
-  public Query resolve(BulkQueryDefinition definition, DbConnector connector, DbConnection connection) {
-    Query query = super.resolve(definition, connector, connection);
+  public Query resolve(BulkQueryDefinition definition, DbConnector connector, DbConnection connection,
+                       StreamingHelper streamingHelper) {
+    Query query = super.resolve(definition, connector, connection, streamingHelper);
     List<QueryParam> queryParams = new LinkedList<>();
 
     final QueryTemplate queryTemplate = query.getQueryTemplate();
@@ -55,7 +57,9 @@ public class BulkQueryResolver extends AbstractQueryResolver<BulkQueryDefinition
   }
 
   @Override
-  protected List<QueryParamValue> resolveParams(BulkQueryDefinition statementDefinition, QueryTemplate template) {
+  protected List<QueryParamValue> resolveParams(BulkQueryDefinition statementDefinition,
+                                                QueryTemplate template,
+                                                StreamingHelper streamingHelper) {
     return new LinkedList<>();
   }
 }

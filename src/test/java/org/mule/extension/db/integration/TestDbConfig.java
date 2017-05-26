@@ -20,6 +20,18 @@ public class TestDbConfig {
 
   private static boolean USE_DERBY = true;
   private static boolean USE_MYSQL = false;
+
+  /**
+   * <strong>Developer Note:</strong>
+   * To run oracle tests you need to follow this steps:
+   * <ul>
+   * <li>set this USE_ORACLE flag to true</li>
+   * <li>You need to have an oracle instance running in your machine. (You can use the oracle-xe-11g docker image: https://hub.docker.com/r/wnameless/oracle-xe-11g)</li>
+   * <li>Then you need to install in your maven repository an <strong>oracle-jdbc-driver</strong> using the mvn install:install-file command</li>
+   * <li>Add the installed driver dependency to this project so the test can find it in the classpath</li>
+   * <li>Finally change the oracle db configurations to point to your installed instance (e.g. host, port, user, etc)</li>
+   * </ul>
+   */
   private static boolean USE_ORACLE = false;
 
   public static List<Object[]> getResources() {

@@ -7,6 +7,7 @@
 
 package org.mule.extension.db.internal.resolver.param;
 
+import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.query.QueryTemplate;
 import org.mule.extension.db.internal.domain.type.DbType;
@@ -18,6 +19,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,7 +46,8 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
   }
 
   @Override
-  public Map<Integer, DbType> getParameterTypes(DbConnection connection, QueryTemplate queryTemplate) throws SQLException {
+  public Map<Integer, DbType> getParameterTypes(DbConnection connection, QueryTemplate queryTemplate, List<ParameterType> types)
+      throws SQLException {
     DatabaseMetaData dbMetaData = connection.getJdbcConnection().getMetaData();
 
     String storedProcedureName = getStoredProcedureName(dbMetaData, queryTemplate.getSqlText());

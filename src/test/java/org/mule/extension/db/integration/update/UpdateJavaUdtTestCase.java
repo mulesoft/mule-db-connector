@@ -6,12 +6,11 @@
  */
 package org.mule.extension.db.integration.update;
 
-import static org.mule.extension.db.integration.TestDbConfig.getOracleResource;
-import static org.mule.extension.db.integration.model.RegionManager.SOUTHWEST_MANAGER;
-import static org.mule.extension.db.AllureConstants.DbFeature.DB_EXTENSION;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-
+import static org.mule.extension.db.AllureConstants.DbFeature.DB_EXTENSION;
+import static org.mule.extension.db.integration.TestDbConfig.getOracleResource;
+import static org.mule.extension.db.integration.model.RegionManager.SOUTHWEST_MANAGER;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.OracleTestDatabase;
 import org.mule.runtime.api.message.Message;
@@ -20,7 +19,6 @@ import java.sql.Struct;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import ru.yandex.qatools.allure.annotations.Features;
@@ -54,7 +52,6 @@ public class UpdateJavaUdtTestCase extends AbstractDbIntegrationTestCase {
                equalTo(SOUTHWEST_MANAGER.getContactDetails().asObjectArray()));
   }
 
-  @Ignore("MULE-11162: db:parameter-types are ignored")
   @Test
   public void updatesWithArray() throws Exception {
     Object[] payload = SOUTHWEST_MANAGER.getContactDetails().asObjectArray();

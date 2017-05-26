@@ -9,6 +9,7 @@ package org.mule.extension.db.internal.resolver.query;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
+import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.api.param.StatementDefinition;
 import org.mule.extension.db.internal.DbConnector;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
@@ -46,7 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-abstract class AbstractQueryResolver<T extends StatementDefinition> implements QueryResolver<T> {
+abstract class AbstractQueryResolver<T extends StatementDefinition<?>> implements QueryResolver<T> {
 
   protected Cache<String, QueryTemplate> queryTemplates = CacheBuilder.newBuilder().build();
   private QueryTemplateParser queryTemplateParser = new SimpleQueryTemplateParser();
@@ -69,19 +70,21 @@ abstract class AbstractQueryResolver<T extends StatementDefinition> implements Q
 
     QueryTemplate queryTemplate = queryTemplateParser.parse(statementDefinition.getSql());
     if (needsParamTypeResolution(queryTemplate)) {
-      Map<Integer, DbType> paramTypes = getParameterTypes(connector, connection, queryTemplate);
+      List<ParameterType> parameterTypes = statementDefinition.getParameterTypes();
+      Map<Integer, DbType> paramTypes = getParameterTypes(connector, connection, queryTemplate, parameterTypes);
       queryTemplate = resolveQueryTemplate(queryTemplate, paramTypes);
     }
 
     return queryTemplate;
   }
 
-  private Map<Integer, DbType> getParameterTypes(DbConnector connector, DbConnection connection, QueryTemplate queryTemplate) {
+  private Map<Integer, DbType> getParameterTypes(DbConnector connector, DbConnection connection, QueryTemplate queryTemplate,
+                                                 List<ParameterType> types) {
     ParamTypeResolverFactory paramTypeResolverFactory =
         new GenericParamTypeResolverFactory(createTypeManager(connector, connection));
 
     try {
-      return paramTypeResolverFactory.create(queryTemplate).getParameterTypes(connection, queryTemplate);
+      return paramTypeResolverFactory.create(queryTemplate).getParameterTypes(connection, queryTemplate, types);
     } catch (SQLException e) {
       throw new QueryResolutionException("Cannot resolve parameter types", e);
     }

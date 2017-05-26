@@ -7,12 +7,14 @@
 
 package org.mule.extension.db.internal.resolver.param;
 
+import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.query.QueryTemplate;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.UnknownDbTypeException;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,11 +25,13 @@ public interface ParamTypeResolver {
   /**
    * Resolves actual parameter types
    *
-   * @param connection database connection to resolve against to
-   * @param queryTemplate query template containing UNKNOWN parameter types
+   * @param connection     database connection to resolve against to
+   * @param queryTemplate  query template containing UNKNOWN parameter types
+   * @param parameterTypes the parameter types bounded to the performing query
    * @return a map containing the actual type for each parameter index
-   * @throws SQLException if this method is invoked on a closed connection
+   * @throws SQLException           if this method is invoked on a closed connection
    * @throws UnknownDbTypeException when an invalid data type is used
    */
-  Map<Integer, DbType> getParameterTypes(DbConnection connection, QueryTemplate queryTemplate) throws SQLException;
+  Map<Integer, DbType> getParameterTypes(DbConnection connection, QueryTemplate queryTemplate, List<ParameterType> parameterTypes)
+      throws SQLException;
 }

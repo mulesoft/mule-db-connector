@@ -7,6 +7,7 @@
 
 package org.mule.extension.db.internal.resolver.param;
 
+import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.param.QueryParam;
 import org.mule.extension.db.internal.domain.query.QueryTemplate;
@@ -17,6 +18,7 @@ import org.mule.extension.db.internal.domain.type.UnknownDbType;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,7 +34,9 @@ public class DefaultParamTypeResolver implements ParamTypeResolver {
     this.metadataParamTypeResolver = metadataParamTypeResolver;
   }
 
-  public Map<Integer, DbType> getParameterTypes(DbConnection connection, QueryTemplate queryTemplate) throws SQLException {
+  public Map<Integer, DbType> getParameterTypes(DbConnection connection, QueryTemplate queryTemplate,
+                                                List<ParameterType> parameterTypes)
+      throws SQLException {
     Map<Integer, DbType> resolvedParamTypes = new HashMap<>();
 
     Map<Integer, DbType> metadataParamTypes = null;
@@ -40,7 +44,7 @@ public class DefaultParamTypeResolver implements ParamTypeResolver {
     for (QueryParam queryParam : queryTemplate.getParams()) {
       if (queryParam.getType() instanceof UnknownDbType) {
         if (metadataParamTypes == null) {
-          metadataParamTypes = getParamTypesUsingMetadata(connection, queryTemplate);
+          metadataParamTypes = getParamTypesUsingMetadata(connection, queryTemplate, parameterTypes);
         }
 
         resolvedParamTypes.put(queryParam.getIndex(), metadataParamTypes.get(queryParam.getIndex()));
@@ -56,10 +60,11 @@ public class DefaultParamTypeResolver implements ParamTypeResolver {
     return resolvedParamTypes;
   }
 
-  protected Map<Integer, DbType> getParamTypesUsingMetadata(DbConnection connection, QueryTemplate queryTemplate) {
+  protected Map<Integer, DbType> getParamTypesUsingMetadata(DbConnection connection, QueryTemplate queryTemplate,
+                                                            List<ParameterType> parameterTypes) {
     Map<Integer, DbType> metadataParamTypes;
     try {
-      metadataParamTypes = metadataParamTypeResolver.getParameterTypes(connection, queryTemplate);
+      metadataParamTypes = metadataParamTypeResolver.getParameterTypes(connection, queryTemplate, parameterTypes);
     } catch (SQLException e) {
       metadataParamTypes = getParamTypesFromQueryTemplate(queryTemplate);
     }

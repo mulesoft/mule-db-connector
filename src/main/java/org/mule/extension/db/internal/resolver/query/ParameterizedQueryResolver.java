@@ -16,7 +16,7 @@ import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 import java.util.List;
 import java.util.Optional;
 
-public class ParameterizedQueryResolver<T extends ParameterizedStatementDefinition> extends AbstractQueryResolver<T> {
+public class ParameterizedQueryResolver<T extends ParameterizedStatementDefinition<?>> extends AbstractQueryResolver<T> {
 
   @Override
   protected List<QueryParamValue> resolveParams(T statementDefinition, QueryTemplate template, StreamingHelper streamingHelper) {

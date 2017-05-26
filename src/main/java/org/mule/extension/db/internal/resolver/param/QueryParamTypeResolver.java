@@ -7,6 +7,7 @@
 
 package org.mule.extension.db.internal.resolver.param;
 
+import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.param.QueryParam;
 import org.mule.extension.db.internal.domain.query.QueryTemplate;
@@ -20,7 +21,9 @@ import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Resolves parameter types for standard queries
@@ -34,16 +37,17 @@ public class QueryParamTypeResolver implements ParamTypeResolver {
   }
 
   @Override
-  public Map<Integer, DbType> getParameterTypes(DbConnection connection, QueryTemplate queryTemplate) throws SQLException {
+  public Map<Integer, DbType> getParameterTypes(DbConnection connection, QueryTemplate queryTemplate, List<ParameterType> types)
+      throws SQLException {
     Map<Integer, DbType> paramTypes = new HashMap<>();
-
     PreparedStatement statement = connection.getJdbcConnection().prepareStatement(queryTemplate.getSqlText());
-
     ParameterMetaData parameterMetaData = statement.getParameterMetaData();
 
     for (QueryParam queryParam : queryTemplate.getParams()) {
       int parameterTypeId = parameterMetaData.getParameterType(queryParam.getIndex());
-      String parameterTypeName = parameterMetaData.getParameterTypeName(queryParam.getIndex());
+      Optional<ParameterType> type = types.stream().filter(p -> p.getKey().equals(queryParam.getName())).findAny();
+      String parameterTypeName = type.map(p -> p.getDbType().getName())
+          .orElse(parameterMetaData.getParameterTypeName(queryParam.getIndex()));
       DbType dbType;
       if (parameterTypeName == null) {
         // Use unknown data type
@@ -56,7 +60,6 @@ public class QueryParamTypeResolver implements ParamTypeResolver {
           dbType = new ResolvedDbType(parameterTypeId, parameterTypeName);
         }
       }
-
       paramTypes.put(queryParam.getIndex(), dbType);
     }
 

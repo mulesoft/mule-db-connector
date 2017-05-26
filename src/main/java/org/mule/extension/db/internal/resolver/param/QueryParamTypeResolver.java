@@ -46,8 +46,8 @@ public class QueryParamTypeResolver implements ParamTypeResolver {
     for (QueryParam queryParam : queryTemplate.getParams()) {
       int parameterTypeId = parameterMetaData.getParameterType(queryParam.getIndex());
       Optional<ParameterType> type = types.stream().filter(p -> p.getKey().equals(queryParam.getName())).findAny();
-      String parameterTypeName = type.map(p -> p.getDbType().getName())
-          .orElse(parameterMetaData.getParameterTypeName(queryParam.getIndex()));
+      String parameterTypeName =
+          type.isPresent() ? type.get().getDbType().getName() : parameterMetaData.getParameterTypeName(queryParam.getIndex());
       DbType dbType;
       if (parameterTypeName == null) {
         // Use unknown data type

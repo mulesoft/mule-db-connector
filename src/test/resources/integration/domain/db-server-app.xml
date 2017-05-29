@@ -11,7 +11,7 @@
     <flow name="dbServerService">
         <scheduler>
             <scheduling-strategy>
-                <fixed-frequency-scheduler frequency="100"/>
+                <fixed-frequency frequency="100"/>
             </scheduling-strategy>
         </scheduler>
         <db:select config-ref="dbConfig">

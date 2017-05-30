@@ -14,6 +14,7 @@ import org.mule.runtime.extension.api.annotation.metadata.TypeResolver;
 import org.mule.runtime.extension.api.annotation.param.Content;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Example;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
@@ -42,6 +43,7 @@ public abstract class ParameterizedStatementDefinition<T extends ParameterizedSt
   @Optional(defaultValue = "#[{}]")
   @TypeResolver(DbInputMetadataResolver.class)
   @Placement(order = 2)
+  @DisplayName("Input Parameters")
   @Example("#[{'name': \"Max\", 'nickname': \"The Mule\", 'company': \"MuleSoft\"}]")
   protected Map<String, Object> inputParameters = new LinkedHashMap<>();
 

@@ -216,7 +216,7 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
 
     assertThat(metadata.isSuccess(), is(true));
     return metadata.get().getModel().getAllParameterModels().stream()
-        .filter(p -> p.getName().equals("inputParameters"))
+        .filter(p -> p.getName().equals("inputParameters") || p.getName().equals("bulkInputParameters"))
         .findFirst().get().getType();
   }
 
@@ -235,7 +235,8 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
     MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata = getMetadata(flow, query);
     assertThat(metadata.isSuccess(), is(true));
     return metadata.get().getModel().getAllParameterModels().stream()
-        .filter(p -> p.getName().equals("inputParameters")).findFirst().get().getType();
+        .filter(p -> p.getName().equals("inputParameters") || p.getName().equals("bulkInputParameters"))
+        .findFirst().get().getType();
   }
 
 }

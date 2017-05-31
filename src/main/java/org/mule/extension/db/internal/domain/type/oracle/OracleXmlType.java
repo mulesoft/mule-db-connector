@@ -93,6 +93,6 @@ public class OracleXmlType extends AbstractStructuredDbType {
    * @throws ClassNotFoundException if there required class in not in the classpath
    */
   public static Class<?> getXmlTypeClass() throws ClassNotFoundException {
-    return ClassUtils.getClass(ORACLE_XMLTYPE_CLASS);
+    return org.apache.commons.lang.ClassUtils.getClass(ORACLE_XMLTYPE_CLASS);
   }
 }

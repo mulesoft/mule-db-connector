@@ -7,7 +7,7 @@
 
 package org.mule.extension.db.internal.util;
 
-import org.mule.runtime.core.util.IOUtils;
+import org.mule.runtime.core.api.util.IOUtils;
 
 import java.io.IOException;
 

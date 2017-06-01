@@ -7,12 +7,12 @@
 
 package org.mule.extension.db.internal.parser;
 
+import static org.mule.runtime.core.api.util.StringUtils.isEmpty;
 import org.mule.extension.db.internal.domain.param.DefaultInputQueryParam;
 import org.mule.extension.db.internal.domain.param.QueryParam;
 import org.mule.extension.db.internal.domain.query.QueryTemplate;
 import org.mule.extension.db.internal.domain.query.QueryType;
 import org.mule.extension.db.internal.domain.type.UnknownDbType;
-import org.mule.runtime.core.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +100,7 @@ public class SimpleQueryTemplateParser implements QueryTemplateParser {
   }
 
   private QueryTemplate doParse(String sqlText, QueryType queryType) {
-    if (StringUtils.isEmpty(sqlText)) {
+    if (isEmpty(sqlText)) {
       throw new QueryTemplateParsingException("SQL text cannot be empty");
     }
 

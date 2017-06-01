@@ -7,7 +7,6 @@
 package org.mule.extension.db.internal.domain.type.oracle;
 
 import org.mule.extension.db.internal.domain.type.AbstractStructuredDbType;
-import org.mule.runtime.core.util.ClassUtils;
 
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -93,6 +92,6 @@ public class OracleXmlType extends AbstractStructuredDbType {
    * @throws ClassNotFoundException if there required class in not in the classpath
    */
   public static Class<?> getXmlTypeClass() throws ClassNotFoundException {
-    return ClassUtils.getClass(ORACLE_XMLTYPE_CLASS);
+    return org.apache.commons.lang.ClassUtils.getClass(ORACLE_XMLTYPE_CLASS);
   }
 }

@@ -8,10 +8,10 @@
 package org.mule.extension.db.internal.domain.query;
 
 import static java.util.stream.Collectors.toCollection;
+import static org.mule.runtime.core.api.util.StringUtils.isEmpty;
 import org.mule.extension.db.internal.domain.param.InputQueryParam;
 import org.mule.extension.db.internal.domain.param.OutputQueryParam;
 import org.mule.extension.db.internal.domain.param.QueryParam;
-import org.mule.runtime.core.util.StringUtils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -83,10 +83,10 @@ public class QueryTemplate {
 
     for (InputQueryParam inputParam : inputParams) {
       if (firstParam) {
-        namedParams = !StringUtils.isEmpty(inputParam.getName());
+        namedParams = !isEmpty(inputParam.getName());
         firstParam = false;
       } else {
-        if (namedParams == StringUtils.isEmpty(inputParam.getName())) {
+        if (namedParams == isEmpty(inputParam.getName())) {
           throw new IllegalArgumentException("Cannot mix named and inline parameters in the same query");
         }
       }

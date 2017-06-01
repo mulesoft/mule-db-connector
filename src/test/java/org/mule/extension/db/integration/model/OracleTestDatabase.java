@@ -8,7 +8,6 @@
 package org.mule.extension.db.integration.model;
 
 import org.mule.extension.db.integration.DbTestUtil;
-import org.mule.runtime.core.util.ClassUtils;
 
 import java.math.BigDecimal;
 import java.sql.Connection;

@@ -7,7 +7,7 @@
 
 package org.mule.extension.db.internal.parser;
 
-import static org.mule.runtime.core.util.StringUtils.isEmpty;
+import static org.mule.runtime.core.api.util.StringUtils.isEmpty;
 import org.mule.extension.db.internal.domain.param.DefaultInputQueryParam;
 import org.mule.extension.db.internal.domain.param.QueryParam;
 import org.mule.extension.db.internal.domain.query.QueryTemplate;

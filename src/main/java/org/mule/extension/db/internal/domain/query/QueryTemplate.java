@@ -8,7 +8,7 @@
 package org.mule.extension.db.internal.domain.query;
 
 import static java.util.stream.Collectors.toCollection;
-import static org.mule.runtime.core.util.StringUtils.isEmpty;
+import static org.mule.runtime.core.api.util.StringUtils.isEmpty;
 import org.mule.extension.db.internal.domain.param.InputQueryParam;
 import org.mule.extension.db.internal.domain.param.OutputQueryParam;
 import org.mule.extension.db.internal.domain.param.QueryParam;

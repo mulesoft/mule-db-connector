@@ -22,7 +22,7 @@ public class InsensitiveMapRowHandler implements RowHandler {
 
   @Override
   public Map<String, Object> process(ResultSet resultSet) throws SQLException {
-    CaseInsensitiveHashMap result = new CaseInsensitiveHashMap();
+    Map result = new CaseInsensitiveHashMap();
     ResultSetMetaData metaData = resultSet.getMetaData();
     int cols = metaData.getColumnCount();
 

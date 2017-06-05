@@ -14,6 +14,7 @@ import static org.mule.runtime.api.connection.ConnectionValidationResult.success
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.disposeIfNeeded;
+import static org.mule.runtime.core.util.collection.Collectors.toImmutableList;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extension.db.api.config.DbPoolingProfile;
@@ -38,7 +39,6 @@ import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.tx.MuleXaObject;
 import org.mule.runtime.core.api.MuleContext;
-import org.mule.runtime.core.util.collection.ImmutableListCollector;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.ConfigName;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -252,7 +252,7 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
         return new ResolvedDbType(id, name);
       }
     })
-        .collect(new ImmutableListCollector<>());
+        .collect(toImmutableList());
   }
 
   private DataSourceFactory createDataSourceFactory() {

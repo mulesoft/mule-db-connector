@@ -13,7 +13,7 @@ import org.mule.runtime.api.tx.DataSourceDecorator;
 import org.mule.runtime.api.config.DatabasePoolingProfile;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.api.lifecycle.Disposable;
-import org.mule.runtime.core.util.concurrent.ConcurrentHashSet;
+import org.mule.runtime.core.api.util.concurrent.ConcurrentHashSet;
 
 import com.mchange.v2.c3p0.DataSources;
 

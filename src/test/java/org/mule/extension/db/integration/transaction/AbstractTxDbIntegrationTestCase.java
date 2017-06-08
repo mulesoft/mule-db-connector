@@ -12,15 +12,17 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
 import static org.mule.extension.db.integration.DbTestUtil.selectData;
-import org.hamcrest.Matcher;
+
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.functional.junit4.FlowRunner;
-import org.mule.runtime.core.component.ComponentException;
 import org.mule.runtime.core.exception.MessagingException;
 
-import javax.sql.DataSource;
 import java.util.List;
 import java.util.Map;
+
+import javax.sql.DataSource;
+
+import org.hamcrest.Matcher;
 
 public abstract class AbstractTxDbIntegrationTestCase extends AbstractDbIntegrationTestCase {
 
@@ -31,7 +33,7 @@ public abstract class AbstractTxDbIntegrationTestCase extends AbstractDbIntegrat
     FlowRunner flowRunner = flowRunner(flowName);
     additionalVariables().entrySet().forEach(entry -> flowRunner.withVariable(entry.getKey(), entry.getValue()));
     MessagingException exception = flowRunner.runExpectingException();
-    assertThat(exception.getCause(), is(instanceOf(ComponentException.class)));
+    assertThat(exception.getCause(), is(instanceOf(IllegalStateException.class)));
   }
 
   protected void validateDbState(String planet) throws java.sql.SQLException {

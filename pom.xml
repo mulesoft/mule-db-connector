@@ -72,7 +72,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.mule.tests</groupId>
+            <groupId>org.mule.tests.plugin</groupId>
             <artifactId>mule-tests-component-plugin</artifactId>
             <version>${mule.version}</version>
             <classifier>mule-plugin</classifier>

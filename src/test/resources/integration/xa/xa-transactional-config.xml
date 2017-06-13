@@ -11,7 +11,7 @@
         <db:update config-ref="dbConfig">
             <db:parameterized-query>update PLANET set NAME='Mercury' where POSITION=4</db:parameterized-query>
         </db:update>
-        <test:component throwException="true" exceptionToThrow="java.lang.IllegalStateException"/>
+        <test:processor throwException="true" exceptionToThrow="java.lang.IllegalStateException"/>
     </flow>
 
     <flow name="jdbcCommit">
@@ -25,7 +25,7 @@
             <db:parameterized-query>update PLANET set NAME='Mercury' where POSITION=4</db:parameterized-query>
         </db:update>
 
-        <test:component throwException="true" exceptionToThrow="java.lang.IllegalStateException"/>
+        <test:processor throwException="true" exceptionToThrow="java.lang.IllegalStateException"/>
     </flow>
 
     <flow name="commitWithNonTransactionalMP">
@@ -33,6 +33,6 @@
             <db:parameterized-query>update PLANET set NAME='Mercury' where POSITION=4</db:parameterized-query>
         </db:update>
 
-        <test:component throwException="true" exceptionToThrow="java.lang.IllegalStateException"/>
+        <test:processor throwException="true" exceptionToThrow="java.lang.IllegalStateException"/>
     </flow>
 </mule>

@@ -16,7 +16,7 @@ import org.mule.extension.db.internal.domain.param.QueryParam;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Defines a SQL query that could be executed against a database connection.

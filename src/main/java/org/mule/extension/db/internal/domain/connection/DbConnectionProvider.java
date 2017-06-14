@@ -54,7 +54,7 @@ import javax.inject.Inject;
 import javax.sql.DataSource;
 import javax.sql.XAConnection;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
 /**

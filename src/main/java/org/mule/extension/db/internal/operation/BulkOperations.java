@@ -8,7 +8,7 @@ package org.mule.extension.db.internal.operation;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.mule.extension.db.internal.domain.query.QueryType.DELETE;
 import static org.mule.extension.db.internal.domain.query.QueryType.INSERT;
 import static org.mule.extension.db.internal.domain.query.QueryType.UPDATE;

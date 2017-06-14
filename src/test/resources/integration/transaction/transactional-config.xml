@@ -13,7 +13,7 @@
                 update PLANET set NAME='Mercury' where POSITION=4
             </db:sql>
         </db:update>
-        <test:component throwException="true" exceptionToThrow="java.lang.IllegalStateException"/>
+        <test:processor throwException="true" exceptionToThrow="java.lang.IllegalStateException"/>
     </flow>
 
     <flow name="commitAnOptionalTxUpdateIsANonTxBlock">
@@ -23,7 +23,7 @@
                     update PLANET set NAME='Mercury' where POSITION=4
                 </db:sql>
             </db:update>
-            <test:component throwException="true" exceptionToThrow="java.lang.IllegalStateException"/>
+            <test:processor throwException="true" exceptionToThrow="java.lang.IllegalStateException"/>
         </try>
     </flow>
 
@@ -35,7 +35,7 @@
                 </db:sql>
             </db:update>
 
-            <test:component throwException="true" exceptionToThrow="java.lang.IllegalStateException"/>
+            <test:processor throwException="true" exceptionToThrow="java.lang.IllegalStateException"/>
         </try>
     </flow>
 
@@ -46,7 +46,7 @@
                     update PLANET set NAME='Earth' where POSITION=4
                 </db:sql>
             </db:update>
-            <test:component throwException="true" exceptionToThrow="java.lang.IllegalStateException"/>
+            <test:processor throwException="true" exceptionToThrow="java.lang.IllegalStateException"/>
         </try>
     </flow>
 
@@ -57,7 +57,7 @@
                     update PLANET set NAME='Mercury' where POSITION=4
                 </db:sql>
             </db:update>
-            <test:component throwException="true" exceptionToThrow="java.lang.IllegalStateException"/>
+            <test:processor throwException="true" exceptionToThrow="java.lang.IllegalStateException"/>
         </try>
     </flow>
 </mule>

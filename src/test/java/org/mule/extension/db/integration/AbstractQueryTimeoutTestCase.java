@@ -14,7 +14,7 @@ import static org.hamcrest.core.Is.is;
 
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.core.api.Event;
-import org.mule.runtime.core.exception.MessagingException;
+import org.mule.runtime.core.api.exception.MessagingException;
 
 import org.junit.Before;
 import org.junit.Test;

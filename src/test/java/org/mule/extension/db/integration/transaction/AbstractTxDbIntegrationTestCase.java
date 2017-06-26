@@ -15,7 +15,7 @@ import static org.mule.extension.db.integration.DbTestUtil.selectData;
 
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.functional.junit4.FlowRunner;
-import org.mule.runtime.core.exception.MessagingException;
+import org.mule.runtime.core.api.exception.MessagingException;
 
 import java.util.List;
 import java.util.Map;

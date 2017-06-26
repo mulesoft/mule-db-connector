@@ -18,7 +18,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.rules.ExpectedException.none;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.core.exception.MessagingException;
+import org.mule.runtime.core.api.exception.MessagingException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

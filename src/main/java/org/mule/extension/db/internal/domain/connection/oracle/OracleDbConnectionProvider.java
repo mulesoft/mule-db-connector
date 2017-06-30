@@ -14,6 +14,7 @@ import static org.mule.extension.db.api.exception.connection.DbError.INVALID_CRE
 import static org.mule.extension.db.api.exception.connection.DbError.INVALID_DATABASE;
 import static org.mule.extension.db.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionParameters.DRIVER_CLASS_NAME;
+import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
 import org.mule.extension.db.api.exception.connection.DbError;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
@@ -39,7 +40,7 @@ import javax.sql.DataSource;
 @DisplayName("Oracle Connection")
 @Alias("oracle")
 @ExternalLib(name = "Oracle JDBC Driver", description = "A JDBC driver which supports connecting to an Oracle Database",
-    fileName = DRIVER_FILE_NAME_PATTERN, requiredClassName = DRIVER_CLASS_NAME)
+    nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, requiredClassName = DRIVER_CLASS_NAME, type = JAR)
 public class OracleDbConnectionProvider extends DbConnectionProvider {
 
   private static final String INVALID_CREDENTIALS_ORACLE_CODE = "ORA-01017";

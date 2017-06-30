@@ -7,6 +7,7 @@
 package org.mule.extension.db.internal.domain.connection.generic;
 
 import static org.mule.extension.db.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
+import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.extension.db.internal.domain.connection.DbConnectionProvider;
@@ -27,7 +28,7 @@ import javax.sql.DataSource;
 @DisplayName("Generic Connection")
 @Alias("generic")
 @ExternalLib(name = "JDBC Driver", description = "A JDBC driver which supports connecting to the Database",
-    fileName = DRIVER_FILE_NAME_PATTERN)
+    nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, type = JAR)
 public class GenericConnectionProvider extends DbConnectionProvider {
 
   @ParameterGroup(name = CONNECTION)

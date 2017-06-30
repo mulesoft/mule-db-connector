@@ -11,6 +11,7 @@ import static java.util.Optional.ofNullable;
 import static org.mule.extension.db.api.exception.connection.DbError.CANNOT_REACH;
 import static org.mule.extension.db.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
 import static org.mule.extension.db.internal.domain.connection.derby.DerbyConnectionParameters.DERBY_DRIVER_CLASS;
+import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
 import org.mule.extension.db.api.exception.connection.DbError;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
@@ -33,7 +34,7 @@ import javax.sql.DataSource;
 @DisplayName("Derby Connection")
 @Alias("derby")
 @ExternalLib(name = "Derby JDBC Driver", description = "A JDBC driver which supports connecting to a Derby Database",
-    fileName = DRIVER_FILE_NAME_PATTERN, requiredClassName = DERBY_DRIVER_CLASS)
+    nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, requiredClassName = DERBY_DRIVER_CLASS, type = JAR)
 public class DerbyConnectionProvider extends DbConnectionProvider {
 
   private static final String FAILED_TO_START_DATABASE = "Failed to start database";

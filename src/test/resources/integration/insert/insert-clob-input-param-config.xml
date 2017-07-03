@@ -45,7 +45,7 @@
             </db:select>
             <!-- Get the CLOB field value -->
             <set-payload value="#[mel:payload.openCursor().next().get('DESCRIPTION')]"/>
-            <component class="org.mule.extension.db.integration.ClobToString"/>
+            <custom-processor class="org.mule.extension.db.integration.ClobToString"/>
         </try>
     </sub-flow>
 </mule>

@@ -11,8 +11,12 @@ import static java.util.stream.IntStream.range;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mule.extension.db.integration.TestDbConfig.getDerbyResource;
+
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
+import org.mule.functional.api.component.EventCallback;
 import org.mule.runtime.api.message.Message;
+import org.mule.runtime.core.api.Event;
+import org.mule.runtime.core.api.MuleContext;
 
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -123,9 +127,10 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
     return new Long(Stream.of(messages).filter(predicate).count()).intValue();
   }
 
-  public static class JoinRequests {
+  public static class JoinRequests implements EventCallback {
 
-    public static Object process(Object payload) {
+    @Override
+    public void eventReceived(Event event, Object component, MuleContext muleContext) throws Exception {
       connectionLatch.countDown();
 
       try {
@@ -133,8 +138,6 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
       } catch (InterruptedException e) {
         Thread.currentThread().interrupt();
       }
-
-      return payload;
     }
   }
 }

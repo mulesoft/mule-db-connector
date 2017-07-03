@@ -9,15 +9,15 @@ package org.mule.extension.db.internal.domain.connection;
 
 import org.mule.extension.db.api.config.DbPoolingProfile;
 import org.mule.extension.db.internal.domain.xa.CompositeDataSourceDecorator;
-import org.mule.runtime.api.tx.DataSourceDecorator;
 import org.mule.runtime.api.config.DatabasePoolingProfile;
-import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.api.lifecycle.Disposable;
+import org.mule.runtime.api.tx.DataSourceDecorator;
 import org.mule.runtime.core.api.util.concurrent.ConcurrentHashSet;
 
 import com.mchange.v2.c3p0.DataSources;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -41,9 +41,9 @@ public class DataSourceFactory implements Disposable {
   private final Set<Disposable> disposableDataSources = new ConcurrentHashSet();
   private final CompositeDataSourceDecorator dataSourceDecorator;
 
-  public DataSourceFactory(String name, MuleContext muleContext) {
+  public DataSourceFactory(String name, Collection<DataSourceDecorator> dataSourceDecorators) {
     this.name = name;
-    dataSourceDecorator = new CompositeDataSourceDecorator(muleContext.getRegistry().lookupObjects(DataSourceDecorator.class));
+    dataSourceDecorator = new CompositeDataSourceDecorator(dataSourceDecorators);
   }
 
   /**

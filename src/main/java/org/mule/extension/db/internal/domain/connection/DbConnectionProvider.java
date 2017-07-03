@@ -30,6 +30,7 @@ import org.mule.extension.db.internal.domain.type.MappedStructResolvedDbType;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
 import org.mule.extension.db.internal.domain.type.StructDbType;
 import org.mule.extension.db.internal.domain.xa.XADbConnection;
+import org.mule.runtime.api.artifact.ServiceDiscoverer;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.connection.ConnectionValidationResult;
@@ -37,13 +38,16 @@ import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
+import org.mule.runtime.api.tx.DataSourceDecorator;
 import org.mule.runtime.api.tx.MuleXaObject;
-import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.ConfigName;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -53,9 +57,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 import javax.sql.XAConnection;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
 
 /**
  * Creates a generic DB connection through an URL
@@ -74,7 +75,7 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
   private String configName;
 
   @Inject
-  private MuleContext muleContext;
+  private ServiceDiscoverer serviceDiscoverer;
 
   /**
    * Provides a way to configure database connection pooling.
@@ -256,7 +257,7 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
   }
 
   private DataSourceFactory createDataSourceFactory() {
-    return new DataSourceFactory(configName, muleContext);
+    return new DataSourceFactory(configName, serviceDiscoverer.lookupAll(DataSourceDecorator.class));
   }
 
   public DataSource getConfiguredDataSource() {

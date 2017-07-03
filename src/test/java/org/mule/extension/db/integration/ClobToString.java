@@ -7,22 +7,32 @@
 
 package org.mule.extension.db.integration;
 
+import org.mule.runtime.api.exception.MuleException;
+import org.mule.runtime.api.message.Message;
+import org.mule.runtime.core.api.Event;
+import org.mule.runtime.core.api.processor.Processor;
+
 import java.io.BufferedReader;
 import java.io.Reader;
 import java.sql.Clob;
 
 /**
  * Converts the value of a CLOB field to a String.
- * <p/>
+ * <p>
  * This class is required as some databases, in particular MySql, do not return Clob values for fields of "Clob" type. MySql has a
  * set of Clob like types, that accept a Clob value as input, but when selected they just return as a String value.
- * <p/>
- * IMPORTANT: Clobs must be read from a open connection, so to use this class be sure to maintain active the same transaction that
- * created the Clob value.
- *
- *
+ * <p>
+ * <b>IMPORTANT:</b> Clobs must be read from a open connection, so to use this class be sure to maintain active the same
+ * transaction that created the Clob value.
  */
-public class ClobToString {
+public class ClobToString implements Processor {
+
+  @Override
+  public Event process(Event event) throws MuleException {
+    final Message message = event.getMessage();
+    return Event.builder(event).message(Message.builder(message).payload(convert(message.getPayload().getValue())).build())
+        .build();
+  }
 
   /**
    * Converts a {@link Clob} to {@link String}

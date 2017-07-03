@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:test="http://www.mulesoft.org/schema/mule/test"
       xmlns="http://www.mulesoft.org/schema/mule/core"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+            http://www.mulesoft.org/schema/mule/test http://www.mulesoft.org/schema/mule/test/current/mule-test.xsd
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
     <flow name="queryAndJoin" processingStrategy="synchronous">
@@ -11,11 +13,15 @@
                 <db:sql>delete from PLANET</db:sql>
             </db:delete>
             <set-payload value="OK" />
-            <component class="org.mule.extension.db.integration.connectivity.DataSourcePoolingTestCase$JoinRequests"/>
+                <test:processor>
+                    <test:callback class="org.mule.extension.db.integration.connectivity.DataSourcePoolingTestCase$JoinRequests"/>
+                </test:processor>
             <error-handler>
                 <on-error-continue>
                     <set-payload value="FAIL" />
-                    <component class="org.mule.extension.db.integration.connectivity.DataSourcePoolingTestCase$JoinRequests"/>
+                    <test:processor>
+                        <test:callback class="org.mule.extension.db.integration.connectivity.DataSourcePoolingTestCase$JoinRequests"/>
+                    </test:processor>
                 </on-error-continue>
             </error-handler>
         </try>
@@ -27,7 +33,9 @@
                 <db:sql>delete from PLANET</db:sql>
             </db:delete>
             <set-payload value="OK" />
-            <component class="org.mule.extension.db.integration.connectivity.DataSourcePoolingTestCase$JoinRequests"/>
+            <test:processor>
+                <test:callback class="org.mule.extension.db.integration.connectivity.DataSourcePoolingTestCase$JoinRequests"/>
+            </test:processor>
         </try>
     </flow>
 </mule>

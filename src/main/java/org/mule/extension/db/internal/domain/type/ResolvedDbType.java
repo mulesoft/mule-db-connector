@@ -7,6 +7,10 @@
 
 package org.mule.extension.db.internal.domain.type;
 
+import static java.sql.Types.DECIMAL;
+import static java.sql.Types.NUMERIC;
+
+import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -25,7 +29,18 @@ public class ResolvedDbType extends AbstractDbType {
     if (value == null) {
       statement.setNull(index, id);
     } else {
-      statement.setObject(index, value, id);
+      if (DECIMAL == id || NUMERIC == id) {
+        if (value instanceof BigDecimal) {
+          statement.setObject(index, value, id, ((BigDecimal) value).scale());
+        } else if (value instanceof Float || value instanceof Double) {
+          BigDecimal bigDecimal = new BigDecimal(value.toString());
+          statement.setObject(index, bigDecimal, id, bigDecimal.scale());
+        } else {
+          statement.setObject(index, value, id);
+        }
+      } else {
+        statement.setObject(index, value, id);
+      }
     }
   }
 

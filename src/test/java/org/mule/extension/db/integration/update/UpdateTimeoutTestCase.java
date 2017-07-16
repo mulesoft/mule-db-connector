@@ -10,11 +10,11 @@ import static org.mule.extension.db.AllureConstants.DbFeature.DB_EXTENSION;
 
 import org.mule.extension.db.integration.AbstractQueryTimeoutTestCase;
 
-import ru.yandex.qatools.allure.annotations.Features;
-import ru.yandex.qatools.allure.annotations.Stories;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 
-@Features(DB_EXTENSION)
-@Stories("Update Statement")
+@Feature(DB_EXTENSION)
+@Story("Update Statement")
 public class UpdateTimeoutTestCase extends AbstractQueryTimeoutTestCase {
 
   protected String[] getFlowConfigurationResources() {

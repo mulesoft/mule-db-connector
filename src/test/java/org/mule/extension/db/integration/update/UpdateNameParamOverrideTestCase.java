@@ -16,14 +16,14 @@ import org.mule.extension.db.integration.model.Record;
 import org.mule.runtime.api.message.Message;
 
 import org.junit.Test;
-import ru.yandex.qatools.allure.annotations.Features;
-import ru.yandex.qatools.allure.annotations.Stories;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 
 import java.util.List;
 import java.util.Map;
 
-@Features(DB_EXTENSION)
-@Stories("Update Statement")
+@Feature(DB_EXTENSION)
+@Story("Update Statement")
 public class UpdateNameParamOverrideTestCase extends AbstractDbIntegrationTestCase {
 
   @Override

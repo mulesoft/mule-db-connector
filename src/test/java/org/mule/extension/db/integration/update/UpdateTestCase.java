@@ -15,6 +15,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 
+import io.qameta.allure.Issue;
 import org.mule.extension.db.api.StatementResult;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.Field;
@@ -53,6 +54,7 @@ public class UpdateTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   @Ignore("MULE-12338")
+  @Issue("MULE-12338")
   public void truncateTable() throws Exception {
     flowRunner("truncateTable").run();
     List<Map<String, String>> result = selectData("select * from PLANET", getDefaultDataSource());

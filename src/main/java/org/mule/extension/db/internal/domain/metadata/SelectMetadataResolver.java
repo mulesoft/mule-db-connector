@@ -78,6 +78,6 @@ public class SelectMetadataResolver extends BaseDbMetadataResolver implements Ou
     ObjectTypeBuilder record = typeBuilder.objectType().id("recordModel");
     recordModels.entrySet().forEach(e -> record.addField().key(e.getKey()).value(e.getValue()));
 
-    return typeBuilder.arrayType().of(record).build();
+    return record.build();
   }
 }

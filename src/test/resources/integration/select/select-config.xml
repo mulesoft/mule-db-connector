@@ -20,14 +20,14 @@
     <flow name="expressionAndFixedParamMixed">
         <set-variable variableName="position" value="3"/>
         <db:select config-ref="dbConfig">
-            <db:sql>#["SELECT * FROM PLANET WHERE POSITION = $(position) AND NAME = 'Earth'"]</db:sql>
+            <db:sql>#["SELECT * FROM PLANET WHERE POSITION = $(vars.position) AND NAME = 'Earth'"]</db:sql>
         </db:select>
     </flow>
 
     <flow name="dynamicQuery">
         <set-variable variableName="tableName" value="PLANET"/>
         <db:select config-ref="dbConfig">
-            <db:sql>#["select * from $(tableName) order by ID"]</db:sql>
+            <db:sql>#["select * from $(vars.tableName) order by ID"]</db:sql>
         </db:select>
     </flow>
 

@@ -16,7 +16,7 @@
         <set-variable variableName="position" value="4"/>
 
         <db:update config-ref="dbConfig">
-            <db:sql>#["update PLANET set NAME='$(data)' where POSITION=$(position)"]</db:sql>
+            <db:sql>#["update PLANET set NAME='$(vars.data)' where POSITION=$(vars.position)"]</db:sql>
         </db:update>
     </flow>
 

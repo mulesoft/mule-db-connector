@@ -24,7 +24,7 @@
             <db:input-parameters>
                 #[
                 {
-                    'id' : id,
+                    'id' : vars.id,
                     'name' : payload
                 }]
             </db:input-parameters>

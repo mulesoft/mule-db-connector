@@ -30,7 +30,7 @@ import org.mule.extension.db.internal.domain.type.MappedStructResolvedDbType;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
 import org.mule.extension.db.internal.domain.type.StructDbType;
 import org.mule.extension.db.internal.domain.xa.XADbConnection;
-import org.mule.runtime.api.artifact.ServiceDiscoverer;
+import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.connection.ConnectionValidationResult;
@@ -75,7 +75,7 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
   private String configName;
 
   @Inject
-  private ServiceDiscoverer serviceDiscoverer;
+  private Registry registry;
 
   /**
    * Provides a way to configure database connection pooling.
@@ -257,7 +257,7 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
   }
 
   private DataSourceFactory createDataSourceFactory() {
-    return new DataSourceFactory(configName, serviceDiscoverer.lookupAll(DataSourceDecorator.class));
+    return new DataSourceFactory(configName, registry.lookupAll(DataSourceDecorator.class));
   }
 
   public DataSource getConfiguredDataSource() {

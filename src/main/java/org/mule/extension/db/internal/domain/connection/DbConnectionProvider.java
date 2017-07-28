@@ -41,7 +41,7 @@ import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.tx.DataSourceDecorator;
 import org.mule.runtime.api.tx.MuleXaObject;
 import org.mule.runtime.extension.api.annotation.Expression;
-import org.mule.runtime.extension.api.annotation.param.ConfigName;
+import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
@@ -71,7 +71,7 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
   private static final String ERROR_TRYING_TO_LOAD_DRIVER = "Error trying to load driver";
 
 
-  @ConfigName
+  @RefName
   private String configName;
 
   @Inject

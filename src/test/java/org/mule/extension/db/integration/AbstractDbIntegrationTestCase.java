@@ -28,7 +28,7 @@ import org.mule.extension.db.integration.model.Field;
 import org.mule.extension.db.integration.model.Record;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.connection.DbConnectionProvider;
-import org.mule.functional.junit4.FlowRunner;
+import org.mule.functional.api.flow.FlowRunner;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.metadata.api.ClassTypeLoader;
 import org.mule.metadata.api.builder.BaseTypeBuilder;

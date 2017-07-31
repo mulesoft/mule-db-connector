@@ -14,7 +14,7 @@ import static org.junit.Assert.assertThat;
 import static org.mule.extension.db.integration.DbTestUtil.selectData;
 
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
-import org.mule.functional.junit4.FlowRunner;
+import org.mule.functional.api.flow.FlowRunner;
 import org.mule.runtime.core.api.exception.MessagingException;
 
 import java.util.List;

@@ -30,7 +30,7 @@ public class ClobToString implements Processor {
   @Override
   public Event process(Event event) throws MuleException {
     final Message message = event.getMessage();
-    return Event.builder(event).message(Message.builder(message).payload(convert(message.getPayload().getValue())).build())
+    return Event.builder(event).message(Message.builder(message).value(convert(message.getPayload().getValue())).build())
         .build();
   }
 

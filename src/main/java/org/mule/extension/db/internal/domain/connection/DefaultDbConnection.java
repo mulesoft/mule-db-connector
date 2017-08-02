@@ -7,11 +7,13 @@
 
 package org.mule.extension.db.internal.domain.connection;
 
+import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 import org.mule.extension.db.api.exception.connection.ConnectionClosingException;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
 import org.mule.extension.db.internal.result.statement.GenericStatementResultIteratorFactory;
 import org.mule.extension.db.internal.result.statement.StatementResultIteratorFactory;
+import org.mule.runtime.api.tx.TransactionException;
 
 import com.google.common.collect.ImmutableList;
 
@@ -67,9 +69,13 @@ public class DefaultDbConnection implements DbConnection {
    * {@inheritDoc}
    */
   @Override
-  public void begin() throws Exception {
-    if (jdbcConnection.getAutoCommit()) {
-      jdbcConnection.setAutoCommit(false);
+  public void begin() throws TransactionException {
+    try {
+      if (jdbcConnection.getAutoCommit()) {
+        jdbcConnection.setAutoCommit(false);
+      }
+    } catch (Exception e) {
+      throw new TransactionException(createStaticMessage("Could not start transaction: " + e.getMessage()), e);
     }
   }
 
@@ -77,18 +83,28 @@ public class DefaultDbConnection implements DbConnection {
    * {@inheritDoc}
    */
   @Override
-  public void commit() throws SQLException {
-    jdbcConnection.commit();
-    abortStreaming();
+  public void commit() throws TransactionException {
+    try {
+      jdbcConnection.commit();
+    } catch (Exception e) {
+      throw new TransactionException(createStaticMessage("Could not start transaction: " + e.getMessage()), e);
+    } finally {
+      abortStreaming();
+    }
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public void rollback() throws SQLException {
-    jdbcConnection.rollback();
-    abortStreaming();
+  public void rollback() throws TransactionException {
+    try {
+      jdbcConnection.rollback();
+    } catch (Exception e) {
+      throw new TransactionException(createStaticMessage("Could not start transaction: " + e.getMessage()), e);
+    } finally {
+      abortStreaming();
+    }
   }
 
   /**

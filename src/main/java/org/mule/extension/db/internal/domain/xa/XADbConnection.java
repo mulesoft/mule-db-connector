@@ -59,17 +59,17 @@ public class XADbConnection implements DbConnection, XATransactionalConnection {
   }
 
   @Override
-  public void begin() throws Exception {
+  public void begin() throws TransactionException {
     connection.begin();
   }
 
   @Override
-  public void commit() throws Exception {
+  public void commit() throws TransactionException {
     connection.commit();
   }
 
   @Override
-  public void rollback() throws Exception {
+  public void rollback() throws TransactionException {
     connection.rollback();
   }
 

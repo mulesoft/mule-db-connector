@@ -44,7 +44,6 @@ import org.mule.runtime.api.metadata.resolving.MetadataResult;
 import org.mule.runtime.core.api.Event;
 import org.mule.runtime.core.api.registry.RegistrationException;
 import org.mule.runtime.core.internal.connection.ConnectionProviderWrapper;
-import org.mule.runtime.core.internal.metadata.MuleMetadataService;
 import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFactory;
 import org.mule.runtime.extension.api.runtime.ConfigurationProvider;
 import org.mule.test.runner.RunnerDelegateTo;
@@ -206,7 +205,7 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
 
   protected MetadataResult<ComponentMetadataDescriptor<OperationModel>> getMetadata(String flow, String query)
       throws RegistrationException {
-    MetadataService metadataService = muleContext.getRegistry().lookupObject(MuleMetadataService.class);
+    MetadataService metadataService = muleContext.getRegistry().lookupObject(MetadataService.class);
     return metadataService.getOperationMetadata(builder().globalName(flow).addProcessorsPart().addIndexPart(0).build(),
                                                 newKey(query).build());
   }

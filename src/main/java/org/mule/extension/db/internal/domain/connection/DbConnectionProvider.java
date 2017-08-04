@@ -41,22 +41,25 @@ import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.tx.DataSourceDecorator;
 import org.mule.runtime.api.tx.MuleXaObject;
 import org.mule.runtime.extension.api.annotation.Expression;
-import org.mule.runtime.extension.api.annotation.param.RefName;
+import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
 import javax.sql.XAConnection;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 
 /**
  * Creates a generic DB connection through an URL
@@ -84,6 +87,7 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
   @Optional
   @Expression(NOT_SUPPORTED)
   @Placement(tab = ADVANCED_TAB)
+  @NullSafe
   private DbPoolingProfile poolingProfile;
 
   /**
@@ -110,7 +114,12 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
 
   private DataSource dataSource;
 
-  private java.util.Optional<DbError> getDbErrorType(SQLException e) {
+  private java.util.Optional<DbError> getDbErrorType(Throwable t) {
+    if (!(t instanceof SQLException)) {
+      return empty();
+    }
+
+    SQLException e = (SQLException) t;
     String message = e.getMessage();
     if (message.contains(ERROR_TRYING_TO_LOAD_DRIVER)) {
       return of(CANNOT_LOAD_DRIVER);
@@ -276,8 +285,14 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
 
   private ConnectionException handleSQLConnectionException(Exception e) {
     java.util.Optional<DbError> dbError = empty();
-    if (e instanceof SQLException) {
-      dbError = getDbErrorType((SQLException) e);
+
+    Set<Throwable> causes = new HashSet<>();
+    Throwable t = e;
+    while (causes.add(t)) {
+      dbError = getDbErrorType(t);
+      if (!dbError.isPresent()) {
+        t = t.getCause();
+      }
     }
 
     return dbError

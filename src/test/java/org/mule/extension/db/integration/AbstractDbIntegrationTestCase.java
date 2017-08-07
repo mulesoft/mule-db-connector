@@ -21,7 +21,7 @@ import static org.mule.extension.db.integration.TestRecordUtil.assertRecords;
 import static org.mule.metadata.api.model.MetadataFormat.JAVA;
 import static org.mule.runtime.api.component.location.Location.builder;
 import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
-import static org.mule.runtime.core.internal.connection.ConnectionProviderWrapper.unwrapProviderWrapper;
+import static org.mule.runtime.core.api.connection.ConnectionProviderUtils.unwrapProviderWrapper;
 import org.mule.extension.db.api.StatementResult;
 import org.mule.extension.db.integration.model.AbstractTestDatabase;
 import org.mule.extension.db.integration.model.Field;
@@ -35,6 +35,7 @@ import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.metadata.api.model.ObjectFieldType;
 import org.mule.metadata.api.model.ObjectType;
+import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.meta.model.operation.OperationModel;
@@ -43,7 +44,6 @@ import org.mule.runtime.api.metadata.descriptor.ComponentMetadataDescriptor;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
 import org.mule.runtime.core.api.Event;
 import org.mule.runtime.core.api.registry.RegistrationException;
-import org.mule.runtime.core.internal.connection.ConnectionProviderWrapper;
 import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFactory;
 import org.mule.runtime.extension.api.runtime.ConfigurationProvider;
 import org.mule.test.runner.RunnerDelegateTo;
@@ -94,8 +94,8 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
   protected DataSource getDefaultDataSource(String configName) {
     try {
       ConfigurationProvider configurationProvider = muleContext.getRegistry().get(configName);
-      ConnectionProviderWrapper<DbConnection> connectionProviderWrapper =
-          (ConnectionProviderWrapper<DbConnection>) configurationProvider
+      ConnectionProvider<DbConnection> connectionProviderWrapper =
+          (ConnectionProvider<DbConnection>) configurationProvider
               .get(getEvent())
               .getConnectionProvider().get();
 

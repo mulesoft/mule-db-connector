@@ -41,7 +41,6 @@ import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.tx.DataSourceDecorator;
 import org.mule.runtime.api.tx.MuleXaObject;
 import org.mule.runtime.extension.api.annotation.Expression;
-import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.RefName;
@@ -87,7 +86,6 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
   @Optional
   @Expression(NOT_SUPPORTED)
   @Placement(tab = ADVANCED_TAB)
-  @NullSafe
   private DbPoolingProfile poolingProfile;
 
   /**

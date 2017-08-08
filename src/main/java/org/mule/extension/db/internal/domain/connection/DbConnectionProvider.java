@@ -286,7 +286,7 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
 
     Set<Throwable> causes = new HashSet<>();
     Throwable t = e;
-    while (causes.add(t)) {
+    while (t != null && causes.add(t)) {
       dbError = getDbErrorType(t);
       if (!dbError.isPresent()) {
         t = t.getCause();

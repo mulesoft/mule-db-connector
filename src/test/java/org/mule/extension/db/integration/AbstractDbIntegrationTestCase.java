@@ -45,7 +45,7 @@ import org.mule.runtime.api.metadata.resolving.MetadataResult;
 import org.mule.runtime.core.api.Event;
 import org.mule.runtime.core.api.registry.RegistrationException;
 import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFactory;
-import org.mule.runtime.extension.api.runtime.ConfigurationProvider;
+import org.mule.runtime.extension.api.runtime.config.ConfigurationProvider;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import java.sql.SQLException;

@@ -9,6 +9,7 @@ package org.mule.extension.db.integration;
 
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.message.Message;
+import org.mule.runtime.api.meta.AbstractAnnotatedObject;
 import org.mule.runtime.core.api.Event;
 import org.mule.runtime.core.api.processor.Processor;
 
@@ -25,7 +26,7 @@ import java.sql.Clob;
  * <b>IMPORTANT:</b> Clobs must be read from a open connection, so to use this class be sure to maintain active the same
  * transaction that created the Clob value.
  */
-public class ClobToString implements Processor {
+public class ClobToString extends AbstractAnnotatedObject implements Processor {
 
   @Override
   public Event process(Event event) throws MuleException {

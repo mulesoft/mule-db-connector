@@ -41,7 +41,7 @@ import org.mule.runtime.api.meta.model.operation.OperationModel;
 import org.mule.runtime.api.metadata.MetadataService;
 import org.mule.runtime.api.metadata.descriptor.ComponentMetadataDescriptor;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
-import org.mule.runtime.core.api.Event;
+import org.mule.runtime.core.api.InternalEvent;
 import org.mule.runtime.core.api.registry.RegistrationException;
 import org.mule.runtime.core.internal.connection.ConnectionProviderWrapper;
 import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFactory;
@@ -105,8 +105,8 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
     }
   }
 
-  private Event getEvent() throws MuleException {
-    Event.Builder builder = Event.builder(testEvent());
+  private InternalEvent getEvent() throws MuleException {
+    InternalEvent.Builder builder = InternalEvent.builder(testEvent());
     additionalVariables()
         .entrySet()
         .forEach(entry -> builder.addVariable(entry.getKey(), entry.getValue()));

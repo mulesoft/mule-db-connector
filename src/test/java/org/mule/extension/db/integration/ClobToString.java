@@ -10,7 +10,7 @@ package org.mule.extension.db.integration;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.meta.AbstractAnnotatedObject;
-import org.mule.runtime.core.api.Event;
+import org.mule.runtime.core.api.InternalEvent;
 import org.mule.runtime.core.api.processor.Processor;
 
 import java.io.BufferedReader;
@@ -29,9 +29,9 @@ import java.sql.Clob;
 public class ClobToString extends AbstractAnnotatedObject implements Processor {
 
   @Override
-  public Event process(Event event) throws MuleException {
+  public InternalEvent process(InternalEvent event) throws MuleException {
     final Message message = event.getMessage();
-    return Event.builder(event).message(Message.builder(message).value(convert(message.getPayload().getValue())).build())
+    return InternalEvent.builder(event).message(Message.builder(message).value(convert(message.getPayload().getValue())).build())
         .build();
   }
 

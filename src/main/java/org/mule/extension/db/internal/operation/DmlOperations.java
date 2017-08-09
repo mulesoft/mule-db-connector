@@ -109,7 +109,7 @@ public class DmlOperations extends BaseDbOperations {
       }
 
       @Override
-      public void close() throws IOException {
+      public void close(DbConnection connection) throws IOException {
         resultSetCloser.closeResultSets();
       }
 

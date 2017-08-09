@@ -15,7 +15,7 @@ import static org.mule.extension.db.integration.TestDbConfig.getDerbyResource;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.functional.api.component.EventCallback;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.core.api.Event;
+import org.mule.runtime.core.api.InternalEvent;
 import org.mule.runtime.core.api.MuleContext;
 
 import java.util.List;
@@ -130,7 +130,7 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
   public static class JoinRequests implements EventCallback {
 
     @Override
-    public void eventReceived(Event event, Object component, MuleContext muleContext) throws Exception {
+    public void eventReceived(InternalEvent event, Object component, MuleContext muleContext) throws Exception {
       connectionLatch.countDown();
 
       try {

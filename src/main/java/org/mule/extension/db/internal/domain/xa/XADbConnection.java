@@ -14,16 +14,14 @@ import org.mule.extension.db.internal.result.statement.StatementResultIteratorFa
 import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.tx.TransactionException;
 import org.mule.runtime.extension.api.connectivity.XATransactionalConnection;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.XAConnection;
 import javax.transaction.xa.XAResource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
 
 public class XADbConnection implements DbConnection, XATransactionalConnection {
 
@@ -49,9 +47,8 @@ public class XADbConnection implements DbConnection, XATransactionalConnection {
   @Override
   public void close() {
     connection.release();
-
     try {
-      xaConnection.close();
+      connection.getJdbcConnection().close();
     } catch (SQLException e) {
       LOGGER.info("Exception while explicitly closing the xaConnection (some providers require this). "
           + "The exception will be ignored and only logged: " + e.getMessage(), e);

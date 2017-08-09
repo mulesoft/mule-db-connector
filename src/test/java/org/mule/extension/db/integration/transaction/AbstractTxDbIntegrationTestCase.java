@@ -12,17 +12,14 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
 import static org.mule.extension.db.integration.DbTestUtil.selectData;
-
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.functional.api.flow.FlowRunner;
 import org.mule.runtime.core.api.exception.MessagingException;
-
-import java.util.List;
-import java.util.Map;
+import org.hamcrest.Matcher;
 
 import javax.sql.DataSource;
-
-import org.hamcrest.Matcher;
+import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractTxDbIntegrationTestCase extends AbstractDbIntegrationTestCase {
 
@@ -42,7 +39,12 @@ public abstract class AbstractTxDbIntegrationTestCase extends AbstractDbIntegrat
   }
 
   protected void validateDbState(String planet, String configName) throws java.sql.SQLException {
-    DataSource dataSource = getDefaultDataSource(configName);
+    DataSource dataSource = getDataSource(configName);
+    checkState(planet, dataSource);
+  }
+
+  protected void validateDbState(String planet, String configName, Map<String, Object> variables) throws java.sql.SQLException {
+    DataSource dataSource = getDataSource(configName, variables);
     checkState(planet, dataSource);
   }
 

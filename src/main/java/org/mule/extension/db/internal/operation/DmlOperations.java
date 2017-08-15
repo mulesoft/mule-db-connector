@@ -37,6 +37,7 @@ import org.mule.extension.db.internal.result.resultset.ResultSetIterator;
 import org.mule.extension.db.internal.result.row.InsensitiveMapRowHandler;
 import org.mule.extension.db.internal.result.statement.StatementResultHandler;
 import org.mule.extension.db.internal.result.statement.StreamingStatementResultHandler;
+import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -47,7 +48,6 @@ import org.mule.runtime.extension.api.runtime.operation.FlowListener;
 import org.mule.runtime.extension.api.runtime.streaming.PagingProvider;
 import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
-import java.io.IOException;
 import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -109,7 +109,7 @@ public class DmlOperations extends BaseDbOperations {
       }
 
       @Override
-      public void close(DbConnection connection) throws IOException {
+      public void close(DbConnection connection) throws MuleException {
         resultSetCloser.closeResultSets();
       }
 

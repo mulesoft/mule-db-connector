@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.internal.domain.connection;
 
+import static java.lang.System.identityHashCode;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
@@ -45,20 +46,18 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 
+import javax.inject.Inject;
+import javax.sql.DataSource;
+import javax.sql.XAConnection;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.inject.Inject;
-import javax.sql.DataSource;
-import javax.sql.XAConnection;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
 
 /**
  * Creates a generic DB connection through an URL
@@ -69,7 +68,7 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
 
   private static final Logger LOGGER = getLogger(DbConnectionProvider.class);
   public static final String DRIVER_FILE_NAME_PATTERN = "(.*)\\.jar";
-  protected static final String CONNECTION_ERROR_MESSAGE = "Could not obtain connection from data source";
+  private static final String CONNECTION_ERROR_MESSAGE = "Could not obtain connection from data source";
   private static final String ERROR_TRYING_TO_LOAD_DRIVER = "Error trying to load driver";
 
 
@@ -264,7 +263,9 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
   }
 
   private DataSourceFactory createDataSourceFactory() {
-    return new DataSourceFactory(configName, registry.lookupAll(DataSourceDecorator.class));
+    // The identityHashCode() concatenation is required to distinguish different configs when these are dynamic and
+    // uses the same `configName`
+    return new DataSourceFactory(configName + identityHashCode(this), registry.lookupAll(DataSourceDecorator.class));
   }
 
   public DataSource getConfiguredDataSource() {

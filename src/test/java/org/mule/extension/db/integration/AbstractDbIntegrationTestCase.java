@@ -8,6 +8,7 @@
 package org.mule.extension.db.integration;
 
 import static java.lang.String.format;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.apache.commons.lang3.StringUtils.replace;
@@ -47,17 +48,15 @@ import org.mule.runtime.core.api.registry.RegistrationException;
 import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFactory;
 import org.mule.runtime.extension.api.runtime.config.ConfigurationProvider;
 import org.mule.test.runner.RunnerDelegateTo;
+import org.junit.Before;
+import org.junit.runners.Parameterized;
 
+import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import javax.sql.DataSource;
-
-import org.junit.Before;
-import org.junit.runners.Parameterized;
 
 @RunnerDelegateTo(Parameterized.class)
 public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunctionalTestCase
@@ -81,6 +80,9 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
   @Before
   public void configDB() throws SQLException {
     testDatabase.createDefaultDatabaseConfig(getDefaultDataSource());
+    for (DbConfig dbConfig : additionalConfigs()) {
+      testDatabase.createDefaultDatabaseConfig(getDataSource(dbConfig.getName(), dbConfig.getVariables()));
+    }
   }
 
   protected Map<String, Object> additionalVariables() {
@@ -88,15 +90,19 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
   }
 
   protected DataSource getDefaultDataSource() {
-    return getDefaultDataSource("dbConfig");
+    return getDataSource("dbConfig");
   }
 
-  protected DataSource getDefaultDataSource(String configName) {
+  protected DataSource getDataSource(String configName) {
+    return getDataSource(configName, additionalVariables());
+  }
+
+  protected DataSource getDataSource(String configName, Map<String, Object> variables) {
     try {
       ConfigurationProvider configurationProvider = muleContext.getRegistry().get(configName);
       ConnectionProvider<DbConnection> connectionProviderWrapper =
           (ConnectionProvider<DbConnection>) configurationProvider
-              .get(getEvent())
+              .get(getEvent(variables))
               .getConnectionProvider().get();
 
       return ((DbConnectionProvider) unwrapProviderWrapper(connectionProviderWrapper)).getConfiguredDataSource();
@@ -105,12 +111,16 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
     }
   }
 
-  private InternalEvent getEvent() throws MuleException {
+  private InternalEvent getEvent(Map<String, Object> variables) throws MuleException {
     InternalEvent.Builder builder = InternalEvent.builder(testEvent());
-    additionalVariables()
+    variables
         .entrySet()
         .forEach(entry -> builder.addVariable(entry.getKey(), entry.getValue()));
     return builder.build();
+  }
+
+  private InternalEvent getEvent() throws MuleException {
+    return getEvent(additionalVariables());
   }
 
   @Override
@@ -238,4 +248,26 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
         .findFirst().get().getType();
   }
 
+  public List<DbConfig> additionalConfigs() {
+    return emptyList();
+  }
+
+  public static class DbConfig {
+
+    private String name;
+    private Map<String, Object> variables;
+
+    public DbConfig(String name, Map<String, Object> variables) {
+      this.name = name;
+      this.variables = variables;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public Map<String, Object> getVariables() {
+      return variables;
+    }
+  }
 }

@@ -39,7 +39,7 @@ public class SelectExceptionTestCase extends AbstractDbIntegrationTestCase {
 
   @Override
   protected DataSource getDefaultDataSource() {
-    return getDefaultDataSource("pooledJdbcConfig");
+    return getDataSource("pooledJdbcConfig");
   }
 
   @Test

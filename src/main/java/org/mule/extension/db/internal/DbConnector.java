@@ -41,7 +41,7 @@ import java.util.List;
  *
  * @since 1.0
  */
-@Extension(name = "Database", description = "Connector for connecting to relation Databases through the JDBC API")
+@Extension(name = "Database")
 @Operations({DmlOperations.class, DdlOperations.class, BulkOperations.class})
 @ConnectionProviders({DataSourceReferenceConnectionProvider.class, GenericConnectionProvider.class, DerbyConnectionProvider.class,
     MySqlConnectionProvider.class, OracleDbConnectionProvider.class})

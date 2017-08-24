@@ -75,7 +75,7 @@ public class SelectMetadataResolver extends BaseDbMetadataResolver implements Ou
       throw new MetadataResolvingException(e.getMessage(), FailureCode.UNKNOWN, e);
     }
 
-    ObjectTypeBuilder record = typeBuilder.objectType().id("recordModel");
+    ObjectTypeBuilder record = typeBuilder.objectType();
     recordModels.entrySet().forEach(e -> record.addField().key(e.getKey()).value(e.getValue()));
 
     return record.build();

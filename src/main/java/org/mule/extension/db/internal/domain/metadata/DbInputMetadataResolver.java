@@ -92,7 +92,7 @@ public class DbInputMetadataResolver extends BaseDbMetadataResolver implements I
       recordModels.put(fieldName, getDataTypeMetadataModel(VARCHAR));
     }
 
-    ObjectTypeBuilder record = typeBuilder.objectType().id("recordModel");
+    ObjectTypeBuilder record = typeBuilder.objectType();
     recordModels.entrySet().forEach(e -> record.addField().key(e.getKey()).value(e.getValue()));
     return record.build();
   }
@@ -108,7 +108,7 @@ public class DbInputMetadataResolver extends BaseDbMetadataResolver implements I
       recordModels.put(fieldName, getDataTypeMetadataModel(dataType));
     }
 
-    ObjectTypeBuilder record = typeBuilder.objectType().id("recordModel");
+    ObjectTypeBuilder record = typeBuilder.objectType();
     recordModels.entrySet().forEach(e -> record.addField().key(e.getKey()).value(e.getValue()));
     return record.build();
   }

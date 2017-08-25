@@ -12,6 +12,7 @@ import static java.util.Optional.of;
 import org.mule.extension.db.internal.domain.metadata.DbInputMetadataResolver;
 import org.mule.runtime.extension.api.annotation.metadata.TypeResolver;
 import org.mule.runtime.extension.api.annotation.param.Content;
+import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
@@ -40,7 +41,8 @@ public abstract class ParameterizedStatementDefinition<T extends ParameterizedSt
    */
   @Parameter
   @Content
-  @Optional(defaultValue = "#[{}]")
+  @Optional
+  @NullSafe
   @TypeResolver(DbInputMetadataResolver.class)
   @Placement(order = 2)
   @DisplayName("Input Parameters")

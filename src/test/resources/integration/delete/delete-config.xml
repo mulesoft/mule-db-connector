@@ -11,6 +11,15 @@
         </db:delete>
     </flow>
 
+    <flow name="deleteWithNullValues">
+        <db:delete config-ref="dbConfig">
+            <db:sql>#["DELETE FROM PLANET WHERE name = '$(payload)'"]</db:sql>
+            <db:input-parameters>
+                #[null]
+            </db:input-parameters>
+        </db:delete>
+    </flow>
+
     <flow name="deleteParameterized">
         <db:delete config-ref="dbConfig">
             <db:sql>DELETE FROM PLANET WHERE name = :name</db:sql>

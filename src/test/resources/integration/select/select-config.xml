@@ -11,6 +11,15 @@
         </db:select>
     </flow>
 
+    <flow name="selectWithNullParams">
+        <db:select config-ref="dbConfig">
+            <db:sql>select * from PLANET order by ID</db:sql>
+            <db:input-parameters>
+                #[null]
+            </db:input-parameters>
+        </db:select>
+    </flow>
+
     <flow name="fixedParam">
         <db:select config-ref="dbConfig">
             <db:sql>SELECT * FROM PLANET WHERE POSITION = 4</db:sql>

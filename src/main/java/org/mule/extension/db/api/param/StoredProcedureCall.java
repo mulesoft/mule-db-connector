@@ -9,6 +9,7 @@ package org.mule.extension.db.api.param;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
+import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
@@ -34,6 +35,7 @@ public class StoredProcedureCall extends ParameterizedStatementDefinition<Stored
    */
   @Parameter
   @Optional
+  @NullSafe
   @DisplayName("Input - Output Parameters")
   @ParameterDsl(allowReferences = false)
   protected LinkedHashMap<String, Object> inOutParameters = new LinkedHashMap<>();
@@ -44,6 +46,7 @@ public class StoredProcedureCall extends ParameterizedStatementDefinition<Stored
    */
   @Parameter
   @Optional
+  @NullSafe
   @DisplayName("Output Parameters")
   @ParameterDsl(allowReferences = false)
   private List<OutputParameter> outputParameters = new LinkedList<>();

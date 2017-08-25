@@ -6,16 +6,14 @@
  */
 package org.mule.extension.db.integration.update;
 
-import static org.mule.extension.db.integration.DbTestUtil.DbType.MYSQL;
-import static org.mule.extension.db.integration.DbTestUtil.selectData;
-import static org.mule.extension.db.integration.TestRecordUtil.assertRecords;
-import static org.mule.extension.db.AllureConstants.DbFeature.DB_EXTENSION;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
-
-import io.qameta.allure.Issue;
+import static org.mule.extension.db.AllureConstants.DbFeature.DB_EXTENSION;
+import static org.mule.extension.db.integration.DbTestUtil.DbType.MYSQL;
+import static org.mule.extension.db.integration.DbTestUtil.selectData;
+import static org.mule.extension.db.integration.TestRecordUtil.assertRecords;
 import org.mule.extension.db.api.StatementResult;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.Field;
@@ -28,11 +26,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.junit.Ignore;
-import org.junit.Test;
 import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
+import io.qameta.allure.Issue;
 import io.qameta.allure.Story;
+import org.junit.Ignore;
+import org.junit.Test;
 
 @Feature(DB_EXTENSION)
 @Story("Update Statement")
@@ -64,6 +63,12 @@ public class UpdateTestCase extends AbstractDbIntegrationTestCase {
   @Test
   public void update() throws Exception {
     Message response = flowRunner("update").run().getMessage();
+    verifyUpdatedRecord((StatementResult) response.getPayload().getValue());
+  }
+
+  @Test
+  public void updateWithNullValues() throws Exception {
+    Message response = flowRunner("updateWithNullValues").run().getMessage();
     verifyUpdatedRecord((StatementResult) response.getPayload().getValue());
   }
 

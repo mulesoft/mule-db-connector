@@ -42,6 +42,12 @@ public class SelectTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
+  public void selectWithNullParams() throws Exception {
+    Message response = flowRunner("selectWithNullParams").keepStreamsOpen().run().getMessage();
+    assertMessageContains(response, getAllPlanetRecords());
+  }
+
+  @Test
   public void fixedParam() throws Exception {
     Message response = flowRunner("fixedParam").keepStreamsOpen().run().getMessage();
     assertMessageContains(response, getMarsRecord());

@@ -11,6 +11,15 @@
         </db:update>
     </flow>
 
+    <flow name="updateWithNullValues">
+        <db:update config-ref="dbConfig">
+            <db:sql>update PLANET set NAME='Mercury' where POSITION=4</db:sql>
+            <db:input-parameters>
+                #[null]
+            </db:input-parameters>
+        </db:update>
+    </flow>
+
     <flow name="updateDynamic">
         <set-variable variableName="data" value="Mercury"/>
         <set-variable variableName="position" value="4"/>

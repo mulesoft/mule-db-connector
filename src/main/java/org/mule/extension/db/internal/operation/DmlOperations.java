@@ -39,6 +39,7 @@ import org.mule.extension.db.internal.result.statement.StatementResultHandler;
 import org.mule.extension.db.internal.result.statement.StreamingStatementResultHandler;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.exception.MuleRuntimeException;
+import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
 import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.Connection;
@@ -57,13 +58,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Contains a set of operations for performing single statement DML operations
  *
  * @since 1.0
  */
+@Throws(OperationErrorTypeProvider.class)
 public class DmlOperations extends BaseDbOperations {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(DmlOperations.class);
+  
   private final StoredProcedureQueryResolver storedProcedureResolver = new StoredProcedureQueryResolver();
 
   /**
@@ -82,7 +89,8 @@ public class DmlOperations extends BaseDbOperations {
                                                                   @ParameterGroup(name = QUERY_GROUP) @Placement(
                                                                       tab = ADVANCED_TAB) QueryDefinition query,
                                                                   @Config DbConnector connector,
-                                                                  StreamingHelper streamingHelper)
+                                                                  StreamingHelper streamingHelper,
+                                                                  FlowListener flowListener)
       throws SQLException {
 
     return new PagingProvider<DbConnection, Map<String, Object>>() {
@@ -116,6 +124,16 @@ public class DmlOperations extends BaseDbOperations {
       private ResultSetIterator getIterator(DbConnection connection) {
         if (initialised.compareAndSet(false, true)) {
           resultSetCloser = new StatementStreamingResultSetCloser(connection);
+          flowListener.onError(e -> {
+            try {
+              close(connection);
+            } catch (Exception t) {
+              if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn(String.format("Exception was found closing connection for select operation: %s. Error was: %s",
+                                          query.getSql(), t.getMessage()), e);
+              }
+            }
+          });
           final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, SELECT, STORE_PROCEDURE_CALL);
 
           QueryStatementFactory statementFactory = getStatementFactory(query);

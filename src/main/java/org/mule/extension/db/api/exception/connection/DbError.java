@@ -18,14 +18,48 @@ import java.util.Optional;
  * @since 1.0
  */
 public enum DbError implements ErrorTypeDefinition<DbError> {
-  CONNECTIVITY(MuleErrors.CONNECTIVITY), INVALID_CREDENTIALS(CONNECTIVITY), INVALID_DATABASE(CONNECTIVITY), CANNOT_REACH(
-      CONNECTIVITY), CANNOT_LOAD_DRIVER(CONNECTIVITY);
+  /**
+   * Generic error for a connectivity issue with the Database
+   */
+  CONNECTIVITY(MuleErrors.CONNECTIVITY),
+
+  /**
+   * Database rejected the provided credentials
+   */
+  INVALID_CREDENTIALS(CONNECTIVITY),
+
+  /**
+   * Connection to the RDBMS was established, but the Database doesn't exist
+   */
+  INVALID_DATABASE(CONNECTIVITY),
+
+  /**
+   * Cannot establish a connection with the RDBMS
+   */
+  CANNOT_REACH(CONNECTIVITY),
+
+  /**
+   * Could not load the JDBC driver
+   */
+  CANNOT_LOAD_DRIVER(CONNECTIVITY),
+
+  /**
+   * The provided SQL query has bad syntax
+   */
+  BAD_SQL_SYNTAX,
+
+  /**
+   * There was an error executing the query
+   */
+  QUERY_EXECUTION;
 
   private ErrorTypeDefinition<? extends Enum<?>> parent;
 
   DbError(ErrorTypeDefinition<? extends Enum<?>> parent) {
     this.parent = parent;
   }
+
+  DbError() {}
 
   @Override
   public Optional<ErrorTypeDefinition<? extends Enum<?>>> getParent() {

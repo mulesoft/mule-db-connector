@@ -9,9 +9,6 @@
         <dbn:select config-ref="pooledJdbcConfig">
             <dbn:sql>select * from NOT_EXISTS order by ID</dbn:sql>
         </dbn:select>
-        <foreach>
-            <logger />
-        </foreach>
     </flow>
 
     <flow name="selectExceptionClosesPreviousResultSets">

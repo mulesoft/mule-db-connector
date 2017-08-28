@@ -7,8 +7,14 @@
 
 package org.mule.extension.db.integration.select;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.junit.rules.ExpectedException.none;
+import static org.mule.extension.db.api.exception.connection.DbError.BAD_SQL_SYNTAX;
 import static org.mule.extension.db.integration.TestRecordUtil.assertMessageContains;
 import static org.mule.extension.db.integration.TestRecordUtil.getAllPlanetRecords;
 import static org.mule.extension.db.integration.TestRecordUtil.getEarthRecord;
@@ -19,7 +25,12 @@ import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.Field;
 import org.mule.extension.db.integration.model.Planet;
 import org.mule.extension.db.integration.model.Record;
+import org.mule.runtime.api.message.Error;
 import org.mule.runtime.api.message.Message;
+import org.mule.runtime.core.api.InternalEvent;
+import org.mule.runtime.core.api.exception.MessagingException;
+
+import java.util.concurrent.Callable;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -93,5 +104,28 @@ public class SelectTestCase extends AbstractDbIntegrationTestCase {
   public void missingSQL() throws Exception {
     expectedException.expectMessage(containsString("sql query cannot be blank"));
     flowRunner("missingSQL").run();
+  }
+
+  @Test
+  public void invalidQueryType() throws Exception {
+    assertErrorType(() -> flowRunner("invalidQueryType").run(), "DB", BAD_SQL_SYNTAX.name());
+  }
+
+  @Test
+  public void badSqlSyntax() throws Exception {
+    assertErrorType(() -> flowRunner("badSqlSyntax").run(), "DB", BAD_SQL_SYNTAX.name());
+  }
+
+  private void assertErrorType(Callable task, String errorNamespace, String errorIdentifier) throws Exception {
+    try {
+      task.call();
+      fail("Expected exception");
+    } catch (MessagingException e) {
+      InternalEvent event = e.getEvent();
+      Error error = event.getError().orElse(null);
+      assertThat(error, is(notNullValue()));
+      assertThat(error.getErrorType().getNamespace(), equalTo(errorNamespace));
+      assertThat(error.getErrorType().getIdentifier(), equalTo(errorIdentifier));
+    }
   }
 }

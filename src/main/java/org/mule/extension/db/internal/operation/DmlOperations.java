@@ -70,7 +70,7 @@ import org.slf4j.LoggerFactory;
 public class DmlOperations extends BaseDbOperations {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DmlOperations.class);
-  
+
   private final StoredProcedureQueryResolver storedProcedureResolver = new StoredProcedureQueryResolver();
 
   /**
@@ -130,7 +130,8 @@ public class DmlOperations extends BaseDbOperations {
             } catch (Exception t) {
               if (LOGGER.isWarnEnabled()) {
                 LOGGER.warn(String.format("Exception was found closing connection for select operation: %s. Error was: %s",
-                                          query.getSql(), t.getMessage()), e);
+                                          query.getSql(), t.getMessage()),
+                            e);
               }
             }
           });

@@ -13,6 +13,7 @@ import org.mule.extension.db.api.param.QuerySettings;
 import org.mule.extension.db.internal.DbConnector;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.query.Query;
+import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -27,6 +28,7 @@ import java.sql.SQLException;
  *
  * @since 1.0
  */
+@Throws(OperationErrorTypeProvider.class)
 public class DdlOperations extends BaseDbOperations {
 
   /**

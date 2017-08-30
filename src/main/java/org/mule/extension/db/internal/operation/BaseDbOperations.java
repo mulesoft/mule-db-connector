@@ -12,6 +12,7 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import org.mule.extension.db.api.StatementResult;
+import org.mule.extension.db.api.exception.connection.BadSqlSyntaxException;
 import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.api.param.ParameterizedStatementDefinition;
 import org.mule.extension.db.api.param.QueryDefinition;
@@ -95,9 +96,9 @@ abstract class BaseDbOperations {
 
   protected void validateQueryType(QueryTemplate queryTemplate, List<QueryType> validTypes) {
     if (validTypes == null || !validTypes.contains(queryTemplate.getType())) {
-      throw new IllegalArgumentException(format("Query type must be one of [%s] but query '%s' is of type '%s'",
-                                                Joiner.on(", ").join(validTypes), queryTemplate.getSqlText(),
-                                                queryTemplate.getType()));
+      throw new BadSqlSyntaxException(format("Query type must be one of [%s] but query '%s' is of type '%s'",
+                                             Joiner.on(", ").join(validTypes), queryTemplate.getSqlText(),
+                                             queryTemplate.getType()));
     }
   }
 

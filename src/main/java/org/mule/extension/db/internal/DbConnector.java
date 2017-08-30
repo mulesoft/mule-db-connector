@@ -21,6 +21,7 @@ import org.mule.extension.db.internal.domain.type.CompositeDbTypeManager;
 import org.mule.extension.db.internal.domain.type.DbTypeManager;
 import org.mule.extension.db.internal.domain.type.MetadataDbTypeManager;
 import org.mule.extension.db.internal.domain.type.StaticDbTypeManager;
+import org.mule.extension.db.internal.exception.DbExceptionHandler;
 import org.mule.extension.db.internal.operation.BulkOperations;
 import org.mule.extension.db.internal.operation.DdlOperations;
 import org.mule.extension.db.internal.operation.DmlOperations;
@@ -28,6 +29,7 @@ import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.Export;
 import org.mule.runtime.extension.api.annotation.Extension;
+import org.mule.runtime.extension.api.annotation.OnException;
 import org.mule.runtime.extension.api.annotation.Operations;
 import org.mule.runtime.extension.api.annotation.connectivity.ConnectionProviders;
 import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
@@ -49,6 +51,7 @@ import java.util.List;
 @Export(
     classes = {QueryDefinition.class, StoredProcedureCall.class, BulkQueryDefinition.class, ConnectionCreationException.class})
 @ErrorTypes(DbError.class)
+@OnException(DbExceptionHandler.class)
 public class DbConnector implements Initialisable {
 
   private DbTypeManager typeManager;

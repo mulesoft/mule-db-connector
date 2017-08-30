@@ -68,4 +68,18 @@
         </foreach>
     </flow>
 
+    <flow name="invalidQueryType">
+        <db:select config-ref="dbConfig">
+            <db:sql>I dunno SQL</db:sql>
+        </db:select>
+        <set-payload value="#[payload[0]]" />
+    </flow>
+
+    <flow name="badSqlSyntax">
+        <db:select config-ref="dbConfig">
+            <db:sql>SELECT FROM PLANETS col1, col2</db:sql>
+        </db:select>
+        <set-payload value="#[payload[0]]" />
+    </flow>
+
 </mule>

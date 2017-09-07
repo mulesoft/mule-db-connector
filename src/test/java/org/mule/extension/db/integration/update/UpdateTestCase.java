@@ -33,6 +33,7 @@ import io.qameta.allure.Story;
 import org.junit.Ignore;
 import org.junit.Test;
 
+
 @Feature(DB_EXTENSION)
 @Story("Update Statement")
 public class UpdateTestCase extends AbstractDbIntegrationTestCase {
@@ -92,9 +93,7 @@ public class UpdateTestCase extends AbstractDbIntegrationTestCase {
     byte[] picture = new byte[100];
     new Random().nextBytes(picture);
 
-    Message response = flowRunner("updateBlob").withPayload(picture).run().getMessage();
-    assertAffectedRows((StatementResult) response.getPayload().getValue(), 1);
-    assertPlanetRecordsFromQuery("Mars");
+    assertBlob(picture);
   }
 
   @Test
@@ -104,7 +103,18 @@ public class UpdateTestCase extends AbstractDbIntegrationTestCase {
     byte[] picture = new byte[100];
     new Random().nextBytes(picture);
 
-    Message response = flowRunner("updateBlob").withPayload(new ByteArrayInputStream(picture)).run().getMessage();
+    assertBlob(new ByteArrayInputStream(picture));
+  }
+
+  @Test
+  @Description("This test tries to update the value of a Blob column from an String. " +
+      "This implies that DB connector will detect this type, and transform it from String to Blob")
+  public void updateBlobWithString() throws Exception {
+    assertBlob("Hello world!");
+  }
+
+  private void assertBlob(Object picture) throws Exception {
+    Message response = flowRunner("updateBlob").withPayload(picture).run().getMessage();
     assertAffectedRows((StatementResult) response.getPayload().getValue(), 1);
     assertPlanetRecordsFromQuery("Mars");
   }

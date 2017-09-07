@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.internal.domain.type;
 
+import static java.lang.String.format;
 import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 import org.mule.runtime.api.exception.MuleRuntimeException;
@@ -29,26 +30,39 @@ public class BlobDbType extends ResolvedDbType {
 
   /**
    * Sets the parameter accounting for the case in which the {@code value} is
-   * an {@link InputStream}, in which case it is consumed into a {@code byte[]} and
+   * an {@link InputStream} or a {@link String}, in which case it is consumed into a {@code byte[]} and
    * set.
    * {@inheritDoc}
    */
   @Override
   public void setParameterValue(PreparedStatement statement, int index, Object value) throws SQLException {
+    value = canBeCoercedToBlob(value) ? coerceToBlob(statement, index, value) : value;
+    super.setParameterValue(statement, index, value);
+  }
+
+  private boolean canBeCoercedToBlob(Object value) {
+    return value instanceof byte[] || value instanceof InputStream || value instanceof String;
+  }
+
+  private Object coerceToBlob(PreparedStatement statement, int index, Object value) throws SQLException {
+    Blob blob = statement.getConnection().createBlob();
+    blob.setBytes(1, getBlobBytes(value, index));
+    return blob;
+  }
+
+  private byte[] getBlobBytes(Object value, int index) {
     if (value instanceof byte[]) {
-      Blob blob = statement.getConnection().createBlob();
-      blob.setBytes(1, (byte[]) value);
-      value = blob;
+      return (byte[]) value;
     } else if (value instanceof InputStream) {
       try {
-        Blob blob = statement.getConnection().createBlob();
-        blob.setBytes(1, toByteArray((InputStream) value));
-        value = blob;
+        return toByteArray((InputStream) value);
       } catch (IOException e) {
         throw new MuleRuntimeException(createStaticMessage("Could not consume inputStream in parameter of index " + index), e);
       }
+    } else if (value instanceof String) {
+      return ((String) value).getBytes();
     }
 
-    super.setParameterValue(statement, index, value);
+    throw new IllegalArgumentException(format("Object of class '%s' cannot be coerced into a BLOB", value.getClass().getName()));
   }
 }

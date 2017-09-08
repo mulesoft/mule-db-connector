@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.core.api.InternalEvent;
+import org.mule.runtime.core.api.event.BaseEvent;
 import org.mule.runtime.core.api.exception.MessagingException;
 
 import org.junit.Before;
@@ -33,7 +33,7 @@ public abstract class AbstractQueryTimeoutTestCase extends AbstractDbIntegration
    */
   @Test
   public void timeoutsQuery() throws Exception {
-    InternalEvent responseEvent = flowRunner(QUERY_TIMEOUT_FLOW).withPayload(0).run();
+    BaseEvent responseEvent = flowRunner(QUERY_TIMEOUT_FLOW).withPayload(0).run();
 
     Message response = responseEvent.getMessage();
     assertThat(response.getPayload().getValue(), is(notNullValue()));

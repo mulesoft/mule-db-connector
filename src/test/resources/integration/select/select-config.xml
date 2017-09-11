@@ -46,6 +46,15 @@
         </db:select>
     </flow>
 
+    <flow name="emptyResult">
+        <db:select config-ref="dbConfig">
+            <db:sql>select * from SPACESHIP order by ID</db:sql>
+        </db:select>
+        <foreach>
+            <logger message="#[payload]" />
+        </foreach>
+    </flow>
+
     <flow name="selectParameterizedQuery">
         <db:select config-ref="dbConfig">
             <db:sql>select * from PLANET where name = :name</db:sql>

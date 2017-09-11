@@ -38,6 +38,12 @@ public class OracleTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createSpaceshipTable(Connection connection) throws SQLException {
+    executeDdl(connection,
+            "CREATE TABLE SPACESHIP(ID INTEGER NOT NULL PRIMARY KEY,MODEL VARCHAR(255), MANUFACTURER VARCHAR(255))");
+  }
+
+  @Override
   protected String getInsertPlanetSql(String name, int position) {
     return "INSERT INTO PLANET(ID, POSITION, NAME) VALUES (PLANET_SEQ.NEXTVAL, " + position + ", '" + name + "')";
   }

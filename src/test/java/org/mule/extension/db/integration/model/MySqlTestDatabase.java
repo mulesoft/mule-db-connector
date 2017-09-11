@@ -37,6 +37,12 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createSpaceshipTable(Connection connection) throws SQLException {
+    executeDdl(connection,
+            "CREATE TABLE SPACESHIP(ID INTEGER NOT NULL AUTO_INCREMENT,MODEL VARCHAR(255), MANUFACTURER VARCHAR(255), PRIMARY KEY (ID))");
+  }
+
+  @Override
   protected String getInsertPlanetSql(String name, int position) {
     return "INSERT INTO PLANET(POSITION, NAME) VALUES (" + position + ", '" + name + "')";
   }

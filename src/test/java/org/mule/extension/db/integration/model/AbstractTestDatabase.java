@@ -44,7 +44,13 @@ public abstract class AbstractTestDatabase {
     executeUpdate(connection, "DELETE FROM PLANET");
   }
 
+  public void deleteSpaceshipTable(Connection connection) throws SQLException {
+    executeUpdate(connection, "DELETE FROM SPACESHIP");
+  }
+
   public abstract void createPlanetTable(Connection connection) throws SQLException;
+
+  public abstract void createSpaceshipTable(Connection connection) throws SQLException;
 
   public abstract DbTestUtil.DbType getDbType();
 
@@ -95,6 +101,7 @@ public abstract class AbstractTestDatabase {
       connection.setAutoCommit(false);
 
       createPlanetTestTable(connection);
+      createSpaceshipTestTable(connection);
 
       if (supportsXmlType()) {
         createAlienTestTable(connection);
@@ -291,6 +298,14 @@ public abstract class AbstractTestDatabase {
     }
 
     populatePlanetTable(connection, PLANET_TEST_VALUES);
+  }
+
+  protected void createSpaceshipTestTable(Connection connection) throws SQLException {
+    try {
+      deleteSpaceshipTable(connection);
+    } catch (Exception e) {
+      createSpaceshipTable(connection);
+    }
   }
 
   public void createStoredProcedure(DataSource dataSource, String sql) throws SQLException {

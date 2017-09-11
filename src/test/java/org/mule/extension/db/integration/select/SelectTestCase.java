@@ -83,6 +83,11 @@ public class SelectTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
+  public void emptyResult() throws Exception {
+    flowRunner("emptyResult").run().getMessage();
+  }
+
+  @Test
   public void namedParameter() throws Exception {
     Message response = flowRunner("selectParameterizedQuery").withPayload(MARS.getName()).keepStreamsOpen().run().getMessage();
     assertMessageContains(response, getMarsRecord());

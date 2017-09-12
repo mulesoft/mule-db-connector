@@ -87,6 +87,7 @@ public class SelectTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void emptyResult() throws Exception {
+    executeWithDataSources(dataSource -> testDatabase.truncateSpaceshipTable(dataSource.getConnection()));
     Message response = flowRunner("emptyResult").keepStreamsOpen().run().getMessage();
     assertThat(response.getPayload().getValue(), instanceOf(CursorIteratorProvider.class));
     assertThat((((CursorIteratorProvider) response.getPayload().getValue()).openCursor()).hasNext(), is(false));

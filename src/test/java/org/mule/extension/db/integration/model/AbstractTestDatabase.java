@@ -48,6 +48,10 @@ public abstract class AbstractTestDatabase {
     executeUpdate(connection, "DELETE FROM SPACESHIP");
   }
 
+  public void truncateSpaceshipTable(Connection connection) throws SQLException {
+    executeUpdate(connection, "TRUNCATE TABLE SPACESHIP");
+  }
+
   public abstract void createPlanetTable(Connection connection) throws SQLException;
 
   public abstract void createSpaceshipTable(Connection connection) throws SQLException;

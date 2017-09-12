@@ -45,18 +45,21 @@ import org.mule.runtime.api.metadata.descriptor.ComponentMetadataDescriptor;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
 import org.mule.runtime.core.api.event.BaseEvent;
 import org.mule.runtime.core.api.registry.RegistrationException;
+import org.mule.runtime.core.api.util.func.CheckedConsumer;
 import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFactory;
 import org.mule.runtime.extension.api.runtime.config.ConfigurationProvider;
 import org.mule.test.runner.RunnerDelegateTo;
-import org.junit.Before;
-import org.junit.runners.Parameterized;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import javax.sql.DataSource;
+
+import org.junit.Before;
+import org.junit.runners.Parameterized;
 
 @RunnerDelegateTo(Parameterized.class)
 public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunctionalTestCase
@@ -79,9 +82,13 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
 
   @Before
   public void configDB() throws SQLException {
-    testDatabase.createDefaultDatabaseConfig(getDefaultDataSource());
+    executeWithDataSources(dataSource -> testDatabase.createDefaultDatabaseConfig(dataSource));
+  }
+
+  protected void executeWithDataSources(CheckedConsumer<DataSource> dataSourceConsumer) {
+    dataSourceConsumer.accept(getDefaultDataSource());
     for (DbConfig dbConfig : additionalConfigs()) {
-      testDatabase.createDefaultDatabaseConfig(getDataSource(dbConfig.getName(), dbConfig.getVariables()));
+      dataSourceConsumer.accept(getDataSource(dbConfig.getName(), dbConfig.getVariables()));
     }
   }
 

@@ -8,6 +8,7 @@
 package org.mule.extension.db.integration.select;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.containsString;
@@ -21,12 +22,14 @@ import static org.mule.extension.db.integration.TestRecordUtil.getEarthRecord;
 import static org.mule.extension.db.integration.TestRecordUtil.getMarsRecord;
 import static org.mule.extension.db.integration.TestRecordUtil.getVenusRecord;
 import static org.mule.extension.db.integration.model.Planet.MARS;
+
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.Field;
 import org.mule.extension.db.integration.model.Planet;
 import org.mule.extension.db.integration.model.Record;
 import org.mule.runtime.api.message.Error;
 import org.mule.runtime.api.message.Message;
+import org.mule.runtime.api.streaming.object.CursorIteratorProvider;
 import org.mule.runtime.core.api.event.BaseEvent;
 import org.mule.runtime.core.api.exception.MessagingException;
 
@@ -84,7 +87,9 @@ public class SelectTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void emptyResult() throws Exception {
-    flowRunner("emptyResult").run().getMessage();
+    Message response = flowRunner("emptyResult").keepStreamsOpen().run().getMessage();
+    assertThat(response.getPayload().getValue(), instanceOf(CursorIteratorProvider.class));
+    assertThat((((CursorIteratorProvider) response.getPayload().getValue()).openCursor()).hasNext(), is(false));
   }
 
   @Test

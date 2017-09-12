@@ -47,6 +47,9 @@
     </flow>
 
     <flow name="emptyResult">
+        <db:delete config-ref="dbConfig">
+            <db:sql>delete from SPACESHIP</db:sql>
+        </db:delete>
         <db:select config-ref="dbConfig">
             <db:sql>select * from SPACESHIP order by ID</db:sql>
         </db:select>

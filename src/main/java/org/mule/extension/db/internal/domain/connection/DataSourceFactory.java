@@ -7,12 +7,12 @@
 
 package org.mule.extension.db.internal.domain.connection;
 
+import static java.util.concurrent.ConcurrentHashMap.newKeySet;
 import org.mule.extension.db.api.config.DbPoolingProfile;
 import org.mule.extension.db.internal.domain.xa.CompositeDataSourceDecorator;
 import org.mule.runtime.api.config.DatabasePoolingProfile;
 import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.tx.DataSourceDecorator;
-import org.mule.runtime.core.api.util.concurrent.ConcurrentHashSet;
 
 import com.mchange.v2.c3p0.DataSources;
 
@@ -37,8 +37,8 @@ public class DataSourceFactory implements Disposable {
   private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceFactory.class);
 
   private final String name;
-  private final Set<DataSource> pooledDataSources = new ConcurrentHashSet();
-  private final Set<Disposable> disposableDataSources = new ConcurrentHashSet();
+  private final Set<DataSource> pooledDataSources = newKeySet();
+  private final Set<Disposable> disposableDataSources = newKeySet();
   private final CompositeDataSourceDecorator dataSourceDecorator;
 
   public DataSourceFactory(String name, Collection<DataSourceDecorator> dataSourceDecorators) {

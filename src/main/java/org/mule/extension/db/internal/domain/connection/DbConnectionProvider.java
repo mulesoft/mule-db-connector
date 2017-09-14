@@ -15,7 +15,7 @@ import static org.mule.runtime.api.connection.ConnectionValidationResult.success
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.disposeIfNeeded;
-import static org.mule.runtime.core.api.util.collection.Collectors.toImmutableList;
+import static org.mule.runtime.api.util.collection.Collectors.toImmutableList;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extension.db.api.config.DbPoolingProfile;

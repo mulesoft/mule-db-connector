@@ -265,7 +265,7 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
   private DataSourceFactory createDataSourceFactory() {
     // The identityHashCode() concatenation is required to distinguish different configs when these are dynamic and
     // uses the same `configName`
-    return new DataSourceFactory(configName + identityHashCode(this), registry.lookupAll(DataSourceDecorator.class));
+    return new DataSourceFactory(configName + identityHashCode(this), registry.lookupAllByType(DataSourceDecorator.class));
   }
 
   public DataSource getConfiguredDataSource() {

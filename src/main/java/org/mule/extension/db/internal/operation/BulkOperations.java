@@ -12,13 +12,14 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.mule.extension.db.internal.domain.query.QueryType.DELETE;
 import static org.mule.extension.db.internal.domain.query.QueryType.INSERT;
 import static org.mule.extension.db.internal.domain.query.QueryType.UPDATE;
+
 import org.mule.extension.db.api.param.BulkQueryDefinition;
 import org.mule.extension.db.api.param.BulkScript;
 import org.mule.extension.db.api.param.QuerySettings;
 import org.mule.extension.db.internal.DbConnector;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.executor.BulkUpdateExecutor;
-import org.mule.extension.db.internal.domain.metadata.DbBulkInputMetadataResolver;
+import org.mule.extension.db.internal.domain.metadata.DbInputMetadataResolver;
 import org.mule.extension.db.internal.domain.query.BulkQuery;
 import org.mule.extension.db.internal.domain.query.Query;
 import org.mule.extension.db.internal.domain.query.QueryParamValue;
@@ -68,7 +69,7 @@ public class BulkOperations extends BaseDbOperations {
    * @throws SQLException if an error is produced
    */
   public int[] bulkInsert(@DisplayName("Input Parameters") @Content @Placement(
-      order = 1) @TypeResolver(DbBulkInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
+      order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
                           @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
                           @Config DbConnector connector,
                           @Connection DbConnection connection,
@@ -92,7 +93,7 @@ public class BulkOperations extends BaseDbOperations {
    * @throws SQLException if an error is produced
    */
   public int[] bulkUpdate(@DisplayName("Input Parameters") @Content @Placement(
-      order = 1) @TypeResolver(DbBulkInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
+      order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
                           @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
                           @Config DbConnector connector,
                           @Connection DbConnection connection,
@@ -116,7 +117,7 @@ public class BulkOperations extends BaseDbOperations {
    * @throws SQLException if an error is produced
    */
   public int[] bulkDelete(@DisplayName("Input Parameters") @Content @Placement(
-      order = 1) @TypeResolver(DbBulkInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
+      order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
                           @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
                           @Config DbConnector connector,
                           @Connection DbConnection connection,

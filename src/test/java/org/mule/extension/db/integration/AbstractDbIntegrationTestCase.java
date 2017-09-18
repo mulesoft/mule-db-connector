@@ -22,7 +22,7 @@ import static org.mule.extension.db.integration.TestRecordUtil.assertRecords;
 import static org.mule.metadata.api.model.MetadataFormat.JAVA;
 import static org.mule.runtime.api.component.location.Location.builder;
 import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
-import static org.mule.runtime.core.api.connection.util.ConnectionProviderUtils.unwrapProviderWrapper;
+import static org.mule.runtime.module.extension.api.util.ConnectionProviderUtils.unwrapProviderWrapper;
 
 import org.mule.extension.db.api.StatementResult;
 import org.mule.extension.db.integration.model.AbstractTestDatabase;
@@ -51,7 +51,8 @@ import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFacto
 import org.mule.runtime.extension.api.runtime.config.ConfigurationProvider;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import javax.sql.DataSource;
+import org.junit.Before;
+import org.junit.runners.Parameterized;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -59,8 +60,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.junit.Before;
-import org.junit.runners.Parameterized;
+import javax.inject.Inject;
+import javax.sql.DataSource;
 
 @RunnerDelegateTo(Parameterized.class)
 public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunctionalTestCase
@@ -72,6 +73,9 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
   public AbstractTestDatabase testDatabase;
   @Parameterized.Parameter(2)
   public DbTestUtil.DbType dbType;
+
+  @Inject
+  private MetadataService metadataService;
 
   protected final BaseTypeBuilder typeBuilder = BaseTypeBuilder.create(JAVA);
   protected final ClassTypeLoader typeLoader = ExtensionsTypeLoaderFactory.getDefault().createTypeLoader();
@@ -107,9 +111,9 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
 
   protected DataSource getDataSource(String configName, Map<String, Object> variables) {
     try {
-      ConfigurationProvider configurationProvider = muleContext.getRegistry().get(configName);
+      ConfigurationProvider configurationProvider = registry.<ConfigurationProvider>lookupByName(configName).get();
       ConnectionProvider<DbConnection> connectionProviderWrapper =
-          (ConnectionProvider<DbConnection>) configurationProvider
+          configurationProvider
               .get(getEvent(variables))
               .getConnectionProvider().get();
 
@@ -223,7 +227,6 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
 
   protected MetadataResult<ComponentMetadataDescriptor<OperationModel>> getMetadata(String flow, String query)
       throws RegistrationException {
-    MetadataService metadataService = muleContext.getRegistry().lookupObject(MetadataService.class);
     return metadataService.getOperationMetadata(builder().globalName(flow).addProcessorsPart().addIndexPart(0).build(),
                                                 newKey(query).build());
   }

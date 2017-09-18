@@ -11,6 +11,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mule.runtime.core.api.util.StreamingUtils.streamingContent;
+
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.mule.runtime.api.streaming.object.CursorIterator;
@@ -18,24 +19,22 @@ import org.mule.runtime.api.streaming.object.CursorIteratorProvider;
 import org.mule.runtime.core.api.event.BaseEvent;
 import org.mule.runtime.core.api.streaming.StreamingManager;
 
+import org.junit.Test;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.junit.Test;
+import javax.inject.Inject;
 
 public class DbStreamingTestCase extends AbstractDbIntegrationTestCase {
 
+  @Inject
   private StreamingManager streamingManager;
 
   @Override
   protected String[] getFlowConfigurationResources() {
     return new String[] {"integration/streaming/streaming-config.xml"};
-  }
-
-  @Override
-  protected void doSetUp() throws Exception {
-    streamingManager = muleContext.getRegistry().lookupObject(StreamingManager.class);
   }
 
   @Test

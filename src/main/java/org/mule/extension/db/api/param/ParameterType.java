@@ -44,4 +44,8 @@ public class ParameterType {
   public DbType getDbType() {
     return typeClassifier.getDbType();
   }
+
+  public TypeClassifier getTypeClassifier() {
+    return typeClassifier;
+  }
 }

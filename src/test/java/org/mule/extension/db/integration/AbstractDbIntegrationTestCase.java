@@ -22,7 +22,7 @@ import static org.mule.extension.db.integration.TestRecordUtil.assertRecords;
 import static org.mule.metadata.api.model.MetadataFormat.JAVA;
 import static org.mule.runtime.api.component.location.Location.builder;
 import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
-import static org.mule.runtime.core.internal.connection.util.ConnectionProviderUtils.unwrapProviderWrapper;
+import static org.mule.runtime.core.api.connection.util.ConnectionProviderUtils.unwrapProviderWrapper;
 
 import org.mule.extension.db.api.StatementResult;
 import org.mule.extension.db.integration.model.AbstractTestDatabase;

@@ -6,6 +6,8 @@
  */
 package org.mule.extension.db.internal.domain.connection.datasource;
 
+import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
+import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 
 import javax.sql.DataSource;
@@ -23,6 +25,7 @@ public final class DataSourceConnectionSettings {
    * When using XA transactions, an {@link XADataSource} object must be provided.
    */
   @Parameter
+  @Expression(NOT_SUPPORTED)
   private DataSource dataSourceRef;
 
   public DataSource getDataSourceRef() {

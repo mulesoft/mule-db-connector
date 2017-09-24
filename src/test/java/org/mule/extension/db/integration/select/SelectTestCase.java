@@ -30,7 +30,7 @@ import org.mule.extension.db.integration.model.Record;
 import org.mule.runtime.api.message.Error;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.streaming.object.CursorIteratorProvider;
-import org.mule.runtime.core.api.event.BaseEvent;
+import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.core.api.exception.MessagingException;
 
 import java.util.concurrent.Callable;
@@ -132,7 +132,7 @@ public class SelectTestCase extends AbstractDbIntegrationTestCase {
       task.call();
       fail("Expected exception");
     } catch (MessagingException e) {
-      BaseEvent event = e.getEvent();
+      CoreEvent event = e.getEvent();
       Error error = event.getError().orElse(null);
       assertThat(error, is(notNullValue()));
       assertThat(error.getErrorType().getNamespace(), equalTo(errorNamespace));

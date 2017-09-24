@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.fail;
 import static org.mule.extension.db.integration.TestDbConfig.getDerbyResource;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
-import org.mule.runtime.core.api.event.BaseEvent;
+import org.mule.runtime.core.api.event.CoreEvent;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -36,7 +36,7 @@ public class StalePooledConnectionResetTestCase extends AbstractDbIntegrationTes
 
   @Test
   public void resetsStalePooledConnection() throws Exception {
-    BaseEvent response = runFlow("main");
+    CoreEvent response = runFlow("main");
     assertThat(response.getError().isPresent(), is(false));
 
     stopDatabase();

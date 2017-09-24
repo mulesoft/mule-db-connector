@@ -13,6 +13,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.mule.extension.db.integration.DbTestUtil.DbType.MYSQL;
 import static org.mule.extension.db.internal.domain.metadata.SelectMetadataResolver.DUPLICATE_COLUMN_LABEL_ERROR;
+
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.metadata.api.ClassTypeLoader;
 import org.mule.metadata.api.model.ArrayType;
@@ -22,13 +23,12 @@ import org.mule.runtime.api.metadata.descriptor.ComponentMetadataDescriptor;
 import org.mule.runtime.api.metadata.resolving.FailureCode;
 import org.mule.runtime.api.metadata.resolving.MetadataFailure;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
-import org.mule.runtime.core.api.registry.RegistrationException;
 import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFactory;
+
+import org.junit.Test;
 
 import java.sql.Blob;
 import java.sql.Clob;
-
-import org.junit.Test;
 
 public class SelectMetadataOutputTestCase extends AbstractDbIntegrationTestCase {
 
@@ -85,7 +85,7 @@ public class SelectMetadataOutputTestCase extends AbstractDbIntegrationTestCase 
     assertThat(failure.getMessage(), is(DUPLICATE_COLUMN_LABEL_ERROR));
   }
 
-  private ObjectType getSelectOutputMetadata(String query) throws RegistrationException {
+  private ObjectType getSelectOutputMetadata(String query) {
     MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata = getMetadata("selectMetadata", query);
     assertThat(metadata.isSuccess(), is(true));
     ArrayType output = (ArrayType) metadata.get().getModel().getOutput().getType();

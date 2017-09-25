@@ -16,7 +16,7 @@ import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.mule.runtime.api.streaming.object.CursorIterator;
 import org.mule.runtime.api.streaming.object.CursorIteratorProvider;
-import org.mule.runtime.core.api.event.BaseEvent;
+import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.core.api.streaming.StreamingManager;
 
 import org.junit.Test;
@@ -46,7 +46,7 @@ public class DbStreamingTestCase extends AbstractDbIntegrationTestCase {
                                                 testEvent());
     flowRunner("insert").withPayload(payload).run();
 
-    BaseEvent responseEvent = flowRunner("select").keepStreamsOpen().run();
+    CoreEvent responseEvent = flowRunner("select").keepStreamsOpen().run();
     Object response = responseEvent.getMessage().getPayload().getValue();
 
     assertThat(response, is(instanceOf(CursorIteratorProvider.class)));

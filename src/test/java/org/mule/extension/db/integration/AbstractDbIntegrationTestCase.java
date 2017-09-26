@@ -45,11 +45,13 @@ import org.mule.runtime.api.metadata.MetadataService;
 import org.mule.runtime.api.metadata.descriptor.ComponentMetadataDescriptor;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
 import org.mule.runtime.core.api.event.CoreEvent;
-import org.mule.runtime.core.api.registry.RegistrationException;
 import org.mule.runtime.core.api.util.func.CheckedConsumer;
 import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFactory;
 import org.mule.runtime.extension.api.runtime.config.ConfigurationProvider;
 import org.mule.test.runner.RunnerDelegateTo;
+
+import org.junit.Before;
+import org.junit.runners.Parameterized;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -59,9 +61,6 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
-
-import org.junit.Before;
-import org.junit.runners.Parameterized;
 
 @RunnerDelegateTo(Parameterized.class)
 public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunctionalTestCase
@@ -225,13 +224,12 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
     return (Map<String, Object>) response.getPayload().getValue();
   }
 
-  protected MetadataResult<ComponentMetadataDescriptor<OperationModel>> getMetadata(String flow, String query)
-      throws RegistrationException {
+  protected MetadataResult<ComponentMetadataDescriptor<OperationModel>> getMetadata(String flow, String query) {
     return metadataService.getOperationMetadata(builder().globalName(flow).addProcessorsPart().addIndexPart(0).build(),
                                                 newKey(query).build());
   }
 
-  protected MetadataType getInputMetadata(String flow, String query) throws RegistrationException {
+  protected MetadataType getInputMetadata(String flow, String query) {
     MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata = getMetadata(flow, query);
 
     assertThat(metadata.isSuccess(), is(true));
@@ -251,7 +249,7 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
     assertThat(metadata.get().getModel().getOutput().getType(), is(type));
   }
 
-  protected MetadataType getParameterValuesMetadata(String flow, String query) throws RegistrationException {
+  protected MetadataType getParameterValuesMetadata(String flow, String query) {
     MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata = getMetadata(flow, query);
     assertThat(metadata.isSuccess(), is(true));
     return metadata.get().getModel().getAllParameterModels().stream()

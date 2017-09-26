@@ -8,14 +8,16 @@ package org.mule.extension.db.integration.connectivity.negative;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Rule;
+
 import org.mule.extension.db.integration.DbArtifactClassLoaderRunnerConfig;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.tck.junit4.rule.SystemProperty;
 import org.mule.tck.util.TestConnectivityUtils;
+
+import org.hamcrest.Matcher;
+import org.junit.Before;
+import org.junit.Rule;
 
 public abstract class AbstractDbNegativeConnectivityTestCase extends MuleArtifactFunctionalTestCase
     implements DbArtifactClassLoaderRunnerConfig {
@@ -34,7 +36,7 @@ public abstract class AbstractDbNegativeConnectivityTestCase extends MuleArtifac
 
   @Before
   public void createUtils() {
-    utils = new TestConnectivityUtils(muleContext);
+    utils = new TestConnectivityUtils(registry);
   }
 
 }

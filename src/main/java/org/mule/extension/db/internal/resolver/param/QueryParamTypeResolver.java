@@ -7,6 +7,7 @@
 
 package org.mule.extension.db.internal.resolver.param;
 
+import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.param.QueryParam;
@@ -25,10 +26,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+
 /**
  * Resolves parameter types for standard queries
  */
 public class QueryParamTypeResolver implements ParamTypeResolver {
+
+  private static final Logger LOGGER = getLogger(QueryParamTypeResolver.class);
 
   private final DbTypeManager dbTypeManager;
 
@@ -40,27 +45,38 @@ public class QueryParamTypeResolver implements ParamTypeResolver {
   public Map<Integer, DbType> getParameterTypes(DbConnection connection, QueryTemplate queryTemplate, List<ParameterType> types)
       throws SQLException {
     Map<Integer, DbType> paramTypes = new HashMap<>();
-    PreparedStatement statement = connection.getJdbcConnection().prepareStatement(queryTemplate.getSqlText());
-    ParameterMetaData parameterMetaData = statement.getParameterMetaData();
+    PreparedStatement statement = null;
+    try {
+      statement = connection.getJdbcConnection().prepareStatement(queryTemplate.getSqlText());
+      ParameterMetaData parameterMetaData = statement.getParameterMetaData();
 
-    for (QueryParam queryParam : queryTemplate.getParams()) {
-      int parameterTypeId = parameterMetaData.getParameterType(queryParam.getIndex());
-      Optional<ParameterType> type = types.stream().filter(p -> p.getKey().equals(queryParam.getName())).findAny();
-      String parameterTypeName =
-          type.isPresent() ? type.get().getDbType().getName() : parameterMetaData.getParameterTypeName(queryParam.getIndex());
-      DbType dbType;
-      if (parameterTypeName == null) {
-        // Use unknown data type
-        dbType = UnknownDbType.getInstance();
-      } else {
+      for (QueryParam queryParam : queryTemplate.getParams()) {
+        int parameterTypeId = parameterMetaData.getParameterType(queryParam.getIndex());
+        Optional<ParameterType> type = types.stream().filter(p -> p.getKey().equals(queryParam.getName())).findAny();
+        String parameterTypeName =
+            type.isPresent() ? type.get().getDbType().getName() : parameterMetaData.getParameterTypeName(queryParam.getIndex());
+        DbType dbType;
+        if (parameterTypeName == null) {
+          // Use unknown data type
+          dbType = UnknownDbType.getInstance();
+        } else {
+          try {
+            dbType = dbTypeManager.lookup(connection, parameterTypeId, parameterTypeName);
+          } catch (UnknownDbTypeException e) {
+            // Type was not found in the type manager, but the DB knows about it
+            dbType = new ResolvedDbType(parameterTypeId, parameterTypeName);
+          }
+        }
+        paramTypes.put(queryParam.getIndex(), dbType);
+      }
+    } finally {
+      if (statement != null) {
         try {
-          dbType = dbTypeManager.lookup(connection, parameterTypeId, parameterTypeName);
-        } catch (UnknownDbTypeException e) {
-          // Type was not found in the type manager, but the DB knows about it
-          dbType = new ResolvedDbType(parameterTypeId, parameterTypeName);
+          statement.close();
+        } catch (SQLException e) {
+          LOGGER.warn("Could not close statement", e);
         }
       }
-      paramTypes.put(queryParam.getIndex(), dbType);
     }
 
     return paramTypes;

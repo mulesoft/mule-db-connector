@@ -18,7 +18,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.rules.ExpectedException.none;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.core.api.exception.MessagingException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -54,7 +53,6 @@ public class BulkInsertTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void bulkInsertUnusedParameterType() throws Exception {
-    expectedException.expect(MessagingException.class);
     expectedException.expectCause(instanceOf(IllegalArgumentException.class));
     expectedException
         .expectMessage(containsString("Query defines parameters ['unused'] but they aren't present in the query"));

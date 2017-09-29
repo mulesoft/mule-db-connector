@@ -14,12 +14,13 @@ import static org.junit.Assert.assertThat;
 import static org.mule.extension.db.integration.DbTestUtil.selectData;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.functional.api.flow.FlowRunner;
-import org.mule.runtime.core.api.exception.MessagingException;
-import org.hamcrest.Matcher;
 
-import javax.sql.DataSource;
 import java.util.List;
 import java.util.Map;
+
+import javax.sql.DataSource;
+
+import org.hamcrest.Matcher;
 
 public abstract class AbstractTxDbIntegrationTestCase extends AbstractDbIntegrationTestCase {
 
@@ -29,7 +30,7 @@ public abstract class AbstractTxDbIntegrationTestCase extends AbstractDbIntegrat
   protected void executeTransaction(String flowName) throws Exception {
     FlowRunner flowRunner = flowRunner(flowName);
     additionalVariables().entrySet().forEach(entry -> flowRunner.withVariable(entry.getKey(), entry.getValue()));
-    MessagingException exception = flowRunner.runExpectingException();
+    Exception exception = flowRunner.runExpectingException();
     assertThat(exception.getCause(), is(instanceOf(IllegalStateException.class)));
   }
 

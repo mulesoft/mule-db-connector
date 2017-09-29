@@ -7,13 +7,10 @@
 
 package org.mule.extension.db.integration.select;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 import static org.junit.rules.ExpectedException.none;
 import static org.mule.extension.db.api.exception.connection.DbError.BAD_SQL_SYNTAX;
 import static org.mule.extension.db.integration.TestRecordUtil.assertMessageContains;
@@ -27,19 +24,20 @@ import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.Field;
 import org.mule.extension.db.integration.model.Planet;
 import org.mule.extension.db.integration.model.Record;
-import org.mule.runtime.api.message.Error;
+import org.mule.functional.api.exception.ExpectedError;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.streaming.object.CursorIteratorProvider;
-import org.mule.runtime.core.api.event.CoreEvent;
-import org.mule.runtime.core.api.exception.MessagingException;
-
-import java.util.concurrent.Callable;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.concurrent.Callable;
+
 public class SelectTestCase extends AbstractDbIntegrationTestCase {
+
+  @Rule
+  public ExpectedError expectedError = ExpectedError.none();
 
   @Rule
   public ExpectedException expectedException = none();
@@ -128,15 +126,16 @@ public class SelectTestCase extends AbstractDbIntegrationTestCase {
   }
 
   private void assertErrorType(Callable task, String errorNamespace, String errorIdentifier) throws Exception {
-    try {
-      task.call();
-      fail("Expected exception");
-    } catch (MessagingException e) {
-      CoreEvent event = e.getEvent();
-      Error error = event.getError().orElse(null);
-      assertThat(error, is(notNullValue()));
-      assertThat(error.getErrorType().getNamespace(), equalTo(errorNamespace));
-      assertThat(error.getErrorType().getIdentifier(), equalTo(errorIdentifier));
-    }
+    expectedError.expectErrorType(errorNamespace, errorIdentifier);
+    // try {
+    task.call();
+    // fail("Expected exception");
+    // } catch (MessagingException e) {
+    // CoreEvent event = e.getEvent();
+    // Error error = event.getError().orElse(null);
+    // assertThat(error, is(notNullValue()));
+    // assertThat(error.getErrorType().getNamespace(), equalTo(errorNamespace));
+    // assertThat(error.getErrorType().getIdentifier(), equalTo(errorIdentifier));
+    // }
   }
 }

@@ -10,16 +10,16 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.DerbyTestDatabase;
-import org.mule.runtime.core.api.exception.MessagingException;
+
+import org.junit.Test;
+import org.junit.runners.Parameterized;
 
 import java.util.List;
 
 import javax.sql.DataSource;
-
-import org.junit.Test;
-import org.junit.runners.Parameterized;
 
 public class SelectExceptionTestCase extends AbstractDbIntegrationTestCase {
 
@@ -48,7 +48,7 @@ public class SelectExceptionTestCase extends AbstractDbIntegrationTestCase {
       try {
         flowRunner("selectException").run();
         fail("Expected 'Table does not exist' exception.");
-      } catch (MessagingException e) {
+      } catch (Exception e) {
         assertThat("Iteration " + i, e.getMessage(), containsString("Table/View 'NOT_EXISTS' does not exist."));
       }
     }

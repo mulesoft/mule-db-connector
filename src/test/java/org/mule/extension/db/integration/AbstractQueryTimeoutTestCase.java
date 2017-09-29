@@ -7,28 +7,31 @@
 
 package org.mule.extension.db.integration;
 
-import static junit.framework.TestCase.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 
+import org.mule.functional.api.exception.ExpectedError;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.core.api.event.CoreEvent;
-import org.mule.runtime.core.api.exception.MessagingException;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 public abstract class AbstractQueryTimeoutTestCase extends AbstractDbIntegrationTestCase {
 
   private static final String QUERY_TIMEOUT_FLOW = "queryTimeout";
 
+  @Rule
+  public ExpectedError expectedError = ExpectedError.none();
+
   /**
    * Verifies that queryTimeout is used and query execution is aborted with an error. As different DB drivers thrown different
    * type of exceptions instead of throwing SQLTimeoutException, the test firsts executes the flow using no timeout, which must
    * pass, and then using a timeout which must fail. Because the first execution was successful is assumed that the error is
    * because of an aborted execution.
-   * 
+   *
    * @throws Exception
    */
   @Test
@@ -38,12 +41,8 @@ public abstract class AbstractQueryTimeoutTestCase extends AbstractDbIntegration
     Message response = responseEvent.getMessage();
     assertThat(response.getPayload().getValue(), is(notNullValue()));
 
-    try {
-      flowRunner(QUERY_TIMEOUT_FLOW).withPayload(5).run();
-      fail("Expected query to timeout");
-    } catch (MessagingException e) {
-      // Expected
-    }
+    expectedError.expectErrorType("DB", "QUERY_EXECUTION");
+    flowRunner(QUERY_TIMEOUT_FLOW).withPayload(5).run();
   }
 
   @Before

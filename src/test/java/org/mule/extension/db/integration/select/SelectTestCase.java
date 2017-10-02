@@ -127,15 +127,6 @@ public class SelectTestCase extends AbstractDbIntegrationTestCase {
 
   private void assertErrorType(Callable task, String errorNamespace, String errorIdentifier) throws Exception {
     expectedError.expectErrorType(errorNamespace, errorIdentifier);
-    // try {
     task.call();
-    // fail("Expected exception");
-    // } catch (MessagingException e) {
-    // CoreEvent event = e.getEvent();
-    // Error error = event.getError().orElse(null);
-    // assertThat(error, is(notNullValue()));
-    // assertThat(error.getErrorType().getNamespace(), equalTo(errorNamespace));
-    // assertThat(error.getErrorType().getIdentifier(), equalTo(errorIdentifier));
-    // }
   }
 }

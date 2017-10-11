@@ -8,17 +8,21 @@ package org.mule.extension.db.internal.domain.connection.datasource;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
+import static org.mule.extension.db.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
+import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
+
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.extension.db.internal.domain.connection.DbConnectionProvider;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.extension.api.annotation.Alias;
+import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 
-import java.util.Optional;
-
 import javax.sql.DataSource;
+
+import java.util.Optional;
 
 /**
  * {@link ConnectionProvider} implementation which creates DB connections from a referenced {@link
@@ -28,6 +32,8 @@ import javax.sql.DataSource;
  */
 @DisplayName("Data Source Reference Connection")
 @Alias("data-source")
+@ExternalLib(name = "JDBC Driver", description = "A JDBC driver which supports connecting to the Database",
+    nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, type = JAR, optional = true)
 public class DataSourceReferenceConnectionProvider extends DbConnectionProvider {
 
   @ParameterGroup(name = CONNECTION)

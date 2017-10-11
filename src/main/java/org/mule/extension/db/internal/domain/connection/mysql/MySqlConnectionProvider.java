@@ -13,8 +13,10 @@ import static org.mule.extension.db.api.exception.connection.DbError.INVALID_CRE
 import static org.mule.extension.db.api.exception.connection.DbError.INVALID_DATABASE;
 import static org.mule.extension.db.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
 import static org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionParameters.MYSQL_DRIVER_CLASS;
+import static org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionProvider.MYSQL_GAV;
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
+
 import org.mule.extension.db.api.exception.connection.DbError;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.extension.db.internal.domain.connection.DbConnectionProvider;
@@ -23,10 +25,10 @@ import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 
+import javax.sql.DataSource;
+
 import java.sql.SQLException;
 import java.util.Optional;
-
-import javax.sql.DataSource;
 
 /**
  * Creates connections to a MySQL database.
@@ -36,12 +38,14 @@ import javax.sql.DataSource;
 @DisplayName("MySQL Connection")
 @Alias("my-sql")
 @ExternalLib(name = "MySQL JDBC Driver", description = "A JDBC driver which supports connecting to the MySQL Database",
-    nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, requiredClassName = MYSQL_DRIVER_CLASS, type = JAR)
+    nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, requiredClassName = MYSQL_DRIVER_CLASS, type = JAR,
+    coordinates = MYSQL_GAV)
 public class MySqlConnectionProvider extends DbConnectionProvider {
 
   private static final String ACCESS_DENIED = "Access denied";
   private static final String UNKNOWN_DATABASE = "Unknown database";
   private static final String COMMUNICATIONS_LINK_FAILURE = "Communications link failure";
+  static final String MYSQL_GAV = "mysql:mysql-connector-java:5.1.44";
 
   @ParameterGroup(name = CONNECTION)
   private MySqlConnectionParameters mySqlParameters;

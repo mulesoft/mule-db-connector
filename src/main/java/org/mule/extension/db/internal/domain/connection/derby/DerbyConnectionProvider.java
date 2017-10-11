@@ -11,8 +11,10 @@ import static java.util.Optional.ofNullable;
 import static org.mule.extension.db.api.exception.connection.DbError.CANNOT_REACH;
 import static org.mule.extension.db.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
 import static org.mule.extension.db.internal.domain.connection.derby.DerbyConnectionParameters.DERBY_DRIVER_CLASS;
+import static org.mule.extension.db.internal.domain.connection.derby.DerbyConnectionProvider.DERBY_GAV;
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
+
 import org.mule.extension.db.api.exception.connection.DbError;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.extension.db.internal.domain.connection.DbConnectionProvider;
@@ -21,10 +23,10 @@ import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 
+import javax.sql.DataSource;
+
 import java.sql.SQLException;
 import java.util.Optional;
-
-import javax.sql.DataSource;
 
 /**
  * Creates connections to a Derby database
@@ -34,11 +36,12 @@ import javax.sql.DataSource;
 @DisplayName("Derby Connection")
 @Alias("derby")
 @ExternalLib(name = "Derby JDBC Driver", description = "A JDBC driver which supports connecting to a Derby Database",
-    nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, requiredClassName = DERBY_DRIVER_CLASS, type = JAR)
+    nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, requiredClassName = DERBY_DRIVER_CLASS, type = JAR, coordinates = DERBY_GAV)
 public class DerbyConnectionProvider extends DbConnectionProvider {
 
   private static final String FAILED_TO_START_DATABASE = "Failed to start database";
   private static final String NOT_FOUND = "not found";
+  static final String DERBY_GAV = "org.apache.derby:derby:10.13.1.1";
 
   @ParameterGroup(name = CONNECTION)
   private DerbyConnectionParameters derbyParameters;

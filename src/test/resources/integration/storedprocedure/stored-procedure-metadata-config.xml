@@ -5,11 +5,36 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
-    <flow name="storedMetadata">
+    <flow name="storedOutputMetadata">
         <db:stored-procedure config-ref="dbConfig">
             <db:sql>{ CALL countTestRecords(:count) }</db:sql>
             <db:output-parameters>
                 <db:output-parameter key="count"/>
+            </db:output-parameters>
+        </db:stored-procedure>
+    </flow>
+
+    <flow name="storedSingleParameterInputMetadata">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql>call updateParamTestType1(:type)</db:sql>
+            <db:input-parameters>
+                #[{'type' : payload}]
+            </db:input-parameters>
+        </db:stored-procedure>
+    </flow>
+
+    <flow name="storedMixedParametersInputMetadata">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql>{ call multiplyInts(3, :int2, :result1, :int3, :result2) }</db:sql>
+            <db:input-parameters>
+                #[{
+                'int2' : 4,
+                'int3' : 5
+                }]
+            </db:input-parameters>
+            <db:output-parameters>
+                <db:output-parameter key="result1"/>
+                <db:output-parameter key="result2"/>
             </db:output-parameters>
         </db:stored-procedure>
     </flow>

@@ -8,6 +8,7 @@
 package org.mule.extension.db.integration.model;
 
 import org.mule.extension.db.integration.DbTestUtil;
+import org.mule.metadata.api.model.MetadataType;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -140,7 +141,7 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
-  public Object getDescriptionFieldMetaDataType() {
+  public MetadataType getDescriptionFieldMetaDataType() {
     // TODO(pablo.kraan): DB - what type must be used here?
     return super.getDescriptionFieldMetaDataType();
   }

@@ -6,7 +6,6 @@
  */
 package org.mule.extension.db.internal.domain.metadata;
 
-import static java.sql.Types.VARCHAR;
 import static org.mule.runtime.api.metadata.resolving.FailureCode.INVALID_CONFIGURATION;
 import static org.mule.runtime.api.metadata.resolving.FailureCode.UNKNOWN;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
@@ -93,7 +92,7 @@ public abstract class BaseDbMetadataResolver {
     dbToMetaDataType.put(Types.NUMERIC, typeBuilder.numberType().build());
     dbToMetaDataType.put(Types.DECIMAL, typeBuilder.numberType().build());
     dbToMetaDataType.put(Types.CHAR, typeBuilder.stringType().build());
-    dbToMetaDataType.put(VARCHAR, typeBuilder.stringType().build());
+    dbToMetaDataType.put(Types.VARCHAR, typeBuilder.stringType().build());
     dbToMetaDataType.put(Types.LONGNVARCHAR, typeBuilder.stringType().build());
     dbToMetaDataType.put(Types.DATE, typeLoader.load(Date.class));
     dbToMetaDataType.put(Types.TIME, typeLoader.load(Time.class));
@@ -103,6 +102,7 @@ public abstract class BaseDbMetadataResolver {
     dbToMetaDataType.put(Types.LONGVARBINARY, typeBuilder.binaryType().build());
     dbToMetaDataType.put(Types.NULL, typeBuilder.nullType().build());
     dbToMetaDataType.put(Types.OTHER, typeBuilder.anyType().build());
+    dbToMetaDataType.put(Types.JAVA_OBJECT, typeBuilder.anyType().build());
     dbToMetaDataType.put(Types.DISTINCT, typeBuilder.anyType().build());
     dbToMetaDataType.put(Types.STRUCT, typeLoader.load(Struct.class));
     dbToMetaDataType.put(Types.ARRAY, typeBuilder.arrayType().of().anyType().build());

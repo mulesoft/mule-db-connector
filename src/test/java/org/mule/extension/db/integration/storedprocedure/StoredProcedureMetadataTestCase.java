@@ -7,25 +7,38 @@
 
 package org.mule.extension.db.integration.storedprocedure;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.core.Is.is;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
-import org.mule.metadata.api.model.ArrayType;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.metadata.api.model.ObjectType;
 import org.mule.runtime.api.meta.model.operation.OperationModel;
 import org.mule.runtime.api.metadata.descriptor.ComponentMetadataDescriptor;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
 
+import org.junit.Before;
 import org.junit.Test;
 
-public class StoreProcedureOutputMetadataTestCase extends AbstractDbIntegrationTestCase {
+public class StoredProcedureMetadataTestCase extends AbstractDbIntegrationTestCase {
 
   @Override
   protected String[] getFlowConfigurationResources() {
     return new String[] {"integration/storedprocedure/stored-procedure-metadata-config.xml"};
+  }
+
+  @Before
+  public void setupStoredProcedure() throws Exception {
+    testDatabase.createStoredProcedureDoubleMyInt(getDefaultDataSource());
+    testDatabase.createStoredProcedureConcatenateStrings(getDefaultDataSource());
+    testDatabase.createStoredProcedureCountRecords(getDefaultDataSource());
+    testDatabase.createStoredProcedureMultiplyInts(getDefaultDataSource());
+    testDatabase.createStoredProcedureGetRecords(getDefaultDataSource());
+    testDatabase.createStoredProcedureUpdateTestType1(getDefaultDataSource());
+    testDatabase.createStoredProcedureParameterizedUpdatePlanetDescription(getDefaultDataSource());
+    testDatabase.createStoredProcedureParameterizedUpdateTestType1(getDefaultDataSource());
+    testDatabase.createStoredProcedureGetSplitRecords(getDefaultDataSource());
+    testDatabase.createDelayFunction(getDefaultDataSource());
   }
 
   @Test
@@ -39,12 +52,9 @@ public class StoreProcedureOutputMetadataTestCase extends AbstractDbIntegrationT
 
   @Test
   public void storedProcedureSingleParameterInputMetadata() throws Exception {
-    MetadataType parameters = getParameterValuesMetadata("storedSingleParameterInputMetadata", null);
+    MetadataType parameters = getParameterValuesMetadata("storedMixedParametersInputMetadata", null);
 
-    assertThat(parameters, is(instanceOf(ArrayType.class)));
-    assertThat(((ArrayType) parameters).getType(), is(instanceOf(ObjectType.class)));
-    MetadataType listGeneric = ((ArrayType) parameters).getType();
-    assertThat(((ObjectType) listGeneric).getFields().size(), equalTo(1));
-    assertFieldOfType(((ObjectType) listGeneric), "name", testDatabase.getNameFieldMetaDataType());
+    assertThat(parameters, is(instanceOf(ObjectType.class)));
+    assertFieldOfType(((ObjectType) parameters), "description", testDatabase.getDescriptionFieldMetaDataType());
   }
 }

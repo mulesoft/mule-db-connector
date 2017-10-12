@@ -229,7 +229,7 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
     Location location = builder().globalName(flow).addProcessorsPart().addIndexPart(0).build();
 
     return isAllBlank(query) ? metadataService.getOperationMetadata(location)
-      : metadataService.getOperationMetadata(location, newKey(query).build());
+        : metadataService.getOperationMetadata(location, newKey(query).build());
   }
 
   protected MetadataType getInputMetadata(String flow, String query) {

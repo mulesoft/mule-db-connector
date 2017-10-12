@@ -25,12 +25,20 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
   public static final String DERBY_ERROR_OBJECT_ALREADY_EXISTS = "X0Y68";
 
   public static String SQL_CREATE_SP_UPDATE_TEST_TYPE_1 =
-      "CREATE PROCEDURE updateTestType1()\n" + "PARAMETER STYLE JAVA\n" + "LANGUAGE JAVA\n" + "MODIFIES SQL DATA\n"
-          + "DYNAMIC RESULT SETS 0\n" + "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".updateTestType1'";
+      "CREATE PROCEDURE updateTestType1()\n" +
+          "PARAMETER STYLE JAVA\n" +
+          "LANGUAGE JAVA\n" +
+          "MODIFIES SQL DATA\n" +
+          "DYNAMIC RESULT SETS 0\n" +
+          "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".updateTestType1'";
 
-  public static String SQL_CREATE_SP_PARAM_UPDATE_TEST_TYPE_1 = "CREATE PROCEDURE updateParamTestType1(name VARCHAR(40))\n"
-      + "PARAMETER STYLE JAVA\n" + "LANGUAGE JAVA\n" + "MODIFIES SQL DATA\n" + "DYNAMIC RESULT SETS 0\n" + "EXTERNAL NAME '"
-      + DerbyTestStoredProcedure.class.getName() + ".updateParameterizedTestType1'";
+  public static String SQL_CREATE_SP_PARAM_UPDATE_TEST_TYPE_1 =
+      "CREATE PROCEDURE updateParamTestType1(name VARCHAR(40))\n" +
+          "PARAMETER STYLE JAVA\n" +
+          "LANGUAGE JAVA\n" +
+          "MODIFIES SQL DATA\n" +
+          "DYNAMIC RESULT SETS 0\n" +
+          "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".updateParameterizedTestType1'";
 
   public static String SQL_CREATE_SP_PARAM_UPDATE_PLANET_DESCRIPTION =
       "CREATE PROCEDURE updatePlanetDescription(name VARCHAR(40), description CLOB)\n" +
@@ -42,34 +50,55 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
 
 
   public static String SQL_CREATE_SP_COUNT_RECORDS =
-      "CREATE PROCEDURE countTestRecords(OUT COUNT INTEGER)\n" + "PARAMETER STYLE JAVA\n" + "LANGUAGE JAVA\n" + "READS SQL DATA\n"
-          + "DYNAMIC RESULT SETS 0\n" + "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".countTestRecords'";
+      "CREATE PROCEDURE countTestRecords(OUT COUNT INTEGER)\n" +
+          "PARAMETER STYLE JAVA\n" +
+          "LANGUAGE JAVA\n" +
+          "READS SQL DATA\n" +
+          "DYNAMIC RESULT SETS 0\n" +
+          "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".countTestRecords'";
 
   public static String SQL_CREATE_SP_GET_RECORDS =
-      "CREATE PROCEDURE getTestRecords()\n" + "PARAMETER STYLE JAVA\n" + "LANGUAGE JAVA\n" + "READS SQL DATA\n"
-          + "DYNAMIC RESULT SETS 1\n" + "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".getTestRecords'";
+      "CREATE PROCEDURE getTestRecords()\n" +
+          "PARAMETER STYLE JAVA\n" +
+          "LANGUAGE JAVA\n" +
+          "READS SQL DATA\n" +
+          "DYNAMIC RESULT SETS 1\n" +
+          "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".getTestRecords'";
 
   public static String SQL_CREATE_SP_GET_SPLIT_RECORDS =
-      "CREATE PROCEDURE getSplitTestRecords()\n" + "PARAMETER STYLE JAVA\n" + "LANGUAGE JAVA\n" + "READS SQL DATA\n"
-          + "DYNAMIC RESULT SETS 2\n" + "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".getSplitTestRecords'";
+      "CREATE PROCEDURE getSplitTestRecords()\n" +
+          "PARAMETER STYLE JAVA\n" +
+          "LANGUAGE JAVA\n" +
+          "READS SQL DATA\n" +
+          "DYNAMIC RESULT SETS 2\n" +
+          "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".getSplitTestRecords'";
 
   public static String SQL_CREATE_SP_DOUBLE_MY_INT =
-      "CREATE PROCEDURE doubleMyInt(INOUT MYINT INTEGER)\n" + "PARAMETER STYLE JAVA\n" + "LANGUAGE JAVA\n"
-          + "DYNAMIC RESULT SETS 0\n" + "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".doubleMyInt'";
+      "CREATE PROCEDURE doubleMyInt(INOUT MYINT INTEGER)\n" +
+          "PARAMETER STYLE JAVA\n" +
+          "LANGUAGE JAVA\n" +
+          "DYNAMIC RESULT SETS 0\n" +
+          "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".doubleMyInt'";
 
   public static String SQL_CREATE_SP_MULTIPLY_INTS =
       "CREATE PROCEDURE multiplyInts(IN INT1 INTEGER, IN INT2 INTEGER, OUT RESULT1 INTEGER, IN INT3 INTEGER, OUT RESULT2 INTEGER)\n"
-          + "PARAMETER STYLE JAVA\n" + "LANGUAGE JAVA\n" + "DYNAMIC RESULT SETS 0\n" + "EXTERNAL NAME '"
-          + DerbyTestStoredProcedure.class.getName() + ".multiplyInts'";
+          +
+          "PARAMETER STYLE JAVA\n" +
+          "LANGUAGE JAVA\n" +
+          "DYNAMIC RESULT SETS 0\n" +
+          "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".multiplyInts'";
 
   public static String SQL_CREATE_SP_CONCATENATE_STRINGS =
-      "CREATE PROCEDURE concatenateStrings(IN INT1 VARCHAR(100), IN INT2 VARCHAR(100), OUT RESULT VARCHAR(200))\n"
-          + "PARAMETER STYLE JAVA\n" + "LANGUAGE JAVA\n" + "DYNAMIC RESULT SETS 0\n" + "EXTERNAL NAME '"
-          + DerbyTestStoredProcedure.class.getName() + ".concatenateStrings'";
+      "CREATE PROCEDURE concatenateStrings(IN INT1 VARCHAR(100), IN INT2 VARCHAR(100), OUT RESULT VARCHAR(200))\n" +
+          "PARAMETER STYLE JAVA\n" +
+          "LANGUAGE JAVA\n" +
+          "DYNAMIC RESULT SETS 0\n" +
+          "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".concatenateStrings'";
 
   public static final String SQL_CREATE_DELAY_FUNCTION =
-      "create function delay(SECONDS INTEGER) " + "returns INTEGER language java parameter style java external name " + "'"
-          + DerbyTestStoredProcedure.class.getName() + ".timeDelay'";
+      "create function delay(SECONDS INTEGER) " +
+          "returns INTEGER language java parameter style java external name " +
+          "'" + DerbyTestStoredProcedure.class.getName() + ".timeDelay'";
 
   public static final String SQL_CREATE_CONTACT_DETAIL_FUNCTION =
       "create function createContactDetails(DESCRIPTION VARCHAR(32), PHONE VARCHAR(32), EMAIL VARCHAR(32)) "
@@ -77,9 +106,11 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
           + DerbyTestStoredProcedure.class.getName() + ".createContactDetails'";
 
   public static final String SQL_CREATE_SP_GET_MANAGER_DETAILS =
-      "CREATE PROCEDURE getManagerDetails(IN NAME VARCHAR(32), OUT RESULT CONTACT_DETAILS)\n" + "PARAMETER STYLE JAVA\n"
-          + "LANGUAGE JAVA\n" + "DYNAMIC RESULT SETS 0\n" + "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName()
-          + ".getManagerDetails'";
+      "CREATE PROCEDURE getManagerDetails(IN NAME VARCHAR(32), OUT RESULT CONTACT_DETAILS)\n" +
+          "PARAMETER STYLE JAVA\n" +
+          "LANGUAGE JAVA\n" +
+          "DYNAMIC RESULT SETS 0\n" +
+          "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".getManagerDetails'";
 
   public static final String CREATE_CONTACT_DETAILS_TYPE =
       "CREATE TYPE CONTACT_DETAILS EXTERNAL NAME '" + ContactDetails.class.getName() + "' LANGUAGE JAVA";

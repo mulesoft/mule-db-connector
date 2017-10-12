@@ -14,20 +14,23 @@
         </db:stored-procedure>
     </flow>
 
-    <flow name="storedSingleParameterInputMetadata">
+    <flow name="storedMixedParametersInputMetadata">
         <db:stored-procedure config-ref="dbConfig">
-            <db:sql>call updateParamTestType1(:type)</db:sql>
+            <db:sql>{ call updatePlanetDescription('hardcoded', :description) }</db:sql>
             <db:input-parameters>
-                #[{'type' : payload}]
+                #[{
+                'description' : 'descriptionParamValue',
+                }]
             </db:input-parameters>
         </db:stored-procedure>
     </flow>
 
-    <flow name="storedMixedParametersInputMetadata">
+    <flow name="multiplyIntsMetadata">
         <db:stored-procedure config-ref="dbConfig">
-            <db:sql>{ call multiplyInts(3, :int2, :result1, :int3, :result2) }</db:sql>
+            <db:sql>{ call multiplyInts(:int1, :int2, :result1, :int3, :result2) }</db:sql>
             <db:input-parameters>
                 #[{
+                'int1' : 3,
                 'int2' : 4,
                 'int3' : 5
                 }]
@@ -38,4 +41,5 @@
             </db:output-parameters>
         </db:stored-procedure>
     </flow>
+
 </mule>

@@ -39,6 +39,7 @@ public class StoredProcedureCall extends ParameterizedStatementDefinition<Stored
   @DisplayName("Input - Output Parameters")
   @ParameterDsl(allowReferences = false)
   protected LinkedHashMap<String, Object> inOutParameters = new LinkedHashMap<>();
+
   /**
    * A list of output parameters to be set on the JDBC prepared
    * statement. Each parameter should be referenced in the sql

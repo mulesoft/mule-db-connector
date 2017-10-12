@@ -11,6 +11,7 @@ import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.apache.commons.lang3.StringUtils.endsWith;
+import static org.apache.commons.lang3.StringUtils.isAllBlank;
 import static org.apache.commons.lang3.StringUtils.replace;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -23,7 +24,6 @@ import static org.mule.metadata.api.model.MetadataFormat.JAVA;
 import static org.mule.runtime.api.component.location.Location.builder;
 import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
 import static org.mule.runtime.core.api.connection.util.ConnectionProviderUtils.unwrapProviderWrapper;
-
 import org.mule.extension.db.api.StatementResult;
 import org.mule.extension.db.integration.model.AbstractTestDatabase;
 import org.mule.extension.db.integration.model.Field;
@@ -37,6 +37,7 @@ import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.metadata.api.model.ObjectFieldType;
 import org.mule.metadata.api.model.ObjectType;
+import org.mule.runtime.api.component.location.Location;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.message.Message;
@@ -50,9 +51,6 @@ import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFacto
 import org.mule.runtime.extension.api.runtime.config.ConfigurationProvider;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import org.junit.Before;
-import org.junit.runners.Parameterized;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +59,9 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
+
+import org.junit.Before;
+import org.junit.runners.Parameterized;
 
 @RunnerDelegateTo(Parameterized.class)
 public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunctionalTestCase
@@ -225,8 +226,10 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
   }
 
   protected MetadataResult<ComponentMetadataDescriptor<OperationModel>> getMetadata(String flow, String query) {
-    return metadataService.getOperationMetadata(builder().globalName(flow).addProcessorsPart().addIndexPart(0).build(),
-                                                newKey(query).build());
+    Location location = builder().globalName(flow).addProcessorsPart().addIndexPart(0).build();
+
+    return isAllBlank(query) ? metadataService.getOperationMetadata(location)
+        : metadataService.getOperationMetadata(location, newKey(query).build());
   }
 
   protected MetadataType getInputMetadata(String flow, String query) {

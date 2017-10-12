@@ -9,12 +9,14 @@ package org.mule.extension.db.integration.model;
 
 import static org.mule.extension.db.integration.model.RegionManager.NORTHWEST_MANAGER;
 import static org.mule.extension.db.integration.model.RegionManager.SOUTHWEST_MANAGER;
-
 import org.mule.extension.db.integration.DbTestUtil;
+import org.mule.metadata.api.ClassTypeLoader;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.model.MetadataFormat;
 import org.mule.metadata.api.model.MetadataType;
+import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFactory;
 
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -38,7 +40,9 @@ public abstract class AbstractTestDatabase {
   public static final String NO_RESULSET_FROM_FUNCTION_SUPPORT_ERROR =
       "Database does not support returning a resultset from a function";
   public static final String NO_UDT_SUPPORT_ERROR = "Database does not support User Defined Data Types";
+
   public final BaseTypeBuilder typeBuilder = BaseTypeBuilder.create(MetadataFormat.JAVA);
+  public final ClassTypeLoader typeLoader = ExtensionsTypeLoaderFactory.getDefault().createTypeLoader();
 
   public void deletePlanetTable(Connection connection) throws SQLException {
     executeUpdate(connection, "DELETE FROM PLANET");
@@ -390,8 +394,8 @@ public abstract class AbstractTestDatabase {
     return typeBuilder.stringType().build();
   }
 
-  public Object getDescriptionFieldMetaDataType() {
-    return typeBuilder.objectType().build();
+  public MetadataType getDescriptionFieldMetaDataType() {
+    return typeLoader.load(Clob.class);
   }
 
   public Class getIdFieldJavaClass() {

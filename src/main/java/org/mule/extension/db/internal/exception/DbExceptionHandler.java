@@ -41,6 +41,7 @@ public class DbExceptionHandler extends ExceptionHandler {
             .orElse(e));
   }
 
+  //TODO: MULE-13798
   private boolean isConnectionException(SQLException e) {
     String sqlState = e.getSQLState();
     return "08S01".equals(sqlState) || "08001".equals(sqlState);

@@ -11,6 +11,7 @@ import static java.util.stream.Collectors.toList;
 import org.mule.extension.db.api.param.ParameterizedStatementDefinition;
 import org.mule.extension.db.internal.domain.query.QueryParamValue;
 import org.mule.extension.db.internal.domain.query.QueryTemplate;
+import org.mule.runtime.api.util.Reference;
 import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
 import java.util.List;
@@ -24,9 +25,10 @@ public class ParameterizedQueryResolver<T extends ParameterizedStatementDefiniti
         .map(p -> {
           final String parameterName = p.getName();
 
-          Optional<Object> parameterValue = getStreamingAwareParameter(statementDefinition, parameterName, streamingHelper);
+          Optional<Reference<Object>> parameterValue =
+              getStreamingAwareParameter(statementDefinition, parameterName, streamingHelper);
           if (parameterValue.isPresent()) {
-            return new QueryParamValue(parameterName, parameterValue.get());
+            return new QueryParamValue(parameterName, parameterValue.get().get());
           } else {
             throw new IllegalArgumentException(format("Parameter '%s' was not bound for query '%s'",
                                                       parameterName, statementDefinition.getSql()));
@@ -34,12 +36,13 @@ public class ParameterizedQueryResolver<T extends ParameterizedStatementDefiniti
         }).collect(toList());
   }
 
-  private Optional<Object> getStreamingAwareParameter(T statementDefinition, String parameterName,
-                                                      StreamingHelper streamingHelper) {
-    return getInputParameter(statementDefinition, parameterName).map(streamingHelper::resolveCursor);
+  private Optional<Reference<Object>> getStreamingAwareParameter(T statementDefinition, String parameterName,
+                                                                 StreamingHelper streamingHelper) {
+    return getInputParameter(statementDefinition, parameterName)
+        .map(ref -> new Reference<>(streamingHelper.resolveCursor(ref.get())));
   }
 
-  protected Optional<Object> getInputParameter(T statementDefinition, String parameterName) {
+  protected Optional<Reference<Object>> getInputParameter(T statementDefinition, String parameterName) {
     return statementDefinition.getInputParameter(parameterName);
   }
 }

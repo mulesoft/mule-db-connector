@@ -24,6 +24,8 @@ import java.sql.Statement;
 @SuppressWarnings("UnusedDeclaration")
 public class DerbyTestStoredProcedure {
 
+  public static final String NULL_PLANET_NAME = "NullLand";
+
   public static void selectRows(ResultSet[] data1) throws SQLException {
 
     Connection conn = DriverManager.getConnection("jdbc:default:connection");
@@ -48,6 +50,10 @@ public class DerbyTestStoredProcedure {
 
   public static void updateParameterizedTestType1(String name) throws SQLException {
     Connection conn = DriverManager.getConnection("jdbc:default:connection");
+
+    if (name == null) {
+      name = NULL_PLANET_NAME;
+    }
 
     try {
       Statement ps1 = conn.createStatement();

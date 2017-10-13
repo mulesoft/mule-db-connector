@@ -21,6 +21,7 @@ import org.mule.extension.db.internal.domain.query.QueryTemplate;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.DbTypeManager;
 import org.mule.extension.db.internal.domain.type.DynamicDbType;
+import org.mule.runtime.api.util.Reference;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -55,14 +56,14 @@ public class StoredProcedureQueryResolver extends ParameterizedQueryResolver<Sto
         return new DefaultOutputQueryParam(param.getIndex(), type, paramName);
       }
 
-      Optional<Object> parameterValue = call.getInputParameter(paramName);
+      Optional<Reference<Object>> parameterValue = call.getInputParameter(paramName);
       if (parameterValue.isPresent()) {
-        return new DefaultInputQueryParam(param.getIndex(), param.getType(), parameterValue.get(), paramName);
+        return new DefaultInputQueryParam(param.getIndex(), param.getType(), parameterValue.get().get(), paramName);
       }
 
       parameterValue = call.getInOutParameter(paramName);
       if (parameterValue.isPresent()) {
-        return new DefaultInOutQueryParam(param.getIndex(), param.getType(), paramName, parameterValue.get());
+        return new DefaultInOutQueryParam(param.getIndex(), param.getType(), paramName, parameterValue.get().get());
       }
 
       throw new IllegalArgumentException(format("Parameter '%s' was not bound for query '%s'", paramName, call.getSql()));
@@ -70,8 +71,8 @@ public class StoredProcedureQueryResolver extends ParameterizedQueryResolver<Sto
   }
 
   @Override
-  protected Optional<Object> getInputParameter(StoredProcedureCall statementDefinition, String parameterName) {
-    Optional<Object> value = super.getInputParameter(statementDefinition, parameterName);
+  protected Optional<Reference<Object>> getInputParameter(StoredProcedureCall statementDefinition, String parameterName) {
+    Optional<Reference<Object>> value = super.getInputParameter(statementDefinition, parameterName);
     if (!value.isPresent()) {
       value = statementDefinition.getInOutParameter(parameterName);
     }

@@ -69,8 +69,10 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
 
   @Parameterized.Parameter(0)
   public String dataSourceConfigResource;
+
   @Parameterized.Parameter(1)
   public AbstractTestDatabase testDatabase;
+
   @Parameterized.Parameter(2)
   public DbTestUtil.DbType dbType;
 
@@ -129,10 +131,6 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
         .entrySet()
         .forEach(entry -> builder.addVariable(entry.getKey(), entry.getValue()));
     return builder.build();
-  }
-
-  private CoreEvent getEvent() throws MuleException {
-    return getEvent(additionalVariables());
   }
 
   @Override

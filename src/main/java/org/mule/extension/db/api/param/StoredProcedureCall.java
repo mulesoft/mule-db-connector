@@ -8,6 +8,7 @@ package org.mule.extension.db.api.param;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+import org.mule.runtime.api.util.Reference;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -65,7 +66,7 @@ public class StoredProcedureCall extends ParameterizedStatementDefinition<Stored
     return outputParameters.stream().filter(p -> p.getKey().equals(name)).findFirst();
   }
 
-  public java.util.Optional<Object> getInOutParameter(String name) {
+  public java.util.Optional<Reference<Object>> getInOutParameter(String name) {
     return findParameter(inOutParameters, name);
   }
 

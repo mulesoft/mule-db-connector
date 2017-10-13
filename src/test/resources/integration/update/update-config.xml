@@ -59,6 +59,17 @@
         </db:update>
     </flow>
 
+    <flow name="updateWithNullValue">
+        <db:update config-ref="dbConfig">
+            <db:sql>UPDATE PLANET SET NAME = :param where POSITION = 4</db:sql>
+            <db:input-parameters>#[{'param' : null}]</db:input-parameters>
+        </db:update>
+
+        <db:select config-ref="dbConfig">
+            <db:sql>select * from PLANET where NAME IS NULL</db:sql>
+        </db:select>
+    </flow>
+
     <flow name="truncateTable">
         <db:update config-ref="dbConfig">
             <db:sql>TRUNCATE TABLE PLANET</db:sql>

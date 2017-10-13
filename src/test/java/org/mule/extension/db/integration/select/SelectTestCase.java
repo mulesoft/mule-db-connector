@@ -19,7 +19,6 @@ import static org.mule.extension.db.integration.TestRecordUtil.getEarthRecord;
 import static org.mule.extension.db.integration.TestRecordUtil.getMarsRecord;
 import static org.mule.extension.db.integration.TestRecordUtil.getVenusRecord;
 import static org.mule.extension.db.integration.model.Planet.MARS;
-
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.Field;
 import org.mule.extension.db.integration.model.Planet;
@@ -28,11 +27,11 @@ import org.mule.functional.api.exception.ExpectedError;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.streaming.object.CursorIteratorProvider;
 
+import java.util.concurrent.Callable;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import java.util.concurrent.Callable;
 
 public class SelectTestCase extends AbstractDbIntegrationTestCase {
 

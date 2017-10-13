@@ -13,6 +13,7 @@ import static org.junit.Assume.assumeThat;
 import static org.mule.extension.db.AllureConstants.DbFeature.DB_EXTENSION;
 import static org.mule.extension.db.integration.DbTestUtil.DbType.MYSQL;
 import static org.mule.extension.db.integration.DbTestUtil.selectData;
+import static org.mule.extension.db.integration.TestRecordUtil.assertMessageContains;
 import static org.mule.extension.db.integration.TestRecordUtil.assertRecords;
 import org.mule.extension.db.api.StatementResult;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
@@ -111,6 +112,13 @@ public class UpdateTestCase extends AbstractDbIntegrationTestCase {
       "This implies that DB connector will detect this type, and transform it from String to Blob")
   public void updateBlobWithString() throws Exception {
     assertBlob("Hello world!");
+  }
+
+  @Test
+  @Description("Executes an UPDATE with a parameter which is present but resolves to null")
+  public void updateWithNullValue() throws Exception {
+    Message response = flowRunner("updateWithNullValue").keepStreamsOpen().run().getMessage();
+    assertMessageContains(response, new Record(new Field("NAME", null)));
   }
 
   private void assertBlob(Object picture) throws Exception {

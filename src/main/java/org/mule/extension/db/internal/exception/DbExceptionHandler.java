@@ -8,6 +8,7 @@ package org.mule.extension.db.internal.exception;
 
 import org.mule.extension.db.api.exception.connection.BadSqlSyntaxException;
 import org.mule.extension.db.api.exception.connection.QueryExecutionException;
+import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.extension.api.exception.ModuleException;
 import org.mule.runtime.extension.api.runtime.exception.ExceptionHandler;
 
@@ -30,7 +31,19 @@ public class DbExceptionHandler extends ExceptionHandler {
     return getCauseOfType(e, SQLSyntaxErrorException.class)
         .map(cause -> (Exception) new BadSqlSyntaxException(e.getMessage(), e))
         .orElseGet(() -> getCauseOfType(e, SQLException.class)
-            .map(cause -> (Exception) new QueryExecutionException(cause.getMessage(), cause))
+            .map(sqlException -> {
+              if (isConnectionException(sqlException)) {
+                return new ConnectionException(e.getMessage(), e);
+              }
+
+              return new QueryExecutionException(sqlException.getMessage(), sqlException);
+            })
             .orElse(e));
+  }
+
+  //TODO: MULE-13798
+  private boolean isConnectionException(SQLException e) {
+    String sqlState = e.getSQLState();
+    return "08S01".equals(sqlState) || "08001".equals(sqlState);
   }
 }

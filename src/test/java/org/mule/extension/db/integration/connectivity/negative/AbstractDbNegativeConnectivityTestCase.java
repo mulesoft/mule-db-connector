@@ -24,6 +24,11 @@ public abstract class AbstractDbNegativeConnectivityTestCase extends MuleArtifac
 
   static final Matcher<Exception> IS_CONNECTION_EXCEPTION = is(instanceOf(ConnectionException.class));
 
+  @Override
+  public boolean enableLazyInit() {
+    return true;
+  }
+
   TestConnectivityUtils utils;
 
   @Override

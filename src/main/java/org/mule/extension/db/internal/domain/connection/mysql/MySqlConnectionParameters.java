@@ -7,8 +7,8 @@
 package org.mule.extension.db.internal.domain.connection.mysql;
 
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
+import static org.slf4j.LoggerFactory.getLogger;
 
-import org.mule.extension.db.api.logger.MuleMySqlLogger;
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -18,6 +18,8 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.slf4j.Logger;
 
 /**
  * {@link DataSourceConfig} implementation for MySQL databases.
@@ -29,6 +31,8 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
   static final String MYSQL_DRIVER_CLASS = "com.mysql.jdbc.Driver";
   private static final String MY_SQL_PREFIX = "jdbc:mysql://";
   private static final String LOGGER_PROPERTY = "logger";
+  private static final String MY_SQL_LOGGER = "org.mule.extension.db.api.logger.MuleMySqlLogger";
+  private static final Logger LOGGER = getLogger(MySqlConnectionParameters.class);
 
   /**
    * Configures the host of the database
@@ -79,9 +83,7 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
 
   @Override
   public String getUrl() {
-    if (connectionProperties != null) {
-      connectionProperties.putIfAbsent(LOGGER_PROPERTY, MuleMySqlLogger.class.getName());
-    }
+    addMuleLoggerProperty(connectionProperties);
     return MySqlDbUtils.getEffectiveUrl(MY_SQL_PREFIX, host, port, database, connectionProperties);
   }
 
@@ -98,5 +100,16 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
   @Override
   public String getUser() {
     return user;
+  }
+
+  private void addMuleLoggerProperty(Map<String, String> connectionProperties) {
+    if (connectionProperties != null) {
+      try {
+        Thread.currentThread().getContextClassLoader().loadClass(MY_SQL_LOGGER);
+        connectionProperties.putIfAbsent(LOGGER_PROPERTY, MY_SQL_LOGGER);
+      } catch (Throwable e) {
+        LOGGER.error("Unable to attach Mule Logger to MySql Driver.", e);
+      }
+    }
   }
 }

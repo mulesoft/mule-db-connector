@@ -80,7 +80,7 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
   @Override
   public String getUrl() {
     if (connectionProperties != null) {
-      connectionProperties.putIfAbsent(LOGGER_PROPERTY, MuleMySqlLogger.class.getCanonicalName());
+      connectionProperties.putIfAbsent(LOGGER_PROPERTY, MuleMySqlLogger.class.getName());
     }
     return MySqlDbUtils.getEffectiveUrl(MY_SQL_PREFIX, host, port, database, connectionProperties);
   }

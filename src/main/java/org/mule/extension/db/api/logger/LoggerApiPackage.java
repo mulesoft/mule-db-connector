@@ -6,8 +6,14 @@
  */
 package org.mule.extension.db.api.logger;
 
+import org.mule.runtime.extension.api.annotation.Export;
+
 /**
  * This is a class used just to export the package.
+ * <p>
+ * The {@link MuleMySqlLogger} is required to be exported, but it can be exported using the {@link Export} annotation
+ * due that {@link MuleMySqlLogger} depends on MySql classes, so to prevent the connector fail when loading it when is
+ * used with other vendors like: Derby, Oracle, etc. this class is exported instead to export the entire package.
  *
  * @since 1.0
  */

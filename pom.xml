@@ -25,6 +25,7 @@
         <commonsLangVersion>3.6</commonsLangVersion>
         <commonsIoVersion>2.4</commonsIoVersion>
         <derbyVersion>10.11.1.1</derbyVersion>
+        <mySqlVersion>5.1.44</mySqlVersion>
         <guavaVersion>18.0</guavaVersion>
         <javax.transaction.version>1.2</javax.transaction.version>
         <xaPoolVersion>1.5.0</xaPoolVersion>
@@ -103,8 +104,8 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.26</version>
-            <scope>test</scope>
+            <version>${mySqlVersion}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

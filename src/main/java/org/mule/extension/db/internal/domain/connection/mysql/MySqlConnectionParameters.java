@@ -7,6 +7,8 @@
 package org.mule.extension.db.internal.domain.connection.mysql;
 
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
+
+import org.mule.extension.db.api.logger.MuleMySqlLogger;
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -26,6 +28,7 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
 
   static final String MYSQL_DRIVER_CLASS = "com.mysql.jdbc.Driver";
   private static final String MY_SQL_PREFIX = "jdbc:mysql://";
+  protected static final String LOGGER_PROPERTY = "logger";
 
   /**
    * Configures the host of the database
@@ -76,6 +79,9 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
 
   @Override
   public String getUrl() {
+    if (connectionProperties != null) {
+      connectionProperties.putIfAbsent(LOGGER_PROPERTY, MuleMySqlLogger.class.getCanonicalName());
+    }
     return MySqlDbUtils.getEffectiveUrl(MY_SQL_PREFIX, host, port, database, connectionProperties);
   }
 

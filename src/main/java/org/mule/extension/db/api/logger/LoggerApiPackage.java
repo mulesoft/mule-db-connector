@@ -8,6 +8,8 @@ package org.mule.extension.db.api.logger;
 
 /**
  * This is a class used just to export the package.
+ *
+ * @since 1.0
  */
 public class LoggerApiPackage {
 }

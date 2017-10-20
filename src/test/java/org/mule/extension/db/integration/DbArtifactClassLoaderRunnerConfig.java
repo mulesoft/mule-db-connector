@@ -18,6 +18,6 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
  */
 @ArtifactClassLoaderRunnerConfig(
     exportPluginClasses = {DbConnectionProvider.class, StatementStreamingResultSetCloser.class},
-    sharedRuntimeLibs = {"org.apache.derby:derby"})
+    sharedRuntimeLibs = {"org.apache.derby:derby", "org.mule.tests:mule-tests-unit"})
 public interface DbArtifactClassLoaderRunnerConfig {
 }

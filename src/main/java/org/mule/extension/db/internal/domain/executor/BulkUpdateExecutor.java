@@ -7,6 +7,7 @@
 
 package org.mule.extension.db.internal.domain.executor;
 
+import org.mule.extension.db.api.exception.connection.QueryExecutionException;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.logger.BulkQueryLogger;
 import org.mule.extension.db.internal.domain.logger.PreparedBulkQueryLogger;
@@ -58,7 +59,7 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
     Statement statement = statementFactory.create(connection, query.getQueryTemplate());
 
     if (!(statement instanceof PreparedStatement)) {
-      throw new IllegalArgumentException("Bulk update must be executed on a prepared statement");
+      throw new QueryExecutionException("The given query can't be executed in bulk, bulk queries must take parameters.");
     }
 
     PreparedStatement preparedStatement = (PreparedStatement) statement;

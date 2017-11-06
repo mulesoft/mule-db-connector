@@ -19,4 +19,8 @@ public class QueryExecutionException extends ModuleException {
   public QueryExecutionException(String message, Throwable cause) {
     super(message, QUERY_EXECUTION, cause);
   }
+
+  public QueryExecutionException(String message) {
+    super(message, QUERY_EXECUTION);
+  }
 }

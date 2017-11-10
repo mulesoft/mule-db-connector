@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.internal.domain.connection.mysql;
 
+import static java.lang.String.format;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -108,7 +109,10 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
         Thread.currentThread().getContextClassLoader().loadClass(MY_SQL_LOGGER);
         connectionProperties.putIfAbsent(LOGGER_PROPERTY, MY_SQL_LOGGER);
       } catch (Throwable e) {
-        LOGGER.error("Unable to attach Mule Logger to MySql Driver.", e);
+        LOGGER.warn(format("Unable to attach Mule Logger to MySql Driver. Cause: %s", e.getMessage()));
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("Unable to attach Mule Logger to MySql Driver", e);
+        }
       }
     }
   }

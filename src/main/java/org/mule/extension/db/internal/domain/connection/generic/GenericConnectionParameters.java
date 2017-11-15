@@ -10,6 +10,7 @@ import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParamete
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.extension.db.internal.domain.connection.DbConnectionParameters;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
+import org.mule.runtime.extension.api.annotation.param.display.ClassValue;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
@@ -33,6 +34,7 @@ public final class GenericConnectionParameters extends BaseDbConnectionParameter
    */
   @Parameter
   @Placement(order = 2)
+  @ClassValue(extendsOrImplements = "java.sql.Driver")
   private String driverClassName;
 
   @Override

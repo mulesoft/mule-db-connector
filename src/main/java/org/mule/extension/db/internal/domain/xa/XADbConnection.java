@@ -14,6 +14,7 @@ import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
 import org.mule.extension.db.internal.result.statement.StatementResultIteratorFactory;
 import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.tx.TransactionException;
+import org.mule.runtime.core.api.transaction.Transaction;
 import org.mule.runtime.core.api.transaction.TransactionCoordination;
 import org.mule.runtime.extension.api.connectivity.XATransactionalConnection;
 
@@ -33,6 +34,7 @@ public class XADbConnection implements DbConnection, XATransactionalConnection {
 
   private final DbConnection connection;
   private final XAConnection xaConnection;
+  private boolean isXaResourceProvided = false;
 
   public XADbConnection(DbConnection connection, XAConnection xaConnection) {
     this.connection = connection;
@@ -42,7 +44,9 @@ public class XADbConnection implements DbConnection, XATransactionalConnection {
   @Override
   public XAResource getXAResource() {
     try {
-      return xaConnection.getXAResource();
+      XAResource xaResource = xaConnection.getXAResource();
+      isXaResourceProvided = true;
+      return xaResource;
     } catch (SQLException e) {
       throw new MuleRuntimeException(new TransactionException(createStaticMessage("Could not obtain XA Resource"), e));
     }
@@ -56,6 +60,8 @@ public class XADbConnection implements DbConnection, XATransactionalConnection {
     } catch (SQLException e) {
       LOGGER.info("Exception while explicitly closing the xaConnection (some providers require this). "
           + "The exception will be ignored and only logged: " + e.getMessage(), e);
+    } finally {
+      isXaResourceProvided = false;
     }
   }
 
@@ -116,6 +122,13 @@ public class XADbConnection implements DbConnection, XATransactionalConnection {
 
   @Override
   public boolean isTransactionActive() {
-    return TransactionCoordination.isTransactionActive();
+    Transaction transaction = TransactionCoordination.getInstance().getTransaction();
+    if (transaction == null) {
+      return false;
+    } else if (transaction.isXA() && isXaResourceProvided) {
+      return TransactionCoordination.isTransactionActive();
+    } else {
+      return connection.isTransactionActive();
+    }
   }
 }

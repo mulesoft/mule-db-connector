@@ -7,21 +7,25 @@
 package org.mule.extension.db.internal.domain.xa;
 
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
+
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
 import org.mule.extension.db.internal.result.statement.StatementResultIteratorFactory;
 import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.tx.TransactionException;
+import org.mule.runtime.core.api.transaction.TransactionCoordination;
 import org.mule.runtime.extension.api.connectivity.XATransactionalConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.sql.XAConnection;
 import javax.transaction.xa.XAResource;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class XADbConnection implements DbConnection, XATransactionalConnection {
 
@@ -108,5 +112,10 @@ public class XADbConnection implements DbConnection, XATransactionalConnection {
   @Override
   public void endStreaming() {
     connection.endStreaming();
+  }
+
+  @Override
+  public boolean isTransactionActive() {
+    return TransactionCoordination.isTransactionActive();
   }
 }

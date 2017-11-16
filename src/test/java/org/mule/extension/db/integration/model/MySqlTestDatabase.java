@@ -10,10 +10,10 @@ package org.mule.extension.db.integration.model;
 import org.mule.extension.db.integration.DbTestUtil;
 import org.mule.metadata.api.model.MetadataType;
 
+import javax.sql.DataSource;
+
 import java.sql.Connection;
 import java.sql.SQLException;
-
-import javax.sql.DataSource;
 
 public class MySqlTestDatabase extends AbstractTestDatabase {
 
@@ -67,7 +67,7 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
     final String sql =
         "CREATE DEFINER=CURRENT_USER PROCEDURE updatePlanetDescription(IN pName VARCHAR(50), IN pDescription LONGTEXT)\n" +
             "BEGIN\n" +
-            "update Planet SET DESCRIPTION=pDescription where NAME = pName;\n" +
+            "update PLANET SET DESCRIPTION=pDescription where NAME = pName;\n" +
             "END";
 
     createStoredProcedure(dataSource, sql);
@@ -77,8 +77,14 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
   public void createStoredProcedureParameterizedUpdateTestType1(DataSource dataSource) throws SQLException {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS updateParamTestType1;\n");
 
-    final String sql = "CREATE DEFINER=CURRENT_USER PROCEDURE updateParamTestType1(IN pName VARCHAR(50))\n" + "BEGIN\n"
-        + "UPDATE PLANET SET NAME=pName WHERE POSITION=4;\n" + "END";
+    final String sql = "CREATE DEFINER=CURRENT_USER PROCEDURE updateParamTestType1(IN pName VARCHAR(50))\n" +
+        "BEGIN\n" +
+        "    DECLARE name VARCHAR(50);\n" +
+        "    SET name = pName;\n" +
+        "    IF pName IS NULL THEN SET name = 'NullLand';\n" +
+        "    END IF;\n" +
+        "    UPDATE PLANET SET NAME=name WHERE POSITION=4;\n" +
+        "END";
 
     createStoredProcedure(dataSource, sql);
   }
@@ -142,7 +148,15 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
 
   @Override
   public MetadataType getDescriptionFieldMetaDataType() {
-    // TODO(pablo.kraan): DB - what type must be used here?
-    return super.getDescriptionFieldMetaDataType();
+    return getStringType();
+  }
+
+  @Override
+  public MetadataType getIdFieldMetaDataType() {
+    return getStringType();
+  }
+
+  private MetadataType getStringType() {
+    return typeBuilder.stringType().build();
   }
 }

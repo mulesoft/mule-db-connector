@@ -9,6 +9,7 @@ package org.mule.extension.db.integration.streaming;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.mule.runtime.core.api.util.StreamingUtils.streamingContent;
 
@@ -19,13 +20,14 @@ import org.mule.runtime.api.streaming.object.CursorIteratorProvider;
 import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.core.api.streaming.StreamingManager;
 
-import org.junit.Test;
+import javax.inject.Inject;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
+import org.junit.Test;
 
 public class DbStreamingTestCase extends AbstractDbIntegrationTestCase {
 
@@ -50,16 +52,19 @@ public class DbStreamingTestCase extends AbstractDbIntegrationTestCase {
     Object response = responseEvent.getMessage().getPayload().getValue();
 
     assertThat(response, is(instanceOf(CursorIteratorProvider.class)));
-    CursorIterator<Map<String, Object>> iterator = ((CursorIteratorProvider) response).openCursor();
 
-    try {
+    try (CursorIterator<Map<String, Object>> iterator = ((CursorIteratorProvider) response).openCursor()) {
       Map<String, Object> row = iterator.next();
       assertThat(row.get("ID"), is(88));
       Object blob = row.get("PICTURE");
       assertThat(blob, is(instanceOf(CursorStreamProvider.class)));
-    } finally {
-      iterator.close();
     }
+  }
 
+  @Test
+  public void consumingStreamDoesntCloseConnection() throws Exception {
+    List<Object> tx =
+        (List<Object>) flowRunner("consumingStreamDoesntCloseConnection").run().getMessage().getPayload().getValue();
+    assertThat(tx, hasSize(6));
   }
 }

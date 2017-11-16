@@ -41,7 +41,7 @@
     <sub-flow name="obtainClobValue">
         <try transactionalAction="ALWAYS_BEGIN">
             <db:select config-ref="dbConfig">
-                <db:sql>select description from Planet where name = 'Pluto'</db:sql>
+                <db:sql>select description from PLANET where name = 'Pluto'</db:sql>
             </db:select>
             <!-- Get the CLOB field value -->
             <set-payload value="#[mel:payload.openCursor().next().get('DESCRIPTION')]"/>

@@ -18,7 +18,7 @@
 
         <try transactionalAction="ALWAYS_BEGIN">
             <db:select config-ref="dbConfig">
-                <db:sql>select description from Planet where name = 'Venus'</db:sql>
+                <db:sql>select description from PLANET where name = 'Venus'</db:sql>
             </db:select>
             <!-- Get the CLOB field value -->
             <set-payload value="#[mel:payload.openCursor().next().get('DESCRIPTION')]"/>

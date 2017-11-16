@@ -45,7 +45,9 @@ public class StatementStreamingResultSetCloser {
     } finally {
       resultSets.clear();
       connection.endStreaming();
-      connection.release();
+      if (!connection.isTransactionActive()) {
+        connection.release();
+      }
     }
   }
 

@@ -8,6 +8,7 @@
 package org.mule.extension.db.internal.domain.connection;
 
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
+
 import org.mule.extension.db.api.exception.connection.ConnectionClosingException;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
@@ -15,18 +16,19 @@ import org.mule.extension.db.internal.result.statement.GenericStatementResultIte
 import org.mule.extension.db.internal.result.statement.StatementResultIteratorFactory;
 import org.mule.runtime.api.tx.TransactionException;
 
-import com.google.common.collect.ImmutableList;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.google.common.collect.ImmutableList;
+
 public class DefaultDbConnection implements DbConnection {
 
   private final Connection jdbcConnection;
-  private AtomicInteger streamsCount = new AtomicInteger(0);
   private final List<DbType> customDataTypes;
+  private AtomicInteger streamsCount = new AtomicInteger(0);
+  private boolean isTransactionActive = false;
 
   public DefaultDbConnection(Connection jdbcConnection, List<DbType> customDataTypes) {
     this.jdbcConnection = jdbcConnection;
@@ -74,6 +76,7 @@ public class DefaultDbConnection implements DbConnection {
       if (jdbcConnection.getAutoCommit()) {
         jdbcConnection.setAutoCommit(false);
       }
+      isTransactionActive = true;
     } catch (Exception e) {
       throw new TransactionException(createStaticMessage("Could not start transaction: " + e.getMessage()), e);
     }
@@ -89,6 +92,7 @@ public class DefaultDbConnection implements DbConnection {
     } catch (Exception e) {
       throw new TransactionException(createStaticMessage("Could not start transaction: " + e.getMessage()), e);
     } finally {
+      isTransactionActive = false;
       abortStreaming();
     }
   }
@@ -103,6 +107,7 @@ public class DefaultDbConnection implements DbConnection {
     } catch (Exception e) {
       throw new TransactionException(createStaticMessage("Could not start transaction: " + e.getMessage()), e);
     } finally {
+      isTransactionActive = false;
       abortStreaming();
     }
   }
@@ -134,10 +139,18 @@ public class DefaultDbConnection implements DbConnection {
 
   @Override
   public void endStreaming() {
-    streamsCount.decrementAndGet();
+    streamsCount.getAndUpdate(operand -> operand <= 0 ? 0 : operand - 1);
   }
 
   private void abortStreaming() {
     streamsCount.set(0);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean isTransactionActive() {
+    return isTransactionActive;
   }
 }

@@ -64,4 +64,9 @@ public interface DbConnection extends TransactionalConnection {
    * Marks that the streaming is over
    */
   void endStreaming();
+
+  /**
+   * @return a boolean indicating if the current connection is being part of a Transaction.
+   */
+  boolean isTransactionActive();
 }

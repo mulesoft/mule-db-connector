@@ -22,4 +22,24 @@
         </db:select>
     </flow>
 
+    <flow name="consumingStreamDoesntCloseConnection">
+        <set-variable variableName="accumulator" value="#[[]]"/>
+        <try transactionalAction="ALWAYS_BEGIN">
+            <db:select config-ref="dbConfig">
+                <db:sql>SELECT * FROM PLANET</db:sql>
+            </db:select>
+            <!--For each used to consume the entire stream-->
+            <foreach>
+                <set-variable variableName="accumulator" value="#[vars.accumulator + payload]"/>
+            </foreach>
+            <db:select config-ref="dbConfig">
+                <db:sql>SELECT * FROM PLANET</db:sql>
+            </db:select>
+            <foreach>
+                <set-variable variableName="accumulator" value="#[vars.accumulator + payload]"/>
+            </foreach>
+        </try>
+        <set-payload value="#[vars.accumulator]"/>
+    </flow>
+
 </mule>

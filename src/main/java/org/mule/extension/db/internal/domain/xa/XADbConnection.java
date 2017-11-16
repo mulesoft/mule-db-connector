@@ -7,21 +7,27 @@
 package org.mule.extension.db.internal.domain.xa;
 
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
+
+import org.mule.extension.db.api.exception.connection.ConnectionClosingException;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
 import org.mule.extension.db.internal.result.statement.StatementResultIteratorFactory;
 import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.tx.TransactionException;
+import org.mule.runtime.core.api.transaction.Transaction;
+import org.mule.runtime.core.api.transaction.TransactionCoordination;
 import org.mule.runtime.extension.api.connectivity.XATransactionalConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.sql.XAConnection;
 import javax.transaction.xa.XAResource;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class XADbConnection implements DbConnection, XATransactionalConnection {
 
@@ -29,6 +35,7 @@ public class XADbConnection implements DbConnection, XATransactionalConnection {
 
   private final DbConnection connection;
   private final XAConnection xaConnection;
+  private boolean isXaResourceProvided = false;
 
   public XADbConnection(DbConnection connection, XAConnection xaConnection) {
     this.connection = connection;
@@ -38,7 +45,9 @@ public class XADbConnection implements DbConnection, XATransactionalConnection {
   @Override
   public XAResource getXAResource() {
     try {
-      return xaConnection.getXAResource();
+      XAResource xaResource = xaConnection.getXAResource();
+      isXaResourceProvided = true;
+      return xaResource;
     } catch (SQLException e) {
       throw new MuleRuntimeException(new TransactionException(createStaticMessage("Could not obtain XA Resource"), e));
     }
@@ -46,12 +55,17 @@ public class XADbConnection implements DbConnection, XATransactionalConnection {
 
   @Override
   public void close() {
-    connection.release();
     try {
-      connection.getJdbcConnection().close();
-    } catch (SQLException e) {
+      connection.release();
+      Connection jdbcConnection = connection.getJdbcConnection();
+      if (!jdbcConnection.isClosed()) {
+        jdbcConnection.close();
+      }
+    } catch (SQLException | ConnectionClosingException e) {
       LOGGER.info("Exception while explicitly closing the xaConnection (some providers require this). "
           + "The exception will be ignored and only logged: " + e.getMessage(), e);
+    } finally {
+      isXaResourceProvided = false;
     }
   }
 
@@ -108,5 +122,17 @@ public class XADbConnection implements DbConnection, XATransactionalConnection {
   @Override
   public void endStreaming() {
     connection.endStreaming();
+  }
+
+  @Override
+  public boolean isTransactionActive() {
+    Transaction transaction = TransactionCoordination.getInstance().getTransaction();
+    if (transaction == null) {
+      return false;
+    } else if (transaction.isXA() && isXaResourceProvided) {
+      return TransactionCoordination.isTransactionActive();
+    } else {
+      return connection.isTransactionActive();
+    }
   }
 }

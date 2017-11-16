@@ -139,7 +139,7 @@ public class DefaultDbConnection implements DbConnection {
 
   @Override
   public void endStreaming() {
-    streamsCount.decrementAndGet();
+    streamsCount.getAndUpdate(operand -> operand <= 0 ? 0 : operand - 1);
   }
 
   private void abortStreaming() {

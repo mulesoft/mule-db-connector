@@ -8,6 +8,7 @@ package org.mule.extension.db.internal.domain.xa;
 
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 
+import org.mule.extension.db.api.exception.connection.ConnectionClosingException;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
@@ -54,10 +55,13 @@ public class XADbConnection implements DbConnection, XATransactionalConnection {
 
   @Override
   public void close() {
-    connection.release();
     try {
-      connection.getJdbcConnection().close();
-    } catch (SQLException e) {
+      connection.release();
+      Connection jdbcConnection = connection.getJdbcConnection();
+      if (!jdbcConnection.isClosed()) {
+        jdbcConnection.close();
+      }
+    } catch (SQLException | ConnectionClosingException e) {
       LOGGER.info("Exception while explicitly closing the xaConnection (some providers require this). "
           + "The exception will be ignored and only logged: " + e.getMessage(), e);
     } finally {

@@ -9,6 +9,7 @@ package org.mule.extension.db.internal.resolver.query;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
+
 import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.api.param.StatementDefinition;
 import org.mule.extension.db.internal.DbConnector;
@@ -37,15 +38,15 @@ import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.i18n.I18nMessageFactory;
 import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 abstract class AbstractQueryResolver<T extends StatementDefinition<?>> implements QueryResolver<T> {
 
@@ -135,12 +136,13 @@ abstract class AbstractQueryResolver<T extends StatementDefinition<?>> implement
 
   protected DbTypeManager createTypeManager(DbConnector connector, DbConnection connection) {
     List<DbTypeManager> typeManagers = new LinkedList<>();
+    List<DbTypeManager> vendorTypeManagers = new LinkedList<>();
     typeManagers.add(connector.getTypeManager());
 
-    collectTypeManager(typeManagers, connection.getVendorDataTypes());
-    collectTypeManager(typeManagers, connection.getCustomDataTypes());
+    collectTypeManager(vendorTypeManagers, connection.getVendorDataTypes());
+    collectTypeManager(vendorTypeManagers, connection.getCustomDataTypes());
 
-    return new CompositeDbTypeManager(typeManagers);
+    return new CompositeDbTypeManager(vendorTypeManagers, typeManagers);
   }
 
   private void collectTypeManager(List<DbTypeManager> collector, List<DbType> extraDataTypes) {

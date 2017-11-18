@@ -22,6 +22,7 @@ public class SupportsReturningStoredProcedureResultsWithoutParameters extends Ab
     supportedProducts = new HashSet<>();
     supportedProducts.add("MYSQL");
     supportedProducts.add("APACHE DERBY");
+    supportedProducts.add("MICROSOFT SQL SERVER");
   }
 
   @Override

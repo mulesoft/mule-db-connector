@@ -7,7 +7,7 @@
 
     <flow name="clobInputParameter">
         <db:stored-procedure config-ref="dbConfig">
-            <db:sql>call updatePlanetDescription('Venus', :description)</db:sql>
+            <db:sql>{ call updatePlanetDescription('Venus', :description) }</db:sql>
             <db:parameter-types>
                 <db:parameter-type key="description" type="CLOB" />
             </db:parameter-types>

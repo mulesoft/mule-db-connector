@@ -10,14 +10,13 @@ package org.mule.extension.db.integration;
 import static java.lang.String.format;
 import static org.junit.Assert.assertTrue;
 
-import com.mysql.jdbc.Statement;
+import javax.sql.DataSource;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.DataSource;
-
+import com.mysql.jdbc.Statement;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapListHandler;
 
@@ -38,6 +37,6 @@ public class DbTestUtil {
   }
 
   public enum DbType {
-    MYSQL, ORACLE, DERBY
+    MYSQL, ORACLE, DERBY, SQLSERVER
   }
 }

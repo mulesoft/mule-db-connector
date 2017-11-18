@@ -55,7 +55,7 @@ public class DbStreamingTestCase extends AbstractDbIntegrationTestCase {
 
     try (CursorIterator<Map<String, Object>> iterator = ((CursorIteratorProvider) response).openCursor()) {
       Map<String, Object> row = iterator.next();
-      assertThat(row.get("ID"), is(88));
+      assertThat(row.get("NAME"), is("88"));
       Object blob = row.get("PICTURE");
       assertThat(blob, is(instanceOf(CursorStreamProvider.class)));
     }

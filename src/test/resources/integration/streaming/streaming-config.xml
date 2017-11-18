@@ -7,10 +7,11 @@
 
     <flow name="insert">
         <db:insert config-ref="dbConfig">
-            <db:sql>INSERT INTO PLANET (ID, PICTURE) VALUES (88, :data)</db:sql>
+            <db:sql>INSERT INTO PLANET (NAME, PICTURE) VALUES (:name, :data)</db:sql>
             <db:input-parameters>
                 #[{
                 data : payload,
+                name : 88
                 }]
             </db:input-parameters>
         </db:insert>
@@ -18,7 +19,7 @@
 
     <flow name="select">
         <db:select config-ref="dbConfig">
-            <db:sql>SELECT * FROM PLANET WHERE ID = 88</db:sql>
+            <db:sql>SELECT * FROM PLANET WHERE NAME = '88'</db:sql>
         </db:select>
     </flow>
 

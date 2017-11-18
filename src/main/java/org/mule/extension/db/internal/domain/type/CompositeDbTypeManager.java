@@ -7,6 +7,8 @@
 
 package org.mule.extension.db.internal.domain.type;
 
+import static java.util.Collections.emptyList;
+
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 
 import java.util.List;
@@ -16,14 +18,27 @@ import java.util.List;
  */
 public class CompositeDbTypeManager implements DbTypeManager {
 
-  private List<DbTypeManager> typeManagers;
+  private final List<DbTypeManager> vendorTypeManagers;
+  private final List<DbTypeManager> typeManagers;
 
   /**
    * Creates a composed DB type manager
    *
-   * @param typeManagers sorted type managers used to resolve DB types.
+   * @param vendorTypeManagers sorted type managers defined by a vendor used to resolve DB types
+   * @param typeManagers       sorted type managers used to resolve DB types.
    */
+  public CompositeDbTypeManager(List<DbTypeManager> vendorTypeManagers, List<DbTypeManager> typeManagers) {
+    this.vendorTypeManagers = vendorTypeManagers;
+    this.typeManagers = typeManagers;
+  }
+
+  /**
+  * Creates a composed DB type manager
+  *
+  * @param typeManagers sorted type managers used to resolve DB types.
+  */
   public CompositeDbTypeManager(List<DbTypeManager> typeManagers) {
+    this.vendorTypeManagers = emptyList();
     this.typeManagers = typeManagers;
   }
 
@@ -40,6 +55,13 @@ public class CompositeDbTypeManager implements DbTypeManager {
    * @throws UnknownDbTypeException when there is no managed type with the given ID and name
    */
   public DbType lookup(DbConnection connection, int id, String name) throws UnknownDbTypeException {
+    for (DbTypeManager typeManager : vendorTypeManagers) {
+      try {
+        return typeManager.lookup(connection, id, name);
+      } catch (UnknownDbTypeException e) {
+        // Ignore and continue
+      }
+    }
     for (DbTypeManager typeManager : typeManagers) {
       try {
         return typeManager.lookup(connection, id, name);
@@ -62,6 +84,13 @@ public class CompositeDbTypeManager implements DbTypeManager {
    */
   @Override
   public DbType lookup(DbConnection connection, String name) throws UnknownDbTypeException {
+    for (DbTypeManager typeManager : vendorTypeManagers) {
+      try {
+        return typeManager.lookup(connection, name);
+      } catch (UnknownDbTypeException e) {
+        // Ignore and continue
+      }
+    }
     for (DbTypeManager typeManager : typeManagers) {
       try {
         return typeManager.lookup(connection, name);

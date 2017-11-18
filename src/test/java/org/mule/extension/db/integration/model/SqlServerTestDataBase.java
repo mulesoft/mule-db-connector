@@ -4,7 +4,6 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-
 package org.mule.extension.db.integration.model;
 
 import org.mule.extension.db.integration.DbTestUtil;
@@ -15,32 +14,55 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class MySqlTestDatabase extends AbstractTestDatabase {
+public class SqlServerTestDataBase extends AbstractTestDatabase {
 
   @Override
   public DbTestUtil.DbType getDbType() {
-    return DbTestUtil.DbType.MYSQL;
+    return DbTestUtil.DbType.SQLSERVER;
   }
 
-  public static String SQL_CREATE_SP_UPDATE_TEST_TYPE_1 = "CREATE DEFINER=CURRENT_USER PROCEDURE updateTestType1()\n" + "BEGIN\n"
-      + "    UPDATE PLANET SET NAME='Mercury' WHERE POSITION=4;\n" + "END;";
+  public static String SQL_CREATE_SP_UPDATE_TEST_TYPE_1 =
+      "CREATE PROCEDURE updateTestType1\n" +
+          "AS\n" +
+          "BEGIN\n" +
+          "    UPDATE PLANET SET NAME='Mercury' WHERE POSITION=4;\n" +
+          "END";
 
   public static String SQL_CREATE_SP_GET_RECORDS =
-      "CREATE DEFINER=CURRENT_USER PROCEDURE getTestRecords()\n" + "BEGIN\n" + "    SELECT * FROM PLANET;\n" + "END;";
+      "CREATE PROCEDURE getTestRecords\n" +
+          "AS\n" +
+          "BEGIN\n" +
+          "    SELECT * FROM PLANET;\n" +
+          "END";
 
-  public static String SQL_CREATE_SP_GET_SPLIT_RECORDS = "CREATE DEFINER=CURRENT_USER PROCEDURE getSplitTestRecords()\n"
-      + "BEGIN\n" + "    SELECT * FROM PLANET WHERE POSITION <= 2;\n" + "    SELECT * FROM PLANET WHERE POSITION > 2;\n" + "END;";
+  public static String SQL_CREATE_SP_GET_SPLIT_RECORDS =
+      "CREATE PROCEDURE getSplitTestRecords\n" +
+          "AS\n" +
+          "BEGIN\n" +
+          "    SELECT * FROM PLANET WHERE POSITION <= 2; \n" +
+          "    SELECT * FROM PLANET WHERE POSITION > 2;\n" +
+          "END";
 
   @Override
   public void createPlanetTable(Connection connection) throws SQLException {
     executeDdl(connection,
-               "CREATE TABLE PLANET(ID INTEGER NOT NULL AUTO_INCREMENT,POSITION INTEGER,NAME VARCHAR(255), PICTURE BLOB, DESCRIPTION LONGTEXT, PRIMARY KEY (ID))");
+               "CREATE TABLE PLANET(\n" +
+                   "ID INTEGER NOT NULL IDENTITY (1,1),\n" +
+                   "POSITION INTEGER,\n" +
+                   "NAME VARCHAR(255), \n" +
+                   "PICTURE varbinary(8000), \n" +
+                   "DESCRIPTION NTEXT, \n" +
+                   "PRIMARY KEY (ID))");
   }
 
   @Override
   public void createSpaceshipTable(Connection connection) throws SQLException {
     executeDdl(connection,
-               "CREATE TABLE SPACESHIP(ID INTEGER NOT NULL AUTO_INCREMENT,MODEL VARCHAR(255), MANUFACTURER VARCHAR(255), PRIMARY KEY (ID))");
+               "CREATE TABLE SPACESHIP(\n" +
+                   "ID INTEGER NOT NULL IDENTITY (1,1),\n" +
+                   "MODEL VARCHAR(255), \n" +
+                   "MANUFACTURER VARCHAR(255), \n" +
+                   "PRIMARY KEY (ID))");
   }
 
   @Override
@@ -65,9 +87,10 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS updatePlanetDescription;\n");
 
     final String sql =
-        "CREATE DEFINER=CURRENT_USER PROCEDURE updatePlanetDescription(IN pName VARCHAR(50), IN pDescription LONGTEXT)\n" +
+        "CREATE PROCEDURE updatePlanetDescription(@pName VARCHAR(50),@pDescription NTEXT)\n" +
+            "AS\n" +
             "BEGIN\n" +
-            "update PLANET SET DESCRIPTION=pDescription where NAME = pName;\n" +
+            "    update Planet SET DESCRIPTION=@pDescription where NAME = @pName;\n" +
             "END";
 
     createStoredProcedure(dataSource, sql);
@@ -77,13 +100,13 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
   public void createStoredProcedureParameterizedUpdateTestType1(DataSource dataSource) throws SQLException {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS updateParamTestType1;\n");
 
-    final String sql = "CREATE DEFINER=CURRENT_USER PROCEDURE updateParamTestType1(IN pName VARCHAR(50))\n" +
-        "BEGIN\n" +
-        "    DECLARE name VARCHAR(50);\n" +
-        "    SET name = pName;\n" +
-        "    IF pName IS NULL THEN SET name = 'NullLand';\n" +
-        "    END IF;\n" +
-        "    UPDATE PLANET SET NAME=name WHERE POSITION=4;\n" +
+    final String sql = "CREATE PROCEDURE updateParamTestType1(@pName VARCHAR(50))\n" +
+        "    AS\n" +
+        "    BEGIN\n" +
+        "        DECLARE @name varchar(50);\n" +
+        "        SET @name = ISNULL(@pName,'NullLand') \n" +
+        "\n" +
+        "    UPDATE PLANET SET NAME=@name WHERE POSITION=4;\n" +
         "END";
 
     createStoredProcedure(dataSource, sql);
@@ -93,8 +116,11 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
   public void createStoredProcedureCountRecords(DataSource dataSource) throws SQLException {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS countTestRecords;\n");
 
-    final String sql = "CREATE DEFINER=CURRENT_USER PROCEDURE countTestRecords(OUT pResult INT)\n" + "BEGIN\n"
-        + "select count(*) into pResult from PLANET;\n" + "END";
+    final String sql = "CREATE PROCEDURE countTestRecords(@pResult INT OUTPUT)\n" +
+        "AS\n" +
+        "BEGIN\n" +
+        "    set @pResult = (select count(*) from PLANET)\n" +
+        "END";
 
     createStoredProcedure(dataSource, sql);
   }
@@ -111,7 +137,11 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS doubleMyInt;\n");
 
     final String sql =
-        "CREATE DEFINER=CURRENT_USER PROCEDURE doubleMyInt(INOUT pInt INT)\n" + "BEGIN\n" + "SET pInt := pInt * 2;\n" + "END";
+        "CREATE PROCEDURE doubleMyInt(@pInt INT OUTPUT)\n" +
+            "AS\n" +
+            "BEGIN\n" +
+            "    SET @pInt = @pInt * 2\n" +
+            "END";
 
     createStoredProcedure(dataSource, sql);
   }
@@ -121,8 +151,12 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS multiplyInts;\n");
 
     final String sql =
-        "CREATE DEFINER=CURRENT_USER PROCEDURE multiplyInts(IN pInt1 INT, IN pInt2 INT, OUT pResult1 INT, IN pInt3 INT, OUT pResult2 INT)\n"
-            + "BEGIN\n" + "SET pResult1 := pInt1 * pInt2;\n" + "SET pResult2 := pInt1 * pInt2 * pInt3;\n" + "END";
+        "CREATE PROCEDURE multiplyInts(@pInt1 INT, @pInt2 INT, @pResult1 INT OUTPUT, @pInt3 INT, @pResult2 INT OUTPUT)\n" +
+            "AS\n" +
+            "BEGIN\n" +
+            "    SET @pResult1 = @pInt1 * @pInt2;\n" +
+            "    SET @pResult2 = @pInt1 * @pInt2 * @pInt3;\n" +
+            "END";
     createStoredProcedure(dataSource, sql);
   }
 
@@ -131,27 +165,23 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS concatenateStrings;\n");
 
     final String sql =
-        "CREATE DEFINER=CURRENT_USER PROCEDURE concatenateStrings(IN pString1 VARCHAR(50), IN pString2 VARCHAR(50), OUT pResult VARCHAR(100))\n"
-            + "BEGIN\n" + "SET pResult := CONCAT(pString1, pString2);\n" + "END";
+        "CREATE PROCEDURE concatenateStrings(@pString1 VARCHAR(50), @pString2 VARCHAR(50), @pResult VARCHAR(100) OUTPUT)\n" +
+            "AS\n" +
+            "BEGIN\n" +
+            "    SET @pResult = CONCAT(@pString1, @pString2)\n" +
+            "END";
 
     createStoredProcedure(dataSource, sql);
   }
 
   @Override
   public void createDelayFunction(DataSource dataSource) throws SQLException {
-    executeDdl(dataSource, "DROP FUNCTION IF EXISTS DELAY;\n");
-
-    final String sql = "CREATE FUNCTION DELAY(seconds INTEGER) RETURNS INTEGER\n" + "BEGIN\n" + " DO SLEEP(seconds * 1000);\n"
-        + " RETURN 1;\n" + "END;";
-    createStoredProcedure(dataSource, sql);
+    //SQL Server doesn't support delays inside functions
   }
 
   @Override
   public MetadataType getDescriptionFieldMetaDataType() {
-    return getStringType();
-  }
-
-  private MetadataType getStringType() {
-    return typeBuilder.stringType().build();
+    // TODO(pablo.kraan): DB - what type must be used here?
+    return super.getDescriptionFieldMetaDataType();
   }
 }

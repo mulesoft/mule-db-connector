@@ -32,8 +32,12 @@ public class DbExceptionHandler extends ExceptionHandler {
         .map(cause -> (Exception) new BadSqlSyntaxException(e.getMessage(), e))
         .orElseGet(() -> getCauseOfType(e, SQLException.class)
             .map(sqlException -> {
-              if (isConnectionException(sqlException)) {
-                return new ConnectionException(e.getMessage(), e);
+              if (isConnectionException(sqlException) || e instanceof ConnectionException) {
+                return new ConnectionException(sqlException.getMessage(), sqlException);
+              }
+
+              if (isBadSyntaxException(sqlException)) {
+                return new BadSqlSyntaxException(sqlException.getMessage(), sqlException);
               }
 
               return new QueryExecutionException(sqlException.getMessage(), sqlException);
@@ -45,5 +49,10 @@ public class DbExceptionHandler extends ExceptionHandler {
   private boolean isConnectionException(SQLException e) {
     String sqlState = e.getSQLState();
     return "08S01".equals(sqlState) || "08001".equals(sqlState);
+  }
+
+  private boolean isBadSyntaxException(SQLException e) {
+    String sqlState = e.getSQLState();
+    return "S0001".equals(sqlState);
   }
 }

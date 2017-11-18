@@ -18,6 +18,7 @@ import org.mule.extension.db.internal.domain.connection.derby.DerbyConnectionPro
 import org.mule.extension.db.internal.domain.connection.generic.GenericConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnectionProvider;
+import org.mule.extension.db.internal.domain.connection.sqlserver.SqlServerConnectionProvider;
 import org.mule.extension.db.internal.domain.type.CompositeDbTypeManager;
 import org.mule.extension.db.internal.domain.type.DbTypeManager;
 import org.mule.extension.db.internal.domain.type.MetadataDbTypeManager;
@@ -47,7 +48,7 @@ import java.util.List;
 @Extension(name = "Database")
 @Operations({DmlOperations.class, DdlOperations.class, BulkOperations.class})
 @ConnectionProviders({DataSourceReferenceConnectionProvider.class, GenericConnectionProvider.class, DerbyConnectionProvider.class,
-    MySqlConnectionProvider.class, OracleDbConnectionProvider.class})
+    MySqlConnectionProvider.class, OracleDbConnectionProvider.class, SqlServerConnectionProvider.class})
 @Xml(prefix = "db")
 @Export(
     classes = {QueryDefinition.class, StoredProcedureCall.class, BulkQueryDefinition.class, ConnectionCreationException.class,

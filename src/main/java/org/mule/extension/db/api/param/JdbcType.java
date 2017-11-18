@@ -25,63 +25,79 @@ import java.util.List;
  */
 public enum JdbcType {
 
-  BIT(new ResolvedDbType(Types.BIT, "BIT")), TINYINT(
-      new ResolvedDbType(Types.TINYINT, "TINYINT")), SMALLINT(
-          new ResolvedDbType(Types.SMALLINT, "SMALLINT")), INTEGER(
-              new ResolvedDbType(Types.INTEGER, "INTEGER")), BIGINT(
-                  new ResolvedDbType(Types.BIGINT, "BIGINT")), FLOAT(
-                      new ResolvedDbType(Types.FLOAT, "FLOAT")), REAL(
-                          new ResolvedDbType(Types.REAL, "REAL")), DOUBLE(
-                              new ResolvedDbType(Types.DOUBLE, "DOUBLE")), NUMERIC(
-                                  new ResolvedDbType(Types.NUMERIC, "NUMERIC")), DECIMAL(
-                                      new ResolvedDbType(Types.DECIMAL, "DECIMAL")), CHAR(
-                                          new ResolvedDbType(Types.CHAR, "CHAR")), VARCHAR(
-                                              new ResolvedDbType(Types.VARCHAR, "VARCHAR")), LONGVARCHAR(
-                                                  new ResolvedDbType(Types.LONGVARCHAR, "LONGVARCHAR")), DATE(
-                                                      new ResolvedDbType(Types.DATE, "DATE")), TIME(
-                                                          new ResolvedDbType(Types.TIME, "TIME")), TIMESTAMP(
-                                                              new ResolvedDbType(Types.TIMESTAMP, "TIMESTAMP")), BINARY(
-                                                                  new ResolvedDbType(Types.BINARY, "BINARY")), VARBINARY(
-                                                                      new ResolvedDbType(Types.VARBINARY,
-                                                                                         "VARBINARY")), LONGVARBINARY(
-                                                                                             new ResolvedDbType(Types.LONGVARBINARY,
-                                                                                                                "LONGVARBINARY")), NULL(
-                                                                                                                    new ResolvedDbType(Types.NULL,
-                                                                                                                                       "NULL")), OTHER(
-                                                                                                                                           new ResolvedDbType(Types.OTHER,
-                                                                                                                                                              "OTHER")), JAVA_OBJECT(
-                                                                                                                                                                  new ResolvedDbType(Types.JAVA_OBJECT,
-                                                                                                                                                                                     "JAVA_OBJECT")), DISTINCT(
-                                                                                                                                                                                         new ResolvedDbType(Types.DISTINCT,
-                                                                                                                                                                                                            "DISTINCT")), STRUCT(
-                                                                                                                                                                                                                new ResolvedDbType(Types.STRUCT,
-                                                                                                                                                                                                                                   "STRUCT")), ARRAY(
-                                                                                                                                                                                                                                       new ResolvedDbType(Types.ARRAY,
-                                                                                                                                                                                                                                                          "ARRAY")), BLOB(
-                                                                                                                                                                                                                                                              new BlobDbType(Types.BLOB,
-                                                                                                                                                                                                                                                                             "BLOB")), CLOB(
-                                                                                                                                                                                                                                                                                 new ClobResolvedDataType(Types.CLOB,
-                                                                                                                                                                                                                                                                                                          "CLOB")), REF(
-                                                                                                                                                                                                                                                                                                              new ResolvedDbType(Types.REF,
-                                                                                                                                                                                                                                                                                                                                 "REF")), DATALINK(
-                                                                                                                                                                                                                                                                                                                                     new ResolvedDbType(Types.DATALINK,
-                                                                                                                                                                                                                                                                                                                                                        "DATALINK")), BOOLEAN(
-                                                                                                                                                                                                                                                                                                                                                            new ResolvedDbType(Types.BOOLEAN,
-                                                                                                                                                                                                                                                                                                                                                                               "BOOLEAN")), ROWID(
-                                                                                                                                                                                                                                                                                                                                                                                   new ResolvedDbType(Types.ROWID,
-                                                                                                                                                                                                                                                                                                                                                                                                      "ROWID")), NCHAR(
-                                                                                                                                                                                                                                                                                                                                                                                                          new ResolvedDbType(Types.NCHAR,
-                                                                                                                                                                                                                                                                                                                                                                                                                             "NCHAR")), NVARCHAR(
-                                                                                                                                                                                                                                                                                                                                                                                                                                 new ResolvedDbType(Types.NVARCHAR,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                    "NVARCHAR")), LONGNVARCHAR(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        new ResolvedDbType(Types.LONGNVARCHAR,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                           "LONGNVARCHAR")), NCLOB(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                               new ResolvedDbType(Types.NCLOB,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  "NCLOB")), SQLXML(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      new ResolvedDbType(Types.SQLXML,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         "SQLXML")), UNKNOWN(
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             UnknownDbType
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 .getInstance());
+  BIT(new ResolvedDbType(Types.BIT, "BIT")),
+
+  TINYINT(new ResolvedDbType(Types.TINYINT, "TINYINT")),
+
+  SMALLINT(new ResolvedDbType(Types.SMALLINT, "SMALLINT")),
+
+  INTEGER(new ResolvedDbType(Types.INTEGER, "INTEGER")),
+
+  BIGINT(new ResolvedDbType(Types.BIGINT, "BIGINT")),
+
+  FLOAT(new ResolvedDbType(Types.FLOAT, "FLOAT")),
+
+  REAL(new ResolvedDbType(Types.REAL, "REAL")),
+
+  DOUBLE(new ResolvedDbType(Types.DOUBLE, "DOUBLE")),
+
+  NUMERIC(new ResolvedDbType(Types.NUMERIC, "NUMERIC")),
+
+  DECIMAL(new ResolvedDbType(Types.DECIMAL, "DECIMAL")),
+
+  CHAR(new ResolvedDbType(Types.CHAR, "CHAR")),
+
+  VARCHAR(new ResolvedDbType(Types.VARCHAR, "VARCHAR")),
+
+  LONGVARCHAR(new ResolvedDbType(Types.LONGVARCHAR, "LONGVARCHAR")),
+
+  DATE(new ResolvedDbType(Types.DATE, "DATE")),
+
+  TIME(new ResolvedDbType(Types.TIME, "TIME")),
+
+  TIMESTAMP(new ResolvedDbType(Types.TIMESTAMP, "TIMESTAMP")),
+
+  BINARY(new ResolvedDbType(Types.BINARY, "BINARY")),
+
+  VARBINARY(new ResolvedDbType(Types.VARBINARY, "VARBINARY")),
+
+  LONGVARBINARY(new ResolvedDbType(Types.LONGVARBINARY, "LONGVARBINARY")),
+
+  NULL(new ResolvedDbType(Types.NULL, "NULL")),
+
+  OTHER(new ResolvedDbType(Types.OTHER, "OTHER")),
+
+  JAVA_OBJECT(new ResolvedDbType(Types.JAVA_OBJECT, "JAVA_OBJECT")),
+
+  DISTINCT(new ResolvedDbType(Types.DISTINCT, "DISTINCT")),
+
+  STRUCT(new ResolvedDbType(Types.STRUCT, "STRUCT")),
+
+  ARRAY(new ResolvedDbType(Types.ARRAY, "ARRAY")),
+
+  BLOB(new BlobDbType(Types.BLOB, "BLOB")),
+
+  CLOB(new ClobResolvedDataType(Types.CLOB, "CLOB")),
+
+  REF(new ResolvedDbType(Types.REF, "REF")),
+
+  DATALINK(new ResolvedDbType(Types.DATALINK, "DATALINK")),
+
+  BOOLEAN(new ResolvedDbType(Types.BOOLEAN, "BOOLEAN")),
+
+  ROWID(new ResolvedDbType(Types.ROWID, "ROWID")),
+
+  NCHAR(new ResolvedDbType(Types.NCHAR, "NCHAR")),
+
+  NVARCHAR(new ResolvedDbType(Types.NVARCHAR, "NVARCHAR")),
+
+  LONGNVARCHAR(new ResolvedDbType(Types.LONGNVARCHAR, "LONGNVARCHAR")),
+
+  NCLOB(new ResolvedDbType(Types.NCLOB, "NCLOB")),
+
+  SQLXML(new ResolvedDbType(Types.SQLXML, "SQLXML")),
+
+  UNKNOWN(UnknownDbType.getInstance());
 
   private final DbType dbType;
 

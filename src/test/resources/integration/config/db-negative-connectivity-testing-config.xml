@@ -53,4 +53,20 @@
     <db:config name="driverClassNotFound">
         <db:generic-connection driverClassName="invalid.driver.Driver" url="jdbc:derby://127.0.0.1:28812/test;create=true"/>
     </db:config>
+
+    <db:config name="sqlServerInvalidHost">
+        <db:mssql-connection host="invalidHost" />
+    </db:config>
+
+    <db:config name="sqlServerInvalidCredentials">
+        <db:mssql-connection host="0.0.0.0" />
+    </db:config>
+
+    <db:config name="sqlServerInvalidCredentialsForUser">
+        <db:mssql-connection host="0.0.0.0" user="sa" password="dsadsadsa" />
+    </db:config>
+
+    <db:config name="sqlServerInvalidDatabase">
+        <db:mssql-connection host="0.0.0.0" user="sa" password="yourStrong(!)Password" databaseName="dsadsadsa"/>
+    </db:config>
 </mule>

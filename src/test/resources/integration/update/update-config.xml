@@ -54,7 +54,7 @@
                 USING PLANET p2
                 ON (p1.Id = p2.ID)
                 WHEN MATCHED
-                THEN UPDATE SET p1.name = 'merged'
+                THEN UPDATE SET p1.name = 'merged';
             </db:sql>
         </db:update>
     </flow>

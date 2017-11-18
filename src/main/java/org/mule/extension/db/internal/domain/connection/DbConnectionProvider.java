@@ -11,13 +11,15 @@ import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.mule.extension.db.api.exception.connection.DbError.CANNOT_LOAD_DRIVER;
+import static org.mule.extension.db.api.exception.connection.DbError.CONNECTIVITY;
 import static org.mule.runtime.api.connection.ConnectionValidationResult.success;
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
-import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.disposeIfNeeded;
 import static org.mule.runtime.api.util.collection.Collectors.toImmutableList;
+import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.disposeIfNeeded;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.extension.db.api.config.DbPoolingProfile;
 import org.mule.extension.db.api.exception.connection.ConnectionClosingException;
 import org.mule.extension.db.api.exception.connection.ConnectionCommitException;
@@ -46,18 +48,20 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
 import javax.sql.XAConnection;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 
 /**
  * Creates a generic DB connection through an URL
@@ -296,6 +300,6 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
 
     return dbError
         .map(errorType -> new ConnectionCreationException(CONNECTION_ERROR_MESSAGE, e, errorType))
-        .orElse(new ConnectionCreationException(CONNECTION_ERROR_MESSAGE, e));
+        .orElse(new ConnectionCreationException(CONNECTION_ERROR_MESSAGE, e, CONNECTIVITY));
   }
 }

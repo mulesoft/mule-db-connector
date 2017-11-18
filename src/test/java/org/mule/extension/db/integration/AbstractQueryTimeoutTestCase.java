@@ -8,8 +8,11 @@
 package org.mule.extension.db.integration;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assume.assumeThat;
+import static org.mule.extension.db.integration.DbTestUtil.DbType.SQLSERVER;
 
 import org.mule.functional.api.exception.ExpectedError;
 import org.mule.runtime.api.message.Message;
@@ -21,7 +24,7 @@ import org.junit.Test;
 
 public abstract class AbstractQueryTimeoutTestCase extends AbstractDbIntegrationTestCase {
 
-  private static final String QUERY_TIMEOUT_FLOW = "queryTimeout";
+  public static final String QUERY_TIMEOUT_FLOW = "queryTimeout";
 
   @Rule
   public ExpectedError expectedError = ExpectedError.none();
@@ -36,6 +39,8 @@ public abstract class AbstractQueryTimeoutTestCase extends AbstractDbIntegration
    */
   @Test
   public void timeoutsQuery() throws Exception {
+    //TODO: SQL Server doesn't support delay inside functions.
+    assumeThat(dbType, is(not(SQLSERVER)));
     CoreEvent responseEvent = flowRunner(QUERY_TIMEOUT_FLOW).withPayload(0).run();
 
     Message response = responseEvent.getMessage();

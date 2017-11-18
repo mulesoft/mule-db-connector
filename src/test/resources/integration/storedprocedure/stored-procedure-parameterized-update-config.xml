@@ -7,7 +7,7 @@
 
     <flow name="update">
         <db:stored-procedure config-ref="dbConfig">
-            <db:sql>call updateParamTestType1(:type)</db:sql>
+            <db:sql>{ call updateParamTestType1 (:type) }</db:sql>
             <db:input-parameters>
                 #[{'type' : payload}]
             </db:input-parameters>

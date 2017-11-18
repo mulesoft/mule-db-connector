@@ -11,7 +11,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
-import static org.mule.extension.db.integration.DbTestUtil.DbType.MYSQL;
 import static org.mule.extension.db.internal.domain.metadata.SelectMetadataResolver.DUPLICATE_COLUMN_LABEL_ERROR;
 
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
@@ -25,10 +24,10 @@ import org.mule.runtime.api.metadata.resolving.MetadataFailure;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
 import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFactory;
 
-import org.junit.Test;
-
 import java.sql.Blob;
 import java.sql.Clob;
+
+import org.junit.Test;
 
 public class SelectMetadataOutputTestCase extends AbstractDbIntegrationTestCase {
 
@@ -47,12 +46,21 @@ public class SelectMetadataOutputTestCase extends AbstractDbIntegrationTestCase 
     assertFieldOfType(record, "ID", testDatabase.getIdFieldMetaDataType());
     assertFieldOfType(record, "POSITION", testDatabase.getPositionFieldMetaDataType());
     assertFieldOfType(record, "NAME", typeBuilder.stringType().build());
-    if (testDatabase.getDbType().equals(MYSQL)) {
-      assertFieldOfType(record, "PICTURE", typeBuilder.binaryType().build());
-      assertFieldOfType(record, "DESCRIPTION", typeBuilder.anyType().build());
-    } else {
-      assertFieldOfType(record, "PICTURE", typeLoader.load(Blob.class));
-      assertFieldOfType(record, "DESCRIPTION", typeLoader.load(Clob.class));
+    switch (testDatabase.getDbType()) {
+      case MYSQL: {
+        assertFieldOfType(record, "PICTURE", typeBuilder.binaryType().build());
+        assertFieldOfType(record, "DESCRIPTION", typeBuilder.anyType().build());
+        break;
+      }
+      case SQLSERVER: {
+        assertFieldOfType(record, "PICTURE", typeBuilder.binaryType().build());
+        assertFieldOfType(record, "DESCRIPTION", typeBuilder.stringType().build());
+        break;
+      }
+      default: {
+        assertFieldOfType(record, "PICTURE", typeLoader.load(Blob.class));
+        assertFieldOfType(record, "DESCRIPTION", typeLoader.load(Clob.class));
+      }
     }
   }
 

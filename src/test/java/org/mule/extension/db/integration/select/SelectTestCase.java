@@ -101,11 +101,9 @@ public class SelectTestCase extends AbstractDbIntegrationTestCase {
     final String nameFieldAlias = "PLANETNAME";
 
     Message response = flowRunner("usesAlias").keepStreamsOpen().run().getMessage();
-    assertMessageContains(response, new Record[] {
-        new Record(new Field(nameFieldAlias, Planet.VENUS.getName())),
-        new Record(new Field(nameFieldAlias, Planet.EARTH.getName())),
-        new Record(new Field(nameFieldAlias, Planet.MARS.getName())),
-    });
+    assertMessageContains(response, new Record(new Field(nameFieldAlias, Planet.VENUS.getName())),
+                          new Record(new Field(nameFieldAlias, Planet.EARTH.getName())),
+                          new Record(new Field(nameFieldAlias, Planet.MARS.getName())));
   }
 
   @Test

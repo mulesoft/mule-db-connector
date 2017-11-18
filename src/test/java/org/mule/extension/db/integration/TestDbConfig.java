@@ -9,9 +9,11 @@ package org.mule.extension.db.integration;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+
 import org.mule.extension.db.integration.model.DerbyTestDatabase;
 import org.mule.extension.db.integration.model.MySqlTestDatabase;
 import org.mule.extension.db.integration.model.OracleTestDatabase;
+import org.mule.extension.db.integration.model.SqlServerTestDataBase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +27,7 @@ public class TestDbConfig {
    * <strong>Developer Note:</strong>
    * To run oracle tests you need to follow this steps:
    * <ul>
-   * <li>set this USE_ORACLE flag to true</li>
+   * <li>Set this USE_ORACLE flag to true</li>
    * <li>You need to have an oracle instance running in your machine. (You can use the oracle-xe-11g docker image: https://hub.docker.com/r/wnameless/oracle-xe-11g)</li>
    * <li>Then you need to install in your maven repository an <strong>oracle-jdbc-driver</strong> using the mvn install:install-file command</li>
    * <li>Add the installed driver dependency to this project so the test can find it in the classpath</li>
@@ -34,12 +36,23 @@ public class TestDbConfig {
    */
   private static boolean USE_ORACLE = false;
 
+  /**
+   * <strong>Developer Note:</strong>
+   * To run Microsoft SQL Server tests you need to follow this steps:
+   * <ul>
+   * <li>Set this USE_MSSQL_SERVER flag to true</li>
+   * <li>To start a SQL Server using docker, run: <code>docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -p 1433:1433 -d microsoft/mssql-server-linux</code>
+   * </ul>
+   */
+  private static boolean USE_MSSQL_SERVER = false;
+
   public static List<Object[]> getResources() {
     List<Object[]> result = new ArrayList<>();
 
     result.addAll(getDerbyResource());
     result.addAll(getMySqlResource());
     result.addAll(getOracleResource());
+    result.addAll(getSqlServerResource());
 
     return result;
   }
@@ -69,6 +82,16 @@ public class TestDbConfig {
       final OracleTestDatabase oracleTestDatabase = new OracleTestDatabase();
       return singletonList(new Object[] {"integration/config/oracle-db-config.xml", oracleTestDatabase,
           oracleTestDatabase.getDbType()});
+    } else {
+      return emptyList();
+    }
+  }
+
+  public static List<Object[]> getSqlServerResource() {
+    if (USE_MSSQL_SERVER) {
+      final SqlServerTestDataBase sqlServerTestDataBase = new SqlServerTestDataBase();
+      return singletonList(new Object[] {"integration/config/mssql-db-config.xml", sqlServerTestDataBase,
+          sqlServerTestDataBase.getDbType()});
     } else {
       return emptyList();
     }

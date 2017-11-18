@@ -18,23 +18,29 @@ import java.util.Map;
  */
 public class StaticDbTypeManager implements DbTypeManager {
 
-  private Map<String, DbType> vendorTypes = new HashMap<>();
+  private Map<String, DbType> nameVendorTypesMap = new HashMap<>();
+  private Map<String, DbType> nameAndIdVendorTypesMap = new HashMap<>();
 
   public StaticDbTypeManager(List<DbType> vendorTypes) {
     for (DbType vendorType : vendorTypes) {
-      this.vendorTypes.put(vendorType.getName(), vendorType);
+      this.nameAndIdVendorTypesMap.put(vendorType.getName() + vendorType.getId(), vendorType);
+      this.nameVendorTypesMap.put(vendorType.getName(), vendorType);
     }
   }
 
   @Override
   public DbType lookup(DbConnection connection, int id, String name) throws UnknownDbTypeException {
-    throw new UnknownDbTypeException(id, name);
+    if (nameAndIdVendorTypesMap.containsKey(name + id)) {
+      return nameAndIdVendorTypesMap.get(name + id);
+    } else {
+      throw new UnknownDbTypeException(id, name);
+    }
   }
 
   @Override
   public DbType lookup(DbConnection connection, String name) throws UnknownDbTypeException {
-    if (vendorTypes.containsKey(name)) {
-      return vendorTypes.get(name);
+    if (nameVendorTypesMap.containsKey(name)) {
+      return nameVendorTypesMap.get(name);
     } else {
       throw new UnknownDbTypeException(name);
     }

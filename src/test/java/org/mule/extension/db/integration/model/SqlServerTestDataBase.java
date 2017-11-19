@@ -181,7 +181,6 @@ public class SqlServerTestDataBase extends AbstractTestDatabase {
 
   @Override
   public MetadataType getDescriptionFieldMetaDataType() {
-    // TODO(pablo.kraan): DB - what type must be used here?
-    return super.getDescriptionFieldMetaDataType();
+    return typeBuilder.stringType().build();
   }
 }

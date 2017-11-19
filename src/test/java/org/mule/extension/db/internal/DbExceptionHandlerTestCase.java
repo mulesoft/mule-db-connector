@@ -62,10 +62,9 @@ public class DbExceptionHandlerTestCase extends AbstractMuleTestCase {
   private void assertConnectivitySqlState(String sqlState) {
     SQLException sqlException = mock(SQLException.class);
     when(sqlException.getSQLState()).thenReturn(sqlState);
-    Exception e = new RuntimeException(sqlException);
 
-    Exception handledException = handler.enrichException(e);
+    Exception handledException = handler.enrichException(sqlException);
     assertThat(handledException, is(instanceOf(ConnectionException.class)));
-    assertThat(handledException.getCause(), is(sameInstance(e)));
+    assertThat(handledException.getCause(), is(sameInstance(sqlException)));
   }
 }

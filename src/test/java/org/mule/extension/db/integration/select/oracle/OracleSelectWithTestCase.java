@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.integration.select.oracle;
 
+import static java.util.Collections.emptyList;
 import static org.mule.extension.db.integration.TestDbConfig.getOracleResource;
 import static org.mule.extension.db.integration.TestRecordUtil.assertMessageContains;
 import static org.mule.extension.db.integration.TestRecordUtil.getAllPlanetRecords;
@@ -29,7 +30,7 @@ public class OracleSelectWithTestCase extends AbstractDbIntegrationTestCase {
     if (!getOracleResource().isEmpty()) {
       final OracleTestDatabase oracleTestDatabase = new OracleTestDatabase();
       params.add(new Object[] {"integration/config/oracle-db-config.xml", oracleTestDatabase,
-          oracleTestDatabase.getDbType()});
+          oracleTestDatabase.getDbType(), emptyList()});
     }
 
     return params;

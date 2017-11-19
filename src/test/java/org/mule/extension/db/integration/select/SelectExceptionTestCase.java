@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.integration.select;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
@@ -14,12 +15,12 @@ import static org.junit.Assert.fail;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.DerbyTestDatabase;
 
-import org.junit.Test;
-import org.junit.runners.Parameterized;
+import javax.sql.DataSource;
 
 import java.util.List;
 
-import javax.sql.DataSource;
+import org.junit.Test;
+import org.junit.runners.Parameterized;
 
 public class SelectExceptionTestCase extends AbstractDbIntegrationTestCase {
 
@@ -29,7 +30,7 @@ public class SelectExceptionTestCase extends AbstractDbIntegrationTestCase {
   public static List<Object[]> parameters() {
     final DerbyTestDatabase derbyTestDatabase = new DerbyTestDatabase();
     return singletonList(new Object[] {"integration/config/derby-pooling-db-config.xml", derbyTestDatabase,
-        derbyTestDatabase.getDbType()});
+        derbyTestDatabase.getDbType(), emptyList()});
   }
 
   @Override

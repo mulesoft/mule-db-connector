@@ -7,6 +7,7 @@
 
 package org.mule.extension.db.integration.select.oracle;
 
+import static java.util.Collections.emptyList;
 import static org.mule.extension.db.integration.TestDbConfig.getOracleResource;
 import static org.mule.extension.db.integration.TestRecordUtil.assertRecords;
 import static org.mule.extension.db.integration.model.Contact.CONTACT1;
@@ -34,7 +35,7 @@ public class SelectJavaArrayUdtTestCase extends AbstractDbIntegrationTestCase {
     if (!getOracleResource().isEmpty()) {
       final OracleTestDatabase oracleTestDatabase = new OracleTestDatabase();
       params.add(new Object[] {"integration/config/oracle-mapped-udt-db-config.xml", oracleTestDatabase,
-          oracleTestDatabase.getDbType()});
+          oracleTestDatabase.getDbType(), emptyList()});
     }
 
     return params;

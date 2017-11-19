@@ -61,7 +61,7 @@ public class TestDbConfig {
     if (USE_DERBY) {
       final DerbyTestDatabase derbyTestDatabase = new DerbyTestDatabase();
       return singletonList(new Object[] {"integration/config/derby-datasource.xml", derbyTestDatabase,
-          derbyTestDatabase.getDbType()});
+          derbyTestDatabase.getDbType(), emptyList()});
     } else {
       return emptyList();
     }
@@ -71,7 +71,7 @@ public class TestDbConfig {
     if (USE_MYSQL) {
       final MySqlTestDatabase mySqlTestDatabase = new MySqlTestDatabase();
       return singletonList(new Object[] {"integration/config/mysql-db-config.xml", mySqlTestDatabase,
-          mySqlTestDatabase.getDbType()});
+          mySqlTestDatabase.getDbType(), emptyList()});
     } else {
       return emptyList();
     }
@@ -81,7 +81,7 @@ public class TestDbConfig {
     if (USE_ORACLE) {
       final OracleTestDatabase oracleTestDatabase = new OracleTestDatabase();
       return singletonList(new Object[] {"integration/config/oracle-db-config.xml", oracleTestDatabase,
-          oracleTestDatabase.getDbType()});
+          oracleTestDatabase.getDbType(), emptyList()});
     } else {
       return emptyList();
     }
@@ -91,7 +91,7 @@ public class TestDbConfig {
     if (USE_MSSQL_SERVER) {
       final SqlServerTestDataBase sqlServerTestDataBase = new SqlServerTestDataBase();
       return singletonList(new Object[] {"integration/config/mssql-db-config.xml", sqlServerTestDataBase,
-          sqlServerTestDataBase.getDbType()});
+          sqlServerTestDataBase.getDbType(), singletonList("merge")});
     } else {
       return emptyList();
     }

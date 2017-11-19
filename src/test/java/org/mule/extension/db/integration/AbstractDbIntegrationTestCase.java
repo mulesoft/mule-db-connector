@@ -24,6 +24,7 @@ import static org.mule.metadata.api.model.MetadataFormat.JAVA;
 import static org.mule.runtime.api.component.location.Location.builder;
 import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
 import static org.mule.runtime.core.api.connection.util.ConnectionProviderUtils.unwrapProviderWrapper;
+
 import org.mule.extension.db.api.StatementResult;
 import org.mule.extension.db.integration.model.AbstractTestDatabase;
 import org.mule.extension.db.integration.model.Field;
@@ -51,14 +52,14 @@ import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFacto
 import org.mule.runtime.extension.api.runtime.config.ConfigurationProvider;
 import org.mule.test.runner.RunnerDelegateTo;
 
+import javax.inject.Inject;
+import javax.sql.DataSource;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import javax.inject.Inject;
-import javax.sql.DataSource;
 
 import org.junit.Before;
 import org.junit.runners.Parameterized;
@@ -75,6 +76,9 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
 
   @Parameterized.Parameter(2)
   public DbTestUtil.DbType dbType;
+
+  @Parameterized.Parameter(3)
+  public List<String> vendorFlows;
 
   @Inject
   private MetadataService metadataService;
@@ -260,6 +264,15 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
 
   public List<DbConfig> additionalConfigs() {
     return emptyList();
+  }
+
+  @Override
+  protected FlowRunner flowRunner(String flowName) {
+    if (vendorFlows.contains(flowName)) {
+      return super.flowRunner(flowName + dbType);
+    } else {
+      return super.flowRunner(flowName);
+    }
   }
 
   public static class DbConfig {

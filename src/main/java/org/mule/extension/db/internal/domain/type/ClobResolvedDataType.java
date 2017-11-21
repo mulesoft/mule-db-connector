@@ -11,6 +11,7 @@ import static java.lang.String.format;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.sql.Clob;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -29,19 +30,19 @@ public class ClobResolvedDataType extends ResolvedDbType {
   @Override
   public void setParameterValue(PreparedStatement statement, int index, Object value) throws SQLException {
     if (value != null && !(value instanceof Clob)) {
-      Clob clob = statement.getConnection().createClob();
       if (value instanceof String) {
-        clob.setString(1, (String) value);
+        statement.setCharacterStream(index, new StringReader((String) value), ((String) value).length());
       } else if (value instanceof InputStream) {
         try {
-          clob.setString(1, IOUtils.toString((InputStream) value));
+          String stringValue = IOUtils.toString((InputStream) value);
+          statement.setCharacterStream(index, new StringReader(stringValue), stringValue.length());
         } catch (IOException e) {
           throw new SQLException(e);
         }
       } else {
         throw new IllegalArgumentException(createUnsupportedTypeErrorMessage(value));
       }
-      value = clob;
+      return;
     }
 
     super.setParameterValue(statement, index, value);

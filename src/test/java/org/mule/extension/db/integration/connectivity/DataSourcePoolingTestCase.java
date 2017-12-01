@@ -18,15 +18,15 @@ import org.mule.runtime.api.message.Message;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.event.CoreEvent;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runners.Parameterized;
+
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runners.Parameterized;
 
 public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
 
@@ -109,7 +109,8 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
 
   private Message doRunFlow(String flowName) {
     try {
-      return flowRunner(flowName).run().getMessage();
+      CoreEvent response = flowRunner(flowName).run();
+      return response != null ? response.getMessage() : null;
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

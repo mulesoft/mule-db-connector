@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.integration.connectivity;
 
+import static java.lang.Runtime.getRuntime;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.IntStream.range;
 import static org.hamcrest.CoreMatchers.is;
@@ -17,8 +18,11 @@ import org.mule.functional.api.component.EventCallback;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.event.CoreEvent;
+import org.mule.tck.junit4.rule.DynamicPort;
+import org.mule.tck.junit4.rule.SystemProperty;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -33,6 +37,11 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
   private static final int TIMEOUT = 10;
   private static final TimeUnit TIMEOUT_UNIT = SECONDS;
   private static CountDownLatch connectionLatch;
+  private static int CORES = getRuntime().availableProcessors();
+
+  @Rule
+  public SystemProperty maxConnections = new SystemProperty("maxConnections", Integer.toString(CORES - 1));
+
 
   @Parameterized.Parameters(name = "{2}")
   public static List<Object[]> parameters() {
@@ -41,7 +50,7 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
 
   @Before
   public void setUp() throws Exception {
-    setConcurrentRequests(2);
+    setConcurrentRequests(CORES - 1);
   }
 
   private void setConcurrentRequests(int count) {
@@ -67,9 +76,9 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void limitsConnections() throws Exception {
-    setConcurrentRequests(3);
-    Message[] responses = request(3);
-    assertThat(countSuccesses(responses), is(2));
+    setConcurrentRequests(CORES - 1);
+    Message[] responses = request(CORES);
+    assertThat(countSuccesses(responses), is(CORES - 1));
     assertThat(countFailures(responses), is(1));
   }
 
@@ -89,11 +98,10 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
     return responses;
   }
 
-
   @Test
   public void waitForever() throws Exception {
-    setConcurrentRequests(3);
-    for (int i = 0; i < 3; i++) {
+    setConcurrentRequests(CORES);
+    for (int i = 0; i < CORES; i++) {
       new Thread(() -> doRunFlow("waitForever")).start();
     }
     assertThat(connectionLatch.await(5, SECONDS), is(false));

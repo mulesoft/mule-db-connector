@@ -19,7 +19,7 @@ public abstract class AbstractStoredProcedureReturningStreamingResultsetsTestCas
 
   @Test
   public void getResultSet() throws Exception {
-    Message response = flowRunner("getResultSet").run().getMessage();
+    Message response = flowRunner("getResultSet").keepStreamsOpen().run().getMessage();
     assertResponse(response);
   }
 

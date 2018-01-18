@@ -12,6 +12,7 @@ import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
+import org.mule.runtime.extension.api.annotation.values.OfValues;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +42,7 @@ public final class DerbyConnectionParameters extends BaseDbConnectionParameters 
   @Parameter
   @Optional(defaultValue = "directory")
   @Placement(order = 2)
+  @OfValues(DerbySubsubProtocolValueProvider.class)
   private String subsubProtocol;
 
   /**

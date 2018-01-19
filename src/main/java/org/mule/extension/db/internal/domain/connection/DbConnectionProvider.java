@@ -97,6 +97,7 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
   @Parameter
   @Optional
   @Expression(NOT_SUPPORTED)
+  @Placement(tab = ADVANCED_TAB)
   private List<ColumnType> columnTypes = emptyList();
 
 

@@ -12,6 +12,7 @@ import org.mule.extension.db.internal.domain.type.MappedStructResolvedDbType;
 import org.mule.runtime.api.connection.ConnectionException;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -27,8 +28,17 @@ import javax.sql.DataSource;
 public class JdbcConnectionFactory {
 
   /**
+   * Ensures DriverManager classloading takes place before any connection creation. It prevents a JDK deadlock that only occurs
+   * when two JDBC Connections of different DB vendors are created concurrently and the {@link DriverManager} hasn't been loaded
+   * yet. For more information, see MULE-14605.
+   */
+  static {
+    DriverManager.getLoginTimeout();
+  }
+
+  /**
    * Creates a new JDBC {@link Connection}
-   * 
+   *
    * @param dataSource the {@link DataSource} from which the connection comes from
    * @param customDataTypes user defined data types
    * @return a {@link Connection}

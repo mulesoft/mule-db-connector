@@ -24,9 +24,6 @@ import org.mule.runtime.api.metadata.resolving.MetadataFailure;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
 import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFactory;
 
-import java.sql.Blob;
-import java.sql.Clob;
-
 import org.junit.Test;
 
 public class SelectMetadataOutputTestCase extends AbstractDbIntegrationTestCase {
@@ -58,8 +55,8 @@ public class SelectMetadataOutputTestCase extends AbstractDbIntegrationTestCase 
         break;
       }
       default: {
-        assertFieldOfType(record, "PICTURE", typeLoader.load(Blob.class));
-        assertFieldOfType(record, "DESCRIPTION", typeLoader.load(Clob.class));
+        assertFieldOfType(record, "PICTURE", typeBuilder.binaryType().build());
+        assertFieldOfType(record, "DESCRIPTION", typeBuilder.stringType().build());
       }
     }
   }

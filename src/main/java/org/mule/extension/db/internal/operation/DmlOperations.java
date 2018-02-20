@@ -15,7 +15,6 @@ import static org.mule.extension.db.internal.domain.query.QueryType.STORE_PROCED
 import static org.mule.extension.db.internal.domain.query.QueryType.TRUNCATE;
 import static org.mule.extension.db.internal.domain.query.QueryType.UPDATE;
 import static org.mule.extension.db.internal.operation.AutoGenerateKeysAttributes.AUTO_GENERATE_KEYS;
-import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 
 import org.mule.extension.db.api.StatementResult;
@@ -51,7 +50,6 @@ import org.mule.runtime.extension.api.runtime.operation.FlowListener;
 import org.mule.runtime.extension.api.runtime.streaming.PagingProvider;
 import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
-import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -279,17 +277,6 @@ public class DmlOperations extends BaseDbOperations {
   }
 
   private Map<String, Object> resolveResultStreams(Map<String, Object> map, StreamingHelper streamingHelper) {
-    for (Map.Entry<String, Object> entry : map.entrySet()) {
-      Object v = entry.getValue();
-      if (v instanceof Blob) {
-        try {
-          entry.setValue(((Blob) v).getBinaryStream());
-        } catch (Exception e) {
-          throw new MuleRuntimeException(createStaticMessage("Could not open BLOB stream"), e);
-        }
-      }
-    }
-
     return streamingHelper.resolveCursorProviders(map, true);
   }
 }

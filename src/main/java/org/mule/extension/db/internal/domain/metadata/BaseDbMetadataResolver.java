@@ -6,30 +6,29 @@
  */
 package org.mule.extension.db.internal.domain.metadata;
 
+import static org.mule.metadata.api.model.MetadataFormat.XML;
 import static org.mule.runtime.api.metadata.resolving.FailureCode.INVALID_CONFIGURATION;
 import static org.mule.runtime.api.metadata.resolving.FailureCode.UNKNOWN;
+
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.query.QueryTemplate;
 import org.mule.extension.db.internal.parser.SimpleQueryTemplateParser;
 import org.mule.metadata.api.ClassTypeLoader;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
+import org.mule.metadata.api.model.BinaryType;
 import org.mule.metadata.api.model.MetadataType;
+import org.mule.metadata.api.model.NumberType;
+import org.mule.metadata.api.model.StringType;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.metadata.MetadataContext;
 import org.mule.runtime.api.metadata.MetadataResolvingException;
 
 import java.net.URL;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Ref;
 import java.sql.RowId;
 import java.sql.SQLException;
-import java.sql.SQLXML;
 import java.sql.Struct;
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
@@ -81,41 +80,53 @@ public abstract class BaseDbMetadataResolver {
   private void initializeDbToMetaDataType() {
     dbToMetaDataType = new HashMap<>();
 
+    NumberType numberType = typeBuilder.numberType().build();
+    StringType stringType = typeBuilder.stringType().build();
+    BinaryType binaryType = typeBuilder.binaryType().build();
+
     dbToMetaDataType.put(Types.BIT, typeBuilder.booleanType().build());
-    dbToMetaDataType.put(Types.TINYINT, typeBuilder.binaryType().build());
-    dbToMetaDataType.put(Types.SMALLINT, typeBuilder.numberType().build());
-    dbToMetaDataType.put(Types.INTEGER, typeBuilder.numberType().build());
-    dbToMetaDataType.put(Types.BIGINT, typeBuilder.numberType().build());
-    dbToMetaDataType.put(Types.FLOAT, typeBuilder.numberType().build());
-    dbToMetaDataType.put(Types.REAL, typeBuilder.numberType().build());
-    dbToMetaDataType.put(Types.DOUBLE, typeBuilder.numberType().build());
-    dbToMetaDataType.put(Types.NUMERIC, typeBuilder.numberType().build());
-    dbToMetaDataType.put(Types.DECIMAL, typeBuilder.numberType().build());
-    dbToMetaDataType.put(Types.CHAR, typeBuilder.stringType().build());
-    dbToMetaDataType.put(Types.VARCHAR, typeBuilder.stringType().build());
-    dbToMetaDataType.put(Types.LONGNVARCHAR, typeBuilder.stringType().build());
-    dbToMetaDataType.put(Types.DATE, typeLoader.load(Date.class));
-    dbToMetaDataType.put(Types.TIME, typeLoader.load(Time.class));
-    dbToMetaDataType.put(Types.TIMESTAMP, typeLoader.load(Timestamp.class));
-    dbToMetaDataType.put(Types.BINARY, typeBuilder.binaryType().build());
-    dbToMetaDataType.put(Types.VARBINARY, typeBuilder.binaryType().build());
-    dbToMetaDataType.put(Types.LONGVARBINARY, typeBuilder.binaryType().build());
-    dbToMetaDataType.put(Types.NULL, typeBuilder.nullType().build());
+    dbToMetaDataType.put(Types.BOOLEAN, typeBuilder.booleanType().build());
+
+    dbToMetaDataType.put(Types.TINYINT, numberType);
+    dbToMetaDataType.put(Types.SMALLINT, numberType);
+    dbToMetaDataType.put(Types.INTEGER, numberType);
+    dbToMetaDataType.put(Types.BIGINT, numberType);
+    dbToMetaDataType.put(Types.FLOAT, numberType);
+    dbToMetaDataType.put(Types.REAL, numberType);
+    dbToMetaDataType.put(Types.DOUBLE, numberType);
+    dbToMetaDataType.put(Types.NUMERIC, numberType);
+    dbToMetaDataType.put(Types.DECIMAL, numberType);
+
+    dbToMetaDataType.put(Types.CHAR, stringType);
+    dbToMetaDataType.put(Types.VARCHAR, stringType);
+    dbToMetaDataType.put(Types.LONGNVARCHAR, stringType);
+    dbToMetaDataType.put(Types.CLOB, stringType);
+    dbToMetaDataType.put(Types.NCHAR, stringType);
+    dbToMetaDataType.put(Types.NVARCHAR, stringType);
+    dbToMetaDataType.put(Types.NCLOB, stringType);
+
+    dbToMetaDataType.put(Types.BINARY, binaryType);
+    dbToMetaDataType.put(Types.VARBINARY, binaryType);
+    dbToMetaDataType.put(Types.LONGVARBINARY, binaryType);
+    dbToMetaDataType.put(Types.BLOB, binaryType);
+
+    dbToMetaDataType.put(Types.DATE, typeBuilder.dateType().build());
+    dbToMetaDataType.put(Types.TIMESTAMP, typeBuilder.dateType().build());
+    dbToMetaDataType.put(Types.TIME, typeBuilder.timeType().build());
+
     dbToMetaDataType.put(Types.OTHER, typeBuilder.anyType().build());
     dbToMetaDataType.put(Types.JAVA_OBJECT, typeBuilder.anyType().build());
     dbToMetaDataType.put(Types.DISTINCT, typeBuilder.anyType().build());
-    dbToMetaDataType.put(Types.STRUCT, typeLoader.load(Struct.class));
+
     dbToMetaDataType.put(Types.ARRAY, typeBuilder.arrayType().of().anyType().build());
-    dbToMetaDataType.put(Types.BLOB, typeLoader.load(Blob.class));
-    dbToMetaDataType.put(Types.CLOB, typeLoader.load(Clob.class));
+
+    dbToMetaDataType.put(Types.NULL, typeBuilder.nullType().build());
+
+    dbToMetaDataType.put(Types.SQLXML, BaseTypeBuilder.create(XML).objectType().build());
+
+    dbToMetaDataType.put(Types.STRUCT, typeLoader.load(Struct.class));
     dbToMetaDataType.put(Types.REF, typeLoader.load(Ref.class));
     dbToMetaDataType.put(Types.DATALINK, typeLoader.load(URL.class));
-    dbToMetaDataType.put(Types.BOOLEAN, typeBuilder.booleanType().build());
     dbToMetaDataType.put(Types.ROWID, typeLoader.load(RowId.class));
-    dbToMetaDataType.put(Types.NCHAR, typeBuilder.stringType().build());
-    dbToMetaDataType.put(Types.NVARCHAR, typeBuilder.stringType().build());
-    dbToMetaDataType.put(Types.LONGNVARCHAR, typeBuilder.stringType().build());
-    dbToMetaDataType.put(Types.NCLOB, typeBuilder.stringType().build());
-    dbToMetaDataType.put(Types.SQLXML, typeLoader.load(SQLXML.class));
   }
 }

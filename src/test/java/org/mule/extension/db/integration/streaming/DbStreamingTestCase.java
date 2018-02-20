@@ -14,6 +14,7 @@ import static org.junit.Assert.assertThat;
 import static org.mule.runtime.core.api.util.StreamingUtils.streamingContent;
 
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
+import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.mule.runtime.api.streaming.object.CursorIterator;
 import org.mule.runtime.api.streaming.object.CursorIteratorProvider;
@@ -56,8 +57,8 @@ public class DbStreamingTestCase extends AbstractDbIntegrationTestCase {
     try (CursorIterator<Map<String, Object>> iterator = ((CursorIteratorProvider) response).openCursor()) {
       Map<String, Object> row = iterator.next();
       assertThat(row.get("NAME"), is("88"));
-      Object blob = row.get("PICTURE");
-      assertThat(blob, is(instanceOf(CursorStreamProvider.class)));
+      TypedValue blob = (TypedValue) row.get("PICTURE");
+      assertThat(blob.getValue(), is(instanceOf(CursorStreamProvider.class)));
     }
   }
 

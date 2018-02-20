@@ -22,7 +22,7 @@
             </db:select>
             <!-- Get the CLOB field value -->
             <set-payload value="#[mel:payload.openCursor().next().get('DESCRIPTION')]"/>
-            <custom-processor class="org.mule.extension.db.integration.ClobToString"/>
+            <set-payload value="#[output application/java --- payload as String]"/>
         </try>
     </flow>
 </mule>

@@ -15,7 +15,7 @@ import static org.mule.extension.db.internal.domain.query.QueryType.STORE_PROCED
 import static org.mule.extension.db.internal.domain.query.QueryType.TRUNCATE;
 import static org.mule.extension.db.internal.domain.query.QueryType.UPDATE;
 import static org.mule.extension.db.internal.operation.AutoGenerateKeysAttributes.AUTO_GENERATE_KEYS;
-import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
+import static org.mule.runtime.api.util.Preconditions.checkArgument;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 
 import org.mule.extension.db.api.StatementResult;
@@ -41,6 +41,8 @@ import org.mule.extension.db.internal.result.statement.StatementResultHandler;
 import org.mule.extension.db.internal.result.statement.StreamingStatementResultHandler;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.exception.MuleRuntimeException;
+import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.core.api.util.ClassUtils;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -51,11 +53,11 @@ import org.mule.runtime.extension.api.runtime.operation.FlowListener;
 import org.mule.runtime.extension.api.runtime.streaming.PagingProvider;
 import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
-import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -279,17 +281,39 @@ public class DmlOperations extends BaseDbOperations {
   }
 
   private Map<String, Object> resolveResultStreams(Map<String, Object> map, StreamingHelper streamingHelper) {
-    for (Map.Entry<String, Object> entry : map.entrySet()) {
-      Object v = entry.getValue();
-      if (v instanceof Blob) {
-        try {
-          entry.setValue(((Blob) v).getBinaryStream());
-        } catch (Exception e) {
-          throw new MuleRuntimeException(createStaticMessage("Could not open BLOB stream"), e);
-        }
-      }
+    return resolveMap(map, true, streamingHelper);
+  }
+
+  //TODO MULE-14616: This is a copy of the StreamingHelper adding support for TypedValue properties.
+  private <K> Map<K, Object> resolveMap(Map<K, Object> map, boolean recursive, StreamingHelper streamingHelper) {
+    checkArgument(map != null, "Map cannot be null");
+    Map<K, Object> resolved;
+    try {
+      resolved = ClassUtils.instantiateClass(map.getClass());
+    } catch (Exception e) {
+      resolved = new LinkedHashMap<>();
     }
 
-    return streamingHelper.resolveCursorProviders(map, true);
+    for (Map.Entry<K, Object> entry : map.entrySet()) {
+      Object value = resolveCursorProvider(entry.getValue(), streamingHelper);
+
+      if (recursive && value instanceof Map) {
+        value = streamingHelper.resolveCursors((Map) value, recursive);
+      }
+
+      resolved.put(entry.getKey(), value);
+    }
+
+    return resolved;
+  }
+
+  private static Object resolveCursorProvider(Object value, StreamingHelper streamingHelper) {
+    if (value instanceof TypedValue) {
+      TypedValue typedValue = (TypedValue) value;
+      Object newValue = streamingHelper.resolveCursorProvider(typedValue.getValue());
+      return new TypedValue<>(newValue, typedValue.getDataType());
+    } else {
+      return streamingHelper.resolveCursorProvider(value);
+    }
   }
 }

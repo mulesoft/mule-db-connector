@@ -9,6 +9,7 @@ package org.mule.extension.db.integration.model;
 
 import static org.mule.extension.db.integration.model.RegionManager.NORTHWEST_MANAGER;
 import static org.mule.extension.db.integration.model.RegionManager.SOUTHWEST_MANAGER;
+
 import org.mule.extension.db.integration.DbTestUtil;
 import org.mule.metadata.api.ClassTypeLoader;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
@@ -16,12 +17,11 @@ import org.mule.metadata.api.model.MetadataFormat;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFactory;
 
-import java.sql.Clob;
+import javax.sql.DataSource;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import javax.sql.DataSource;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.slf4j.Logger;
@@ -395,7 +395,7 @@ public abstract class AbstractTestDatabase {
   }
 
   public MetadataType getDescriptionFieldMetaDataType() {
-    return typeLoader.load(Clob.class);
+    return typeBuilder.stringType().build();
   }
 
   public Class getIdFieldJavaClass() {

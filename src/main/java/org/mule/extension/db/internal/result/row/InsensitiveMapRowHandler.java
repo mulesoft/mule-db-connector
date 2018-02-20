@@ -7,8 +7,17 @@
 
 package org.mule.extension.db.internal.result.row;
 
+import static org.mule.runtime.api.metadata.MediaType.BINARY;
+import static org.mule.runtime.api.metadata.MediaType.TEXT;
+import static org.mule.runtime.api.metadata.MediaType.XML;
+
+import org.mule.runtime.api.metadata.DataType;
+import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.util.CaseInsensitiveHashMap;
 
+import java.io.InputStream;
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -31,9 +40,11 @@ public class InsensitiveMapRowHandler implements RowHandler {
       Object value = resultSet.getObject(i);
 
       if (value instanceof SQLXML) {
-        SQLXML sqlxml = (SQLXML) value;
-
-        result.put(column, sqlxml.getString());
+        result.put(column, handleSqlXmlType((SQLXML) value));
+      } else if (value instanceof Clob) {
+        result.put(column, handleClobType((Clob) value));
+      } else if (value instanceof Blob) {
+        result.put(column, handleBlobType((Blob) value));
       } else {
         result.put(column, value);
       }
@@ -44,5 +55,17 @@ public class InsensitiveMapRowHandler implements RowHandler {
     }
 
     return result;
+  }
+
+  private TypedValue<InputStream> handleSqlXmlType(SQLXML value) throws SQLException {
+    return new TypedValue<>(value.getBinaryStream(), DataType.builder().type(InputStream.class).mediaType(XML).build());
+  }
+
+  private TypedValue<InputStream> handleBlobType(Blob value) throws SQLException {
+    return new TypedValue<>(value.getBinaryStream(), DataType.builder().type(InputStream.class).mediaType(BINARY).build());
+  }
+
+  private TypedValue<InputStream> handleClobType(Clob value) throws SQLException {
+    return new TypedValue<>(value.getAsciiStream(), DataType.builder().type(InputStream.class).mediaType(TEXT).build());
   }
 }

@@ -7,6 +7,12 @@
 
 package org.mule.extension.db.internal.result.row;
 
+import static org.mule.runtime.api.metadata.MediaType.BINARY;
+import static org.mule.runtime.api.metadata.MediaType.TEXT;
+import static org.mule.runtime.api.metadata.MediaType.XML;
+
+import org.mule.runtime.api.metadata.DataType;
+import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.util.CaseInsensitiveHashMap;
 
 import java.io.InputStream;
@@ -51,16 +57,15 @@ public class InsensitiveMapRowHandler implements RowHandler {
     return result;
   }
 
-  //TODO MULE-14614 - All these handlers should return TypedValues indicating their MimeType.
-  private InputStream handleSqlXmlType(SQLXML value) throws SQLException {
-    return value.getBinaryStream();
+  private TypedValue<InputStream> handleSqlXmlType(SQLXML value) throws SQLException {
+    return new TypedValue<>(value.getBinaryStream(), DataType.builder().type(InputStream.class).mediaType(XML).build());
   }
 
-  private InputStream handleBlobType(Blob value) throws SQLException {
-    return value.getBinaryStream();
+  private TypedValue<InputStream> handleBlobType(Blob value) throws SQLException {
+    return new TypedValue<>(value.getBinaryStream(), DataType.builder().type(InputStream.class).mediaType(BINARY).build());
   }
 
-  private InputStream handleClobType(Clob value) throws SQLException {
-    return value.getAsciiStream();
+  private TypedValue<InputStream> handleClobType(Clob value) throws SQLException {
+    return new TypedValue<>(value.getAsciiStream(), DataType.builder().type(InputStream.class).mediaType(TEXT).build());
   }
 }

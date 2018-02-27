@@ -9,19 +9,16 @@ package org.mule.extension.db.integration.model;
 
 import static org.mule.extension.db.integration.model.RegionManager.NORTHWEST_MANAGER;
 import static org.mule.extension.db.integration.model.RegionManager.SOUTHWEST_MANAGER;
-
 import org.mule.extension.db.integration.DbTestUtil;
-import org.mule.metadata.api.ClassTypeLoader;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.model.MetadataFormat;
 import org.mule.metadata.api.model.MetadataType;
-import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFactory;
-
-import javax.sql.DataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import javax.sql.DataSource;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.slf4j.Logger;
@@ -29,20 +26,22 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractTestDatabase {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTestDatabase.class);
+
   public static final Planet[] PLANET_TEST_VALUES = {Planet.VENUS, Planet.EARTH, Planet.MARS};
+  public static final Planet[] ADDITIONAL_PLANET_VALUES = {Planet.TATOOINE, Planet.JAKU};
+
   public static final Alien[] ALIEN_TEST_VALUES = {Alien.MONGUITO, Alien.ET};
   public static final Contact[] CONTACT_TEST_VALUES = {Contact.CONTACT1, Contact.CONTACT2};
   public static final Region[] REGION_TEST_VALUES = {Region.NORTHWEST, Region.SOUTHWEST};
   public static final RegionManager[] REGION_MANAGER_TEST_VALUES = {SOUTHWEST_MANAGER, NORTHWEST_MANAGER};
 
-  private static final Logger logger = LoggerFactory.getLogger(AbstractTestDatabase.class);
   public static final String NO_SQLXML_SUPPORT_ERROR = "Database does not support SQLXML type";
   public static final String NO_RESULSET_FROM_FUNCTION_SUPPORT_ERROR =
       "Database does not support returning a resultset from a function";
   public static final String NO_UDT_SUPPORT_ERROR = "Database does not support User Defined Data Types";
 
   public final BaseTypeBuilder typeBuilder = BaseTypeBuilder.create(MetadataFormat.JAVA);
-  public final ClassTypeLoader typeLoader = ExtensionsTypeLoaderFactory.getDefault().createTypeLoader();
 
   public void deletePlanetTable(Connection connection) throws SQLException {
     executeUpdate(connection, "DELETE FROM PLANET");
@@ -83,8 +82,8 @@ public abstract class AbstractTestDatabase {
     try (Statement statement = connection.createStatement()) {
       int updated = statement.executeUpdate(updateSql);
 
-      if (logger.isDebugEnabled()) {
-        logger.debug(updated + " rows updated");
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug(updated + " rows updated");
       }
     }
   }
@@ -95,10 +94,14 @@ public abstract class AbstractTestDatabase {
     for (Planet planet : testValues) {
       int updated = qr.update(connection, getInsertPlanetSql(planet.getName(), planet.getPosition()));
 
-      if (logger.isDebugEnabled()) {
-        logger.debug(updated + " rows updated");
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug(updated + " rows updated");
       }
     }
+  }
+
+  public void addAdditionalPlanets(Connection connection) throws SQLException {
+    populatePlanetTable(connection, ADDITIONAL_PLANET_VALUES);
   }
 
   protected abstract String getInsertPlanetSql(String name, int position);
@@ -127,7 +130,7 @@ public abstract class AbstractTestDatabase {
 
       connection.commit();
     } catch (SQLException e) {
-      logger.info("Error creating test database", e);
+      LOGGER.info("Error creating test database", e);
       connection.rollback();
       throw e;
     } finally {
@@ -174,8 +177,8 @@ public abstract class AbstractTestDatabase {
     for (Contact contact : contacts) {
       int updated = qr.update(connection, getInsertContactSql(contact));
 
-      if (logger.isDebugEnabled()) {
-        logger.debug(updated + " rows updated");
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug(updated + " rows updated");
       }
     }
   }
@@ -218,8 +221,8 @@ public abstract class AbstractTestDatabase {
     for (Region region : regions) {
       int updated = qr.update(connection, getInsertRegionSql(region));
 
-      if (logger.isDebugEnabled()) {
-        logger.debug(updated + " rows updated");
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug(updated + " rows updated");
       }
     }
   }
@@ -250,8 +253,8 @@ public abstract class AbstractTestDatabase {
     for (RegionManager regionManager : managers) {
       int updated = qr.update(connection, getInsertRegionManagerSql(regionManager));
 
-      if (logger.isDebugEnabled()) {
-        logger.debug(updated + " rows updated");
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug(updated + " rows updated");
       }
     }
   }
@@ -276,8 +279,8 @@ public abstract class AbstractTestDatabase {
     for (Alien alien : testValues) {
       int updated = qr.update(connection, getInsertAlienSql(alien));
 
-      if (logger.isDebugEnabled()) {
-        logger.debug(updated + " rows updated");
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug(updated + " rows updated");
       }
     }
   }

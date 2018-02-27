@@ -37,28 +37,7 @@ public class SelectMetadataOutputTestCase extends AbstractDbIntegrationTestCase 
 
   @Test
   public void selectAll() throws Exception {
-    ObjectType record = getSelectOutputMetadata("select * from PLANET");
-
-    assertThat(record.getFields().size(), equalTo(5));
-    assertFieldOfType(record, "ID", testDatabase.getIdFieldMetaDataType());
-    assertFieldOfType(record, "POSITION", testDatabase.getPositionFieldMetaDataType());
-    assertFieldOfType(record, "NAME", typeBuilder.stringType().build());
-    switch (testDatabase.getDbType()) {
-      case MYSQL: {
-        assertFieldOfType(record, "PICTURE", typeBuilder.binaryType().build());
-        assertFieldOfType(record, "DESCRIPTION", typeBuilder.anyType().build());
-        break;
-      }
-      case SQLSERVER: {
-        assertFieldOfType(record, "PICTURE", typeBuilder.binaryType().build());
-        assertFieldOfType(record, "DESCRIPTION", typeBuilder.stringType().build());
-        break;
-      }
-      default: {
-        assertFieldOfType(record, "PICTURE", typeBuilder.binaryType().build());
-        assertFieldOfType(record, "DESCRIPTION", typeBuilder.stringType().build());
-      }
-    }
+    assertPlanetObjectType(getSelectOutputMetadata("select * from PLANET"));
   }
 
   @Test

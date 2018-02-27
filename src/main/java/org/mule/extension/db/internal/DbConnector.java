@@ -27,12 +27,14 @@ import org.mule.extension.db.internal.exception.DbExceptionHandler;
 import org.mule.extension.db.internal.operation.BulkOperations;
 import org.mule.extension.db.internal.operation.DdlOperations;
 import org.mule.extension.db.internal.operation.DmlOperations;
+import org.mule.extension.db.internal.source.RowListener;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.Export;
 import org.mule.runtime.extension.api.annotation.Extension;
 import org.mule.runtime.extension.api.annotation.OnException;
 import org.mule.runtime.extension.api.annotation.Operations;
+import org.mule.runtime.extension.api.annotation.Sources;
 import org.mule.runtime.extension.api.annotation.connectivity.ConnectionProviders;
 import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
 import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
@@ -47,6 +49,7 @@ import java.util.List;
  */
 @Extension(name = "Database")
 @Operations({DmlOperations.class, DdlOperations.class, BulkOperations.class})
+@Sources(RowListener.class)
 @ConnectionProviders({DataSourceReferenceConnectionProvider.class, GenericConnectionProvider.class, DerbyConnectionProvider.class,
     MySqlConnectionProvider.class, OracleDbConnectionProvider.class, SqlServerConnectionProvider.class})
 @Xml(prefix = "db")

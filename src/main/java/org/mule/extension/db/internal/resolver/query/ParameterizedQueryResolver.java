@@ -39,7 +39,7 @@ public class ParameterizedQueryResolver<T extends ParameterizedStatementDefiniti
   private Optional<Reference<Object>> getStreamingAwareParameter(T statementDefinition, String parameterName,
                                                                  StreamingHelper streamingHelper) {
     return getInputParameter(statementDefinition, parameterName)
-        .map(ref -> new Reference<>(streamingHelper.resolveCursor(ref.get())));
+        .map(ref -> streamingHelper != null ? new Reference<>(streamingHelper.resolveCursor(ref.get())) : ref);
   }
 
   protected Optional<Reference<Object>> getInputParameter(T statementDefinition, String parameterName) {

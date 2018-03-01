@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * will be used to filter the contents of the next poll, so that only rows with a greater watermark value are returned. If an
  * id column is provided, this component will automatically make sure that the same row is not picked twice by concurrent polls
  *
- * @since 1.1
+ * @since 1.3
  */
 @MetadataScope(outputResolver = RowListenerMetadataResolver.class)
 @Alias("listener")

@@ -33,6 +33,8 @@ import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
+import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
+import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.source.PollContext;
 import org.mule.runtime.extension.api.runtime.source.PollContext.PollItem;
@@ -57,6 +59,8 @@ import org.slf4j.LoggerFactory;
  * @since 1.3
  */
 @MetadataScope(outputResolver = RowListenerMetadataResolver.class)
+@DisplayName("On Table Row")
+@Summary("Triggers a message per each row in a table")
 @Alias("listener")
 public class RowListener extends PollingSource<Map<String, Object>, Void> {
 

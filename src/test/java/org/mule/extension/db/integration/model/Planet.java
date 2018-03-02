@@ -12,6 +12,8 @@ public class Planet {
   public static final Planet VENUS = new Planet("Venus", 2);
   public static final Planet EARTH = new Planet("Earth", 3);
   public static final Planet MARS = new Planet("Mars", 4);
+  public static final Planet TATOOINE = new Planet("Tatooine", 5);
+  public static final Planet JAKU = new Planet("Jaku", 5);
 
   private String name;
   private int position;

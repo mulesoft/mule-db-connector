@@ -51,6 +51,7 @@ import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFacto
 import org.mule.runtime.extension.api.runtime.config.ConfigurationProvider;
 import org.mule.test.runner.RunnerDelegateTo;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +81,7 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
   public List<String> vendorFlows;
 
   @Inject
-  private MetadataService metadataService;
+  protected MetadataService metadataService;
 
   protected final BaseTypeBuilder typeBuilder = BaseTypeBuilder.create(JAVA);
   protected final ClassTypeLoader typeLoader = ExtensionsTypeLoaderFactory.getDefault().createTypeLoader();
@@ -93,6 +94,21 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
   @Before
   public void configDB() throws SQLException {
     executeWithDataSources(dataSource -> testDatabase.createDefaultDatabaseConfig(dataSource));
+  }
+
+  protected void withConnections(CheckedConsumer<Connection> connectionConsumer) {
+    executeWithDataSources(dataSource -> {
+      Connection connection = dataSource.getConnection();
+      try {
+        connection.setAutoCommit(false);
+        connectionConsumer.accept(connection);
+        connection.commit();
+      } catch (Exception e) {
+        connection.rollback();
+      } finally {
+        connection.close();
+      }
+    });
   }
 
   protected void executeWithDataSources(CheckedConsumer<DataSource> dataSourceConsumer) {
@@ -196,6 +212,29 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
     List<Map<String, String>> result =
         selectData(format("select * from PLANET where name in (%s)", conditionBuilder.toString()), getDefaultDataSource());
     assertThat(result.size(), equalTo(0));
+  }
+
+  protected void assertPlanetObjectType(ObjectType type) {
+    assertThat(type.getFields().size(), equalTo(5));
+    assertFieldOfType(type, "ID", testDatabase.getIdFieldMetaDataType());
+    assertFieldOfType(type, "POSITION", testDatabase.getPositionFieldMetaDataType());
+    assertFieldOfType(type, "NAME", typeBuilder.stringType().build());
+    switch (testDatabase.getDbType()) {
+      case MYSQL: {
+        assertFieldOfType(type, "PICTURE", typeBuilder.binaryType().build());
+        assertFieldOfType(type, "DESCRIPTION", typeBuilder.anyType().build());
+        break;
+      }
+      case SQLSERVER: {
+        assertFieldOfType(type, "PICTURE", typeBuilder.binaryType().build());
+        assertFieldOfType(type, "DESCRIPTION", typeBuilder.stringType().build());
+        break;
+      }
+      default: {
+        assertFieldOfType(type, "PICTURE", typeBuilder.binaryType().build());
+        assertFieldOfType(type, "DESCRIPTION", typeBuilder.stringType().build());
+      }
+    }
   }
 
   private String addCondition(StringBuilder conditionBuilder, String name) {

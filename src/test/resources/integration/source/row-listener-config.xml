@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:test="http://www.mulesoft.org/schema/mule/test"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+            http://www.mulesoft.org/schema/mule/test http://www.mulesoft.org/schema/mule/test/current/mule-test.xsd
+            http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+
+    <flow name="listenPlanets" initialState="stopped">
+        <db:listener table="PLANET" config-ref="dbConfig">
+            <scheduling-strategy>
+                <fixed-frequency frequency="1000"/>
+            </scheduling-strategy>
+        </db:listener>
+        <test:processor class="org.mule.extension.db.integration.source.RowListenerTestCase$CapturePayloadProcessor" />
+    </flow>
+
+    <flow name="listenPlanetsWithWatermark" initialState="stopped">
+        <db:listener table="PLANET" watermarkColumn="ID" config-ref="dbConfig">
+            <scheduling-strategy>
+                <fixed-frequency frequency="1000"/>
+            </scheduling-strategy>
+        </db:listener>
+        <test:processor class="org.mule.extension.db.integration.source.RowListenerTestCase$CapturePayloadProcessor" />
+    </flow>
+
+    <flow name="idempotentListen" initialState="stopped">
+        <db:listener table="PLANET" idColumn="NAME" config-ref="dbConfig">
+            <scheduling-strategy>
+                <fixed-frequency frequency="1000"/>
+            </scheduling-strategy>
+        </db:listener>
+        <test:processor class="org.mule.extension.db.integration.source.RowListenerTestCase$CapturePayloadProcessor" />
+        <test:processor waitTime="5000" />
+    </flow>
+
+</mule>

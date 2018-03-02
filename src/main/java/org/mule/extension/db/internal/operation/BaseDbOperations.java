@@ -46,9 +46,9 @@ import java.util.stream.Collectors;
  *
  * @since 1.0
  */
-abstract class BaseDbOperations {
+public abstract class BaseDbOperations {
 
-  protected static final int DEFAULT_FETCH_SIZE = 10;
+  public static final int DEFAULT_FETCH_SIZE = 10;
   protected static final String QUERY_GROUP = "Query";
   protected static final String QUERY_SETTINGS = "Query Settings";
 

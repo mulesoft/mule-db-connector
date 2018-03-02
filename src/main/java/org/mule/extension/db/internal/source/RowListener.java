@@ -7,6 +7,7 @@
 package org.mule.extension.db.internal.source;
 
 import static java.lang.String.format;
+import static org.mule.extension.db.internal.operation.BaseDbOperations.DEFAULT_FETCH_SIZE;
 import static org.mule.runtime.api.meta.model.parameter.ParameterGroupModel.ADVANCED;
 import org.mule.extension.db.api.param.ParameterizedStatementDefinition;
 import org.mule.extension.db.api.param.QueryDefinition;
@@ -65,6 +66,7 @@ import org.slf4j.LoggerFactory;
 public class RowListener extends PollingSource<Map<String, Object>, Void> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RowListener.class);
+  public static final String WATERMARK_PARAM_NAME = "watermark";
 
   /**
    * The name of the table to select from
@@ -74,10 +76,12 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
   private String table;
 
   /**
-   * The name of the column to use for watermark
+   * The name of the column to use for watermark. Values taken from this column will be used to filter the contents of the next
+   * poll, so that only rows with a greater watermark value are processed.
    */
   @Parameter
   @Optional
+  @Summary("The name of the column used for watermark")
   private String watermarkColumn;
 
   /**
@@ -86,6 +90,7 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
    */
   @Parameter
   @Optional
+  @Summary("The name of the column to consider as row ID")
   private String idColumn;
 
   @ParameterGroup(name = ADVANCED)
@@ -109,6 +114,11 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
         Object id = row.get(idColumn);
         if (id != null) {
           item.setId(id.toString());
+        } else {
+          if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(format(
+                                "A null ID value was obtained for row %s. Idempotency will not be enforced for this row", row));
+          }
         }
       };
     } else {
@@ -166,15 +176,15 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
       QueryDefinition queryDefinition = new QueryDefinition();
       StringBuilder sql = new StringBuilder("SELECT * FROM ").append(table);
       pollContext.getWatermark().ifPresent(w -> {
-        sql.append(" WHERE ").append(watermarkColumn).append(" > :watermark");
-        queryDefinition.addInputParameter("watermark", w);
+        sql.append(" WHERE ").append(watermarkColumn).append(" > :").append(WATERMARK_PARAM_NAME);
+        queryDefinition.addInputParameter(WATERMARK_PARAM_NAME, w);
       });
 
       queryDefinition.setSql(sql.toString());
       Query query = queryResolver.resolve(queryDefinition, config, connection, null);
 
       QueryStatementFactory statementFactory = new QueryStatementFactory();
-      statementFactory.setFetchSize(settings.getFetchSize() != null ? settings.getFetchSize() : 0);
+      statementFactory.setFetchSize(settings.getFetchSize() != null ? settings.getFetchSize() : DEFAULT_FETCH_SIZE);
       statementFactory.setQueryTimeout(new Long(settings.getQueryTimeoutUnit().toSeconds(settings.getQueryTimeout())).intValue());
 
       ResultSetHandler resultSetHandler = new ListResultSetHandler(new InsensitiveMapRowHandler());
@@ -200,7 +210,9 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
 
   @Override
   public void onRejectedItem(Result<Map<String, Object>, Void> result, SourceCallbackContext sourceCallbackContext) {
-
+    if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Row has been rejected for processing: " + result.getOutput());
+    }
   }
 
   @FunctionalInterface

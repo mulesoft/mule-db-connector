@@ -12,6 +12,11 @@ import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.metadata.MetadataContext;
 import org.mule.runtime.api.metadata.MetadataResolvingException;
 
+/**
+ * Metadata resolver for the {@link RowListener}
+ *
+ * @since 1.3
+ */
 public class RowListenerMetadataResolver extends SelectMetadataResolver {
 
   @Override

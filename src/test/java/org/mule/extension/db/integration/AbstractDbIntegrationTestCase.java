@@ -217,6 +217,7 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
   protected void assertPlanetObjectType(ObjectType type) {
     assertThat(type.getFields().size(), equalTo(5));
     assertFieldOfType(type, "ID", testDatabase.getIdFieldMetaDataType());
+    assertFieldRequirement(type, "ID", true);
     assertFieldOfType(type, "POSITION", testDatabase.getPositionFieldMetaDataType());
     assertFieldOfType(type, "NAME", typeBuilder.stringType().build());
     switch (testDatabase.getDbType()) {
@@ -279,6 +280,12 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
     return metadata.get().getModel().getAllParameterModels().stream()
         .filter(p -> p.getName().equals("inputParameters") || p.getName().equals("bulkInputParameters"))
         .findFirst().get().getType();
+  }
+
+  protected void assertFieldRequirement(ObjectType record, String name, boolean required) {
+    Optional<ObjectFieldType> field = record.getFieldByName(name);
+    assertThat(field.isPresent(), is(true));
+    assertThat(field.get().isRequired(), is(required));
   }
 
   protected void assertFieldOfType(ObjectType record, String name, MetadataType type) {

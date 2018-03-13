@@ -46,6 +46,7 @@ public class SelectMetadataOutputTestCase extends AbstractDbIntegrationTestCase 
 
     assertThat(record.getFields().size(), equalTo(2));
     assertFieldOfType(record, "ID", testDatabase.getIdFieldMetaDataType());
+    assertFieldRequirement(record, "ID", true);
     assertFieldOfType(record, "POSITION", testDatabase.getPositionFieldMetaDataType());
   }
 

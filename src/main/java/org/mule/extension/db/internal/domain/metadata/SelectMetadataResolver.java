@@ -8,6 +8,8 @@ package org.mule.extension.db.internal.domain.metadata;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+
+import org.mule.metadata.api.builder.ObjectFieldTypeBuilder;
 import org.mule.metadata.api.builder.ObjectTypeBuilder;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.runtime.api.connection.ConnectionException;
@@ -61,12 +63,23 @@ public class SelectMetadataResolver extends BaseDbMetadataResolver implements Ou
                                            FailureCode.INVALID_METADATA_KEY);
     }
 
+    ObjectTypeBuilder record = typeBuilder.objectType();
     Map<String, MetadataType> recordModels = new HashMap<>();
     try {
       for (int i = 1; i <= statementMetaData.getColumnCount(); i++) {
         int columnType = statementMetaData.getColumnType(i);
-        recordModels.put(statementMetaData.getColumnLabel(i),
-                         getDataTypeMetadataModel(columnType, statementMetaData.getColumnClassName(i)));
+        MetadataType columnMetadataType = getDataTypeMetadataModel(columnType, statementMetaData.getColumnClassName(i));
+        String columnLabel = statementMetaData.getColumnLabel(i);
+        recordModels.put(columnLabel, columnMetadataType);
+
+        ObjectFieldTypeBuilder columnBuilder = record.addField();
+        columnBuilder.key(columnLabel);
+
+        if (statementMetaData.isNullable(i) == ResultSetMetaData.columnNoNulls) {
+          columnBuilder.required(true);
+        }
+
+        columnBuilder.value(columnMetadataType);
       }
       if (statementMetaData.getColumnCount() != recordModels.size()) {
         throw new MetadataResolvingException(DUPLICATE_COLUMN_LABEL_ERROR, FailureCode.INVALID_METADATA_KEY);
@@ -74,9 +87,6 @@ public class SelectMetadataResolver extends BaseDbMetadataResolver implements Ou
     } catch (SQLException e) {
       throw new MetadataResolvingException(e.getMessage(), FailureCode.UNKNOWN, e);
     }
-
-    ObjectTypeBuilder record = typeBuilder.objectType();
-    recordModels.entrySet().forEach(e -> record.addField().key(e.getKey()).value(e.getValue()));
 
     return record.build();
   }

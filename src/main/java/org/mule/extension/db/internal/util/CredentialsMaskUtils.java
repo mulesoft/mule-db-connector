@@ -84,8 +84,7 @@ public class CredentialsMaskUtils {
    *
    * @return input with user and password masked
    */
-  public static String maskUrlUserAndPassword(String input, Pattern passwordPattern, Pattern userPattern)
-  {
+  public static String maskUrlUserAndPassword(String input, Pattern passwordPattern, Pattern userPattern) {
     String inputMasked = maskUrlPattern(input, passwordPattern, PASSWORD_MASK, PASSWORD_URL_PREFIX);
     return maskUrlPattern(inputMasked, userPattern, USER_MASK, USER_URL_PREFIX);
   }

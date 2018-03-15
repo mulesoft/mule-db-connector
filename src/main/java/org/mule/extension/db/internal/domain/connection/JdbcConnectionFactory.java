@@ -9,7 +9,7 @@ package org.mule.extension.db.internal.domain.connection;
 import org.mule.extension.db.api.exception.connection.ConnectionCreationException;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.MappedStructResolvedDbType;
-import org.mule.runtime.api.connection.ConnectionException;
+import org.mule.extension.db.internal.util.CredentialsMaskUtils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -35,20 +35,27 @@ public class JdbcConnectionFactory {
    */
   public Connection createConnection(DataSource dataSource, List<DbType> customDataTypes)
       throws SQLException, ConnectionCreationException {
-    Connection connection;
-    connection = dataSource.getConnection();
+    try {
 
-    if (connection == null) {
-      throw new ConnectionCreationException("Unable to create connection to the provided dataSource: " + dataSource);
+
+      Connection connection;
+      connection = dataSource.getConnection();
+
+      if (connection == null) {
+        throw new ConnectionCreationException("Unable to create connection to the provided dataSource: " + dataSource);
+      }
+
+      Map<String, Class<?>> typeMapping = createTypeMapping(customDataTypes);
+
+      if (typeMapping != null && !typeMapping.isEmpty()) {
+        connection.setTypeMap(typeMapping);
+      }
+
+      return connection;
+    } catch (SQLException e) {
+      String s = CredentialsMaskUtils.maskUrlUserAndPassword(e.getMessage());
+      throw new SQLException(s, e.getSQLState(), e.getErrorCode(), e.getCause());
     }
-
-    Map<String, Class<?>> typeMapping = createTypeMapping(customDataTypes);
-
-    if (typeMapping != null && !typeMapping.isEmpty()) {
-      connection.setTypeMap(typeMapping);
-    }
-
-    return connection;
   }
 
   private Map<String, Class<?>> createTypeMapping(List<DbType> customDataTypes) {

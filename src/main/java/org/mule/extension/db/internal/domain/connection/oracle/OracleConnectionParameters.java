@@ -6,12 +6,16 @@
  */
 package org.mule.extension.db.internal.domain.connection.oracle;
 
+import static org.mule.runtime.extension.api.error.MuleErrors.CONNECTIVITY;
+
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
+import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Password;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
+import org.mule.runtime.extension.api.exception.ModuleException;
 
 /**
  * /**
@@ -64,6 +68,13 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
   @Placement(order = 5)
   private String instance;
 
+  /**
+   * The name of the database service name
+   */
+  @Parameter
+  @Optional
+  @Placement(order = 6)
+  private String serviceName;
 
   @Override
   public String getUrl() {
@@ -90,11 +101,19 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
     buf.append(host);
     buf.append(":");
     buf.append(port);
+    if (instance != null && serviceName != null) {
+      String errorMessage = "Instance (SID) : [" + instance + "] and Service Name : [" + serviceName
+          + "] were provided at the same time, please configure only one";
+      throw new ModuleException(errorMessage, CONNECTIVITY, new ConnectionException(errorMessage));
+    }
     if (instance != null) {
       buf.append(":");
       buf.append(instance);
     }
-
+    if (serviceName != null) {
+      buf.append("/");
+      buf.append(serviceName);
+    }
     return buf.toString();
   }
 }

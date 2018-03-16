@@ -8,6 +8,7 @@ package org.mule.extension.db.integration.connectivity.negative;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mule.extension.db.api.exception.connection.DbError.CANNOT_REACH;
+import static org.mule.extension.db.api.exception.connection.DbError.CONNECTIVITY;
 import static org.mule.extension.db.api.exception.connection.DbError.INVALID_CREDENTIALS;
 import static org.mule.extension.db.api.exception.connection.DbError.INVALID_DATABASE;
 import static org.mule.tck.junit4.matcher.ErrorTypeMatcher.errorType;
@@ -20,6 +21,12 @@ public class OracleNegativeConnectivityTestCase extends AbstractDbNegativeConnec
   @Test
   public void oracleConfigInvalidCredentials() {
     utils.assertFailedConnection("oracleConfigInvalidCredentials", IS_CONNECTION_EXCEPTION, is(errorType(INVALID_CREDENTIALS)));
+  }
+
+  @Test
+  public void oracleInstanceAndServiceNameAtTheSameType() {
+    utils.assertFailedConnection("oracleInstanceAndServiceNameAtTheSameType", IS_CONNECTION_EXCEPTION,
+                                 is(errorType(CONNECTIVITY)));
   }
 
   @Test

@@ -50,6 +50,10 @@
         <db:oracle-connection host="invalidHost" port="49161" instance="xe" user="system" password="oracle"/>
     </db:config>
 
+    <db:config name="oracleInstanceAndServiceNameAtTheSameType">
+        <db:oracle-connection host="192.168.99.100" port="49161" instance="xe" serviceName="xe" user="system" password="oracle"/>
+    </db:config>
+
     <db:config name="driverClassNotFound">
         <db:generic-connection driverClassName="invalid.driver.Driver" url="jdbc:derby://127.0.0.1:28812/test;create=true"/>
     </db:config>

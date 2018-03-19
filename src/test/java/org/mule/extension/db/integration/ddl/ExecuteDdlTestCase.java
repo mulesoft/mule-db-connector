@@ -14,6 +14,7 @@ import static org.mule.extension.db.integration.TestRecordUtil.assertRecords;
 
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.runtime.api.message.Message;
+import org.mule.tck.junit4.rule.SystemProperty;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -24,9 +25,15 @@ import javax.sql.DataSource;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 public class ExecuteDdlTestCase extends AbstractDbIntegrationTestCase {
+
+  @ClassRule
+  public static SystemProperty queryTimeout = new SystemProperty("queryTimeout", "10");
+  @ClassRule
+  public static SystemProperty queryTimeoutUnit = new SystemProperty("queryTimeoutUnit", "SECONDS");
 
   @Override
   protected String[] getFlowConfigurationResources() {

@@ -12,6 +12,7 @@ import static java.util.Optional.ofNullable;
 import static org.mule.extension.db.api.exception.connection.DbError.CANNOT_REACH;
 import static org.mule.extension.db.api.exception.connection.DbError.INVALID_CREDENTIALS;
 import static org.mule.extension.db.api.exception.connection.DbError.INVALID_DATABASE;
+import static org.mule.extension.db.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
 import static org.mule.extension.db.internal.domain.connection.sqlserver.SqlServerConnectionProvider.DRIVER_CLASS_NAME;
 import static org.mule.extension.db.internal.domain.connection.sqlserver.SqlServerConnectionProvider.MSSQL_COORDINATE;
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
@@ -26,11 +27,11 @@ import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 
-import javax.sql.DataSource;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Optional;
+
+import javax.sql.DataSource;
 
 /**
  * {@link DbConnectionProvider} implementation for Microsoft SQL Server Databases
@@ -41,7 +42,8 @@ import java.util.Optional;
 @Alias("mssql")
 @ExternalLib(name = "Microsoft SQL Server Driver",
     description = "A JDBC driver which supports connecting to an Microsoft SQL Server Database",
-    requiredClassName = DRIVER_CLASS_NAME, type = JAR, coordinates = MSSQL_COORDINATE)
+    requiredClassName = DRIVER_CLASS_NAME, type = JAR, coordinates = MSSQL_COORDINATE,
+    nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN)
 public class SqlServerConnectionProvider extends DbConnectionProvider {
 
   static final String DRIVER_CLASS_NAME = "com.microsoft.sqlserver.jdbc.SQLServerDriver";

@@ -19,7 +19,7 @@
     <description>A Mule extension that provides functionality for connecting to Databases through the JDBC standard</description>
 
     <properties>
-        <c3p0Version>0.9.5.2-MULE-001</c3p0Version>
+        <c3p0Version>0.9.5.2-MULE-002</c3p0Version>
         <commonsCollectionsVersion>3.2.2</commonsCollectionsVersion>
         <commonsDbUtilsVersion>1.2</commonsDbUtilsVersion>
         <commonsLangVersion>3.6</commonsLangVersion>

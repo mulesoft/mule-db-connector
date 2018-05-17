@@ -9,9 +9,11 @@ package org.mule.extension.db.internal.domain.connection.generic;
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.extension.db.internal.domain.connection.DbConnectionParameters;
+import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.ClassValue;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
+import org.mule.runtime.extension.api.annotation.param.display.Password;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
 /**
@@ -37,6 +39,23 @@ public final class GenericConnectionParameters extends BaseDbConnectionParameter
   @ClassValue(extendsOrImplements = "java.sql.Driver")
   private String driverClassName;
 
+  /**
+   * Database username
+   */
+  @Parameter
+  @Placement(order = 3)
+  @Optional
+  private String user;
+
+  /**
+   * Database password
+   */
+  @Parameter
+  @Placement(order = 4)
+  @Password
+  @Optional
+  private String password;
+
   @Override
   public String getUrl() {
     return url;
@@ -49,11 +68,11 @@ public final class GenericConnectionParameters extends BaseDbConnectionParameter
 
   @Override
   public String getPassword() {
-    return null;
+    return password;
   }
 
   @Override
   public String getUser() {
-    return null;
+    return user;
   }
 }

@@ -21,7 +21,7 @@
     <properties>
         <c3p0Version>0.9.5.2-MULE-002</c3p0Version>
         <commonsCollectionsVersion>3.2.2</commonsCollectionsVersion>
-        <commonsDbUtilsVersion>1.2</commonsDbUtilsVersion>
+        <commonsDbUtilsVersion>1.7</commonsDbUtilsVersion>
         <commonsLangVersion>3.7</commonsLangVersion>
         <commonsIoVersion>2.6</commonsIoVersion>
         <derbyVersion>10.11.1.1</derbyVersion>

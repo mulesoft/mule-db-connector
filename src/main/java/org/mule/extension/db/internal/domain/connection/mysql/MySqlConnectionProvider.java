@@ -25,10 +25,10 @@ import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 
-import javax.sql.DataSource;
-
 import java.sql.SQLException;
 import java.util.Optional;
+
+import javax.sql.DataSource;
 
 /**
  * Creates connections to a MySQL database.
@@ -45,7 +45,7 @@ public class MySqlConnectionProvider extends DbConnectionProvider {
   private static final String ACCESS_DENIED = "Access denied";
   private static final String UNKNOWN_DATABASE = "Unknown database";
   private static final String COMMUNICATIONS_LINK_FAILURE = "Communications link failure";
-  static final String MYSQL_GAV = "mysql:mysql-connector-java:5.1.44";
+  static final String MYSQL_GAV = "mysql:mysql-connector-java:5.1.46";
 
   @ParameterGroup(name = CONNECTION)
   private MySqlConnectionParameters mySqlParameters;

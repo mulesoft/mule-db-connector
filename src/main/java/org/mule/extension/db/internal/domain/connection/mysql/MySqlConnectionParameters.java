@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 public final class MySqlConnectionParameters extends BaseDbConnectionParameters implements DataSourceConfig {
 
   static final String MYSQL_DRIVER_CLASS = "com.mysql.jdbc.Driver";
+  static final String NEW_MYSQL_DRIVER_CLASS = "com.mysql.cj.jdbc.Driver";
   private static final String MY_SQL_PREFIX = "jdbc:mysql://";
   private static final String LOGGER_PROPERTY = "logger";
   private static final String MY_SQL_LOGGER = "org.mule.extension.db.api.logger.MuleMySqlLogger";
@@ -90,7 +91,12 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
 
   @Override
   public String getDriverClassName() {
-    return MYSQL_DRIVER_CLASS;
+    try {
+      Class.forName(NEW_MYSQL_DRIVER_CLASS);
+      return NEW_MYSQL_DRIVER_CLASS;
+    } catch (ClassNotFoundException e) {
+      return MYSQL_DRIVER_CLASS;
+    }
   }
 
   @Override

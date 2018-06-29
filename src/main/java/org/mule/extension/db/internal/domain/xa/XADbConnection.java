@@ -135,4 +135,9 @@ public class XADbConnection implements DbConnection, XATransactionalConnection {
       return connection.isTransactionActive();
     }
   }
+
+  @Override
+  public boolean supportsContentStreaming() {
+    return connection.supportsContentStreaming();
+  }
 }

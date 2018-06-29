@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+            http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+
+    <flow name="insertClobType">
+        <db:insert config-ref="dbConfig">
+            <db:sql>INSERT INTO PLANET(POSITION, DESCRIPTION) VALUES (:id, :description)</db:sql>
+            <db:input-parameters>
+                #[
+                {
+                'id' : vars.id,
+                'description' : payload
+                }]
+            </db:input-parameters>
+        </db:insert>
+    </flow>
+
+    <flow name="selectClobType">
+        <db:select config-ref="dbConfig">
+            <db:sql>SELECT DESCRIPTION from PLANET where POSITION = :position</db:sql>
+            <db:input-parameters>
+                #[
+                {
+                'position' : vars.position,
+                }]
+            </db:input-parameters>
+        </db:select>
+        <set-payload value="#[output text/plain --- payload[0].DESCRIPTION]"/>
+    </flow>
+
+
+    <flow name="insertBlobType">
+        <db:insert config-ref="dbConfig">
+            <db:sql>INSERT INTO PLANET(POSITION, PICTURE) VALUES (:id, :picture)</db:sql>
+            <db:input-parameters>
+                #[
+                {
+                'id' : vars.id,
+                'picture' : payload
+                }]
+            </db:input-parameters>
+        </db:insert>
+    </flow>
+
+    <flow name="selectBlobType">
+        <db:select config-ref="dbConfig">
+            <db:sql>SELECT PICTURE from PLANET where POSITION = :position</db:sql>
+            <db:input-parameters>
+                #[
+                {
+                'position' : vars.position,
+                }]
+            </db:input-parameters>
+        </db:select>
+        <set-payload value="#[payload[0].PICTURE]"/>
+    </flow>
+
+</mule>

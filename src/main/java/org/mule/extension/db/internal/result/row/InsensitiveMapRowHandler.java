@@ -11,10 +11,13 @@ import static org.mule.runtime.api.metadata.MediaType.BINARY;
 import static org.mule.runtime.api.metadata.MediaType.TEXT;
 import static org.mule.runtime.api.metadata.MediaType.XML;
 
+import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.util.CaseInsensitiveHashMap;
+import org.mule.runtime.core.api.util.IOUtils;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Blob;
 import java.sql.Clob;
@@ -28,6 +31,12 @@ import java.util.Map;
  * Maps a row using returning a case insensitive map
  */
 public class InsensitiveMapRowHandler implements RowHandler {
+
+  private DbConnection dbConnection;
+
+  public InsensitiveMapRowHandler(DbConnection dbConnection) {
+    this.dbConnection = dbConnection;
+  }
 
   @Override
   public Map<String, Object> process(ResultSet resultSet) throws SQLException {
@@ -61,11 +70,21 @@ public class InsensitiveMapRowHandler implements RowHandler {
     return new TypedValue<>(value.getBinaryStream(), DataType.builder().type(InputStream.class).mediaType(XML).build());
   }
 
-  private TypedValue<InputStream> handleBlobType(Blob value) throws SQLException {
-    return new TypedValue<>(value.getBinaryStream(), DataType.builder().type(InputStream.class).mediaType(BINARY).build());
+  private TypedValue<Object> handleBlobType(Blob value) throws SQLException {
+    if (dbConnection.supportsContentStreaming()) {
+      return new TypedValue<>(value.getBinaryStream(), DataType.builder().type(InputStream.class).mediaType(BINARY).build());
+    } else {
+      return new TypedValue<>(IOUtils.toByteArray(value.getBinaryStream()),
+                              DataType.builder().type(byte[].class).mediaType(BINARY).build());
+    }
   }
 
-  private TypedValue<InputStream> handleClobType(Clob value) throws SQLException {
-    return new TypedValue<>(value.getAsciiStream(), DataType.builder().type(InputStream.class).mediaType(TEXT).build());
+  private TypedValue<Object> handleClobType(Clob value) throws SQLException {
+    if (dbConnection.supportsContentStreaming()) {
+      return new TypedValue<>(value.getAsciiStream(), DataType.builder().type(InputStream.class).mediaType(TEXT).build());
+    } else {
+      return new TypedValue<>(IOUtils.toByteArray(value.getAsciiStream()),
+                              DataType.builder().type(byte[].class).mediaType(TEXT).build());
+    }
   }
 }

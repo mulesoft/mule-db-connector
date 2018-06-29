@@ -153,4 +153,12 @@ public class DefaultDbConnection implements DbConnection {
   public boolean isTransactionActive() {
     return isTransactionActive;
   }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean supportsContentStreaming() {
+    return true;
+  }
 }

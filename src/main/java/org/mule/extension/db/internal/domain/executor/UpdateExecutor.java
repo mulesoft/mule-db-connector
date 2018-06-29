@@ -47,7 +47,7 @@ public class UpdateExecutor extends AbstractSingleQueryExecutor {
 
       if (autoGenerateKeysStrategy.returnsAutoGenerateKeys()) {
         ResultSet generatedKeys = statement.getGeneratedKeys();
-        ListResultSetHandler listResultSetHandler = new ListResultSetHandler(new InsensitiveMapRowHandler());
+        ListResultSetHandler listResultSetHandler = new ListResultSetHandler(new InsensitiveMapRowHandler(dbConnection));
 
         List generatedKeyList = listResultSetHandler.processResultSet(dbConnection, generatedKeys);
         Map<String, BigInteger> keyMap = generatedKeyList.isEmpty() ? null : (Map<String, BigInteger>) generatedKeyList.get(0);

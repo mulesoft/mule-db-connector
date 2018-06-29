@@ -79,16 +79,22 @@ public class MetadataDbTypeManager implements DbTypeManager {
       DatabaseMetaData metaData = connection.getJdbcConnection().getMetaData();
       ResultSet typeInfo = metaData.getTypeInfo();
       ResultSetIterator resultSetIterator =
-          new ResultSetIterator(typeInfo, new InsensitiveMapRowHandler());
+          new ResultSetIterator(typeInfo, new InsensitiveMapRowHandler(connection));
       while (resultSetIterator.hasNext()) {
         Map<String, Object> typeRecord = resultSetIterator.next();
 
         Number dataType = (Number) typeRecord.get(METADATA_TYPE_ID_COLUMN);
         String typeName = (String) typeRecord.get(METADATA_TYPE_NAME_COLUMN);
 
-        DbType resolvedDbType = Objects.equals(Types.BLOB, dataType.intValue())
-            ? new BlobDbType(dataType.intValue(), typeName)
-            : new ResolvedDbType(dataType.intValue(), typeName);
+        // TODO - MULE-15241 : Fix how DB Connector chooses ResolvedTypes
+        DbType resolvedDbType;
+        if (Objects.equals(Types.BLOB, dataType.intValue())) {
+          resolvedDbType = new BlobDbType(dataType.intValue(), typeName);
+        } else if (Objects.equals(Types.CLOB, dataType.intValue())) {
+          resolvedDbType = new ClobResolvedDataType(dataType.intValue(), typeName);
+        } else {
+          resolvedDbType = new ResolvedDbType(dataType.intValue(), typeName);
+        }
 
         if (!isUserDefinedType(resolvedDbType)) {
           registerType(resolvedDbType);

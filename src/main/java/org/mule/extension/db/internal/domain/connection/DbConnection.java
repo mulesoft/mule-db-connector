@@ -69,4 +69,10 @@ public interface DbConnection extends TransactionalConnection {
    * @return a boolean indicating if the current connection is being part of a Transaction.
    */
   boolean isTransactionActive();
+
+  /**
+   * @return a boolean indicating if the current connection supports to stream the fetched content
+   * @since 1.3.4
+   */
+  boolean supportsContentStreaming();
 }

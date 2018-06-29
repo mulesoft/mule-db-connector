@@ -17,6 +17,7 @@ import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.util.CaseInsensitiveHashMap;
 import org.mule.runtime.core.api.util.IOUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Blob;
@@ -74,7 +75,7 @@ public class InsensitiveMapRowHandler implements RowHandler {
     if (dbConnection.supportsContentStreaming()) {
       return new TypedValue<>(value.getBinaryStream(), DataType.builder().type(InputStream.class).mediaType(BINARY).build());
     } else {
-      return new TypedValue<>(IOUtils.toByteArray(value.getBinaryStream()),
+      return new TypedValue<>(new ByteArrayInputStream(IOUtils.toByteArray(value.getBinaryStream())),
                               DataType.builder().type(byte[].class).mediaType(BINARY).build());
     }
   }
@@ -83,7 +84,7 @@ public class InsensitiveMapRowHandler implements RowHandler {
     if (dbConnection.supportsContentStreaming()) {
       return new TypedValue<>(value.getAsciiStream(), DataType.builder().type(InputStream.class).mediaType(TEXT).build());
     } else {
-      return new TypedValue<>(IOUtils.toByteArray(value.getAsciiStream()),
+      return new TypedValue<>(new ByteArrayInputStream(IOUtils.toByteArray(value.getAsciiStream())),
                               DataType.builder().type(byte[].class).mediaType(TEXT).build());
     }
   }

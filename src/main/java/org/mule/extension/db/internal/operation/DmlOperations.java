@@ -142,7 +142,7 @@ public class DmlOperations extends BaseDbOperations {
           final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, SELECT, STORE_PROCEDURE_CALL);
 
           QueryStatementFactory statementFactory = getStatementFactory(query);
-          InsensitiveMapRowHandler recordHandler = new InsensitiveMapRowHandler();
+          InsensitiveMapRowHandler recordHandler = new InsensitiveMapRowHandler(connection);
           ResultSetHandler resultSetHandler = new IteratorResultSetHandler(recordHandler, resultSetCloser);
 
           try {
@@ -252,7 +252,7 @@ public class DmlOperations extends BaseDbOperations {
 
     QueryStatementFactory statementFactory = getStatementFactory(call);
 
-    InsensitiveMapRowHandler recordHandler = new InsensitiveMapRowHandler();
+    InsensitiveMapRowHandler recordHandler = new InsensitiveMapRowHandler(connection);
 
     StatementStreamingResultSetCloser resultSetCloser = new StatementStreamingResultSetCloser(connection);
     flowListener.onError(e -> resultSetCloser.closeResultSets());

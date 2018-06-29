@@ -17,7 +17,9 @@ import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CON
 
 import org.mule.extension.db.api.exception.connection.DbError;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
+import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.connection.DbConnectionProvider;
+import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
@@ -25,6 +27,7 @@ import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 
 import javax.sql.DataSource;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -45,6 +48,11 @@ public class DerbyConnectionProvider extends DbConnectionProvider {
 
   @ParameterGroup(name = CONNECTION)
   private DerbyConnectionParameters derbyParameters;
+
+  @Override
+  protected DbConnection createDbConnection(Connection connection) throws Exception {
+    return new DerbyConnection(connection, super.resolveCustomTypes());
+  }
 
   @Override
   public Optional<DataSource> getDataSource() {

@@ -187,7 +187,7 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
       statementFactory.setFetchSize(settings.getFetchSize() != null ? settings.getFetchSize() : DEFAULT_FETCH_SIZE);
       statementFactory.setQueryTimeout(new Long(settings.getQueryTimeoutUnit().toSeconds(settings.getQueryTimeout())).intValue());
 
-      ResultSetHandler resultSetHandler = new ListResultSetHandler(new InsensitiveMapRowHandler());
+      ResultSetHandler resultSetHandler = new ListResultSetHandler(new InsensitiveMapRowHandler(connection));
 
       List<Map<String, Object>> rows =
           (List<Map<String, Object>>) new SelectExecutor(statementFactory, resultSetHandler).execute(connection, query);

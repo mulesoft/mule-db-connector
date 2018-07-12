@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
  *
  * @since 1.3
  */
-@MetadataScope(outputResolver = RowListenerMetadataResolver.class)
+@MetadataScope(outputResolver = RowListenerMetadataResolver.class, keysResolver = TableKeyResolver.class)
 @DisplayName("On Table Row")
 @Summary("Triggers a message per each row in a table")
 @Alias("listener")

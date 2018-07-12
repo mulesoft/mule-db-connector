@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.internal.source;
 
+import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
 import static org.mule.runtime.api.metadata.resolving.FailureCode.CONNECTION_FAILURE;
 import static org.mule.runtime.api.metadata.resolving.FailureCode.UNKNOWN;
 
@@ -30,6 +31,9 @@ import java.util.Set;
  */
 public class TableKeyResolver implements TypeKeysResolver {
 
+  private static final int NAME_COLUMN = 3;
+  private static final String ANY_NAME = "%";
+
   @Override
   public Set<MetadataKey> getKeys(MetadataContext context) throws MetadataResolvingException, ConnectionException {
     Optional<DbConnection> connection = context.getConnection();
@@ -41,10 +45,16 @@ public class TableKeyResolver implements TypeKeysResolver {
     LinkedHashSet<MetadataKey> metadataKeys = new LinkedHashSet<>();
     ResultSet tables;
     try {
-      tables = dbConnection.getJdbcConnection().getMetaData().getTables(null, null, "%", null);
+
+      tables = dbConnection
+          .getJdbcConnection()
+          .getMetaData()
+          .getTables(null, null, ANY_NAME, null);
+
       while (tables.next()) {
-        metadataKeys.add(MetadataKeyBuilder.newKey(tables.getString(3)).build());
+        metadataKeys.add(newKey(tables.getString(NAME_COLUMN)).build());
       }
+
     } catch (SQLException e) {
       throw new MetadataResolvingException("Unexpected error when retrieving existing tables", UNKNOWN, e);
     }

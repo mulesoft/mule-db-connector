@@ -27,7 +27,7 @@ import java.util.Set;
 /**
  * {@link TypeKeysResolver} for {@link RowListener} polling source which retrieves the available tables to poll.
  *
- * @since 1.3.4
+ * @since 1.4.0
  */
 public class TableKeyResolver implements TypeKeysResolver {
 

@@ -44,6 +44,8 @@ public class SimpleQueryTemplateParser implements QueryTemplateParser {
   private static final String[] END_SKIP =
       new String[] {"'", "\"", "\n", "*/"};
 
+  private static final char COLON_ESCAPE_CHARACTER = '\\';
+
   private static final String STORED_PROCEDURE_REGEX = "(?ms)(\\{\\s*)?(:\\S+\\s*=)?\\s*CALL\\s* \\s*.*";
   private static final String OPERATION_REGEX_TEMPLATE = "(?ms)%s\\s++.+";
   private static final String UPDATE_REGEX = String.format(OPERATION_REGEX_TEMPLATE, "UPDATE");
@@ -156,6 +158,10 @@ public class SimpleQueryTemplateParser implements QueryTemplateParser {
         QueryParam inputParam = new DefaultInputQueryParam(paramIndex++, UnknownDbType.getInstance(), value);
         parameterList.add(inputParam);
         sqlToUse = sqlToUse + "?";
+        tokenStart = tokenEnd;
+      } else if (currentChar == COLON_ESCAPE_CHARACTER && tokenEnd < sqlTextChars.length && ':' == sqlTextChars[tokenEnd]) {
+        sqlToUse = sqlToUse + ':';
+        tokenEnd++;
         tokenStart = tokenEnd;
       } else if (currentChar == ':') {
         if (tokenEnd < sqlTextChars.length && '=' == sqlTextChars[tokenEnd]) {

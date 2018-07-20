@@ -110,7 +110,7 @@ public class SimpleQueryTemplateParser implements QueryTemplateParser {
       LOGGER.debug("Parsing SQL: " + sqlText);
     }
 
-    String sqlToUse = "";
+    StringBuilder sqlToUse = new StringBuilder();
     List<QueryParam> parameterList = new ArrayList<>();
 
     char[] sqlTextChars = sqlText.toCharArray();
@@ -125,7 +125,7 @@ public class SimpleQueryTemplateParser implements QueryTemplateParser {
         if (tokenStart == skipToPosition) {
           break;
         } else {
-          sqlToUse = sqlToUse + sqlText.substring(tokenStart, skipToPosition);
+          sqlToUse = sqlToUse.append(sqlText.substring(tokenStart, skipToPosition));
           tokenStart = skipToPosition;
         }
       }
@@ -157,15 +157,15 @@ public class SimpleQueryTemplateParser implements QueryTemplateParser {
         String value = sqlText.substring(tokenStart, tokenEnd);
         QueryParam inputParam = new DefaultInputQueryParam(paramIndex++, UnknownDbType.getInstance(), value);
         parameterList.add(inputParam);
-        sqlToUse = sqlToUse + "?";
+        sqlToUse = sqlToUse.append("?");
         tokenStart = tokenEnd;
       } else if (currentChar == COLON_ESCAPE_CHARACTER && tokenEnd < sqlTextChars.length && ':' == sqlTextChars[tokenEnd]) {
-        sqlToUse = sqlToUse + ':';
+        sqlToUse = sqlToUse.append(':');
         tokenEnd++;
         tokenStart = tokenEnd;
       } else if (currentChar == ':') {
         if (tokenEnd < sqlTextChars.length && '=' == sqlTextChars[tokenEnd]) {
-          sqlToUse = sqlToUse + currentChar;
+          sqlToUse = sqlToUse.append(currentChar);
           tokenStart++;
         } else {
           String parameter;
@@ -174,7 +174,7 @@ public class SimpleQueryTemplateParser implements QueryTemplateParser {
             tokenEnd++;
           }
           if (tokenEnd - tokenStart > 1) {
-            sqlToUse = sqlToUse + "?";
+            sqlToUse = sqlToUse.append("?");
             parameter = sqlText.substring(tokenStart + 1, tokenEnd);
             QueryParam inputParam = new DefaultInputQueryParam(paramIndex++, UnknownDbType.getInstance(), null, parameter);
             parameterList.add(inputParam);
@@ -185,14 +185,13 @@ public class SimpleQueryTemplateParser implements QueryTemplateParser {
         QueryParam inputParam = new DefaultInputQueryParam(paramIndex++, UnknownDbType.getInstance(), null);
         parameterList.add(inputParam);
         tokenStart++;
-        sqlToUse = sqlToUse + currentChar;
+        sqlToUse = sqlToUse.append(currentChar);
       } else {
-        sqlToUse = sqlToUse + currentChar;
+        sqlToUse = sqlToUse.append(currentChar);
         tokenStart++;
       }
     }
-
-    return new QueryTemplate(sqlToUse, queryType, parameterList);
+    return new QueryTemplate(sqlToUse.toString(), queryType, parameterList);
   }
 
   private boolean isParamChar(char c) {

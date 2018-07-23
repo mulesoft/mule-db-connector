@@ -233,6 +233,14 @@ public class SimpleQueryTemplateParserTestCase extends AbstractMuleTestCase {
   }
 
   @Test
+  public void definesTemplateWithEscapedColon() throws Exception {
+    QueryTemplate queryTemplate = parser.parse("SELECT somecolumn\\:\\:money\\:\\:numeric\\:\\:float8 FROM sometable");
+    assertEquals(SELECT, queryTemplate.getType());
+    assertEquals("SELECT somecolumn::money::numeric::float8 FROM sometable", queryTemplate.getSqlText());
+    assertEquals(0, queryTemplate.getInputParams().size());
+  }
+
+  @Test
   public void detectsUnterminatedMuleExpression() throws Exception {
     try {
       parser.parse("SELECT * FROM PLANET where id = #[mel:incompleteExpression");

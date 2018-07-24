@@ -49,6 +49,11 @@ public class OracleTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
+  protected String getDeletePlanetSql(String name, int position) {
+    return "DELETE FROM PLANET WHERE NAME='" + name + "' AND POSITION=" + position;
+  }
+
+  @Override
   public void createStoredProcedureGetRecords(DataSource dataSource) throws SQLException {
 
     final String sql = "CREATE OR REPLACE PROCEDURE getTestRecords ( st_cursor OUT SYS_REFCURSOR  )\n" + "     is\n" + " BEGIN\n"

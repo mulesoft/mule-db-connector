@@ -83,7 +83,7 @@ public abstract class AbstractTestDatabase {
       int updated = statement.executeUpdate(updateSql);
 
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug(updated + " rows updated");
+        LOGGER.debug(updated + " rows updated. Query: " + updateSql);
       }
     }
   }
@@ -95,7 +95,7 @@ public abstract class AbstractTestDatabase {
       int updated = qr.update(connection, getInsertPlanetSql(planet.getName(), planet.getPosition()));
 
       if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug(updated + " rows updated");
+        LOGGER.debug(updated + " rows updated. Inserted: " + planet.getName());
       }
     }
   }
@@ -104,7 +104,21 @@ public abstract class AbstractTestDatabase {
     populatePlanetTable(connection, ADDITIONAL_PLANET_VALUES);
   }
 
+  public void removePlanets(Connection connection, Planet[] planets) throws SQLException {
+    QueryRunner qr = new QueryRunner();
+
+    for (Planet planet : planets) {
+      int updated = qr.update(connection, getDeletePlanetSql(planet.getName(), planet.getPosition()));
+
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug(updated + " rows updated. Deleted: " + planet.getName());
+      }
+    }
+  }
+
   protected abstract String getInsertPlanetSql(String name, int position);
+
+  protected abstract String getDeletePlanetSql(String name, int position);
 
   public void createDefaultDatabaseConfig(DataSource dataSource) throws SQLException {
     Connection connection = dataSource.getConnection();

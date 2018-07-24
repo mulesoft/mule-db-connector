@@ -133,6 +133,11 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
+  protected String getDeletePlanetSql(String name, int position) {
+    return "DELETE FROM PLANET WHERE NAME='" + name + "' AND POSITION=" + position;
+  }
+
+  @Override
   public void createStoredProcedureUpdateTestType1(DataSource dataSource) throws SQLException {
     createStoredProcedure(dataSource, SQL_CREATE_SP_UPDATE_TEST_TYPE_1);
   }

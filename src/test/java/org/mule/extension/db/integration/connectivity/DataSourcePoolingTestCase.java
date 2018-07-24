@@ -9,9 +9,11 @@ package org.mule.extension.db.integration.connectivity;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.IntStream.range;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 import static org.mule.extension.db.integration.TestDbConfig.getDerbyResource;
 
+import org.junit.Assume;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.functional.api.component.EventCallback;
 import org.mule.runtime.api.message.Message;
@@ -40,7 +42,7 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     setConcurrentRequests(2);
   }
 
@@ -67,6 +69,9 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void limitsConnections() throws Exception {
+    //NOTE: ignore this test if it is run on an instance with less than 4 cores, otherwise it will fail.
+    Assume.assumeThat(Runtime.getRuntime().availableProcessors(), greaterThanOrEqualTo(4));
+
     setConcurrentRequests(3);
     Message[] responses = request(3);
     assertThat(countSuccesses(responses), is(2));

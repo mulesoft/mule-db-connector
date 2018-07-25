@@ -118,7 +118,9 @@ public abstract class AbstractTestDatabase {
 
   protected abstract String getInsertPlanetSql(String name, int position);
 
-  protected abstract String getDeletePlanetSql(String name, int position);
+  protected String getDeletePlanetSql(String name, int position) {
+    return "DELETE FROM PLANET WHERE NAME='" + name + "' AND POSITION=" + position;
+  }
 
   public void createDefaultDatabaseConfig(DataSource dataSource) throws SQLException {
     Connection connection = dataSource.getConnection();

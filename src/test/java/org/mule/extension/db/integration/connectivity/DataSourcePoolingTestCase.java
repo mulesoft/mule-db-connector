@@ -9,9 +9,7 @@ package org.mule.extension.db.integration.connectivity;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.IntStream.range;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assume.assumeThat;
 import static org.mule.extension.db.integration.TestDbConfig.getDerbyResource;
 
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
@@ -58,7 +56,7 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void providesMultipleConnections() throws Exception {
-    assertThat(countSuccesses(request(2)), is(2));
+    assertThat(countSuccesses(request("queryAndJoin", 2)), is(2));
   }
 
   @Test
@@ -69,21 +67,18 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void limitsConnections() throws Exception {
-    //NOTE: ignore this test if it is run on an instance with less than 4 cores, otherwise it will fail.
-    assumeThat(Runtime.getRuntime().availableProcessors(), greaterThanOrEqualTo(4));
-
-    setConcurrentRequests(3);
-    Message[] responses = request(3);
-    assertThat(countSuccesses(responses), is(2));
+    setConcurrentRequests(2);
+    Message[] responses = request("queryAndJoinSmallPollConnections", 2);
+    assertThat(countSuccesses(responses), is(1));
     assertThat(countFailures(responses), is(1));
   }
 
-  private Message[] request(int times) throws Exception {
+  private Message[] request(String flowName, int times) throws Exception {
     Thread[] requests = new Thread[times];
     Message[] responses = new Message[times];
 
     range(0, times).forEach(i -> {
-      requests[i] = new Thread(() -> doRequest(responses, i));
+      requests[i] = new Thread(() -> doRequest(flowName, responses, i));
       requests[i].start();
     });
 
@@ -104,9 +99,9 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
     assertThat(connectionLatch.await(5, SECONDS), is(false));
   }
 
-  private void doRequest(Message[] responses, int index) {
+  private void doRequest(String flowName, Message[] responses, int index) {
     try {
-      responses[index] = doRunFlow("queryAndJoin");
+      responses[index] = doRunFlow(flowName);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

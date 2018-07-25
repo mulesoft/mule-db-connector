@@ -84,8 +84,7 @@ public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void idempotentListen() throws Exception {
-    Planet[] planetsToDestroy = {Planet.EARTH, Planet.MARS};
-    withConnections(connection -> testDatabase.removePlanets(connection, planetsToDestroy));
+    withConnections(connection -> testDatabase.removePlanets(connection, Planet.EARTH, Planet.MARS));
     Planet[] planetsToCreate = {Planet.VENUS};
     withConnections(connection -> testDatabase.populatePlanetTable(connection, planetsToCreate));
 

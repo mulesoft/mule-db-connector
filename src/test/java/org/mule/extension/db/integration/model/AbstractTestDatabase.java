@@ -104,7 +104,7 @@ public abstract class AbstractTestDatabase {
     populatePlanetTable(connection, ADDITIONAL_PLANET_VALUES);
   }
 
-  public void removePlanets(Connection connection, Planet[] planets) throws SQLException {
+  public void removePlanets(Connection connection, Planet... planets) throws SQLException {
     QueryRunner qr = new QueryRunner();
 
     for (Planet planet : planets) {

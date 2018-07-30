@@ -40,7 +40,7 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     setConcurrentRequests(2);
   }
 
@@ -56,7 +56,7 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void providesMultipleConnections() throws Exception {
-    assertThat(countSuccesses(request(2)), is(2));
+    assertThat(countSuccesses(request("queryAndJoin", 2)), is(2));
   }
 
   @Test
@@ -67,18 +67,18 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void limitsConnections() throws Exception {
-    setConcurrentRequests(3);
-    Message[] responses = request(3);
-    assertThat(countSuccesses(responses), is(2));
+    setConcurrentRequests(2);
+    Message[] responses = request("queryAndJoinSmallPollConnections", 2);
+    assertThat(countSuccesses(responses), is(1));
     assertThat(countFailures(responses), is(1));
   }
 
-  private Message[] request(int times) throws Exception {
+  private Message[] request(String flowName, int times) throws Exception {
     Thread[] requests = new Thread[times];
     Message[] responses = new Message[times];
 
     range(0, times).forEach(i -> {
-      requests[i] = new Thread(() -> doRequest(responses, i));
+      requests[i] = new Thread(() -> doRequest(flowName, responses, i));
       requests[i].start();
     });
 
@@ -99,9 +99,9 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
     assertThat(connectionLatch.await(5, SECONDS), is(false));
   }
 
-  private void doRequest(Message[] responses, int index) {
+  private void doRequest(String flowName, Message[] responses, int index) {
     try {
-      responses[index] = doRunFlow("queryAndJoin");
+      responses[index] = doRunFlow(flowName);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

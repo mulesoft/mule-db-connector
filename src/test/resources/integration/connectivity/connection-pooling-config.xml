@@ -27,6 +27,26 @@
         </try>
     </flow>
 
+    <flow name="queryAndJoinSmallPollConnections">
+        <try transactionalAction="ALWAYS_BEGIN">
+            <db:delete config-ref="smallPoolPooledJdbcConfig">
+                <db:sql>delete from PLANET</db:sql>
+            </db:delete>
+            <set-payload value="OK" />
+            <test:processor>
+                <test:callback class="org.mule.extension.db.integration.connectivity.DataSourcePoolingTestCase$JoinRequests"/>
+            </test:processor>
+            <error-handler>
+                <on-error-continue>
+                    <set-payload value="FAIL" />
+                    <test:processor>
+                        <test:callback class="org.mule.extension.db.integration.connectivity.DataSourcePoolingTestCase$JoinRequests"/>
+                    </test:processor>
+                </on-error-continue>
+            </error-handler>
+        </try>
+    </flow>
+
     <flow name="waitForever">
         <try transactionalAction="ALWAYS_BEGIN">
             <db:delete config-ref="waitForeverJdbcConfig">

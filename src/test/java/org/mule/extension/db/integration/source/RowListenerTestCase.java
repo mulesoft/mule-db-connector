@@ -18,7 +18,6 @@ import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.Planet;
 import org.mule.metadata.api.model.ObjectType;
 import org.mule.runtime.api.component.location.Location;
-import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Startable;
 import org.mule.runtime.api.meta.model.source.SourceModel;
 import org.mule.runtime.api.metadata.descriptor.ComponentMetadataDescriptor;
@@ -41,7 +40,7 @@ public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
   public static final class CapturePayloadProcessor implements Processor {
 
     @Override
-    public CoreEvent process(CoreEvent event) throws MuleException {
+    public CoreEvent process(CoreEvent event) {
       if (PAYLOADS != null) {
         PAYLOADS.add((Map<String, Object>) event.getMessage().getPayload().getValue());
       }
@@ -68,12 +67,12 @@ public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void listenPlanets() throws Exception {
-    listenPlanets("listenPlanets");
+    listenPlanets("listenPlanets", PLANET_TEST_VALUES);
   }
 
   @Test
   public void listenPlanetsWithWatermark() throws Exception {
-    listenPlanets("listenPlanetsWithWatermark");
+    listenPlanets("listenPlanetsWithWatermark", PLANET_TEST_VALUES);
 
     PAYLOADS.clear();
 
@@ -85,8 +84,11 @@ public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void idempotentListen() throws Exception {
-    withConnections(connection -> testDatabase.populatePlanetTable(connection, PLANET_TEST_VALUES));
-    listenPlanets("idempotentListen");
+    withConnections(connection -> testDatabase.removePlanets(connection, Planet.EARTH, Planet.MARS));
+    Planet[] planetsToCreate = {Planet.VENUS};
+    withConnections(connection -> testDatabase.populatePlanetTable(connection, planetsToCreate));
+
+    listenPlanets("idempotentListen", planetsToCreate);
   }
 
   @Test
@@ -133,8 +135,8 @@ public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
     });
   }
 
-  private void listenPlanets(String flowName) throws Exception {
+  private void listenPlanets(String flowName, Planet[] planets) throws Exception {
     startFlow(flowName);
-    assertAllPresent(PLANET_TEST_VALUES);
+    assertAllPresent(planets);
   }
 }

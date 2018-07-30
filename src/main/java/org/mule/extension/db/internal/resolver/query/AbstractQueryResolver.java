@@ -108,6 +108,10 @@ abstract class AbstractQueryResolver<T extends StatementDefinition<?>> implement
       DbType type = paramTypes.get(originalParam.getIndex());
       QueryParam newParam;
 
+      if (type == null) {
+        throw new IllegalArgumentException("Unknown parameter type of " + originalParam.getName());
+      }
+
       if (originalParam instanceof InOutQueryParam) {
         newParam = new DefaultInOutQueryParam(originalParam.getIndex(), type, originalParam.getName(),
                                               ((InOutQueryParam) originalParam).getValue());
@@ -119,7 +123,6 @@ abstract class AbstractQueryResolver<T extends StatementDefinition<?>> implement
         newParam = new DefaultOutputQueryParam(originalParam.getIndex(), type, originalParam.getName());
       } else {
         throw new IllegalArgumentException("Unknown parameter type: " + originalParam.getClass().getName());
-
       }
 
       newParams.add(newParam);

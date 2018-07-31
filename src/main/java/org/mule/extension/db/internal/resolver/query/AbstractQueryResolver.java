@@ -10,6 +10,9 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
 
+import com.google.common.base.Throwables;
+import com.google.common.util.concurrent.UncheckedExecutionException;
+import org.mule.extension.db.api.exception.connection.QueryExecutionException;
 import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.api.param.StatementDefinition;
 import org.mule.extension.db.internal.DbConnector;
@@ -36,6 +39,7 @@ import org.mule.extension.db.internal.resolver.param.GenericParamTypeResolverFac
 import org.mule.extension.db.internal.resolver.param.ParamTypeResolverFactory;
 import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.i18n.I18nMessageFactory;
+import org.mule.runtime.extension.api.exception.ModuleException;
 import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
 import java.sql.SQLException;
@@ -95,6 +99,9 @@ abstract class AbstractQueryResolver<T extends StatementDefinition<?>> implement
     try {
       return queryTemplates.get(statementDefinition.getSql(),
                                 () -> createQueryTemplate(statementDefinition, connector, connection));
+    } catch (UncheckedExecutionException e) {
+      Throwables.propagateIfPossible(e.getCause(), ModuleException.class);
+      throw e;
     } catch (ExecutionException e) {
       throw new MuleRuntimeException(I18nMessageFactory
           .createStaticMessage("Could not resolve query: " + statementDefinition.getSql(), e));
@@ -109,7 +116,7 @@ abstract class AbstractQueryResolver<T extends StatementDefinition<?>> implement
       QueryParam newParam;
 
       if (type == null) {
-        throw new IllegalArgumentException("Unknown parameter type of " + originalParam.getName());
+        throw new QueryExecutionException("Unknown parameter type of " + originalParam.getName());
       }
 
       if (originalParam instanceof InOutQueryParam) {

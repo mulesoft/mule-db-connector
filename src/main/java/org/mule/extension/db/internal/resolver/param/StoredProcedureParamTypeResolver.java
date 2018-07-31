@@ -7,8 +7,10 @@
 
 package org.mule.extension.db.internal.resolver.param;
 
+import org.mule.extension.db.api.exception.connection.QueryExecutionException;
 import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
+import org.mule.extension.db.internal.domain.param.QueryParam;
 import org.mule.extension.db.internal.domain.query.QueryTemplate;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.DbTypeManager;
@@ -23,9 +25,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.lang.String.format;
 
 /**
  * Resolves parameter types for stored procedure queries
@@ -55,7 +60,9 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
         dbMetaData.getProcedureColumns(connection.getJdbcConnection().getCatalog(), null, storedProcedureName, "%");
 
     try {
-      return getStoredProcedureParamTypes(connection, storedProcedureName, procedureColumns);
+      Map<Integer, DbType> paramTypes = getStoredProcedureParamTypes(connection, storedProcedureName, procedureColumns);
+      validateQueryParams(queryTemplate, paramTypes);
+      return paramTypes;
     } finally {
       if (procedureColumns != null) {
         procedureColumns.close();
@@ -76,8 +83,8 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
 
       if (LOGGER.isDebugEnabled()) {
         String name = procedureColumns.getString(PARAM_NAME_COLUN_INDEX);
-        LOGGER.debug(String.format("Resolved parameter type: Store procedure: %s Name: %s Index: %s Type ID: %s Type Name: %s",
-                                   storedProcedureName, name, position, typeId, typeName));
+        LOGGER.debug(format("Resolved parameter type: Store procedure: %s Name: %s Index: %s Type ID: %s Type Name: %s",
+                            storedProcedureName, name, position, typeId, typeName));
       }
 
       DbType dbType;
@@ -107,6 +114,17 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
       return storedProcedureName.toUpperCase();
     } else {
       return storedProcedureName;
+    }
+  }
+
+  private void validateQueryParams(QueryTemplate queryTemplate, Map<Integer, DbType> paramTypes) {
+    List<String> notExistingQueryParams = queryTemplate.getParams().stream()
+        .filter(queryParam -> !paramTypes.containsKey(queryParam.getIndex()))
+        .map(QueryParam::getName)
+        .collect(Collectors.toList());
+
+    if (!notExistingQueryParams.isEmpty()) {
+      throw new QueryExecutionException(format("Could not find query parameters %s.", String.join(",", notExistingQueryParams)));
     }
   }
 }

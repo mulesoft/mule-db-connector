@@ -7,8 +7,6 @@
 package org.mule.extension.db.integration.storedprocedure;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.rules.ExpectedException.none;
 
@@ -21,11 +19,15 @@ import java.util.Map;
 import org.hamcrest.core.IsEqual;
 import org.junit.Before;
 import org.junit.Test;
+import org.mule.functional.api.exception.ExpectedError;
 
 public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
 
   @Rule
   public ExpectedException expectedException = none();
+
+  @Rule
+  public ExpectedError expectedError = ExpectedError.none();
 
   @Before
   public void setupStoredProcedure() throws Exception {
@@ -88,12 +90,9 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
-  public void runStoredProcedureWithArgumentThatDoesNotExists() {
-    try {
-      runProcedure("callNotExistingStoredProcedureWithAnArgument");
-    } catch (Exception e) {
-      assertThat(e.getCause().getCause(), is(instanceOf(IllegalArgumentException.class)));
-    }
+  public void runStoredProcedureWithArgumentThatDoesNotExists() throws Exception {
+    expectedError.expectErrorType("DB", "QUERY_EXECUTION");
+    runProcedure("callNotExistingStoredProcedureWithAnArgument");
   }
 
 }

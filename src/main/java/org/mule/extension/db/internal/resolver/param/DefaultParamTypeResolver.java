@@ -35,8 +35,7 @@ public class DefaultParamTypeResolver implements ParamTypeResolver {
   }
 
   public Map<Integer, DbType> getParameterTypes(DbConnection connection, QueryTemplate queryTemplate,
-                                                List<ParameterType> parameterTypes)
-      throws SQLException {
+                                                List<ParameterType> parameterTypes) {
     Map<Integer, DbType> resolvedParamTypes = new HashMap<>();
 
     Map<Integer, DbType> metadataParamTypes = null;

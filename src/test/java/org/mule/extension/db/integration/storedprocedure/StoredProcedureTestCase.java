@@ -8,6 +8,10 @@ package org.mule.extension.db.integration.storedprocedure;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.rules.ExpectedException.none;
+
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 
 import java.util.Map;
@@ -15,8 +19,15 @@ import java.util.Map;
 import org.hamcrest.core.IsEqual;
 import org.junit.Before;
 import org.junit.Test;
+import org.mule.functional.api.exception.ExpectedError;
 
 public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
+
+  @Rule
+  public ExpectedException expectedException = none();
+
+  @Rule
+  public ExpectedError expectedError = ExpectedError.none();
 
   @Before
   public void setupStoredProcedure() throws Exception {
@@ -76,6 +87,12 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
     // Compares string in to avoid problems when different DB return different integer classes (BigDecimal, integer, etc)
 
     assertThat("3", equalTo(payload.get("count").toString()));
+  }
+
+  @Test
+  public void runStoredProcedureWithArgumentThatDoesNotExists() throws Exception {
+    expectedError.expectErrorType("DB", "QUERY_EXECUTION");
+    runProcedure("callNotExistingStoredProcedureWithAnArgument");
   }
 
 }

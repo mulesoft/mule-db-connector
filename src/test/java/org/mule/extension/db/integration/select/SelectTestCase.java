@@ -9,7 +9,6 @@ package org.mule.extension.db.integration.select;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
 import static org.junit.rules.ExpectedException.none;
 import static org.mule.extension.db.api.exception.connection.DbError.BAD_SQL_SYNTAX;
@@ -19,6 +18,7 @@ import static org.mule.extension.db.integration.TestRecordUtil.getEarthRecord;
 import static org.mule.extension.db.integration.TestRecordUtil.getMarsRecord;
 import static org.mule.extension.db.integration.TestRecordUtil.getVenusRecord;
 import static org.mule.extension.db.integration.model.Planet.MARS;
+
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.Field;
 import org.mule.extension.db.integration.model.Planet;
@@ -104,12 +104,6 @@ public class SelectTestCase extends AbstractDbIntegrationTestCase {
     assertMessageContains(response, new Record(new Field(nameFieldAlias, Planet.VENUS.getName())),
                           new Record(new Field(nameFieldAlias, Planet.EARTH.getName())),
                           new Record(new Field(nameFieldAlias, Planet.MARS.getName())));
-  }
-
-  @Test
-  public void missingSQL() throws Exception {
-    expectedException.expectMessage(containsString("sql query cannot be blank"));
-    flowRunner("missingSQL").run();
   }
 
   @Test

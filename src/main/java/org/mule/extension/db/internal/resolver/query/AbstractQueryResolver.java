@@ -8,7 +8,6 @@ package org.mule.extension.db.internal.resolver.query;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.mule.runtime.api.util.Preconditions.checkArgument;
 
 import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.UncheckedExecutionException;
@@ -59,8 +58,6 @@ abstract class AbstractQueryResolver<T extends StatementDefinition<?>> implement
 
   @Override
   public Query resolve(T statementDefinition, DbConnector connector, DbConnection connection, StreamingHelper streamingHelper) {
-    checkArgument(!isBlank(statementDefinition.getSql()), "sql query cannot be blank");
-
     QueryTemplate queryTemplate = getQueryTemplate(connector, connection, statementDefinition);
     return new Query(queryTemplate, resolveParams(statementDefinition, queryTemplate, streamingHelper));
   }

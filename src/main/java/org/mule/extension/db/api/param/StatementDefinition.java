@@ -32,7 +32,6 @@ public abstract class StatementDefinition<T extends StatementDefinition> extends
    * The text of the SQL query to be executed
    */
   @Parameter
-  @Optional
   @Text
   @DisplayName(SQL_QUERY_TEXT)
   @Placement(order = 1)

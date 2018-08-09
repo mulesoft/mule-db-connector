@@ -70,13 +70,6 @@
         </db:select>
     </flow>
 
-    <flow name="missingSQL">
-        <db:select config-ref="dbConfig"/>
-        <foreach>
-            <logger />
-        </foreach>
-    </flow>
-
     <flow name="invalidQueryType">
         <db:select config-ref="dbConfig">
             <db:sql>I dunno SQL</db:sql>

@@ -8,6 +8,7 @@
 package org.mule.extension.db.integration.ddl;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.mule.extension.db.integration.DbTestUtil.selectData;
 import static org.mule.extension.db.integration.TestRecordUtil.assertRecords;
@@ -16,8 +17,11 @@ import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.runtime.api.message.Message;
 import org.mule.tck.junit4.rule.SystemProperty;
 
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Struct;
 import java.util.List;
 import java.util.Map;
 
@@ -62,5 +66,19 @@ public class ExecuteDdlTestCase extends AbstractDbIntegrationTestCase {
     assertThat(affectedRows, is(0));
     List<Map<String, String>> result = selectData("select * from TestDdl", getDefaultDataSource());
     assertRecords(result);
+  }
+
+  @Test
+  public void executeStructCreation() throws Exception {
+    Object[] structValues = {"foo", "bar"};
+
+    DataSource dataSource = getDefaultDataSource();
+    try (Connection connection = dataSource.getConnection()) {
+      connection.createStruct("BLOB_AND_CLOB_TYPE", structValues);
+      assertThat(structValues[0], instanceOf(Blob.class));
+      assertThat(structValues[1], instanceOf(Clob.class));
+    } catch (SQLException e) {
+      // Ignore: table does not exist
+    }
   }
 }

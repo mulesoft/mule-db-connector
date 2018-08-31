@@ -135,6 +135,7 @@ public abstract class AbstractTestDatabase {
       }
 
       if (supportsSimpleUdt()) {
+        createBlobAndClobType(connection);
         createContactDetailsType(connection);
         createRegionManagersTestTable(connection);
 
@@ -154,6 +155,10 @@ public abstract class AbstractTestDatabase {
         connection.close();
       }
     }
+  }
+
+  protected void createBlobAndClobType(Connection connection) throws SQLException {
+    throw new UnsupportedOperationException(NO_UDT_SUPPORT_ERROR);
   }
 
   protected boolean supportsArraysUdt() {

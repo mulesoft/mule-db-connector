@@ -7,13 +7,13 @@
 
 package org.mule.extension.db.integration.model;
 
-import org.mule.extension.db.integration.DbTestUtil;
-import org.mule.extension.db.integration.model.derbyutil.DerbyTestStoredProcedure;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.sql.DataSource;
+
+import org.mule.extension.db.integration.DbTestUtil;
+import org.mule.extension.db.integration.model.derbyutil.DerbyTestStoredProcedure;
 
 public class DerbyTestDatabase extends AbstractTestDatabase {
 
@@ -115,6 +115,9 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
   public static final String CREATE_CONTACT_DETAILS_TYPE =
       "CREATE TYPE CONTACT_DETAILS EXTERNAL NAME '" + ContactDetails.class.getName() + "' LANGUAGE JAVA";
 
+  public static final String CREATE_BLOB_AND_CLOB_TYPE =
+      "CREATE TYPE BLOB_AND_CLOB_TYPE EXTERNAL NAME '" + BlobAndClobType.class.getName() + "' LANGUAGE JAVA";
+
   @Override
   public void createPlanetTable(Connection connection) throws SQLException {
     executeDdl(connection,
@@ -135,6 +138,20 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
   @Override
   public void createStoredProcedureUpdateTestType1(DataSource dataSource) throws SQLException {
     createStoredProcedure(dataSource, SQL_CREATE_SP_UPDATE_TEST_TYPE_1);
+  }
+
+  @Override
+  protected void createBlobAndClobType(Connection connection) throws SQLException {
+    try {
+      String ddl = CREATE_BLOB_AND_CLOB_TYPE;
+
+      executeDdl(connection, ddl);
+    } catch (SQLException e) {
+      // Ignore exception when type already exists
+      if (!DERBY_ERROR_OBJECT_ALREADY_EXISTS.equals(e.getSQLState())) {
+        throw e;
+      }
+    }
   }
 
   @Override

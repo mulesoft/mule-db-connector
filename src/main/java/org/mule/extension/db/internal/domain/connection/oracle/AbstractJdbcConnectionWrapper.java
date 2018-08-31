@@ -7,8 +7,13 @@
 
 package org.mule.extension.db.internal.domain.connection.oracle;
 
+import static java.lang.String.format;
+import static org.mule.extension.db.api.param.JdbcType.BLOB;
+import static org.mule.extension.db.api.param.JdbcType.CLOB;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
+import static org.mule.runtime.core.api.util.IOUtils.toByteArray;
 
+import java.io.InputStream;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -17,6 +22,7 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.NClob;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLClientInfoException;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
@@ -28,10 +34,24 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
+import org.mule.extension.db.internal.domain.connection.DataSourceFactory;
+import org.mule.extension.db.internal.domain.type.DbType;
+import org.mule.runtime.core.api.util.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Wraps a {@link Connection} to provide custom implementations of the connection's operations.
  */
 public abstract class AbstractJdbcConnectionWrapper implements Connection {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceFactory.class);
+
+  private static final int UNKNOWN_DATA_TYPE = -1;
+
+  public static final int DATA_TYPE_INDEX = 5;
+
+  public static final int ATTR_TYPE_NAME_INDEX = 6;
 
   protected final Connection delegate;
 
@@ -280,6 +300,11 @@ public abstract class AbstractJdbcConnectionWrapper implements Connection {
 
   @Override
   public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
+    try {
+      resolveLobs(typeName, attributes);
+    } catch (SQLException e) {
+      LOGGER.warn("Unable to resolve lobs: {}. Proceeding with original attributes.", e.getMessage());
+    }
     return delegate.createStruct(typeName, attributes);
   }
 
@@ -317,4 +342,86 @@ public abstract class AbstractJdbcConnectionWrapper implements Connection {
   public boolean isWrapperFor(Class<?> iface) throws SQLException {
     return delegate.isWrapperFor(iface);
   }
+
+  /**
+   * Management of lob resolution for UDTs in structs By default, nothing is done
+   * 
+   * @param typeName type name of the UDT
+   * @param attributes attributes of the struct to populate
+   * @throws SQLException raises if a problems occurs on retrieval of the metadata
+   */
+  protected void resolveLobs(String typeName, Object[] attributes) throws SQLException {
+
+    try (ResultSet resultSet = this.getMetaData().getAttributes(this.getCatalog(), null, typeName, null)) {
+
+      int index = 0;
+      while (resultSet.next()) {
+        int dataType = resultSet.getInt(DATA_TYPE_INDEX);
+        String dataTypeName = resultSet.getString(ATTR_TYPE_NAME_INDEX);
+
+        doResolveLobIn(attributes, index, dataType, dataTypeName);
+
+        index++;
+      }
+    }
+  }
+
+  protected void doResolveLobIn(Object[] attributes, Integer index, int dataType, String dataTypeName) throws SQLException {
+    if (shouldResolveAttributeWithJdbcType(dataType, dataTypeName, BLOB.getDbType())) {
+      attributes[index] = createBlob(attributes[index]);
+    } else if (shouldResolveAttributeWithJdbcType(dataType, dataTypeName, CLOB.getDbType())) {
+      attributes[index] = createClob(attributes[index]);
+    }
+  }
+
+  protected void doResolveLobIn(Object[] attributes, int index, int dataType, String dataTypeName) throws SQLException {
+    if (shouldResolveAttributeWithJdbcType(dataType, dataTypeName, BLOB.getDbType())) {
+      attributes[index] = createBlob(attributes[index]);
+    } else if (shouldResolveAttributeWithJdbcType(dataType, dataTypeName, CLOB.getDbType())) {
+      attributes[index] = createClob(attributes[index]);
+    }
+  }
+
+  private boolean shouldResolveAttributeWithJdbcType(int dbDataType, String dbDataTypeName, DbType jdbcType) {
+    if (dbDataType == UNKNOWN_DATA_TYPE) {
+      return dbDataTypeName.equals(jdbcType.getName());
+    } else {
+      return dbDataType == jdbcType.getId();
+    }
+  }
+
+  protected void doResolveLobIn(Object[] attributes, int index, String dataTypeName) throws SQLException {
+    doResolveLobIn(attributes, index, UNKNOWN_DATA_TYPE, dataTypeName);
+  }
+
+  protected Blob createBlob(Object attribute) throws SQLException {
+    Blob blob = this.createBlob();
+    if (attribute instanceof byte[]) {
+      blob.setBytes(1, (byte[]) attribute);
+    } else if (attribute instanceof InputStream) {
+      blob.setBytes(1, toByteArray((InputStream) attribute));
+    } else if (attribute instanceof String) {
+      blob.setBytes(1, ((String) attribute).getBytes());
+    } else {
+      throw new IllegalArgumentException(format("Cannot create a %s from a value of type '%s'", Struct.class.getName(),
+                                                attribute.getClass()));
+    }
+
+    return blob;
+  }
+
+  protected Clob createClob(Object attribute) throws SQLException {
+    Clob clob = this.createClob();
+    if (attribute instanceof String) {
+      clob.setString(1, (String) attribute);
+    } else if (attribute instanceof InputStream) {
+      clob.setString(1, IOUtils.toString((InputStream) attribute));
+    } else {
+      throw new IllegalArgumentException(format("Cannot create a %s from a value of type '%s'", Struct.class.getName(),
+                                                attribute.getClass()));
+    }
+
+    return clob;
+  }
+
 }

@@ -36,6 +36,7 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
+import org.mule.runtime.extension.api.annotation.values.OfValues;
 import org.mule.runtime.extension.api.runtime.operation.Result;
 import org.mule.runtime.extension.api.runtime.source.PollContext;
 import org.mule.runtime.extension.api.runtime.source.PollContext.PollItem;
@@ -81,6 +82,7 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
    */
   @Parameter
   @Optional
+  @OfValues(ColumnValueProvider.class)
   @Summary("The name of the column used for watermark")
   private String watermarkColumn;
 
@@ -91,6 +93,7 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
   @Parameter
   @Optional
   @Summary("The name of the column to consider as row ID")
+  @OfValues(ColumnValueProvider.class)
   private String idColumn;
 
   @ParameterGroup(name = ADVANCED)

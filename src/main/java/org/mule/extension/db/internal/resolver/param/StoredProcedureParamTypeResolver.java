@@ -15,7 +15,6 @@ import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.DbTypeManager;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
 import org.mule.extension.db.internal.domain.type.UnknownDbTypeException;
-import org.mule.extension.db.internal.util.StoredProcedureUtils;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -29,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
+import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoredProcedureName;
 
 /**
  * Resolves parameter types for stored procedure queries
@@ -52,7 +52,7 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
       throws SQLException {
     DatabaseMetaData dbMetaData = connection.getJdbcConnection().getMetaData();
 
-    String storedProcedureName = StoredProcedureUtils.getStoredProcedureName(queryTemplate.getSqlText());
+    String storedProcedureName = getStoredProcedureName(queryTemplate.getSqlText());
     if (dbMetaData.storesUpperCaseIdentifiers()) {
       storedProcedureName = storedProcedureName.toUpperCase();
     }

@@ -12,6 +12,11 @@ import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Utility class for stored helpful for stored procedure operations.
+ *
+ * @since 1.5.0
+ */
 public class StoredProcedureUtils {
 
   private final static Pattern storedProcedureMatcher = Pattern.compile("(?msi)(\\{\\s+)?call\\s* \\s*(\\w+)\\s*\\(.*");

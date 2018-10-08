@@ -4,7 +4,6 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-
 package org.mule.extension.db.internal.resolver.param;
 
 import org.mule.extension.db.api.exception.connection.QueryExecutionException;
@@ -23,27 +22,25 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
+import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoredProcedureName;
 
 /**
  * Resolves parameter types for stored procedure queries
  */
 public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
 
-  public static final int PARAM_NAME_COLUN_INDEX = 4;
+  private static final Logger LOGGER = LoggerFactory.getLogger(StoredProcedureParamTypeResolver.class);
+
+  public static final int PARAM_NAME_COLUMN_INDEX = 4;
   public static final int TYPE_ID_COLUMN_INDEX = 6;
   public static final int TYPE_NAME_COLUMN_INDEX = 7;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(StoredProcedureParamTypeResolver.class);
-
-  private final Pattern storedProcedureMatcher = Pattern.compile("(?msi)(\\{\\s+)?call\\s* \\s*(\\w+)\\(.*");
   private final DbTypeManager dbTypeManager;
 
   public StoredProcedureParamTypeResolver(DbTypeManager dbTypeManager) {
@@ -55,7 +52,11 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
       throws SQLException {
     DatabaseMetaData dbMetaData = connection.getJdbcConnection().getMetaData();
 
-    String storedProcedureName = getStoredProcedureName(dbMetaData, queryTemplate.getSqlText());
+    String storedProcedureName = getStoredProcedureName(queryTemplate.getSqlText());
+    if (dbMetaData.storesUpperCaseIdentifiers()) {
+      storedProcedureName = storedProcedureName.toUpperCase();
+    }
+
     ResultSet procedureColumns =
         dbMetaData.getProcedureColumns(connection.getJdbcConnection().getCatalog(), null, storedProcedureName, "%");
 
@@ -82,7 +83,7 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
       String typeName = procedureColumns.getString(TYPE_NAME_COLUMN_INDEX);
 
       if (LOGGER.isDebugEnabled()) {
-        String name = procedureColumns.getString(PARAM_NAME_COLUN_INDEX);
+        String name = procedureColumns.getString(PARAM_NAME_COLUMN_INDEX);
         LOGGER.debug(format("Resolved parameter type: Store procedure: %s Name: %s Index: %s Type ID: %s Type Name: %s",
                             storedProcedureName, name, position, typeId, typeName));
       }
@@ -99,22 +100,6 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
     }
 
     return paramTypes;
-  }
-
-  private String getStoredProcedureName(DatabaseMetaData dbMetaData, String sqlText) throws SQLException {
-    Matcher matcher = storedProcedureMatcher.matcher(sqlText);
-
-    if (!matcher.matches()) {
-      throw new SQLException("Unable to detect stored procedure name from " + sqlText);
-    }
-
-    String storedProcedureName = matcher.group(2);
-
-    if (dbMetaData.storesUpperCaseIdentifiers()) {
-      return storedProcedureName.toUpperCase();
-    } else {
-      return storedProcedureName;
-    }
   }
 
   private void validateQueryParams(QueryTemplate queryTemplate, Map<Integer, DbType> paramTypes) {

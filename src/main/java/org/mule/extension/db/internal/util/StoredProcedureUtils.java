@@ -13,9 +13,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Utility class for stored helpful for stored procedure operations.
+ * Utility class for stored procedure operations.
  *
- * @since 1.5.0
+ * @since 1.4.1
  */
 public class StoredProcedureUtils {
 

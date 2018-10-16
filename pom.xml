@@ -16,7 +16,7 @@
     <version>1.5.0-SNAPSHOT</version>
 
     <name>Database Connector</name>
-    <description>A Mule extension that provides functionality for connecting to Databases through the JDBC standard</description>
+    <description>TEST PR - A Mule extension that provides functionality for connecting to Databases through the JDBC standard</description>
 
     <properties>
         <c3p0Version>0.9.5.2-MULE-002</c3p0Version>

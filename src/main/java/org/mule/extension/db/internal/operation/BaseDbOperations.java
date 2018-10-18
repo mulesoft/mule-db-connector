@@ -9,6 +9,7 @@ package org.mule.extension.db.internal.operation;
 import static java.lang.Math.min;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import org.mule.extension.db.api.StatementResult;
@@ -34,12 +35,9 @@ import org.mule.extension.db.internal.resolver.query.ParameterizedQueryResolver;
 import org.mule.extension.db.internal.resolver.query.QueryResolver;
 import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
-import com.google.common.base.Joiner;
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Base class with common functionality for Database operations
@@ -96,8 +94,9 @@ public abstract class BaseDbOperations {
 
   protected void validateQueryType(QueryTemplate queryTemplate, List<QueryType> validTypes) {
     if (validTypes == null || !validTypes.contains(queryTemplate.getType())) {
+      String typeList = validTypes.stream().map(QueryType::name).collect(joining(", "));
       throw new BadSqlSyntaxException(format("Query type must be one of [%s] but query '%s' is of type '%s'",
-                                             Joiner.on(", ").join(validTypes), queryTemplate.getSqlText(),
+                                             typeList, queryTemplate.getSqlText(),
                                              queryTemplate.getType()));
     }
   }
@@ -109,11 +108,10 @@ public abstract class BaseDbOperations {
         parameterTypes.stream().map(type -> type.getKey()).filter(type -> !params.contains(type)).collect(toSet());
 
     if (!unusedTypes.isEmpty()) {
-      throw new IllegalArgumentException(format("Query defines parameters [%s] but they aren't present in the query",
-                                                Joiner.on(", ").join(unusedTypes.stream()
-                                                    .map(s -> new StringBuilder().append("'").append(s).append("'").toString())
-                                                    .collect(Collectors.toList()))));
-
+      String msg = unusedTypes.stream()
+          .map(s -> new StringBuilder().append("'").append(s).append("'").toString())
+          .collect(joining(", "));
+      throw new IllegalArgumentException(format("Query defines parameters [%s] but they aren't present in the query", msg));
     }
   }
 

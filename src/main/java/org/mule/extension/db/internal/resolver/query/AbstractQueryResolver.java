@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.internal.resolver.query;
 
+import static com.github.benmanes.caffeine.cache.Caffeine.newBuilder;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
@@ -42,19 +43,18 @@ import org.mule.runtime.api.i18n.I18nMessageFactory;
 import org.mule.runtime.extension.api.exception.ModuleException;
 import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
+import com.github.benmanes.caffeine.cache.Cache;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 
 abstract class AbstractQueryResolver<T extends StatementDefinition<?>> implements QueryResolver<T> {
 
-  protected Cache<String, QueryTemplate> queryTemplates = CacheBuilder.newBuilder().build();
+  protected Cache<String, QueryTemplate> queryTemplates = newBuilder().maximumSize(50).build();
   private QueryTemplateParser queryTemplateParser = new SimpleQueryTemplateParser();
 
   @Override
@@ -98,11 +98,14 @@ abstract class AbstractQueryResolver<T extends StatementDefinition<?>> implement
   private QueryTemplate getQueryTemplate(DbConnector connector, DbConnection connection, T statementDefinition) {
     try {
       return queryTemplates.get(statementDefinition.getSql(),
-                                () -> createQueryTemplate(statementDefinition, connector, connection));
-    } catch (UncheckedExecutionException e) {
-      Throwables.propagateIfPossible(e.getCause(), ModuleException.class);
+                                key -> createQueryTemplate(statementDefinition, connector, connection));
+    } catch (ModuleException e) {
       throw e;
-    } catch (ExecutionException e) {
+    } catch (Exception e) {
+      if (e.getCause() instanceof ModuleException) {
+        throw (ModuleException) e.getCause();
+      }
+
       throw new MuleRuntimeException(I18nMessageFactory
           .createStaticMessage("Could not resolve query: " + statementDefinition.getSql(), e));
     }

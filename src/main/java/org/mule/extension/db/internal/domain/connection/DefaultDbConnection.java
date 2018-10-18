@@ -7,8 +7,8 @@
 
 package org.mule.extension.db.internal.domain.connection;
 
+import static java.util.Collections.emptyList;
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
-
 import org.mule.extension.db.api.exception.connection.ConnectionClosingException;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
@@ -20,8 +20,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import com.google.common.collect.ImmutableList;
 
 public class DefaultDbConnection implements DbConnection {
 
@@ -48,7 +46,7 @@ public class DefaultDbConnection implements DbConnection {
    */
   @Override
   public List<DbType> getVendorDataTypes() {
-    return ImmutableList.of();
+    return emptyList();
   }
 
   /**

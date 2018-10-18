@@ -6,9 +6,11 @@
  */
 package org.mule.extension.db.api;
 
-import com.google.common.collect.ImmutableMap;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -35,7 +37,7 @@ public class StatementResult {
    */
   public StatementResult(int affectedRows, Map<String, BigInteger> generatedKeys) {
     this.affectedRows = affectedRows;
-    this.generatedKeys = generatedKeys != null ? ImmutableMap.copyOf(generatedKeys) : ImmutableMap.of();
+    this.generatedKeys = generatedKeys != null ? unmodifiableMap(new HashMap<>(generatedKeys)) : emptyMap();
   }
 
   /**

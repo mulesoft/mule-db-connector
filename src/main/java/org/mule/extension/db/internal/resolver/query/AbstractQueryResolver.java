@@ -10,9 +10,6 @@ import static com.github.benmanes.caffeine.cache.Caffeine.newBuilder;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.runtime.api.util.Preconditions.checkArgument;
-
-import com.google.common.base.Throwables;
-import com.google.common.util.concurrent.UncheckedExecutionException;
 import org.mule.extension.db.api.exception.connection.QueryExecutionException;
 import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.api.param.StatementDefinition;

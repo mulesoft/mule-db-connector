@@ -14,26 +14,19 @@
 
         <set-variable variableName="records" value="#[[]]"/>
 
-        <enricher target="mel:flowVars.unused">
-            <processor-chain>
-                <set-payload value="#[payload.'resultSet1']"/>
+        <flow-ref name="processFirst" target="unused"/>
+        <flow-ref name="processSecond" target="unused"/>
 
-                <foreach>
-                    <expression-component>mel:flowVars['records'].add(payload)</expression-component>
-                </foreach>
-            </processor-chain>
-        </enricher>
-
-        <enricher target="mel:flowVars.unused">
-            <processor-chain>
-                <set-payload value="#[payload.'resultSet2']"/>
-
-                <foreach>
-                    <expression-component>mel:flowVars['records'].add(payload)</expression-component>
-                </foreach>
-            </processor-chain>
-        </enricher>
-
-        <set-payload value="#[mel:flowVars['records']]"/>
+        <set-payload value="#[vars['records']]"/>
     </flow>
+
+    <sub-flow name="processFirst">
+        <set-payload value="#[payload.'resultSet1']"/>
+        <set-variable variableName="records" value="#[vars['records'] ++ payload]"/>
+    </sub-flow>
+
+    <sub-flow name="processSecond">
+        <set-payload value="#[payload.'resultSet2']"/>
+        <set-variable variableName="records" value="#[vars['records'] ++ payload]"/>
+    </sub-flow>
 </mule>

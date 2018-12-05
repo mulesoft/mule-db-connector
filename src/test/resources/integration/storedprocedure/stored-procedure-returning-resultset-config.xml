@@ -9,5 +9,8 @@
         <db:stored-procedure config-ref="dbConfig">
             <db:sql>{ call getTestRecords() }</db:sql>
         </db:stored-procedure>
+        <!--This is done so that the payload can be used after the connection is closed -->
+        <set-payload value="#[output application/json --- payload]"/>
+        <set-payload value="#[output application/java --- payload]"/>
     </flow>
 </mule>

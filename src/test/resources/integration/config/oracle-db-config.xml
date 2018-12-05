@@ -6,6 +6,8 @@
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
     <db:config name="dbConfig">
-        <db:oracle-connection host="192.168.99.100" port="1521" instance="xe" user="system" password="oracle" />
+        <db:oracle-connection host="192.168.99.100" port="1521" instance="xe" user="system" password="oracle">
+            <db:pooling-profile/>
+        </db:oracle-connection>
     </db:config>
 </mule>

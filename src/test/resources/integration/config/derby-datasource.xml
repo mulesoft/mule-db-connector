@@ -7,6 +7,7 @@
 
     <db:config name="dbConfig">
         <db:derby-connection database="target/muleEmbeddedDB" create="true">
+            <db:pooling-profile/>
             <db:column-types>
                 <!-- Derby uses JAVA_OBJECT for UDT-->
                 <db:column-type typeName="CONTACT_DETAILS" id="2000"/>

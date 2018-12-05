@@ -11,6 +11,7 @@ import static org.junit.Assume.assumeThat;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.matcher.SupportsReturningStoredProcedureResultsWithoutParameters;
 
+import io.qameta.allure.Description;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,10 +27,12 @@ public class StoredProcedureReturningResultSetReleasesConnectionTestCase extends
   @Before
   public void setupStoredProcedure() throws Exception {
     assumeThat(getDefaultDataSource(), new SupportsReturningStoredProcedureResultsWithoutParameters());
-    testDatabase.createStoredProcedureGetSplitRecords(getDefaultDataSource());
+    testDatabase.createStoredProcedureGetRecords(getDefaultDataSource());
   }
 
   @Test
+  @Description("This test ensures that connections are returned to the connection pool by calling a stored procedure more" +
+      " times than the size of the pools, if the connections are not getting released this test will timeout")
   public void connectionsReleasesToPoolWithStreamedResponse() throws Exception {
     for (int i = 0; i < TIMES_TO_CALL_STORED_PROCEDURE; i++) {
       flowRunner("getResultSet").run();

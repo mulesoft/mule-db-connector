@@ -32,7 +32,7 @@ public class StoredProcedureReturningResultSetReleasesConnectionTestCase extends
   @Test
   public void connectionsReleasesToPoolWithStreamedResponse() throws Exception {
     for (int i = 0; i < TIMES_TO_CALL_STORED_PROCEDURE; i++) {
-      flowRunner("getResultSet").keepStreamsOpen().run().getMessage();
+      flowRunner("getResultSet").run();
     }
   }
 

@@ -20,8 +20,8 @@ import java.util.List;
 
 public class TestDbConfig {
 
-  private static boolean USE_DERBY = false;
-  private static boolean USE_MYSQL = true;
+  private static boolean USE_DERBY = true;
+  private static boolean USE_MYSQL = false;
 
   /**
    * <strong>Developer Note:</strong>

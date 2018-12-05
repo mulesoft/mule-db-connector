@@ -10,11 +10,16 @@ import org.junit.Test;
 
 public class StoredProcedureReturningResultSetReleasesConnection extends AbstractDbIntegrationTestCase {
 
-  private static final int TIMES_TO_CALL_STORED_PROCEDURE = 1;
+  private static final int TIMES_TO_CALL_STORED_PROCEDURE = 20;
+
+  // @Override
+  // protected String[] getFlowConfigurationResources() {
+  // return new String[] {"integration/storedprocedure/stored-procedure-returning-resultset-config.xml"};
+  // }
 
   @Override
   protected String[] getFlowConfigurationResources() {
-    return new String[] {"integration/storedprocedure/stored-procedure-returning-resultset-config.xml"};
+    return new String[] {"integration/storedprocedure/stored-procedure-clob-input-param-config.xml"};
   }
 
   @Before
@@ -26,7 +31,8 @@ public class StoredProcedureReturningResultSetReleasesConnection extends Abstrac
   @Test
   public void connectionsReleasesToPoolWithStreamedResponse() throws Exception {
     for (int i = 0; i < TIMES_TO_CALL_STORED_PROCEDURE; i++) {
-      flowRunner("getResultSet").keepStreamsOpen().run().getMessage();
+        flowRunner("clobInputParameter").withPayload(TEST_MESSAGE).run();
+//      flowRunner("getResultSet").keepStreamsOpen().run().getMessage();
     }
   }
 

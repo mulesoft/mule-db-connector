@@ -255,7 +255,7 @@ public class DmlOperations extends BaseDbOperations {
     InsensitiveMapRowHandler recordHandler = new InsensitiveMapRowHandler(connection);
 
     StatementStreamingResultSetCloser resultSetCloser = new StatementStreamingResultSetCloser(connection);
-    flowListener.onComplete(() -> resultSetCloser.closeResultSets());
+    flowListener.onError(e -> resultSetCloser.closeResultSets());
 
     StatementResultHandler resultHandler = connection.getJdbcConnection().getMetaData().supportsMultipleOpenResults()
         ? new StreamingStatementResultHandler(new IteratorResultSetHandler(recordHandler, resultSetCloser))

@@ -20,8 +20,8 @@ import java.util.List;
 
 public class TestDbConfig {
 
-  private static boolean USE_DERBY = true;
-  private static boolean USE_MYSQL = false;
+  private static boolean USE_DERBY;
+  private static boolean USE_MYSQL;
 
   /**
    * <strong>Developer Note:</strong>
@@ -34,7 +34,7 @@ public class TestDbConfig {
    * <li>Finally change the oracle db configurations to point to your installed instance (e.g. host, port, user, etc)</li>
    * </ul>
    */
-  private static boolean USE_ORACLE = false;
+  private static boolean USE_ORACLE;
 
   /**
    * <strong>Developer Note:</strong>
@@ -44,9 +44,19 @@ public class TestDbConfig {
    * <li>To start a SQL Server using docker, run: <code>docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -p 1433:1433 -d microsoft/mssql-server-linux</code>
    * </ul>
    */
-  private static boolean USE_MSSQL_SERVER = false;
+  private static boolean USE_MSSQL_SERVER;
 
   public static List<Object[]> getResources() {
+
+    USE_MYSQL = getValueFor("mysql");
+    USE_MSSQL_SERVER = getValueFor("mssql");
+    USE_DERBY = getValueFor("derby");
+    USE_ORACLE = getValueFor("oracle");
+
+    if (!(USE_DERBY || USE_MYSQL || USE_MSSQL_SERVER || USE_ORACLE)) {
+      USE_DERBY = true;
+    }
+
     List<Object[]> result = new ArrayList<>();
 
     result.addAll(getDerbyResource());
@@ -95,5 +105,9 @@ public class TestDbConfig {
     } else {
       return emptyList();
     }
+  }
+
+  private static Boolean getValueFor(String vendor) {
+    return Boolean.valueOf(System.getProperty(vendor));
   }
 }

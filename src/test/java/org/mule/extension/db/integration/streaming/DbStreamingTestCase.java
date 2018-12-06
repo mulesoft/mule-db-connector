@@ -11,9 +11,12 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
+import static org.mule.extension.db.integration.DbTestUtil.DbType.MYSQL;
+import static org.mule.extension.db.integration.DbTestUtil.DbType.SQLSERVER;
 import static org.mule.runtime.core.api.util.StreamingUtils.streamingContent;
 
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
+import org.mule.extension.db.integration.DbTestUtil.DbType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.mule.runtime.api.streaming.object.CursorIterator;
@@ -57,8 +60,12 @@ public class DbStreamingTestCase extends AbstractDbIntegrationTestCase {
     try (CursorIterator<Map<String, Object>> iterator = ((CursorIteratorProvider) response).openCursor()) {
       Map<String, Object> row = iterator.next();
       assertThat(row.get("NAME"), is("88"));
-      TypedValue blob = (TypedValue) row.get("PICTURE");
-      assertThat(blob.getValue(), is(instanceOf(CursorStreamProvider.class)));
+      Object blob = row.get("PICTURE");
+      if (dbType.equals(MYSQL) || dbType.equals(SQLSERVER)) {
+        assertThat(blob, is(instanceOf(byte[].class)));
+      } else {
+        assertThat((((TypedValue) blob).getValue()), is(instanceOf(CursorStreamProvider.class)));
+      }
     }
   }
 

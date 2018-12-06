@@ -33,7 +33,7 @@ public class ColumnValueProviderTestCase extends AbstractDbIntegrationTestCase
   }
 
   @Test
-  public void retrieveSubsubProtocols() {
+  public void retrieveTableColumns() {
     Location sourceLocation = Location.builder().globalName("value-providers-id-watermark").addSourcePart().build();
     ValueResult idValues = valueProviderService.getValues(sourceLocation, "idColumn");
     ValueResult watermarkValues = valueProviderService.getValues(sourceLocation, "watermarkColumn");

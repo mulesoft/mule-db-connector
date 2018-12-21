@@ -10,9 +10,14 @@ package org.mule.extension.db.integration.insert;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeThat;
+import static org.mule.extension.db.integration.DbTestUtil.DbType.ORACLE;
+
 import org.mule.extension.db.api.StatementResult;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
+import org.mule.extension.db.integration.DbTestUtil.DbType;
 import org.mule.metadata.api.model.ArrayType;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.metadata.api.model.NullType;
@@ -21,6 +26,7 @@ import org.mule.runtime.api.meta.model.operation.OperationModel;
 import org.mule.runtime.api.metadata.descriptor.ComponentMetadataDescriptor;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
 
+import org.junit.Assume;
 import org.junit.Test;
 
 public class InsertMetadataTestCase extends AbstractDbIntegrationTestCase {
@@ -55,8 +61,12 @@ public class InsertMetadataTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void bulkInsertParameterizedInputMetadata() throws Exception {
-    MetadataType parameters =
-        getParameterValuesMetadata("bulkInsertMetadata", "INSERT INTO PLANET(POSITION, NAME) VALUES (777, :name)");
+    MetadataType parameters;
+    if (dbType == ORACLE) {
+      parameters = getParameterValuesMetadata("bulkInsertMetadata", "INSERT INTO PLANET(NAME) VALUES (:name)");
+    } else {
+      parameters = getParameterValuesMetadata("bulkInsertMetadata", "INSERT INTO PLANET(POSITION, NAME) VALUES (777, :name)");
+    }
 
     assertThat(parameters, is(instanceOf(ArrayType.class)));
     assertThat(((ArrayType) parameters).getType(), is(instanceOf(ObjectType.class)));
@@ -74,8 +84,13 @@ public class InsertMetadataTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void insertParameterizedInputMetadata() throws Exception {
-    MetadataType parameters =
-        getInputMetadata("insertMetadata", "INSERT INTO PLANET(POSITION, NAME) VALUES (777, :name)");
+    MetadataType parameters;
+
+    if (dbType == ORACLE) {
+      parameters = getInputMetadata("insertMetadata", "INSERT INTO PLANET(NAME) VALUES (:name)");
+    } else {
+      parameters = getInputMetadata("insertMetadata", "INSERT INTO PLANET(POSITION, NAME) VALUES (777, :name)");
+    }
 
     assertThat(parameters, is(instanceOf(ObjectType.class)));
     assertThat(((ObjectType) parameters).getFields().size(), equalTo(1));

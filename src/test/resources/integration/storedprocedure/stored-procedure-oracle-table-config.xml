@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+            http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+
+    <flow name="insertTableTypeWithMapping">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql >{ call INSERT_FRUIT_AS_TABLE(:in) }</db:sql>
+            <db:input-parameters >#[{
+                in : payload map ({
+                fruitID: $.fruitID,
+                fruitName: $.fruitName,
+                fruitQuantity: $.fruitQuantity
+                } as Object {class : "org.mule.extension.db.integration.select.Fruit"}) }]
+            </db:input-parameters>
+        </db:stored-procedure>
+    </flow>
+
+    <flow name="insertTableType2WithMapping">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql >{ call INSERT_FRUIT_AS_TYPE(:in) }</db:sql>
+            <db:input-parameters >#[{
+                in : payload map ({
+                fruitID: $.fruitID,
+                fruitName: $.fruitName,
+                fruitQuantity: $.fruitQuantity
+                } as Object {class : "org.mule.extension.db.integration.select.Fruit"}) }]
+            </db:input-parameters>
+        </db:stored-procedure>
+    </flow>
+
+    <flow name="returnTableTypeWithMapping">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql >{ call CREATE_FRUIT_TABLE(:out) }</db:sql>
+            <db:output-parameters>
+                <db:output-parameter key="out" customType="SYSTEM.FRUIT_ORDER_CONTENTS_TABLE"/>
+            </db:output-parameters>
+        </db:stored-procedure>
+    </flow>
+
+    <flow name="insertTableType">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql >{ call INSERT_FRUIT_AS_TABLE(:in) }</db:sql>
+            <db:input-parameters >#[{
+                in : payload map [$.fruitID, $.fruitName, $.fruitQuantity]
+                }]
+            </db:input-parameters>
+        </db:stored-procedure>
+    </flow>
+
+    <flow name="insertTableType2">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql >{ call INSERT_FRUIT_AS_TYPE(:in) }</db:sql>
+            <db:input-parameters >#[{
+                in : payload map [$.fruitID, $.fruitName, $.fruitQuantity]
+                }]
+            </db:input-parameters>
+        </db:stored-procedure>
+    </flow>
+
+    <flow name="returnTableType">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql >{ call CREATE_FRUIT_TABLE(:out) }</db:sql>
+            <db:output-parameters>
+                <db:output-parameter key="out"/>
+            </db:output-parameters>
+        </db:stored-procedure>
+    </flow>
+
+    <flow name="selectFromFruitsTable">
+        <db:select config-ref="dbConfig">
+            <db:sql>#["SELECT * FROM FRUITS_AS_TABLE WHERE" + (payload map $$) reduce ((item, accumulator) -> accumulator ++ "$(if (item == 0) '' else ' OR') (fruitID = :id$(item))")]</db:sql>
+            <db:input-parameters>
+                #[payload map ((item, index) -> {pos : index, val : item})
+                reduce ((item, accumulator = {}) -> accumulator ++ {"id$(item.pos)" : item.val})]
+            </db:input-parameters>
+        </db:select>
+    </flow>
+
+    <flow name="selectFromFruitsTable2">
+        <db:select config-ref="dbConfig">
+            <db:sql>#["SELECT * FROM FRUITS_AS_TYPE F WHERE" + (payload map $$) reduce ((item, accumulator) -> accumulator ++ "$(if (item == 0) '' else ' OR') (F.FRUIT.FRUITID = :id$(item))")]</db:sql>
+            <db:input-parameters>
+                #[payload map ((item, index) -> {pos : index, val : item})
+                reduce ((item, accumulator = {}) -> accumulator ++ {"id$(item.pos)" : item.val})]
+            </db:input-parameters>
+        </db:select>
+    </flow>
+
+    <flow name="insertStruct">
+        <db:insert config-ref="dbConfig">
+            <db:sql>INSERT INTO FRUITS_AS_TYPE (fruit) VALUES (:fruit)</db:sql>
+            <db:input-parameters>
+                #[{
+                    fruit : [payload.fruitID, payload.fruitName, payload.fruitQuantity]
+                }]
+            </db:input-parameters>
+        </db:insert>
+    </flow>
+
+    <flow name="insertStructWithMapping">
+        <db:insert config-ref="dbConfig">
+            <db:sql>INSERT INTO FRUITS_AS_TYPE (fruit) VALUES (:fruit)</db:sql>
+            <db:input-parameters>
+                #[{
+                fruit : {
+                    fruitID: payload.fruitID,
+                    fruitName: payload.fruitName,
+                    fruitQuantity: payload.fruitQuantity
+                } as Object {class : "org.mule.extension.db.integration.select.Fruit"}
+                }]
+            </db:input-parameters>
+        </db:insert>
+    </flow>
+
+</mule>

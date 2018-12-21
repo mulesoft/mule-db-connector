@@ -16,6 +16,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mule.extension.db.internal.domain.type.ArrayResolvedDbType.createUnsupportedTypeErrorMessage;
+
+import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
@@ -42,6 +44,7 @@ public class ArrayResolvedDbTypeTestCase extends AbstractMuleTestCase {
   private ArrayResolvedDbType dataType;
   private PreparedStatement statement;
   private Connection connection;
+  private DbConnection dbConnection;
   private Array dbArray;
 
   @Before
@@ -49,6 +52,7 @@ public class ArrayResolvedDbTypeTestCase extends AbstractMuleTestCase {
     dataType = new ArrayResolvedDbType(ARRAY, TYPE_NAME);
     statement = mock(PreparedStatement.class);
     connection = mock(Connection.class);
+    dbConnection = mock(DbConnection.class);
     dbArray = mock(Array.class);
 
     when(statement.getConnection()).thenReturn(connection);
@@ -58,9 +62,9 @@ public class ArrayResolvedDbTypeTestCase extends AbstractMuleTestCase {
   public void convertsJavaArray() throws Exception {
     Object[] value = new Object[] {"foo", "bar"};
 
-    when(connection.createArrayOf(TYPE_NAME, value)).thenReturn(dbArray);
+    when(dbConnection.createArrayOf(TYPE_NAME, value)).thenReturn(dbArray);
 
-    dataType.setParameterValue(statement, PARAM_INDEX, value);
+    dataType.setParameterValue(statement, PARAM_INDEX, value, dbConnection);
 
     verify(statement).setArray(PARAM_INDEX, dbArray);
   }
@@ -71,9 +75,9 @@ public class ArrayResolvedDbTypeTestCase extends AbstractMuleTestCase {
     value.add("foo");
     value.add("bar");
 
-    when(connection.createArrayOf(argThat(equalTo(TYPE_NAME)), argThat(arrayContaining("foo", "bar")))).thenReturn(dbArray);
+    when(dbConnection.createArrayOf(argThat(equalTo(TYPE_NAME)), argThat(arrayContaining("foo", "bar")))).thenReturn(dbArray);
 
-    dataType.setParameterValue(statement, PARAM_INDEX, value);
+    dataType.setParameterValue(statement, PARAM_INDEX, value, dbConnection);
 
     verify(statement).setArray(PARAM_INDEX, dbArray);
   }
@@ -84,6 +88,6 @@ public class ArrayResolvedDbTypeTestCase extends AbstractMuleTestCase {
     expectedException.expect(IllegalArgumentException.class);
     expectedException.expectMessage(containsString(createUnsupportedTypeErrorMessage(value)));
 
-    dataType.setParameterValue(statement, PARAM_INDEX, value);
+    dataType.setParameterValue(statement, PARAM_INDEX, value, dbConnection);
   }
 }

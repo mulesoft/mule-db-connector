@@ -8,6 +8,9 @@
 package org.mule.extension.db.internal.domain.type;
 
 import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
+
+import org.mule.extension.db.internal.domain.connection.DbConnection;
 
 import java.sql.Array;
 import java.sql.CallableStatement;
@@ -15,7 +18,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Struct;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Defines a structured data type for {@link Array}
@@ -33,13 +40,13 @@ public class ArrayResolvedDbType extends AbstractStructuredDbType {
   }
 
   @Override
-  public void setParameterValue(PreparedStatement statement, int index, Object value) throws SQLException {
+  public void setParameterValue(PreparedStatement statement, int index, Object value, DbConnection dbConnection)
+      throws SQLException {
     if (!(value instanceof Array)) {
-      Connection connection = statement.getConnection();
       if (value instanceof Object[]) {
-        value = connection.createArrayOf(name, (Object[]) value);
+        value = dbConnection.createArrayOf(name, (Object[]) value);
       } else if (value instanceof List) {
-        value = connection.createArrayOf(name, ((List) value).toArray());
+        value = dbConnection.createArrayOf(name, ((List) value).toArray());
       } else {
         throw new IllegalArgumentException(createUnsupportedTypeErrorMessage(value));
       }
@@ -50,7 +57,25 @@ public class ArrayResolvedDbType extends AbstractStructuredDbType {
 
   @Override
   public Object getParameterValue(CallableStatement statement, int index) throws SQLException {
-    return statement.getArray(index);
+    Object array = statement.getArray(index).getArray();
+    if (array instanceof Collection) {
+      return ((Collection<?>) array).stream().map(this::processArray).collect(toList());
+    } else if (array instanceof Object[]) {
+      return Arrays.stream((Object[]) array).map(this::processArray).collect(toList());
+    }
+    return array;
+  }
+
+  private Object processArray(Object object) {
+    if (object instanceof Struct) {
+      try {
+        return ((Struct) object).getAttributes();
+      } catch (SQLException e1) {
+        throw new RuntimeException(e1);
+      }
+    } else {
+      return object;
+    }
   }
 
   /**

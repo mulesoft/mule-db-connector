@@ -82,6 +82,7 @@
             <classifier>mule-plugin</classifier>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>commons-dbutils</groupId>
             <artifactId>commons-dbutils</artifactId>

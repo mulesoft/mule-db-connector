@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.internal.domain.metadata;
 
+import static org.mule.metadata.api.model.MetadataFormat.JAVA;
 import static org.mule.metadata.api.model.MetadataFormat.XML;
 import static org.mule.runtime.api.metadata.resolving.FailureCode.INVALID_CONFIGURATION;
 import static org.mule.runtime.api.metadata.resolving.FailureCode.UNKNOWN;
@@ -14,7 +15,9 @@ import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.query.QueryTemplate;
 import org.mule.extension.db.internal.parser.SimpleQueryTemplateParser;
 import org.mule.metadata.api.ClassTypeLoader;
+import org.mule.metadata.api.builder.ArrayTypeBuilder;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
+import org.mule.metadata.api.model.AnyType;
 import org.mule.metadata.api.model.BinaryType;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.metadata.api.model.NumberType;
@@ -57,12 +60,25 @@ public abstract class BaseDbMetadataResolver {
     return statement;
   }
 
-  protected MetadataType getDataTypeMetadataModel(int columnTypeName, String columnClassName) {
-    if (columnTypeName == Types.JAVA_OBJECT) {
+  protected MetadataType getDataTypeMetadataModel(int typeId, String columnClassName) {
+    if (typeId == Types.JAVA_OBJECT) {
       return typeLoader.load(columnClassName).orElse(typeBuilder.anyType().build());
+    } else if (typeId == Types.STRUCT) {
+      try {
+        if (Struct.class.isAssignableFrom(Class.forName(columnClassName))) {
+          ArrayTypeBuilder arrayTypeBuilder = BaseTypeBuilder.create(JAVA).arrayType();
+          arrayTypeBuilder.of().anyType();
+          return arrayTypeBuilder.build();
+        } else {
+          return typeLoader.load(columnClassName).orElse(typeBuilder.anyType().build());
+        }
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      }
+
     }
 
-    return getDataTypeMetadataModel(columnTypeName);
+    return getDataTypeMetadataModel(typeId);
   }
 
   protected MetadataType getDataTypeMetadataModel(int columnTypeName) {
@@ -83,6 +99,7 @@ public abstract class BaseDbMetadataResolver {
     NumberType numberType = typeBuilder.numberType().build();
     StringType stringType = typeBuilder.stringType().build();
     BinaryType binaryType = typeBuilder.binaryType().build();
+    AnyType anyType = typeBuilder.anyType().build();
 
     dbToMetaDataType.put(Types.BIT, typeBuilder.booleanType().build());
     dbToMetaDataType.put(Types.BOOLEAN, typeBuilder.booleanType().build());
@@ -118,13 +135,13 @@ public abstract class BaseDbMetadataResolver {
     dbToMetaDataType.put(Types.JAVA_OBJECT, typeBuilder.anyType().build());
     dbToMetaDataType.put(Types.DISTINCT, typeBuilder.anyType().build());
 
-    dbToMetaDataType.put(Types.ARRAY, typeBuilder.arrayType().of().anyType().build());
+    dbToMetaDataType.put(Types.ARRAY, typeBuilder.arrayType().of(anyType).build());
 
     dbToMetaDataType.put(Types.NULL, typeBuilder.nullType().build());
 
     dbToMetaDataType.put(Types.SQLXML, BaseTypeBuilder.create(XML).objectType().build());
 
-    dbToMetaDataType.put(Types.STRUCT, typeLoader.load(Struct.class));
+    dbToMetaDataType.put(Types.STRUCT, typeBuilder.arrayType().of(anyType).build());
     dbToMetaDataType.put(Types.REF, typeLoader.load(Ref.class));
     dbToMetaDataType.put(Types.DATALINK, typeLoader.load(URL.class));
     dbToMetaDataType.put(Types.ROWID, typeLoader.load(RowId.class));

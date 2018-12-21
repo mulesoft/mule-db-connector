@@ -13,6 +13,7 @@ import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.param.InputQueryParam;
 import org.mule.extension.db.internal.domain.query.QueryTemplate;
 import org.mule.extension.db.internal.parser.SimpleQueryTemplateParser;
+import org.mule.metadata.api.builder.ObjectFieldTypeBuilder;
 import org.mule.metadata.api.builder.ObjectTypeBuilder;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.runtime.api.connection.ConnectionException;
@@ -56,7 +57,6 @@ public class DbInputMetadataResolver extends BaseDbMetadataResolver implements I
       if (name == null) {
         return typeBuilder.anyType().build();
       }
-
       fieldNames.add(name);
     }
 
@@ -103,12 +103,30 @@ public class DbInputMetadataResolver extends BaseDbMetadataResolver implements I
 
     Map<String, MetadataType> recordModels = new HashMap<>();
     int i = 1;
+    ObjectTypeBuilder record = typeBuilder.objectType();
     for (String fieldName : fieldNames) {
-      int dataType = parameterMetaData.getParameterType(i++);
-      recordModels.put(fieldName, getDataTypeMetadataModel(dataType));
+      int dataType = parameterMetaData.getParameterType(i);
+
+      try {
+
+        ObjectFieldTypeBuilder fieldTypeBuilder = record.addField();
+        fieldTypeBuilder
+            .key(fieldName)
+            .value(getDataTypeMetadataModel(dataType, parameterMetaData.getParameterClassName(i)));
+
+        int nullableCode = parameterMetaData.isNullable(i);
+        //Is not nulleable
+        if (nullableCode == 0) {
+          fieldTypeBuilder.required();
+        }
+
+      } catch (Exception e) {
+        //
+      }
+
+      i++;
     }
 
-    ObjectTypeBuilder record = typeBuilder.objectType();
     recordModels.entrySet().forEach(e -> record.addField().key(e.getKey()).value(e.getValue()));
     return record.build();
   }

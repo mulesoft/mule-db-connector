@@ -26,7 +26,7 @@
             </db:select>
 
             <!--Obtains the java array from the array field-->
-            <set-payload value="#[payload[0]['ZIPS'].array]"/>
+            <set-payload value="#[payload[0]['ZIPS']]"/>
         </try>
     </flow>
 
@@ -51,7 +51,7 @@
             </db:select>
 
             <!--Obtains the java array from the array field-->
-            <set-payload value="#[payload[0]['DETAILS'].array]"/>
+            <set-payload value="#[payload[0]['DETAILS']]"/>
         </try>
     </flow>
 </mule>

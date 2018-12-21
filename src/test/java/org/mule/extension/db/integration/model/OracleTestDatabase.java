@@ -354,6 +354,60 @@ public class OracleTestDatabase extends AbstractTestDatabase {
     executeDdl(connection, ddl);
   }
 
+  public void initUdts(Connection connection) throws SQLException {
+    executeDdlSilently(connection, "DROP PROCEDURE INSERT_FRUIT_AS_TYPE");
+    executeDdlSilently(connection, "DROP PROCEDURE INSERT_FRUIT_AS_TABLE");
+    executeDdlSilently(connection, "DROP PROCEDURE CREATE_FRUIT_TABLE");
+    executeDdlSilently(connection, "DROP TABLE FRUITS_AS_TYPE;");
+    executeDdlSilently(connection, "DROP TABLE FRUITS_AS_TABLE;");
+    executeDdlSilently(connection, "DROP TYPE FRUIT_ORDER_CONTENTS_TABLE;");
+    executeDdlSilently(connection, "DROP TYPE FRUIT_RECORD_TYPE;");
+
+    executeDdlSilently(connection, "CREATE OR REPLACE TYPE FRUIT_RECORD_TYPE AS OBJECT (\n" +
+        "    fruitID integer,\n" +
+        "    fruitName varchar2(250),\n" +
+        "    fruitQuantity NUMBER(10,3)\n" +
+        ");");
+    executeDdlSilently(connection, "CREATE OR REPLACE TYPE FRUIT_ORDER_CONTENTS_TABLE AS TABLE OF FRUIT_RECORD_TYPE;");
+
+    executeDdlSilently(connection, "CREATE TABLE \"SYSTEM\".\"FRUITS_AS_TYPE\" \n" +
+        "   (\t\"FRUIT\" \"SYSTEM\".\"FRUIT_RECORD_TYPE\" \n" +
+        "   )");
+    executeDdlSilently(connection, "CREATE TABLE \"SYSTEM\".\"FRUITS_AS_TABLE\" \n" +
+        "   (\t\"FRUITID\" NUMBER(*,0), \n" +
+        "\t\"FRUITNAME\" VARCHAR2(250 BYTE), \n" +
+        "\t\"FRUITQUANTITY\" NUMBER(10,3)\n" +
+        "   )");
+    executeDdlSilently(connection, "CREATE OR REPLACE PROCEDURE INSERT_FRUIT_AS_TYPE(fruits in FRUIT_ORDER_CONTENTS_TABLE)\n" +
+        "as\n" +
+        "BEGIN\n" +
+        "FOR i IN fruits.FIRST .. fruits.LAST\n" +
+        "  LOOP\n" +
+        "\t    INSERT INTO FRUITS_AS_TYPE VALUES (fruits(i));\n" +
+        "  END LOOP;\n" +
+        "end;");
+
+    executeDdlSilently(connection, "create or replace procedure INSERT_FRUIT_AS_TABLE(param1 in FRUIT_ORDER_CONTENTS_TABLE)\n" +
+        "as\n" +
+        "BEGIN\n" +
+        "INSERT INTO FRUITS_AS_TABLE SELECT * FROM Table(param1);\n" +
+        "end;");
+
+    executeDdlSilently(connection, "create or replace procedure CREATE_FRUIT_TABLE(param1 out FRUIT_ORDER_CONTENTS_TABLE)\n" +
+        "as\n" +
+        "begin\n" +
+        "    param1 := FRUIT_ORDER_CONTENTS_TABLE(FRUIT_RECORD_TYPE(123, 'sad', 321));\n" +
+        "end;");
+  }
+
+  private void executeDdlSilently(Connection connection, String sql) {
+    try {
+      executeUpdate(connection, sql);
+    } catch (SQLException e) {
+      //ignore
+    }
+  }
+
   @Override
   protected void deleteRegionManagersTable(Connection connection) throws SQLException {
     executeUpdate(connection, "DELETE FROM REGION_MANAGERS");

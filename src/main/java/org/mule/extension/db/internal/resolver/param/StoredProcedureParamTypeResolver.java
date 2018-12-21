@@ -11,6 +11,7 @@ import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.param.QueryParam;
 import org.mule.extension.db.internal.domain.query.QueryTemplate;
+import org.mule.extension.db.internal.domain.type.ArrayResolvedDbType;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.DbTypeManager;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
@@ -19,15 +20,18 @@ import org.mule.extension.db.internal.domain.type.UnknownDbTypeException;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
+import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.TABLE_TYPE_NAME;
 import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoredProcedureName;
 
 /**
@@ -88,9 +92,22 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
                             storedProcedureName, name, position, typeId, typeName));
       }
 
-      DbType dbType;
+      DbType dbType = null;
       try {
-        dbType = dbTypeManager.lookup(connection, typeId, typeName);
+        // TODO - MULE-15241 : Fix how DB Connector chooses ResolvedTypes
+        if (TABLE_TYPE_NAME.equals(typeName)) {
+          String procedureName = procedureColumns.getString(3);
+          String argumentName = procedureColumns.getString(4);
+          String owner = procedureColumns.getString(2);
+
+          Optional<String> columnType = connection.getProcedureColumnType(procedureName, argumentName, owner);
+          dbType = columnType.map(type -> (DbType) new ArrayResolvedDbType(Types.ARRAY, type)).orElse(null);
+        }
+
+        if (dbType == null) {
+          dbType = dbTypeManager.lookup(connection, typeId, typeName);
+        }
+
       } catch (UnknownDbTypeException e) {
         // Type was not found in the type manager, but the DB knows about it
         dbType = new ResolvedDbType(typeId, typeName);

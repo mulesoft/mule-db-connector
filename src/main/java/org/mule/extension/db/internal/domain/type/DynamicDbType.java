@@ -7,6 +7,8 @@
 
 package org.mule.extension.db.internal.domain.type;
 
+import org.mule.extension.db.internal.domain.connection.DbConnection;
+
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -38,7 +40,8 @@ public class DynamicDbType implements DbType {
   }
 
   @Override
-  public void setParameterValue(PreparedStatement statement, int index, Object value) throws SQLException {
+  public void setParameterValue(PreparedStatement statement, int index, Object value, DbConnection connection)
+      throws SQLException {
     throw new UnsupportedOperationException();
   }
 

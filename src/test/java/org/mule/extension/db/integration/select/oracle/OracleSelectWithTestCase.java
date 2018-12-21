@@ -43,7 +43,7 @@ public class OracleSelectWithTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void selectWith() throws Exception {
-    Message response = runFlow("with").getMessage();
+    Message response = flowRunner("with").keepStreamsOpen().run().getMessage();
 
     assertMessageContains(response, getAllPlanetRecords());
   }

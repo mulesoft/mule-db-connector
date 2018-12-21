@@ -9,6 +9,8 @@ package org.mule.extension.db.internal.domain.type;
 import static java.lang.String.format;
 import static org.apache.commons.io.IOUtils.toByteArray;
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
+
+import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.runtime.api.exception.MuleRuntimeException;
 
 import java.io.IOException;
@@ -35,9 +37,10 @@ public class BlobDbType extends ResolvedDbType {
    * {@inheritDoc}
    */
   @Override
-  public void setParameterValue(PreparedStatement statement, int index, Object value) throws SQLException {
+  public void setParameterValue(PreparedStatement statement, int index, Object value, DbConnection connection)
+      throws SQLException {
     value = canBeCoercedToBlob(value) ? coerceToBlob(statement, index, value) : value;
-    super.setParameterValue(statement, index, value);
+    super.setParameterValue(statement, index, value, connection);
   }
 
   private boolean canBeCoercedToBlob(Object value) {

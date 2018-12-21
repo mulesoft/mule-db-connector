@@ -7,14 +7,23 @@
 
 package org.mule.extension.db.internal.domain.connection;
 
+import static java.util.Optional.empty;
+
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
 import org.mule.extension.db.internal.result.statement.StatementResultIterator;
 import org.mule.extension.db.internal.result.statement.StatementResultIteratorFactory;
 import org.mule.runtime.extension.api.connectivity.TransactionalConnection;
 
+import java.sql.Array;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Wraps a {@link Connection} adding connector's specific functionality
@@ -75,4 +84,76 @@ public interface DbConnection extends TransactionalConnection {
    * @since 1.3.4
    */
   boolean supportsContentStreaming();
+
+  /**
+   * Creates an {@link Array} of the given {@code typeName} with the given {@code values}
+   *
+   * @param typeName The Array type name
+   * @param values   The values to convert to an {@link Array}
+   * @return The created {@link Array}
+   *
+   * @throws SQLException if an error occurs trying to create the array.
+   * @since 1.5.0
+   */
+  default Array createArrayOf(String typeName, Object[] values) throws SQLException {
+    return getJdbcConnection().createArrayOf(typeName, values);
+  }
+
+  /**
+   * Creates an {@link Array} of the given {@code typeName} with the given {@code values}
+   *
+   * @param typeName The Array type name
+   * @param value   The values to convert to an {@link Array}
+   * @return The created {@link Array}
+   *
+   * @throws SQLException if an error occurs trying to create the array.
+   * @since 1.5.0
+   */
+  default Array createArrayOf(String typeName, Object value) throws SQLException {
+    Object[] values;
+    if (value instanceof Object[]) {
+      values = (Object[]) value;
+    } else if (value instanceof Collection) {
+      values = ((Collection) value).toArray();
+    } else {
+      values = new Object[] {value};
+    }
+    return createArrayOf(typeName, values);
+  }
+
+  /**
+   * Returns the type name of a Stored Procedure Column
+   *
+   * @param procedureName The Stored Procedure name
+   * @param columnName    Name of the column name
+   * @param owner         The owner of the stored procedure
+   * @return An Optional String with the Column type Name
+   * @throws SQLException if an error occurs trying to obtain the column name
+   * @since 1.5.0
+   */
+  default Optional<String> getProcedureColumnType(String procedureName, String columnName, String owner) throws SQLException {
+    return empty();
+  }
+
+  /**
+   * Returns all the available tables of the current Database.
+   * @return A Set with all the table names
+   *
+   * @throws SQLException if an error occurs trying to obtain the table names
+   *
+   * @since 1.5.0
+   */
+  default Set<String> getTables() throws SQLException {
+    Set<String> tableNames = new HashSet<>();
+
+    ResultSet tables = getJdbcConnection()
+        .getMetaData()
+        .getTables(null, null, "%", null);
+
+    while (tables.next()) {
+      tableNames.add(tables.getString(3));
+    }
+
+    return tableNames;
+  }
 }

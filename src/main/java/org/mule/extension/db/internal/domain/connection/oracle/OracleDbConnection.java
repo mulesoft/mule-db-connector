@@ -6,14 +6,23 @@
  */
 package org.mule.extension.db.internal.domain.connection.oracle;
 
+import static java.util.Optional.ofNullable;
+
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
 import org.mule.extension.db.internal.domain.type.oracle.OracleXmlType;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * {@link DefaultDbConnection} implementation for Oracle databases
@@ -21,6 +30,8 @@ import java.util.List;
  * @since 1.0
  */
 public class OracleDbConnection extends DefaultDbConnection {
+
+  public static final String TABLE_TYPE_NAME = "TABLE";
 
   private static final int CURSOR_TYPE_ID = -10;
   private static final String CURSOR_TYPE_NAME = "CURSOR";
@@ -39,5 +50,41 @@ public class OracleDbConnection extends DefaultDbConnection {
     dbTypes.add(new OracleXmlType());
 
     return dbTypes;
+  }
+
+  @Override
+  public Optional<String> getProcedureColumnType(String procedureName, String columnName, String owner) throws SQLException {
+    try (PreparedStatement statement = getJdbcConnection().prepareStatement("SELECT TYPE_NAME FROM SYS.ALL_ARGUMENTS \n" +
+        "WHERE OWNER= ? \n" +
+        "AND OBJECT_NAME= ?\n" +
+        "AND ARGUMENT_NAME = ?\n" +
+        "ORDER BY SEQUENCE")) {
+
+      statement.setString(1, owner);
+      statement.setString(2, procedureName);
+      statement.setString(3, columnName);
+
+      ResultSet resultSet = statement.executeQuery();
+
+      Optional<String> columnType = Optional.empty();
+
+      if (resultSet.next()) {
+        columnType = ofNullable(resultSet.getString(1));
+      }
+      return columnType;
+    }
+  }
+
+  @Override
+  public Set<String> getTables() throws SQLException {
+    Statement statement = getJdbcConnection().createStatement();
+    statement.execute("SELECT table_name FROM user_tables");
+    ResultSet resultSet = statement.getResultSet();
+
+    Set<String> tables = new HashSet<>();
+    while (resultSet.next()) {
+      tables.add(resultSet.getString(1));
+    }
+    return tables;
   }
 }

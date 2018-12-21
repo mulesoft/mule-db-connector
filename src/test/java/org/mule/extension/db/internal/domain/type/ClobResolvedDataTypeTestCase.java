@@ -16,6 +16,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mule.extension.db.internal.domain.type.ClobResolvedDataType.createUnsupportedTypeErrorMessage;
+
+import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
@@ -42,6 +44,7 @@ public class ClobResolvedDataTypeTestCase extends AbstractMuleTestCase {
   private ClobResolvedDataType dataType;
   private PreparedStatement statement;
   private Connection connection;
+  private DbConnection dbConnection;
   private Clob clob;
 
   @Before
@@ -49,6 +52,7 @@ public class ClobResolvedDataTypeTestCase extends AbstractMuleTestCase {
     dataType = new ClobResolvedDataType(CLOB, null);
     statement = mock(PreparedStatement.class);
     connection = mock(Connection.class);
+    dbConnection = mock(DbConnection.class);
     clob = mock(Clob.class);
 
     when(statement.getConnection()).thenReturn(connection);
@@ -59,7 +63,7 @@ public class ClobResolvedDataTypeTestCase extends AbstractMuleTestCase {
   public void convertsStringToClob() throws Exception {
     String value = "foo";
 
-    dataType.setParameterValue(statement, PARAM_INDEX, value);
+    dataType.setParameterValue(statement, PARAM_INDEX, value, dbConnection);
 
     verify(statement).setCharacterStream(eq(PARAM_INDEX), any(StringReader.class), eq(value.length()));
     verify(statement, never()).setObject(PARAM_INDEX, clob, CLOB);
@@ -70,7 +74,7 @@ public class ClobResolvedDataTypeTestCase extends AbstractMuleTestCase {
     String streamContent = "bar";
     InputStream value = new StringInputStream(streamContent);
 
-    dataType.setParameterValue(statement, PARAM_INDEX, value);
+    dataType.setParameterValue(statement, PARAM_INDEX, value, dbConnection);
 
     verify(statement).setCharacterStream(eq(PARAM_INDEX), any(StringReader.class), eq(streamContent.length()));
     verify(statement, never()).setObject(PARAM_INDEX, clob, CLOB);
@@ -80,7 +84,7 @@ public class ClobResolvedDataTypeTestCase extends AbstractMuleTestCase {
   public void setClobDirectly() throws Exception {
     Clob clob = mock(Clob.class);
 
-    dataType.setParameterValue(statement, PARAM_INDEX, clob);
+    dataType.setParameterValue(statement, PARAM_INDEX, clob, dbConnection);
 
     verify(statement).setObject(PARAM_INDEX, clob, CLOB);
   }
@@ -92,7 +96,7 @@ public class ClobResolvedDataTypeTestCase extends AbstractMuleTestCase {
     expectedException.expect(IllegalArgumentException.class);
     expectedException.expectMessage(containsString(createUnsupportedTypeErrorMessage(value)));
 
-    dataType.setParameterValue(statement, PARAM_INDEX, value);
+    dataType.setParameterValue(statement, PARAM_INDEX, value, dbConnection);
   }
 
   private static class StringInputStream extends ReaderInputStream {

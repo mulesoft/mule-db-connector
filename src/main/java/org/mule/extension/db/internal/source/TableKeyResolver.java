@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.internal.source;
 
+import static java.util.stream.Collectors.toSet;
 import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
 import static org.mule.runtime.api.metadata.resolving.FailureCode.CONNECTION_FAILURE;
 import static org.mule.runtime.api.metadata.resolving.FailureCode.UNKNOWN;
@@ -14,13 +15,10 @@ import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.metadata.MetadataContext;
 import org.mule.runtime.api.metadata.MetadataKey;
-import org.mule.runtime.api.metadata.MetadataKeyBuilder;
 import org.mule.runtime.api.metadata.MetadataResolvingException;
 import org.mule.runtime.api.metadata.resolving.TypeKeysResolver;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -31,9 +29,6 @@ import java.util.Set;
  */
 public class TableKeyResolver implements TypeKeysResolver {
 
-  private static final int NAME_COLUMN = 3;
-  private static final String ANY_NAME = "%";
-
   @Override
   public Set<MetadataKey> getKeys(MetadataContext context) throws MetadataResolvingException, ConnectionException {
     Optional<DbConnection> connection = context.getConnection();
@@ -42,19 +37,13 @@ public class TableKeyResolver implements TypeKeysResolver {
         .orElseThrow(() -> new MetadataResolvingException("No connection available to retrieve existing tables",
                                                           CONNECTION_FAILURE));
 
-    LinkedHashSet<MetadataKey> metadataKeys = new LinkedHashSet<>();
-    ResultSet tables;
+    Set<MetadataKey> metadataKeys;
     try {
-
-      tables = dbConnection
-          .getJdbcConnection()
-          .getMetaData()
-          .getTables(null, null, ANY_NAME, null);
-
-      while (tables.next()) {
-        metadataKeys.add(newKey(tables.getString(NAME_COLUMN)).build());
-      }
-
+      metadataKeys = dbConnection.getTables()
+          .stream()
+          .map(tableName -> newKey(tableName)
+              .build())
+          .collect(toSet());
     } catch (SQLException e) {
       throw new MetadataResolvingException("Unexpected error when retrieving existing tables", UNKNOWN, e);
     }

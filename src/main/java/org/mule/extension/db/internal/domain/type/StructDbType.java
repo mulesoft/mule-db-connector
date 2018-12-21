@@ -9,6 +9,8 @@ package org.mule.extension.db.internal.domain.type;
 
 import static java.lang.String.format;
 
+import org.mule.extension.db.internal.domain.connection.DbConnection;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -31,19 +33,18 @@ public class StructDbType extends AbstractStructuredDbType {
   }
 
   @Override
-  public void setParameterValue(PreparedStatement statement, int index, Object value) throws SQLException {
+  public void setParameterValue(PreparedStatement statement, int index, Object value, DbConnection dbConnection)
+      throws SQLException {
     if (value != null && !(value instanceof Struct)) {
       Connection connection = statement.getConnection();
       if (value instanceof Object[]) {
         value = connection.createStruct(name, (Object[]) value);
       } else if (value instanceof List) {
         value = connection.createStruct(name, ((List) value).toArray());
-      } else {
-        throw new IllegalArgumentException(createUnsupportedTypeErrorMessage(value));
       }
     }
 
-    super.setParameterValue(statement, index, value);
+    super.setParameterValue(statement, index, value, dbConnection);
   }
 
   /**

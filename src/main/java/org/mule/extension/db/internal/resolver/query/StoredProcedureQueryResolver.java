@@ -21,6 +21,7 @@ import org.mule.extension.db.internal.domain.query.QueryTemplate;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.DbTypeManager;
 import org.mule.extension.db.internal.domain.type.DynamicDbType;
+import org.mule.extension.db.internal.domain.type.UnknownDbTypeException;
 import org.mule.runtime.api.util.Reference;
 
 import java.util.LinkedList;
@@ -48,9 +49,15 @@ public class StoredProcedureQueryResolver extends ParameterizedQueryResolver<Sto
       Optional<OutputParameter> outputParameter = call.getOutputParameter(paramName);
       if (outputParameter.isPresent()) {
         final ParameterType parameterType = outputParameter.get();
+
         DbType type = parameterType.getDbType() != null ? parameterType.getDbType() : param.getType();
-        if (type instanceof DynamicDbType) {
-          type = typeManager.lookup(connection, type.getName());
+
+        try {
+          if (type instanceof DynamicDbType) {
+            type = typeManager.lookup(connection, type.getName());
+          }
+        } catch (UnknownDbTypeException e) {
+          type = param.getType();
         }
 
         return new DefaultOutputQueryParam(param.getIndex(), type, paramName);

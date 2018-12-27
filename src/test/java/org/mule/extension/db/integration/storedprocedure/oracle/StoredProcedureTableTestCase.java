@@ -42,8 +42,7 @@ public class StoredProcedureTableTestCase extends AbstractStoredProcedureTableTe
   public static List<Object[]> parameters() {
     List<Object[]> oracleResource = TestDbConfig.getOracleResource();
     ArrayList<Object[]> configs = new ArrayList<>();
-    if (true) {
-      //    if (!oracleResource.isEmpty()) {
+    if (!oracleResource.isEmpty()) {
       OracleTestDatabase oracleTestDatabase = new OracleTestDatabase();
       configs.add(new Object[] {"integration/config/oracle-db-config.xml", oracleTestDatabase,
           oracleTestDatabase.getDbType(), emptyList(), ""});

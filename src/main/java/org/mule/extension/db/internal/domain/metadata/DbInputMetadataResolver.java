@@ -107,21 +107,24 @@ public class DbInputMetadataResolver extends BaseDbMetadataResolver implements I
     for (String fieldName : fieldNames) {
       int dataType = parameterMetaData.getParameterType(i);
 
+      ObjectFieldTypeBuilder fieldTypeBuilder = record.addField();
+      fieldTypeBuilder.key(fieldName);
+
       try {
+        fieldTypeBuilder.value(getDataTypeMetadataModel(dataType, parameterMetaData.getParameterClassName(i)));
+      } catch (Exception e) {
+        // If we fail to retrieve the MetadataType of the field we do a best effort and use AnyType
+        fieldTypeBuilder.value(typeBuilder.anyType().build());
+      }
 
-        ObjectFieldTypeBuilder fieldTypeBuilder = record.addField();
-        fieldTypeBuilder
-            .key(fieldName)
-            .value(getDataTypeMetadataModel(dataType, parameterMetaData.getParameterClassName(i)));
-
+      try {
         int nullableCode = parameterMetaData.isNullable(i);
-        //Is not nulleable
+        // Is not nulleable
         if (nullableCode == 0) {
           fieldTypeBuilder.required();
         }
-
       } catch (Exception e) {
-        //
+        // If we fail to retrieve if the field is nullable, we do a best effort and asume it is nullable
       }
 
       i++;

@@ -7,6 +7,9 @@
 
 package org.mule.extension.db.integration.model;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class Contact {
 
   public static final Contact CONTACT1 =
@@ -36,6 +39,24 @@ public class Contact {
       result[i] = details[i].asObjectArray();
     }
 
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
+    Contact contact = (Contact) o;
+    return Objects.equals(name, contact.name) &&
+        Arrays.equals(details, contact.details);
+  }
+
+  @Override
+  public int hashCode() {
+    int result = Objects.hash(name);
+    result = 31 * result + Arrays.hashCode(details);
     return result;
   }
 }

@@ -8,6 +8,8 @@
 package org.mule.extension.db.internal.domain.executor;
 
 import static java.lang.String.format;
+
+import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.logger.DefaultQueryLoggerFactory;
 import org.mule.extension.db.internal.domain.logger.QueryLoggerFactory;
 import org.mule.extension.db.internal.domain.logger.SingleQueryLogger;
@@ -42,7 +44,7 @@ public abstract class AbstractExecutor {
   }
 
   protected void doProcessParameters(PreparedStatement statement, QueryTemplate queryTemplate, List<QueryParamValue> paramValues,
-                                     SingleQueryLogger queryLogger)
+                                     SingleQueryLogger queryLogger, DbConnection connection)
       throws SQLException {
     int valueIndex = 0;
 
@@ -53,7 +55,7 @@ public abstract class AbstractExecutor {
 
         queryLogger.addParameter(queryTemplate.getInputParams().get(valueIndex), param.getValue());
 
-        processInputParam(statement, paramIndex, param.getValue(), queryParam.getType());
+        processInputParam(statement, paramIndex, param.getValue(), queryParam.getType(), connection);
         valueIndex++;
       }
 
@@ -63,8 +65,9 @@ public abstract class AbstractExecutor {
     }
   }
 
-  protected void processInputParam(PreparedStatement statement, int index, Object value, DbType type) throws SQLException {
-    type.setParameterValue(statement, index, value);
+  protected void processInputParam(PreparedStatement statement, int index, Object value, DbType type, DbConnection connection)
+      throws SQLException {
+    type.setParameterValue(statement, index, value, connection);
   }
 
   private void processOutputParam(CallableStatement statement, int index, DbType type) throws SQLException {

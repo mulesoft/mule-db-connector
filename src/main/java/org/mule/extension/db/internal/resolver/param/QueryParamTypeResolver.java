@@ -7,20 +7,26 @@
 
 package org.mule.extension.db.internal.resolver.param;
 
+import static java.sql.Types.ARRAY;
+import static java.sql.Types.STRUCT;
 import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.param.QueryParam;
 import org.mule.extension.db.internal.domain.query.QueryTemplate;
+import org.mule.extension.db.internal.domain.type.ArrayResolvedDbType;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.DbTypeManager;
+import org.mule.extension.db.internal.domain.type.DynamicDbType;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
+import org.mule.extension.db.internal.domain.type.StructDbType;
 import org.mule.extension.db.internal.domain.type.UnknownDbType;
 import org.mule.extension.db.internal.domain.type.UnknownDbTypeException;
 
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,17 +62,16 @@ public class QueryParamTypeResolver implements ParamTypeResolver {
         String parameterTypeName =
             type.isPresent() ? type.get().getDbType().getName() : parameterMetaData.getParameterTypeName(queryParam.getIndex());
         DbType dbType;
+
         if (parameterTypeName == null) {
           // Use unknown data type
           dbType = UnknownDbType.getInstance();
+        } else if (type.isPresent() && !(type.get().getDbType() instanceof DynamicDbType)) {
+          dbType = type.get().getDbType();
         } else {
-          try {
-            dbType = dbTypeManager.lookup(connection, parameterTypeId, parameterTypeName);
-          } catch (UnknownDbTypeException e) {
-            // Type was not found in the type manager, but the DB knows about it
-            dbType = new ResolvedDbType(parameterTypeId, parameterTypeName);
-          }
+          dbType = resolveDbType(connection, parameterTypeId, parameterTypeName);
         }
+
         paramTypes.put(queryParam.getIndex(), dbType);
       }
     } finally {
@@ -80,5 +85,24 @@ public class QueryParamTypeResolver implements ParamTypeResolver {
     }
 
     return paramTypes;
+  }
+
+  private DbType resolveDbType(DbConnection connection, int typeId, String typeName) {
+    DbType dbType;
+    try {
+      dbType = dbTypeManager.lookup(connection, typeId, typeName);
+      // TODO - MULE-15241 : Fix how DB Connector chooses ResolvedTypes
+    } catch (UnknownDbTypeException e) {
+      // Type was not found in the type manager, but the DB knows about it
+      if (typeId == STRUCT) {
+        //Maybe is not defined the type on the Config, but we can still use it.
+        dbType = new StructDbType(typeId, typeName);
+      } else if (typeId == ARRAY) {
+        dbType = new ArrayResolvedDbType(typeId, typeName);
+      } else {
+        dbType = new ResolvedDbType(typeId, typeName);
+      }
+    }
+    return dbType;
   }
 }

@@ -5,7 +5,7 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
-    <flow name="listener">
+    <flow name="listener" initialState="stopped">
         <db:listener config-ref="dbConfig" table="PLANET">
             <scheduling-strategy>
                 <fixed-frequency frequency="1000"/>

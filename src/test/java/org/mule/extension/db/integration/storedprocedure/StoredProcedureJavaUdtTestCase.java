@@ -7,6 +7,7 @@
 
 package org.mule.extension.db.integration.storedprocedure;
 
+import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mule.extension.db.integration.TestDbConfig.getDerbyResource;
@@ -31,7 +32,7 @@ public class StoredProcedureJavaUdtTestCase extends AbstractDbIntegrationTestCas
     if (!getOracleResource().isEmpty()) {
       final OracleTestDatabase oracleTestDatabase = new OracleTestDatabase();
       params.add(new Object[] {"integration/config/oracle-mapped-udt-db-config.xml", oracleTestDatabase,
-          oracleTestDatabase.getDbType()});
+          oracleTestDatabase.getDbType(), emptyList()});
     }
 
     if (!getDerbyResource().isEmpty()) {

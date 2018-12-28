@@ -7,6 +7,7 @@
 
 package org.mule.extension.db.integration.update;
 
+import static java.util.Collections.emptyList;
 import static org.mule.extension.db.integration.TestDbConfig.getOracleResource;
 import static org.mule.extension.db.integration.model.RegionManager.SOUTHWEST_MANAGER;
 import static org.mule.extension.db.AllureConstants.DbFeature.DB_EXTENSION;
@@ -35,7 +36,7 @@ public class UpdateStructUdtTestCase extends AbstractDbIntegrationTestCase {
     if (!getOracleResource().isEmpty()) {
       final OracleTestDatabase oracleTestDatabase = new OracleTestDatabase();
       params.add(new Object[] {"integration/config/oracle-mapped-udt-db-config.xml", oracleTestDatabase,
-          oracleTestDatabase.getDbType()});
+          oracleTestDatabase.getDbType(), emptyList()});
     }
 
     return params;

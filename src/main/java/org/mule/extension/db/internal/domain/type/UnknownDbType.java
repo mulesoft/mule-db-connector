@@ -7,6 +7,8 @@
 
 package org.mule.extension.db.internal.domain.type;
 
+import org.mule.extension.db.internal.domain.connection.DbConnection;
+
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -26,7 +28,8 @@ public class UnknownDbType extends AbstractDbType {
   }
 
   @Override
-  public void setParameterValue(PreparedStatement statement, int index, Object value) throws SQLException {
+  public void setParameterValue(PreparedStatement statement, int index, Object value, DbConnection connection)
+      throws SQLException {
     statement.setObject(index, value);
   }
 

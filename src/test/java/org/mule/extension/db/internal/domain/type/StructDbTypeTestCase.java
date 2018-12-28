@@ -16,6 +16,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mule.extension.db.internal.domain.type.StructDbType.createUnsupportedTypeErrorMessage;
+
+import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
@@ -42,6 +44,7 @@ public class StructDbTypeTestCase extends AbstractMuleTestCase {
   private StructDbType dataType;
   private PreparedStatement statement;
   private Connection connection;
+  private DbConnection dbConnection;
   private Struct struct;
 
   @Before
@@ -49,6 +52,7 @@ public class StructDbTypeTestCase extends AbstractMuleTestCase {
     dataType = new StructDbType(STRUCT, TYPE_NAME);
     statement = mock(PreparedStatement.class);
     connection = mock(Connection.class);
+    dbConnection = mock(DbConnection.class);
     struct = mock(Struct.class);
 
     when(statement.getConnection()).thenReturn(connection);
@@ -60,30 +64,21 @@ public class StructDbTypeTestCase extends AbstractMuleTestCase {
 
     when(connection.createStruct(TYPE_NAME, value)).thenReturn(struct);
 
-    dataType.setParameterValue(statement, PARAM_INDEX, value);
+    dataType.setParameterValue(statement, PARAM_INDEX, value, dbConnection);
 
     verify(statement).setObject(PARAM_INDEX, struct, STRUCT);
   }
 
   @Test
   public void convertsListToStruct() throws Exception {
-    List value = new ArrayList<>();
+    List<String> value = new ArrayList<>();
     value.add("foo");
     value.add("bar");
 
     when(connection.createStruct(argThat(equalTo(TYPE_NAME)), argThat(arrayContaining("foo", "bar")))).thenReturn(struct);
 
-    dataType.setParameterValue(statement, PARAM_INDEX, value);
+    dataType.setParameterValue(statement, PARAM_INDEX, value, dbConnection);
 
     verify(statement).setObject(PARAM_INDEX, struct, STRUCT);
-  }
-
-  @Test
-  public void failsToConvertUnsupportedType() throws Exception {
-    Object value = new Object();
-    expectedException.expect(IllegalArgumentException.class);
-    expectedException.expectMessage(containsString(createUnsupportedTypeErrorMessage(value)));
-
-    dataType.setParameterValue(statement, PARAM_INDEX, value);
   }
 }

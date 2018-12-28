@@ -48,7 +48,7 @@ public class BigDecimalDbTypeTestCase extends AbstractMuleTestCase {
   public void setBigDecimalValue() throws Exception {
     int index = 0;
     BigDecimal bigDecimalValue = new BigDecimal(1234.1234);
-    resolvedDbType.setParameterValue(statement, index, bigDecimalValue);
+    resolvedDbType.setParameterValue(statement, index, bigDecimalValue, null);
     verify(statement).setObject(index, bigDecimalValue, sqlType, bigDecimalValue.scale());
   }
 
@@ -67,7 +67,7 @@ public class BigDecimalDbTypeTestCase extends AbstractMuleTestCase {
   @Test
   public void setBigDecimalValueFromInteger() throws Exception {
     Integer integerValue = 1234;
-    resolvedDbType.setParameterValue(statement, 0, integerValue);
+    resolvedDbType.setParameterValue(statement, 0, integerValue, null);
     verify(statement).setObject(anyInt(), anyObject(), anyInt());
   }
 
@@ -77,7 +77,7 @@ public class BigDecimalDbTypeTestCase extends AbstractMuleTestCase {
       bigDecimal[0] = (BigDecimal) invocation.getArguments()[1];
       return null;
     }).when(statement).setObject(anyInt(), anyObject(), anyInt(), anyInt());
-    resolvedDbType.setParameterValue(statement, 0, value);
+    resolvedDbType.setParameterValue(statement, 0, value, null);
     assertThat(bigDecimal[0].scale(), is(scale));
   }
 

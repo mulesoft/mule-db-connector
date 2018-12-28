@@ -20,6 +20,13 @@ import java.util.List;
 
 public class TestDbConfig {
 
+  static {
+    USE_MYSQL = getValueFor("mysql");
+    USE_MSSQL_SERVER = getValueFor("mssql");
+    USE_DERBY = getValueFor("derby");
+    USE_ORACLE = getValueFor("oracle");
+  }
+
   private static boolean USE_DERBY;
   private static boolean USE_MYSQL;
 
@@ -47,11 +54,6 @@ public class TestDbConfig {
   private static boolean USE_MSSQL_SERVER;
 
   public static List<Object[]> getResources() {
-
-    USE_MYSQL = getValueFor("mysql");
-    USE_MSSQL_SERVER = getValueFor("mssql");
-    USE_DERBY = getValueFor("derby");
-    USE_ORACLE = getValueFor("oracle");
 
     if (!(USE_DERBY || USE_MYSQL || USE_MSSQL_SERVER || USE_ORACLE)) {
       USE_DERBY = true;

@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.internal.domain.connection.sqlserver.type;
 
+import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.type.AbstractStructuredDbType;
 import org.mule.extension.db.internal.domain.type.DbType;
 
@@ -32,10 +33,11 @@ public class SqlServerBinaryDbType extends AbstractStructuredDbType {
   }
 
   @Override
-  public void setParameterValue(PreparedStatement statement, int index, Object value) throws SQLException {
+  public void setParameterValue(PreparedStatement statement, int index, Object value, DbConnection connection)
+      throws SQLException {
     if (value instanceof String) {
       value = ((String) value).getBytes();
     }
-    super.setParameterValue(statement, index, value);
+    super.setParameterValue(statement, index, value, connection);
   }
 }

@@ -20,12 +20,15 @@ import org.mule.runtime.core.api.util.IOUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.SQLXML;
+import java.sql.Struct;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -55,6 +58,10 @@ public class InsensitiveMapRowHandler implements RowHandler {
         result.put(column, handleClobType((Clob) value));
       } else if (value instanceof Blob) {
         result.put(column, handleBlobType((Blob) value));
+      } else if (value instanceof Struct) {
+        result.put(column, handleStructType((Struct) value));
+      } else if (value instanceof Array) {
+        result.put(column, handleArrayType((Array) value));
       } else {
         result.put(column, value);
       }
@@ -67,12 +74,20 @@ public class InsensitiveMapRowHandler implements RowHandler {
     return result;
   }
 
+  private Object handleArrayType(Array value) throws SQLException {
+    return value.getArray();
+  }
+
+  private Object[] handleStructType(Struct value) throws SQLException {
+    return value.getAttributes();
+  }
+
   private TypedValue<InputStream> handleSqlXmlType(SQLXML value) throws SQLException {
     return new TypedValue<>(value.getBinaryStream(), DataType.builder().type(InputStream.class).mediaType(XML).build());
   }
 
   private TypedValue<Object> handleBlobType(Blob value) throws SQLException {
-    if (dbConnection.supportsContentStreaming()) {
+    if (dbConnection != null && dbConnection.supportsContentStreaming()) {
       return new TypedValue<>(value.getBinaryStream(), DataType.builder().type(InputStream.class).mediaType(BINARY).build());
     } else {
       return new TypedValue<>(new ByteArrayInputStream(IOUtils.toByteArray(value.getBinaryStream())),
@@ -81,7 +96,7 @@ public class InsensitiveMapRowHandler implements RowHandler {
   }
 
   private TypedValue<Object> handleClobType(Clob value) throws SQLException {
-    if (dbConnection.supportsContentStreaming()) {
+    if (dbConnection != null && dbConnection.supportsContentStreaming()) {
       return new TypedValue<>(value.getAsciiStream(), DataType.builder().type(InputStream.class).mediaType(TEXT).build());
     } else {
       return new TypedValue<>(new ByteArrayInputStream(IOUtils.toByteArray(value.getAsciiStream())),

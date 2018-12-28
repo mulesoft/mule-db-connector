@@ -9,6 +9,8 @@ package org.mule.extension.db.internal.domain.type;
 
 import static java.lang.String.format;
 
+import org.mule.extension.db.internal.domain.connection.DbConnection;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -28,7 +30,8 @@ public class ClobResolvedDataType extends ResolvedDbType {
   }
 
   @Override
-  public void setParameterValue(PreparedStatement statement, int index, Object value) throws SQLException {
+  public void setParameterValue(PreparedStatement statement, int index, Object value, DbConnection connection)
+      throws SQLException {
     if (value != null && !(value instanceof Clob)) {
       if (value instanceof String) {
         statement.setCharacterStream(index, new StringReader((String) value), ((String) value).length());
@@ -45,7 +48,7 @@ public class ClobResolvedDataType extends ResolvedDbType {
       return;
     }
 
-    super.setParameterValue(statement, index, value);
+    super.setParameterValue(statement, index, value, connection);
   }
 
   protected static String createUnsupportedTypeErrorMessage(Object value) {

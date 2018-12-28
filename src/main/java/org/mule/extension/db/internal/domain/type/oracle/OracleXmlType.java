@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.internal.domain.type.oracle;
 
+import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.type.AbstractStructuredDbType;
 
 import java.io.InputStream;
@@ -36,7 +37,8 @@ public class OracleXmlType extends AbstractStructuredDbType {
   }
 
   @Override
-  public void setParameterValue(PreparedStatement statement, int index, Object value) throws SQLException {
+  public void setParameterValue(PreparedStatement statement, int index, Object value, DbConnection connection)
+      throws SQLException {
     try {
       if (value instanceof String) {
         statement.setObject(index, createXmlType(statement.getConnection(), (String) value), OPAQUE_TYPE_ID);
@@ -49,7 +51,7 @@ public class OracleXmlType extends AbstractStructuredDbType {
     } catch (Exception e) {
       throw new SQLException(e);
     }
-    super.setParameterValue(statement, index, value);
+    super.setParameterValue(statement, index, value, connection);
   }
 
   /**

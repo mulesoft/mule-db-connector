@@ -7,15 +7,22 @@
 
 package org.mule.extension.db.internal.domain.connection.oracle;
 
+import static com.mchange.v2.c3p0.C3P0ProxyConnection.RAW_CONNECTION;
+
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Array;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Collection;
+
+import com.mchange.v2.c3p0.impl.NewProxyConnection;
 
 public class OracleJdbcConnectionWrapper extends AbstractJdbcConnectionWrapper {
 
-  private Method createArrayMethod;
   private boolean initialized;
+  private ArrayFactory arrayFactory;
 
   public OracleJdbcConnectionWrapper(Connection delegate) {
     super(delegate);
@@ -23,33 +30,91 @@ public class OracleJdbcConnectionWrapper extends AbstractJdbcConnectionWrapper {
 
   @Override
   public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
-    if (getCreateArrayOfMethod(delegate) == null) {
-      return super.createArrayOf(typeName, elements);
-    } else {
-      try {
-        return (Array) getCreateArrayOfMethod(delegate).invoke(delegate, typeName, elements);
-      } catch (Exception e) {
-        throw new SQLException("Error creating ARRAY", e);
+    try {
+      Object[] objects = Arrays.stream(elements).map(e -> {
+        if (e instanceof Collection) {
+          return ((Collection) e).toArray();
+        } else {
+          return e;
+        }
+      }).toArray();
+
+      return createArray(delegate, typeName, objects);
+    } catch (Exception e) {
+      throw new SQLException("Error creating ARRAY", e);
+    }
+  }
+
+  private Array createArray(Connection delegate, String typeName, Object[] objects)
+      throws IllegalAccessException, SQLException, InvocationTargetException {
+    init(delegate);
+    return arrayFactory.createArray(typeName, objects);
+  }
+
+  private void init(Connection delegate) {
+    if (arrayFactory == null || !initialized) {
+      synchronized (this) {
+        if (arrayFactory == null || !initialized) {
+          try {
+            if (delegate instanceof NewProxyConnection) {
+              arrayFactory = createArrayFactoryFromProxy((NewProxyConnection) delegate);
+            } else {
+              arrayFactory = createArrayFactory(delegate);
+            }
+          } catch (Exception e) {
+            arrayFactory = super::createArrayOf;
+          }
+        }
+        initialized = true;
       }
     }
   }
 
-  private Method getCreateArrayOfMethod(Connection delegate) {
-    if (createArrayMethod == null && !initialized) {
-      synchronized (this) {
-        if (createArrayMethod == null && !initialized) {
-          try {
-            createArrayMethod = delegate.getClass().getMethod("createARRAY", String.class, Object.class);
-            createArrayMethod.setAccessible(true);
-          } catch (NoSuchMethodException e) {
-            // Ignore, will use the standard method
-          }
+  /**
+   * Creates a {@link ArrayFactory} based on the given connection
+   *
+   * @param connection Connection Proxy
+   * @return a {@link ArrayFactory}
+   */
+  private ArrayFactory createArrayFactory(Connection connection) throws NoSuchMethodException {
+    Method createArrayOfMethod = getCreateArrayOfMethod(connection.getClass());
+    return (type, objects) -> (Array) createArrayOfMethod.invoke(connection, type, objects);
+  }
 
-          initialized = true;
-        }
-      }
-    }
+  /**
+   * Creates a {@link ArrayFactory} based on a Proxied Oracle Connection
+   *
+   * @param connection Connection Proxy
+   * @return a {@link ArrayFactory}
+   */
+  private ArrayFactory createArrayFactoryFromProxy(NewProxyConnection connection)
+      throws NoSuchMethodException, IllegalAccessException, SQLException, InvocationTargetException {
+    Method method = getCreateArrayOfMethod(getProxiedConnectionClass(connection));
+    return (type, objects) -> (Array) connection.rawConnectionOperation(method, RAW_CONNECTION, new Object[] {type, objects});
+  }
+
+  /**
+   * Obtains the class of the proxied connection
+   *
+   * @param connection Proxied class
+   * @return The {@link Class} of the proxied connection
+   */
+  private Class<?> getProxiedConnectionClass(NewProxyConnection connection)
+      throws IllegalAccessException, InvocationTargetException, SQLException, NoSuchMethodException {
+    return (Class) connection.rawConnectionOperation(Object.class.getMethod("getClass"), RAW_CONNECTION, new Object[] {});
+  }
+
+  private Method getCreateArrayOfMethod(Class<?> connectionClass) throws NoSuchMethodException {
+    Method createArrayMethod = connectionClass.getMethod("createARRAY", String.class, Object.class);
+    createArrayMethod.setAccessible(true);
 
     return createArrayMethod;
   }
+
+  @FunctionalInterface
+  private interface ArrayFactory {
+
+    Array createArray(String type, Object[] objects) throws SQLException, InvocationTargetException, IllegalAccessException;
+  }
+
 }

@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.integration.transaction;
 
+import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -19,6 +20,7 @@ import org.mule.runtime.core.api.event.CoreEvent;
 
 import javax.sql.DataSource;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -60,8 +62,11 @@ public abstract class AbstractTxDbIntegrationTestCase extends AbstractDbIntegrat
   private void checkState(String planet, DataSource dataSource) throws java.sql.SQLException {
     List<Map<String, Object>> result = selectData("select * from PLANET where POSITION=4", dataSource);
     Matcher<Map<? extends String, ?>> mapMatcher = hasEntry("NAME", planet);
-    Matcher<Map<? extends String, ?>> numberMatcher = hasEntry("POSITION", 4);
+    //Oracle returns BigDecimals
+    Matcher<Map<? extends String, ?>> numberMatcher = hasEntry(is("POSITION"), is(anyOf(is(4), is(new BigDecimal(4)))));
     Matcher<Iterable<Map<String, Object>>> matcher = hasItems(mapMatcher, numberMatcher);
     assertThat(result, matcher);
   }
+
+
 }

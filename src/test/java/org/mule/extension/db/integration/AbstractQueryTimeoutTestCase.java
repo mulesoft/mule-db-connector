@@ -12,6 +12,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assume.assumeThat;
+import static org.mule.extension.db.integration.DbTestUtil.DbType.ORACLE;
 import static org.mule.extension.db.integration.DbTestUtil.DbType.SQLSERVER;
 
 import org.mule.functional.api.exception.ExpectedError;
@@ -39,8 +40,9 @@ public abstract class AbstractQueryTimeoutTestCase extends AbstractDbIntegration
    */
   @Test
   public void timeoutsQuery() throws Exception {
-    //TODO: SQL Server doesn't support delay inside functions.
+    //TODO: SQL Server and ORACLE doesn't support delay inside functions.
     assumeThat(dbType, is(not(SQLSERVER)));
+    assumeThat(dbType, is(not(ORACLE)));
     CoreEvent responseEvent = flowRunner(QUERY_TIMEOUT_FLOW).withPayload(0).run();
 
     Message response = responseEvent.getMessage();

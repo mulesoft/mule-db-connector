@@ -10,6 +10,8 @@ package org.mule.extension.db.internal.domain.type;
 import static java.sql.Types.DECIMAL;
 import static java.sql.Types.NUMERIC;
 
+import org.mule.extension.db.internal.domain.connection.DbConnection;
+
 import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -25,7 +27,8 @@ public class ResolvedDbType extends AbstractDbType {
   }
 
   @Override
-  public void setParameterValue(PreparedStatement statement, int index, Object value) throws SQLException {
+  public void setParameterValue(PreparedStatement statement, int index, Object value, DbConnection connection)
+      throws SQLException {
     if (value == null) {
       statement.setNull(index, id);
     } else {

@@ -7,6 +7,8 @@
 
 package org.mule.extension.db.internal.domain.type;
 
+import org.mule.extension.db.internal.domain.connection.DbConnection;
+
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -29,21 +31,22 @@ public interface DbType {
   /**
    * Sets the value of an input parameter
    *
-   * @param statement statement that contains the parameter
-   * @param index index of the parameter in the statement (first parameter is 1, the second is 2, etc)
-   * @param value value to assign
+   * @param statement  statement that contains the parameter
+   * @param index      index of the parameter in the statement (first parameter is 1, the second is 2, etc)
+   * @param value      value to assign
+   * @param connection connection to create the parameter value
    * @throws SQLException if parameterIndex does not correspond to a parameter marker in the SQL statement; if a database access
-   *         error occurs; this method is called on a closed PreparedStatement or the type of the given object is ambiguous
+   *                      error occurs; this method is called on a closed PreparedStatement or the type of the given object is ambiguous
    */
-  void setParameterValue(PreparedStatement statement, int index, Object value) throws SQLException;
+  void setParameterValue(PreparedStatement statement, int index, Object value, DbConnection connection) throws SQLException;
 
   /**
    * Gets the value of an output parameter
    *
    * @param statement statement that contains the parameter
-   * @param index index of the parameter in the statement (first parameter is 1, the second is 2, etc)
+   * @param index     index of the parameter in the statement (first parameter is 1, the second is 2, etc)
    * @throws SQLException if parameterIndex does not correspond to a parameter marker in the SQL statement; if a database access
-   *         error occurs; this method is called on a closed statement
+   *                      error occurs; this method is called on a closed statement
    */
   Object getParameterValue(CallableStatement statement, int index) throws SQLException;
 
@@ -51,9 +54,9 @@ public interface DbType {
    * Registers an output parameter
    *
    * @param statement statement that contains the parameter
-   * @param index index of the parameter in the statement (first parameter is 1, the second is 2, etc)
+   * @param index     index of the parameter in the statement (first parameter is 1, the second is 2, etc)
    * @throws SQLException if the parameterIndex is not valid; if a database access error occurs or this method is called on a
-   *         closed CallableStatement
+   *                      closed CallableStatement
    */
   void registerOutParameter(CallableStatement statement, int index) throws SQLException;
 }

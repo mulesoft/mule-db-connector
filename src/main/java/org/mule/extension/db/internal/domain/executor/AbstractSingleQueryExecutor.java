@@ -30,7 +30,7 @@ public abstract class AbstractSingleQueryExecutor extends AbstractExecutor imple
   public final Object execute(DbConnection connection, Query query) throws SQLException {
     Statement statement = statementFactory.create(connection, query.getQueryTemplate());
     return safely(statement, () -> {
-      prepareQuery(statement, query);
+      prepareQuery(statement, query, connection);
       return doExecuteQuery(connection, statement, query);
     });
   }
@@ -41,7 +41,7 @@ public abstract class AbstractSingleQueryExecutor extends AbstractExecutor imple
     Statement statement = statementFactory.create(connection, query.getQueryTemplate(), autoGenerateKeysStrategy);
 
     return safely(statement, () -> {
-      prepareQuery(statement, query);
+      prepareQuery(statement, query, connection);
       return doExecuteQuery(connection, statement, query, autoGenerateKeysStrategy);
     });
   }
@@ -52,11 +52,12 @@ public abstract class AbstractSingleQueryExecutor extends AbstractExecutor imple
                                            AutoGenerateKeysStrategy autoGenerateKeysStrategy)
       throws SQLException;
 
-  protected void prepareQuery(Statement statement, Query query) throws SQLException {
+  protected void prepareQuery(Statement statement, Query query, DbConnection connection) throws SQLException {
     SingleQueryLogger queryLogger = queryLoggerFactory.createQueryLogger(LOGGER, query.getQueryTemplate());
 
     if (statement instanceof PreparedStatement) {
-      doProcessParameters((PreparedStatement) statement, query.getQueryTemplate(), query.getParamValues(), queryLogger);
+      doProcessParameters((PreparedStatement) statement, query.getQueryTemplate(), query.getParamValues(), queryLogger,
+                          connection);
     }
 
     queryLogger.logQuery();

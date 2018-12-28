@@ -92,6 +92,8 @@ public class MetadataDbTypeManager implements DbTypeManager {
           resolvedDbType = new BlobDbType(dataType.intValue(), typeName);
         } else if (Objects.equals(Types.CLOB, dataType.intValue())) {
           resolvedDbType = new ClobResolvedDataType(dataType.intValue(), typeName);
+        } else if (Objects.equals(Types.STRUCT, dataType.intValue())) {
+          resolvedDbType = new StructDbType(dataType.intValue(), typeName);
         } else {
           resolvedDbType = new ResolvedDbType(dataType.intValue(), typeName);
         }
@@ -122,7 +124,7 @@ public class MetadataDbTypeManager implements DbTypeManager {
         isTypeDerivedFrom(dbType, ARRAY.getDbType());
   }
 
-  private boolean isTypeDerivedFrom(DbType type, DbType baseType) {
+  public static boolean isTypeDerivedFrom(DbType type, DbType baseType) {
     return type.getId() == baseType.getId() && !type.getName().equals(baseType.getName());
   }
 }

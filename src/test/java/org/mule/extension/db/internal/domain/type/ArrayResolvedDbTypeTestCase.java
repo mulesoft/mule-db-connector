@@ -11,12 +11,11 @@ import static java.sql.Types.ARRAY;
 import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static org.mule.extension.db.internal.domain.type.ArrayResolvedDbType.createUnsupportedTypeErrorMessage;
-
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
@@ -74,6 +73,7 @@ public class ArrayResolvedDbTypeTestCase extends AbstractMuleTestCase {
     List value = new ArrayList<>();
     value.add("foo");
     value.add("bar");
+
 
     when(dbConnection.createArrayOf(argThat(equalTo(TYPE_NAME)), argThat(arrayContaining("foo", "bar")))).thenReturn(dbArray);
 

@@ -9,14 +9,11 @@ package org.mule.extension.db.internal.domain.type;
 
 import static java.sql.Types.STRUCT;
 import static org.hamcrest.Matchers.arrayContaining;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mule.extension.db.internal.domain.type.StructDbType.createUnsupportedTypeErrorMessage;
-
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
@@ -74,7 +71,6 @@ public class StructDbTypeTestCase extends AbstractMuleTestCase {
     List<String> value = new ArrayList<>();
     value.add("foo");
     value.add("bar");
-
     when(connection.createStruct(argThat(equalTo(TYPE_NAME)), argThat(arrayContaining("foo", "bar")))).thenReturn(struct);
 
     dataType.setParameterValue(statement, PARAM_INDEX, value, dbConnection);

@@ -11,6 +11,9 @@ import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.mule.extension.db.internal.domain.query.QueryType.DELETE;
 import static org.mule.extension.db.internal.domain.query.QueryType.INSERT;
+import static org.mule.extension.db.internal.domain.query.QueryType.MERGE;
+import static org.mule.extension.db.internal.domain.query.QueryType.STORE_PROCEDURE_CALL;
+import static org.mule.extension.db.internal.domain.query.QueryType.TRUNCATE;
 import static org.mule.extension.db.internal.domain.query.QueryType.UPDATE;
 
 import org.mule.extension.db.api.param.BulkQueryDefinition;
@@ -68,15 +71,13 @@ public class BulkOperations extends BaseDbOperations {
    *         according to the order in which commands were added to the batch.
    * @throws SQLException if an error is produced
    */
-  public int[] bulkInsert(@DisplayName("Input Parameters") @Content @Placement(
-      order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
-                          @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
+  public int[] bulkInsert(@ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
                           @Config DbConnector connector,
                           @Connection DbConnection connection,
                           StreamingHelper streamingHelper)
       throws SQLException {
 
-    return singleQueryBulk(query, bulkInputParameters, INSERT, connector, connection, streamingHelper);
+    return singleQueryBulk(query, query.getBulkInputParameters(), connector, connection, streamingHelper, INSERT);
   }
 
   /**
@@ -92,15 +93,14 @@ public class BulkOperations extends BaseDbOperations {
    *         according to the order in which commands were added to the batch.
    * @throws SQLException if an error is produced
    */
-  public int[] bulkUpdate(@DisplayName("Input Parameters") @Content @Placement(
-      order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
-                          @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
+  public int[] bulkUpdate(@ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
                           @Config DbConnector connector,
                           @Connection DbConnection connection,
                           StreamingHelper streamingHelper)
       throws SQLException {
 
-    return singleQueryBulk(query, bulkInputParameters, UPDATE, connector, connection, streamingHelper);
+    return singleQueryBulk(query, query.getBulkInputParameters(), connector, connection, streamingHelper, UPDATE, TRUNCATE, MERGE,
+                           STORE_PROCEDURE_CALL);
   }
 
   /**
@@ -116,15 +116,13 @@ public class BulkOperations extends BaseDbOperations {
    *         according to the order in which commands were added to the batch.
    * @throws SQLException if an error is produced
    */
-  public int[] bulkDelete(@DisplayName("Input Parameters") @Content @Placement(
-      order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
-                          @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
+  public int[] bulkDelete(@ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
                           @Config DbConnector connector,
                           @Connection DbConnection connection,
                           StreamingHelper streamingHelper)
       throws SQLException {
 
-    return singleQueryBulk(query, bulkInputParameters, DELETE, connector, connection, streamingHelper);
+    return singleQueryBulk(query, query.getBulkInputParameters(), connector, connection, streamingHelper, DELETE);
   }
 
   /**
@@ -163,10 +161,10 @@ public class BulkOperations extends BaseDbOperations {
 
   private int[] singleQueryBulk(BulkQueryDefinition query,
                                 List<Map<String, Object>> values,
-                                QueryType queryType,
                                 DbConnector connector,
                                 DbConnection connection,
-                                StreamingHelper streamingHelper)
+                                StreamingHelper streamingHelper,
+                                QueryType... queryType)
       throws SQLException {
 
     final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, queryType);

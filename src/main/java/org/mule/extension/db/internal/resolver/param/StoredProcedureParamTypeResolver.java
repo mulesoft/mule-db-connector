@@ -44,6 +44,7 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
   public static final int PARAM_NAME_COLUMN_INDEX = 4;
   public static final int TYPE_ID_COLUMN_INDEX = 6;
   public static final int TYPE_NAME_COLUMN_INDEX = 7;
+  public static final int COLUMN_TYPE_INDEX = 5;
 
   private final DbTypeManager dbTypeManager;
 
@@ -83,6 +84,10 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
     int position = 1;
 
     while (procedureColumns.next()) {
+      if (procedureColumns.getInt(COLUMN_TYPE_INDEX) == 5) {
+        continue;
+      }
+
       int typeId = procedureColumns.getInt(TYPE_ID_COLUMN_INDEX);
       String typeName = procedureColumns.getString(TYPE_NAME_COLUMN_INDEX);
 

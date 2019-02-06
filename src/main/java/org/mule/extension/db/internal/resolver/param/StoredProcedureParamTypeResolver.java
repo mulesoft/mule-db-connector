@@ -46,6 +46,8 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
   public static final int TYPE_NAME_COLUMN_INDEX = 7;
   public static final int COLUMN_TYPE_INDEX = 5;
 
+  public static final short PROCEDURE_COLUMN_RETURN_COLUMN_TYPE = 5;
+
   private final DbTypeManager dbTypeManager;
 
   public StoredProcedureParamTypeResolver(DbTypeManager dbTypeManager) {
@@ -84,7 +86,7 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
     int position = 1;
 
     while (procedureColumns.next()) {
-      if (procedureColumns.getInt(COLUMN_TYPE_INDEX) == 5) {
+      if (procedureColumns.getShort(COLUMN_TYPE_INDEX) == PROCEDURE_COLUMN_RETURN_COLUMN_TYPE) {
         continue;
       }
 

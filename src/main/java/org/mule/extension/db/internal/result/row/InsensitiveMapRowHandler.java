@@ -18,7 +18,6 @@ import org.mule.runtime.core.api.util.CaseInsensitiveHashMap;
 import org.mule.runtime.core.api.util.IOUtils;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Array;
 import java.sql.Blob;
@@ -28,7 +27,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.SQLXML;
 import java.sql.Struct;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -52,19 +50,9 @@ public class InsensitiveMapRowHandler implements RowHandler {
       String column = metaData.getColumnLabel(i);
       Object value = resultSet.getObject(i);
 
-      if (value instanceof SQLXML) {
-        result.put(column, handleSqlXmlType((SQLXML) value));
-      } else if (value instanceof Clob) {
-        result.put(column, handleClobType((Clob) value));
-      } else if (value instanceof Blob) {
-        result.put(column, handleBlobType((Blob) value));
-      } else if (value instanceof Struct) {
-        result.put(column, handleStructType((Struct) value));
-      } else if (value instanceof Array) {
-        result.put(column, handleArrayType((Array) value));
-      } else {
-        result.put(column, value);
-      }
+      Object cellValue = getMuleConsumableValue(value);
+
+      result.put(column, cellValue);
     }
 
     if (cols != result.size()) {
@@ -74,8 +62,38 @@ public class InsensitiveMapRowHandler implements RowHandler {
     return result;
   }
 
+  private Object getMuleConsumableValue(Object value) throws SQLException {
+    Object returnValue;
+
+    if (value instanceof SQLXML) {
+      returnValue = handleSqlXmlType((SQLXML) value);
+    } else if (value instanceof Clob) {
+      returnValue = handleClobType((Clob) value);
+    } else if (value instanceof Blob) {
+      returnValue = handleBlobType((Blob) value);
+    } else if (value instanceof Struct) {
+      returnValue = handleStructType((Struct) value);
+    } else if (value instanceof Array) {
+      returnValue = handleArrayType((Array) value);
+    } else {
+      returnValue = value;
+    }
+    return returnValue;
+  }
+
   private Object handleArrayType(Array value) throws SQLException {
-    return value.getArray();
+    Object array = value.getArray();
+    if (array.getClass().isArray()) {
+      Object[] arrayValue = (Object[]) array;
+      Object[] newArrayValue = new Object[arrayValue.length];
+      for (int i = 0; i < newArrayValue.length; i++) {
+        newArrayValue[i] = getMuleConsumableValue(arrayValue[i]);
+      }
+
+      return newArrayValue;
+    } else {
+      return array;
+    }
   }
 
   private Object[] handleStructType(Struct value) throws SQLException {

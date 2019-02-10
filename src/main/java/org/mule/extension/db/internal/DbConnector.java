@@ -31,6 +31,7 @@ import org.mule.extension.db.internal.source.RowListener;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.Export;
+import org.mule.runtime.extension.api.annotation.ExpressionFunctions;
 import org.mule.runtime.extension.api.annotation.Extension;
 import org.mule.runtime.extension.api.annotation.OnException;
 import org.mule.runtime.extension.api.annotation.Operations;
@@ -57,6 +58,7 @@ import java.util.List;
     classes = {QueryDefinition.class, StoredProcedureCall.class, BulkQueryDefinition.class, ConnectionCreationException.class,
         LoggerApiPackage.class})
 @ErrorTypes(DbError.class)
+@ExpressionFunctions(DbFunctions.class)
 @OnException(DbExceptionHandler.class)
 public class DbConnector implements Initialisable {
 

@@ -69,7 +69,7 @@ public class DbFunctions {
         .createStruct(jdbcType, val.toArray()), properties, typeName, configName);
   }
 
-  public Object execute(WithConnection withConnection, List values, String typeName, String connectionName) {
+  private Object execute(WithConnection withConnection, List values, String typeName, String connectionName) {
     ConnectionProvider connectionProvider = getConnectionProvider(connectionName);
     DbConnection dbConnection = null;
     try {

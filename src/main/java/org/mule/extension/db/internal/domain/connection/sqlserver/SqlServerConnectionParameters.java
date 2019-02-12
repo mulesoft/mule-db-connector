@@ -37,11 +37,19 @@ public class SqlServerConnectionParameters extends BaseDbConnectionParameters im
   private String host;
 
   /**
+   * Configures the name of the instance where the database is
+   */
+  @Parameter
+  @Optional
+  @Placement(order = 2)
+  private String instanceName;
+
+  /**
    * Configures the port of the database
    */
   @Parameter
-  @Optional(defaultValue = "1433")
-  @Placement(order = 2)
+  @Optional
+  @Placement(order = 3)
   private Integer port;
 
   /**
@@ -49,7 +57,7 @@ public class SqlServerConnectionParameters extends BaseDbConnectionParameters im
    */
   @Parameter
   @Optional
-  @Placement(order = 3)
+  @Placement(order = 4)
   private String user;
 
   /**
@@ -57,7 +65,7 @@ public class SqlServerConnectionParameters extends BaseDbConnectionParameters im
    */
   @Parameter
   @Optional
-  @Placement(order = 4)
+  @Placement(order = 5)
   @Password
   private String password;
 
@@ -66,7 +74,7 @@ public class SqlServerConnectionParameters extends BaseDbConnectionParameters im
    */
   @Parameter
   @Optional
-  @Placement(order = 5)
+  @Placement(order = 6)
   private String databaseName;
 
   /**
@@ -80,7 +88,21 @@ public class SqlServerConnectionParameters extends BaseDbConnectionParameters im
 
   @Override
   public String getUrl() {
-    return SUB_PROTOCOL + host + ":" + port + getProperties();
+    return SUB_PROTOCOL + host + getInstanceNameUrlPart() + getPortUrlPart() + getProperties();
+  }
+
+  private String getInstanceNameUrlPart() {
+    if (instanceName != null) {
+      return "\\" + instanceName;
+    }
+    return "";
+  }
+
+  private String getPortUrlPart() {
+    if (port != null) {
+      return ":" + port;
+    }
+    return "";
   }
 
   private String getProperties() {
@@ -116,8 +138,28 @@ public class SqlServerConnectionParameters extends BaseDbConnectionParameters im
     return user;
   }
 
+  public static String getSubProtocol() {
+    return SUB_PROTOCOL;
+  }
+
+  public String getHost() {
+    return host;
+  }
+
   public void setHost(String host) {
     this.host = host;
+  }
+
+  public String getInstanceName() {
+    return instanceName;
+  }
+
+  public void setInstanceName(String instanceName) {
+    this.instanceName = instanceName;
+  }
+
+  public Integer getPort() {
+    return port;
   }
 
   public void setPort(Integer port) {
@@ -130,5 +172,21 @@ public class SqlServerConnectionParameters extends BaseDbConnectionParameters im
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public String getDatabaseName() {
+    return databaseName;
+  }
+
+  public void setDatabaseName(String databaseName) {
+    this.databaseName = databaseName;
+  }
+
+  public Map<String, String> getConnectionProperties() {
+    return connectionProperties;
+  }
+
+  public void setConnectionProperties(Map<String, String> connectionProperties) {
+    this.connectionProperties = connectionProperties;
   }
 }

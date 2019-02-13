@@ -39,7 +39,9 @@ import org.mule.runtime.extension.api.annotation.Sources;
 import org.mule.runtime.extension.api.annotation.connectivity.ConnectionProviders;
 import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
 import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
+import org.mule.runtime.extension.api.annotation.param.DefaultEncoding;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,15 +64,25 @@ import java.util.List;
 @OnException(DbExceptionHandler.class)
 public class DbConnector implements Initialisable {
 
+  @DefaultEncoding
+  private String encoding;
+
+  private Charset charset;
+
   private DbTypeManager typeManager;
 
   @Override
   public void initialise() throws InitialisationException {
     typeManager = createBaseTypeManager();
+    charset = Charset.forName(encoding);
   }
 
   public DbTypeManager getTypeManager() {
     return typeManager;
+  }
+
+  public Charset getCharset() {
+    return charset;
   }
 
   private DbTypeManager createBaseTypeManager() {

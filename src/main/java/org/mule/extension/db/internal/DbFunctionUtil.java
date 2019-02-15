@@ -23,6 +23,11 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Utility class for DB Functions
+ *
+ * @since 1.5.1, 1.6.0
+ */
 public class DbFunctionUtil {
 
   private ExtensionManager extensionManager;

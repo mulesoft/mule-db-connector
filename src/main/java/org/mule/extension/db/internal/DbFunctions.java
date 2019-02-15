@@ -13,6 +13,8 @@ import static org.mule.runtime.dsl.api.component.config.DefaultComponentLocation
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
+import org.mule.runtime.api.lifecycle.Initialisable;
+import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.event.CoreEvent;
@@ -33,15 +35,12 @@ import javax.inject.Inject;
  *
  * @since 1.5.1
  */
-public class DbFunctions {
-
-  private static final CoreEvent EVENT = CoreEvent.builder(create("DB", "dummy", fromSingleComponent("DB"),
-                                                                  NullExceptionHandler.getInstance()))
-      .message(Message.of("none"))
-      .build();
+public class DbFunctions implements Initialisable {
 
   @Inject
   ExtensionManager extensionManager;
+
+  DbFunctionUtil util = null;
 
   /**
    * DataWeave function to create JDBC Array objects based on the Array Type to create and the values that conforms the type.
@@ -52,8 +51,8 @@ public class DbFunctions {
    * @return
    */
   public Object createArray(String configName, String typeName, List values) {
-    return execute((con, val, jdbcType) -> con.createArrayOf(jdbcType, values.toArray()), values, typeName,
-                   configName);
+    return util.execute((con, val, jdbcType) -> con.createArrayOf(jdbcType, values.toArray()), values, typeName,
+                        configName);
   }
 
   /**
@@ -65,39 +64,13 @@ public class DbFunctions {
    * @return
    */
   public Object createStruct(String configName, String typeName, List properties) {
-    return execute((con, val, jdbcType) -> con.getJdbcConnection()
+    return util.execute((con, val, jdbcType) -> con.getJdbcConnection()
         .createStruct(jdbcType, val.toArray()), properties, typeName, configName);
   }
 
-  private Object execute(WithConnection withConnection, List values, String typeName, String connectionName) {
-    ConnectionProvider connectionProvider = getConnectionProvider(connectionName);
-    DbConnection dbConnection = null;
-    try {
-      Object connection = connectionProvider.connect();
-      if (!(connection instanceof DbConnection)) {
-        throw new RuntimeException("Connection is not a DB Connection");
-      } else {
-        dbConnection = (DbConnection) connection;
-      }
 
-      return withConnection.execute(dbConnection, values, typeName);
-    } catch (Throwable t) {
-      throw new RuntimeException("An error occurred when trying to create JDBC Structure. " + t.getMessage(), t);
-    } finally {
-      connectionProvider.disconnect(dbConnection);
-    }
-  }
-
-  private ConnectionProvider getConnectionProvider(String configName) {
-    ConfigurationInstance configuration = extensionManager.getConfiguration(configName, EVENT);
-    Optional<ConnectionProvider> connectionProvider = configuration.getConnectionProvider();
-    return connectionProvider
-        .orElseThrow(() -> new RuntimeException(format("Unable to obtain a connection for configuration: [%s]", configName)));
-  }
-
-  @FunctionalInterface
-  private interface WithConnection {
-
-    Object execute(DbConnection connection, List values, String typeName) throws ConnectionException, SQLException;
+  @Override
+  public void initialise() throws InitialisationException {
+    util = new DbFunctionUtil(extensionManager);
   }
 }

@@ -6,6 +6,10 @@
  */
 package org.mule.extension.db.internal.resolver.param;
 
+import static java.lang.String.format;
+import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.TABLE_TYPE_NAME;
+import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoredProcedureName;
+
 import org.mule.extension.db.api.exception.connection.QueryExecutionException;
 import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
@@ -29,10 +33,6 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.lang.String.format;
-import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.TABLE_TYPE_NAME;
-import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoredProcedureName;
 
 /**
  * Resolves parameter types for stored procedure queries

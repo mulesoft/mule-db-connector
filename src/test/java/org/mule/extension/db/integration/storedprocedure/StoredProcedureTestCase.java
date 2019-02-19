@@ -43,6 +43,18 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
+  public void inOutParameterWithoutSpaceBeforeCall() throws Exception {
+    Map<String, Object> payload = runProcedure("inOutParameterWithoutSpaceBeforeCall");
+
+    // Apparently Derby has a bug: when there are no resultset returned, then
+    // there is a fake updateCount=0 that is returned. Check how this works in other DB vendors.
+    // assertThat(payload.size(), equalTo(2));
+    // Compares string in to avoid problems when different DB return different integer classes (BigDecimal, integer, etc)
+
+    assertThat("6", equalTo(payload.get("myInt").toString()));
+  }
+
+  @Test
   public void inOutParameter() throws Exception {
     Map<String, Object> payload = runProcedure("inOutParameter");
 

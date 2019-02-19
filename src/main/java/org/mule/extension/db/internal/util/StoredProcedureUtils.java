@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  */
 public class StoredProcedureUtils {
 
-  private final static Pattern storedProcedureMatcher = Pattern.compile("(?msi)(\\{\\s+)?call\\s* \\s*(\\w+)\\s*\\(.*");
+  private final static Pattern storedProcedureMatcher = Pattern.compile("(?msi)(\\{\\s*)?call\\s* \\s*(\\w+)\\s*\\(.*");
 
   public static String getStoredProcedureName(String sqlText) throws SQLException {
     Matcher matcher = storedProcedureMatcher.matcher(sqlText);

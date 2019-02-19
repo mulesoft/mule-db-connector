@@ -5,6 +5,15 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
+    <flow name="inOutParameterWithoutSpaceBeforeCall">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql>{call doubleMyInt(:myInt) }</db:sql>
+            <db:in-out-parameters>
+                <db:in-out-parameter key="myInt" value="3"/>
+            </db:in-out-parameters>
+        </db:stored-procedure>
+    </flow>
+
     <flow name="inOutParameter">
         <db:stored-procedure config-ref="dbConfig">
             <db:sql>{ call doubleMyInt(:myInt) }</db:sql>

@@ -6,27 +6,10 @@
  */
 package org.mule.extension.db.internal;
 
-import static java.lang.String.format;
-import static org.mule.runtime.core.api.event.EventContextFactory.create;
-import static org.mule.runtime.dsl.api.component.config.DefaultComponentLocation.fromSingleComponent;
-
-import org.mule.extension.db.internal.domain.connection.DbConnection;
-import org.mule.runtime.api.connection.ConnectionException;
-import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.lifecycle.Initialisable;
-import org.mule.runtime.api.lifecycle.InitialisationException;
-import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.metadata.TypedValue;
-import org.mule.runtime.core.api.event.CoreEvent;
-import org.mule.runtime.core.api.exception.NullExceptionHandler;
 import org.mule.runtime.core.api.extension.ExtensionManager;
-import org.mule.runtime.extension.api.runtime.config.ConfigurationInstance;
 
-import java.sql.Array;
-import java.sql.SQLException;
-import java.sql.Struct;
 import java.util.List;
-import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -51,26 +34,24 @@ public class DbFunctions implements Initialisable {
    * @return
    */
   public Object createArray(String configName, String typeName, List values) {
-    return util.execute((con, val, jdbcType) -> con.createArrayOf(jdbcType, values.toArray()), values, typeName,
-                        configName);
+    return util.execute((con, val, jdbcType) -> con.createArrayOf(jdbcType, values.toArray()), values, typeName, configName);
   }
 
   /**
    * DataWeave function to create JDBC Struct objects based on the Type Name and their correspondent properties.
    *
-   * @param typeName   The name of the Array type to create
+   * @param typeName   The name of the Struct type to create
    * @param properties An array of values that conforms the Struct properties
    * @param configName The configuration in charge of creating the Struct type
    * @return
    */
   public Object createStruct(String configName, String typeName, List properties) {
-    return util.execute((con, val, jdbcType) -> con.getJdbcConnection()
-        .createStruct(jdbcType, val.toArray()), properties, typeName, configName);
+    return util.execute((con, val, jdbcType) -> con.createStruct(jdbcType, val.toArray()), properties, typeName, configName);
   }
 
 
   @Override
-  public void initialise() throws InitialisationException {
+  public void initialise() {
     util = new DbFunctionUtil(extensionManager);
   }
 }

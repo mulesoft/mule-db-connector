@@ -19,6 +19,7 @@ import java.sql.Array;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Struct;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -119,6 +120,20 @@ public interface DbConnection extends TransactionalConnection {
       values = new Object[] {value};
     }
     return createArrayOf(typeName, values);
+  }
+
+  /**
+   * Creates an {@link Struct} of the given {@code typeName} with the given {@code values}
+   *
+   * @param typeName The Struct type name
+   * @param values   The values to convert to an {@link Struct}
+   * @return The created {@link Struct}
+   *
+   * @throws SQLException if an error occurs trying to create the struct.
+   * @since 1.5.2
+   */
+  default Struct createStruct(String typeName, Object[] values) throws SQLException {
+    return getJdbcConnection().createStruct(typeName, values);
   }
 
   /**

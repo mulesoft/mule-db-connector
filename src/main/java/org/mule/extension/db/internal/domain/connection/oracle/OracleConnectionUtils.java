@@ -10,14 +10,18 @@ package org.mule.extension.db.internal.domain.connection.oracle;
 /**
  * Utils for the oracle db connection
  *
+ * @since 1.5.2
  */
 public class OracleConnectionUtils {
+
+  private OracleConnectionUtils() {
+  }
 
   public static String getOwnerFrom(String typeName) {
     if (!typeName.contains(".")) {
       return null;
     } else {
-      return typeName.substring(0, typeName.indexOf("."));
+      return typeName.substring(0, typeName.indexOf('.'));
     }
   }
 
@@ -25,7 +29,7 @@ public class OracleConnectionUtils {
     if (!typeName.contains(".")) {
       return typeName;
     } else {
-      return typeName.substring(typeName.indexOf(".") + 1);
+      return typeName.substring(typeName.indexOf('.') + 1);
     }
   }
 }

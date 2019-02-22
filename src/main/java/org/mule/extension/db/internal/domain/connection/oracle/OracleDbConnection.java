@@ -11,6 +11,7 @@ import static org.mule.extension.db.internal.domain.connection.oracle.OracleConn
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.connection.type.resolver.CollectionTypeResolver;
+import org.mule.extension.db.internal.domain.connection.type.resolver.StructTypeResolver;
 import org.mule.extension.db.internal.domain.connection.type.resolver.TypeResolver;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
@@ -118,7 +119,7 @@ public class OracleDbConnection extends DefaultDbConnection {
       return super.createArrayOf(typeName, values);
     } else {
       try {
-        resolveLobType(typeName, values, new CollectionTypeResolver(this));
+        resolveLobs(typeName, values, new CollectionTypeResolver(this));
         return (Array) getCreateArrayMethod().invoke(getJdbcConnection(), typeName, values);
       } catch (Exception e) {
         throw new SQLException("Error creating ARRAY", e);
@@ -138,7 +139,7 @@ public class OracleDbConnection extends DefaultDbConnection {
     return createArrayMethod;
   }
 
-  private void resolveLobType(String typeName, Object[] attributes, TypeResolver typeResolver) throws SQLException {
+  private void resolveLobs(String typeName, Object[] attributes, TypeResolver typeResolver) throws SQLException {
     Map<Integer, ResolvedDbType> dataTypes = getLobFieldsDataTypeInfo(typeResolver.resolveType(typeName));
 
     for (Map.Entry entry : dataTypes.entrySet()) {

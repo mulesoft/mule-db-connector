@@ -14,6 +14,7 @@ import java.sql.SQLException;
 
 /**
  * Type resolver for struct entities
+ *
  * @since 1.5.2
  */
 public class StructTypeResolver implements TypeResolver {

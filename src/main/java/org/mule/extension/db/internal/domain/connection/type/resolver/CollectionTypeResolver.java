@@ -19,6 +19,7 @@ import java.sql.SQLException;
 
 /**
  * Type resolver for array entities
+ * 
  * @since 1.5.2
  */
 public class CollectionTypeResolver implements TypeResolver {

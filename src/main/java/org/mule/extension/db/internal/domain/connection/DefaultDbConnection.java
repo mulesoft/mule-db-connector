@@ -10,7 +10,7 @@ package org.mule.extension.db.internal.domain.connection;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.mule.extension.db.api.param.JdbcType.*;
+import static org.mule.extension.db.api.param.JdbcType.BLOB;
 import static org.mule.extension.db.api.param.JdbcType.CLOB;
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 import static org.mule.runtime.core.api.util.IOUtils.toByteArray;
@@ -51,8 +51,8 @@ public class DefaultDbConnection implements DbConnection {
   private AtomicInteger streamsCount = new AtomicInteger(0);
   private boolean isTransactionActive = false;
 
-  private static final int DATA_TYPE_INDEX = 5;
-  private static final int ATTR_TYPE_NAME_INDEX = 6;
+  public static final int DATA_TYPE_INDEX = 5;
+  public static final int ATTR_TYPE_NAME_INDEX = 6;
   private static final List<String> LOB_TYPES = asList(BLOB.getDbType().getName(), CLOB.getDbType().getName());
 
   protected static final int UNKNOWN_DATA_TYPE = -1;
@@ -215,7 +215,7 @@ public class DefaultDbConnection implements DbConnection {
     return getMetaData().getAttributes(jdbcConnection.getCatalog(), null, typeName, null);
   }
 
-  private void resolveLobs(String typeName, Object[] attributes, TypeResolver typeResolver) {
+  protected void resolveLobs(String typeName, Object[] attributes, TypeResolver typeResolver) throws SQLException{
     try {
       Map<Integer, ResolvedDbType> dataTypes = getLobFieldsDataTypeInfo(typeName);
 

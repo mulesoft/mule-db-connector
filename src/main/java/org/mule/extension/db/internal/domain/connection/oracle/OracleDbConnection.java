@@ -11,7 +11,6 @@ import static org.mule.extension.db.internal.domain.connection.oracle.OracleConn
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.connection.type.resolver.CollectionTypeResolver;
-import org.mule.extension.db.internal.domain.connection.type.resolver.StructTypeResolver;
 import org.mule.extension.db.internal.domain.connection.type.resolver.TypeResolver;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
@@ -45,18 +44,18 @@ public class OracleDbConnection extends DefaultDbConnection {
   private static final int CURSOR_TYPE_ID = -10;
   private static final String CURSOR_TYPE_NAME = "CURSOR";
 
-  private static final String ATTR_TYPE_NAME_PARAM = "ATTR_TYPE_NAME";
+  public static final String ATTR_TYPE_NAME_PARAM = "ATTR_TYPE_NAME";
 
-  private static final String ATTR_NO_PARAM = "ATTR_NO";
+  public static final String ATTR_NO_PARAM = "ATTR_NO";
 
-  private static final String QUERY_TYPE_ATTRS =
+  public static final String QUERY_TYPE_ATTRS =
       "SELECT ATTR_NO, ATTR_TYPE_NAME FROM ALL_TYPE_ATTRS WHERE TYPE_NAME = ? AND ATTR_TYPE_NAME IN ('CLOB', 'BLOB')";
 
   public static final String QUERY_OWNER_CONDITION = " AND OWNER = ?";
 
   private Method createArrayMethod;
 
-  OracleDbConnection(Connection jdbcConnection, List<DbType> customDataTypes) {
+  public OracleDbConnection(Connection jdbcConnection, List<DbType> customDataTypes) {
     super(jdbcConnection, customDataTypes);
   }
 
@@ -139,7 +138,8 @@ public class OracleDbConnection extends DefaultDbConnection {
     return createArrayMethod;
   }
 
-  private void resolveLobs(String typeName, Object[] attributes, TypeResolver typeResolver) throws SQLException {
+  @Override
+  protected void resolveLobs(String typeName, Object[] attributes, TypeResolver typeResolver) throws SQLException {
     Map<Integer, ResolvedDbType> dataTypes = getLobFieldsDataTypeInfo(typeResolver.resolveType(typeName));
 
     for (Map.Entry entry : dataTypes.entrySet()) {

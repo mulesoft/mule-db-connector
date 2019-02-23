@@ -7,6 +7,7 @@
 package org.mule.extension.db.internal;
 
 import org.mule.runtime.api.lifecycle.Initialisable;
+import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.extension.ExtensionManager;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class DbFunctions implements Initialisable {
 
 
   @Override
-  public void initialise() {
+  public void initialise() throws InitialisationException {
     util = new DbFunctionUtil(extensionManager);
   }
 }

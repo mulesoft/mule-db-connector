@@ -6,16 +6,6 @@
  */
 package org.mule.extension.db.api.param;
 
-import org.mule.extension.db.internal.domain.metadata.DbInputMetadataResolver;
-import org.mule.runtime.extension.api.annotation.metadata.TypeResolver;
-import org.mule.runtime.extension.api.annotation.param.Content;
-import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
-import org.mule.runtime.extension.api.annotation.param.display.Placement;
-
-import java.util.List;
-import java.util.Map;
-
 /**
  * The definition of a bulk operations defined around one single SQL command
  *
@@ -23,14 +13,4 @@ import java.util.Map;
  */
 public class BulkQueryDefinition extends StatementDefinition<BulkQueryDefinition> {
 
-  @DisplayName("Input Parameters")
-  @Content
-  @Placement(order = 10)
-  @TypeResolver(DbInputMetadataResolver.class)
-  @Parameter
-  List<Map<String, Object>> bulkInputParameters;
-
-  public List<Map<String, Object>> getBulkInputParameters() {
-    return bulkInputParameters;
-  }
 }

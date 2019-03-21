@@ -8,8 +8,6 @@ package org.mule.extension.db.internal;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mule.extension.db.internal.domain.connection.DefaultDbConnection.ATTR_TYPE_NAME_INDEX;
-import static org.mule.extension.db.internal.domain.connection.DefaultDbConnection.DATA_TYPE_INDEX;
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 
@@ -26,10 +24,22 @@ public class AbstractDbFunctionTestCase extends AbstractMuleTestCase {
   static final String TYPE_NAME = "TEST_ARRAY";
   static final String TYPE_NAME_WITH_OWNER = "OWNER.TEST_ARRAY";
 
+  static final String ATTR_TYPE_NAME_PARAM = "ATTR_TYPE_NAME";
+
+  static final String ATTR_NO_PARAM = "ATTR_NO";
+
+  static final String QUERY_TYPE_ATTRS =
+      "SELECT ATTR_NO, ATTR_TYPE_NAME FROM ALL_TYPE_ATTRS WHERE TYPE_NAME = ? AND ATTR_TYPE_NAME IN ('CLOB', 'BLOB')";
+
+  static final String QUERY_OWNER_CONDITION = " AND OWNER = ?";
+
+  private static final int DATA_TYPE_INDEX = 5;
+  private static final int ATTR_TYPE_NAME_INDEX = 6;
+
   @Rule
   public ExpectedException expectedException = ExpectedException.none();
 
-  DefaultDbConnection testThroughMetadata(Connection delegate, int dataType, String dataTypeName) throws Exception {
+  DefaultDbConnection mockDefaultDbConnectionMetadata(Connection delegate, int dataType, String dataTypeName) throws Exception {
     DatabaseMetaData metadata = mock(DatabaseMetaData.class);
     ResultSet resultSet = mock(ResultSet.class);
     when(delegate.getMetaData()).thenReturn(metadata);

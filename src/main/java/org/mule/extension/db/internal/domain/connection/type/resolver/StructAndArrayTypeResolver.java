@@ -16,7 +16,7 @@ import java.sql.SQLException;
  *
  * @since 1.5.2
  */
-public interface TypeResolver {
+public interface StructAndArrayTypeResolver {
 
   /**
    * This method changes {@param elements} entity replacing

@@ -7,6 +7,7 @@
 package org.mule.extension.db.internal;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -15,11 +16,6 @@ import static org.mule.extension.db.api.param.JdbcType.BLOB;
 import static org.mule.extension.db.api.param.JdbcType.CLOB;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
-import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.ATTR_NO_PARAM;
-import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.ATTR_TYPE_NAME_PARAM;
-import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.QUERY_OWNER_CONDITION;
-import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.QUERY_TYPE_ATTRS;
-import static org.mule.extension.db.internal.domain.connection.type.resolver.CollectionTypeResolver.QUERY_ALL_COLL_TYPES;
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
 
@@ -31,11 +27,13 @@ import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Optional;
 
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
 public class CreateArrayTestCase extends AbstractDbFunctionTestCase {
+
+  private static final String QUERY_ALL_COLL_TYPES = "SELECT * FROM SYS.ALL_COLL_TYPES WHERE TYPE_NAME = ?";
 
   @Test
   public void createsDbArrayResolvingBlobWithOracleConnectionUsingSimpleName() throws Exception {
@@ -62,8 +60,8 @@ public class CreateArrayTestCase extends AbstractDbFunctionTestCase {
     testThroughOracleQuery(connection, params, BLOB.getDbType().getName(), typeName);
 
     verify(connection).createArrayOf(typeName, params);
-    assertThat(((Object[]) params[0])[0], Matchers.equalTo(blob));
-    assertThat(((Object[]) params[1])[0], Matchers.equalTo(blob));
+    assertThat(((Object[]) params[0])[0], equalTo(blob));
+    assertThat(((Object[]) params[1])[0], equalTo(blob));
   }
 
   @Test
@@ -71,7 +69,7 @@ public class CreateArrayTestCase extends AbstractDbFunctionTestCase {
     createsDbArrayResolvingClobWithOracleConnection(TYPE_NAME);
   }
 
-  @Test     // TODO falla
+  @Test
   public void createsDbArrayResolvingClobWithOracleConnectionUsingFullName() throws Exception {
     createsDbArrayResolvingClobWithOracleConnection(TYPE_NAME_WITH_OWNER);
   }
@@ -91,12 +89,13 @@ public class CreateArrayTestCase extends AbstractDbFunctionTestCase {
     testThroughOracleQuery(connection, params, CLOB.getDbType().getName(), typeName);
 
     verify(connection).createArrayOf(typeName, params);
-    assertThat(((Object[]) params[0])[0], Matchers.equalTo(clob));
-    assertThat(((Object[]) params[1])[0], Matchers.equalTo(clob));
+    assertThat(((Object[]) params[0])[0], equalTo(clob));
+    assertThat(((Object[]) params[1])[0], equalTo(clob));
   }
 
-  private void testThroughOracleQuery(Connection delegate, Object[] values, String dataTypeName, String udtName) throws Exception {
-    String owner = getOwnerFrom(udtName);
+  private void testThroughOracleQuery(Connection delegate, Object[] values, String dataTypeName, String udtName)
+      throws Exception {
+    Optional<String> owner = getOwnerFrom(udtName);
     String typeSimpleName = getTypeSimpleName(udtName);
     PreparedStatement preparedStatement = mock(PreparedStatement.class);
     ResultSet resultSet = mock(ResultSet.class);
@@ -104,13 +103,12 @@ public class CreateArrayTestCase extends AbstractDbFunctionTestCase {
     when(preparedStatement.executeQuery()).thenReturn(resultSet);
 
     when(preparedStatement.executeQuery()).thenReturn(resultSet);
-    if (owner == null) {
-      when(delegate.prepareStatement(QUERY_TYPE_ATTRS)).thenReturn(preparedStatement);
-      when(delegate.prepareStatement(QUERY_ALL_COLL_TYPES)).thenReturn(preparedStatement);
-    }
-    else {
+    if (owner.isPresent()) {
       when(delegate.prepareStatement(QUERY_TYPE_ATTRS + QUERY_OWNER_CONDITION)).thenReturn(preparedStatement);
       when(delegate.prepareStatement(QUERY_ALL_COLL_TYPES + QUERY_OWNER_CONDITION)).thenReturn(preparedStatement);
+    } else {
+      when(delegate.prepareStatement(QUERY_TYPE_ATTRS)).thenReturn(preparedStatement);
+      when(delegate.prepareStatement(QUERY_ALL_COLL_TYPES)).thenReturn(preparedStatement);
     }
 
     when(resultSet.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
@@ -122,8 +120,8 @@ public class CreateArrayTestCase extends AbstractDbFunctionTestCase {
     oracleConnection.createArrayOf(udtName, values);
 
     verify(preparedStatement, times(2)).setString(1, typeSimpleName);
-    if (owner != null) {
-      verify(preparedStatement, times(2)).setString(2, owner);
+    if (owner.isPresent()) {
+      verify(preparedStatement, times(2)).setString(2, owner.get());
     }
   }
 
@@ -140,13 +138,14 @@ public class CreateArrayTestCase extends AbstractDbFunctionTestCase {
     Array array = mock(Array.class);
     when(connection.createArrayOf(TYPE_NAME, params)).thenReturn(array);
 
-    DefaultDbConnection defaultDbConnection = testThroughMetadata(connection, CLOB.getDbType().getId(), CLOB.getDbType().getName());
+    DefaultDbConnection defaultDbConnection =
+        mockDefaultDbConnectionMetadata(connection, CLOB.getDbType().getId(), CLOB.getDbType().getName());
 
     defaultDbConnection.createArrayOf(TYPE_NAME, params);
 
     verify(connection).createArrayOf(TYPE_NAME, params);
-    assertThat(((Object[]) params[0])[0], Matchers.equalTo(clob));
-    assertThat(((Object[]) params[1])[0], Matchers.equalTo(clob));
+    assertThat(((Object[]) params[0])[0], equalTo(clob));
+    assertThat(((Object[]) params[1])[0], equalTo(clob));
   }
 
   @Test
@@ -162,13 +161,14 @@ public class CreateArrayTestCase extends AbstractDbFunctionTestCase {
     Array array = mock(Array.class);
     when(connection.createArrayOf(TYPE_NAME, params)).thenReturn(array);
 
-    DefaultDbConnection defaultDbConnection = testThroughMetadata(connection, BLOB.getDbType().getId(),  BLOB.getDbType().getName());
+    DefaultDbConnection defaultDbConnection =
+        mockDefaultDbConnectionMetadata(connection, BLOB.getDbType().getId(), BLOB.getDbType().getName());
 
     defaultDbConnection.createArrayOf(TYPE_NAME, params);
 
     verify(connection).createArrayOf(TYPE_NAME, params);
-    assertThat(((Object[]) params[0])[0], Matchers.equalTo(blob));
-    assertThat(((Object[]) params[1])[0], Matchers.equalTo(blob));
+    assertThat(((Object[]) params[0])[0], equalTo(blob));
+    assertThat(((Object[]) params[1])[0], equalTo(blob));
   }
 
 }

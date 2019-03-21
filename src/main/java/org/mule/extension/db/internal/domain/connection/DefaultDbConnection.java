@@ -15,9 +15,9 @@ import static org.mule.extension.db.api.param.JdbcType.CLOB;
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 import static org.mule.runtime.core.api.util.IOUtils.toByteArray;
 import org.mule.extension.db.api.exception.connection.ConnectionClosingException;
-import org.mule.extension.db.internal.domain.connection.type.resolver.CollectionTypeResolver;
+import org.mule.extension.db.internal.domain.connection.type.resolver.ArrayTypeResolver;
 import org.mule.extension.db.internal.domain.connection.type.resolver.StructTypeResolver;
-import org.mule.extension.db.internal.domain.connection.type.resolver.TypeResolver;
+import org.mule.extension.db.internal.domain.connection.type.resolver.StructAndArrayTypeResolver;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
 import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
@@ -51,13 +51,13 @@ public class DefaultDbConnection implements DbConnection {
   private AtomicInteger streamsCount = new AtomicInteger(0);
   private boolean isTransactionActive = false;
 
-  public static final int DATA_TYPE_INDEX = 5;
-  public static final int ATTR_TYPE_NAME_INDEX = 6;
+  private static final int DATA_TYPE_INDEX = 5;
+  private static final int ATTR_TYPE_NAME_INDEX = 6;
   private static final List<String> LOB_TYPES = asList(BLOB.getDbType().getName(), CLOB.getDbType().getName());
 
   protected static final int UNKNOWN_DATA_TYPE = -1;
 
-  protected Logger logger = LoggerFactory.getLogger(this.getClass());
+  protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   public DefaultDbConnection(Connection jdbcConnection, List<DbType> customDataTypes) {
     this.jdbcConnection = jdbcConnection;
@@ -197,7 +197,7 @@ public class DefaultDbConnection implements DbConnection {
 
   @Override
   public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
-    resolveLobs(typeName, elements, new CollectionTypeResolver(this));
+    resolveLobs(typeName, elements, new ArrayTypeResolver(this));
     return jdbcConnection.createArrayOf(typeName, elements);
   }
 
@@ -215,7 +215,7 @@ public class DefaultDbConnection implements DbConnection {
     return getMetaData().getAttributes(jdbcConnection.getCatalog(), null, typeName, null);
   }
 
-  protected void resolveLobs(String typeName, Object[] attributes, TypeResolver typeResolver) throws SQLException{
+  protected void resolveLobs(String typeName, Object[] attributes, StructAndArrayTypeResolver typeResolver) throws SQLException {
     try {
       Map<Integer, ResolvedDbType> dataTypes = getLobFieldsDataTypeInfo(typeName);
 
@@ -226,7 +226,7 @@ public class DefaultDbConnection implements DbConnection {
         typeResolver.resolveLobIn(attributes, key, dataType);
       }
     } catch (SQLException e) {
-      logger.warn("Unable to resolve lobs: {}. Proceeding with original attributes.", e.getMessage());
+      logger.debug("Unable to resolve lobs: {}. Proceeding with original attributes.", e.getMessage());
     }
   }
 

@@ -10,8 +10,8 @@ import static java.util.Optional.ofNullable;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
-import org.mule.extension.db.internal.domain.connection.type.resolver.CollectionTypeResolver;
-import org.mule.extension.db.internal.domain.connection.type.resolver.TypeResolver;
+import org.mule.extension.db.internal.domain.connection.type.resolver.ArrayTypeResolver;
+import org.mule.extension.db.internal.domain.connection.type.resolver.StructAndArrayTypeResolver;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
 import org.mule.extension.db.internal.domain.type.oracle.OracleXmlType;
@@ -23,7 +23,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,14 +43,14 @@ public class OracleDbConnection extends DefaultDbConnection {
   private static final int CURSOR_TYPE_ID = -10;
   private static final String CURSOR_TYPE_NAME = "CURSOR";
 
-  public static final String ATTR_TYPE_NAME_PARAM = "ATTR_TYPE_NAME";
+  private static final String ATTR_TYPE_NAME_PARAM = "ATTR_TYPE_NAME";
 
-  public static final String ATTR_NO_PARAM = "ATTR_NO";
+  private static final String ATTR_NO_PARAM = "ATTR_NO";
 
-  public static final String QUERY_TYPE_ATTRS =
+  private static final String QUERY_TYPE_ATTRS =
       "SELECT ATTR_NO, ATTR_TYPE_NAME FROM ALL_TYPE_ATTRS WHERE TYPE_NAME = ? AND ATTR_TYPE_NAME IN ('CLOB', 'BLOB')";
 
-  public static final String QUERY_OWNER_CONDITION = " AND OWNER = ?";
+  private static final String QUERY_OWNER_CONDITION = " AND OWNER = ?";
 
   private Method createArrayMethod;
 
@@ -108,17 +107,12 @@ public class OracleDbConnection extends DefaultDbConnection {
   }
 
   @Override
-  public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
-    return super.createStruct(typeName, attributes);
-  }
-
-  @Override
   public Array createArrayOf(String typeName, Object[] values) throws SQLException {
     if (getCreateArrayMethod() == null) {
       return super.createArrayOf(typeName, values);
     } else {
       try {
-        resolveLobs(typeName, values, new CollectionTypeResolver(this));
+        resolveLobs(typeName, values, new ArrayTypeResolver(this));
         return (Array) getCreateArrayMethod().invoke(getJdbcConnection(), typeName, values);
       } catch (Exception e) {
         throw new SQLException("Error creating ARRAY", e);
@@ -132,14 +126,14 @@ public class OracleDbConnection extends DefaultDbConnection {
         createArrayMethod = getJdbcConnection().getClass().getMethod("createARRAY", String.class, Object.class);
         createArrayMethod.setAccessible(true);
       } catch (NoSuchMethodException e) {
-        // Ignore, will use the standard method
+        logger.debug("No such createARRAY method: {}. Proceeding with standard method.", e.getMessage());
       }
     }
     return createArrayMethod;
   }
 
   @Override
-  protected void resolveLobs(String typeName, Object[] attributes, TypeResolver typeResolver) throws SQLException {
+  protected void resolveLobs(String typeName, Object[] attributes, StructAndArrayTypeResolver typeResolver) throws SQLException {
     Map<Integer, ResolvedDbType> dataTypes = getLobFieldsDataTypeInfo(typeResolver.resolveType(typeName));
 
     for (Map.Entry entry : dataTypes.entrySet()) {
@@ -159,15 +153,15 @@ public class OracleDbConnection extends DefaultDbConnection {
   protected Map<Integer, ResolvedDbType> getLobFieldsDataTypeInfo(String typeName) throws SQLException {
     Map<Integer, ResolvedDbType> dataTypes = new HashMap<>();
 
-    String owner = getOwnerFrom(typeName);
+    Optional<String> owner = getOwnerFrom(typeName);
     String type = getTypeSimpleName(typeName);
 
-    String query = QUERY_TYPE_ATTRS + (owner != null ? QUERY_OWNER_CONDITION : "");
+    String query = QUERY_TYPE_ATTRS + (owner.isPresent() ? QUERY_OWNER_CONDITION : "");
 
     try (PreparedStatement ps = this.prepareStatement(query)) {
       ps.setString(1, type);
-      if (owner != null) {
-        ps.setString(2, owner);
+      if (owner.isPresent()) {
+        ps.setString(2, owner.get());
       }
 
       try (ResultSet resultSet = ps.executeQuery()) {

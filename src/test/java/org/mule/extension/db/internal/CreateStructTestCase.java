@@ -7,6 +7,7 @@
 package org.mule.extension.db.internal;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -14,10 +15,6 @@ import static org.mule.extension.db.api.param.JdbcType.BLOB;
 import static org.mule.extension.db.api.param.JdbcType.CLOB;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
-import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.ATTR_NO_PARAM;
-import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.ATTR_TYPE_NAME_PARAM;
-import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.QUERY_OWNER_CONDITION;
-import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.QUERY_TYPE_ATTRS;
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
 
@@ -28,11 +25,11 @@ import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Optional;
 
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
-public class CreateStructTestCase extends AbstractDbFunctionTestCase{
+public class CreateStructTestCase extends AbstractDbFunctionTestCase {
 
   @Test
   public void createStructResolvingBlobInDefaultDbConnection() throws Exception {
@@ -41,12 +38,13 @@ public class CreateStructTestCase extends AbstractDbFunctionTestCase{
     Blob blob = mock(Blob.class);
     when(delegate.createBlob()).thenReturn(blob);
 
-    DefaultDbConnection defaultDbConnection = testThroughMetadata(delegate, BLOB.getDbType().getId(), BLOB.getDbType().getName());
+    DefaultDbConnection defaultDbConnection =
+        mockDefaultDbConnectionMetadata(delegate, BLOB.getDbType().getId(), BLOB.getDbType().getName());
 
     defaultDbConnection.createStruct(TYPE_NAME, structValues);
 
     verify(delegate).createStruct(TYPE_NAME, structValues);
-    assertThat(structValues[0], Matchers.equalTo(blob));
+    assertThat(structValues[0], equalTo(blob));
   }
 
   @Test
@@ -56,12 +54,13 @@ public class CreateStructTestCase extends AbstractDbFunctionTestCase{
     Clob clob = mock(Clob.class);
     when(delegate.createClob()).thenReturn(clob);
 
-    DefaultDbConnection defaultDbConnection = testThroughMetadata(delegate, CLOB.getDbType().getId(), CLOB.getDbType().getName());
+    DefaultDbConnection defaultDbConnection =
+        mockDefaultDbConnectionMetadata(delegate, CLOB.getDbType().getId(), CLOB.getDbType().getName());
 
     defaultDbConnection.createStruct(TYPE_NAME, structValues);
 
     verify(delegate).createStruct(TYPE_NAME, structValues);
-    assertThat(structValues[0], Matchers.equalTo(clob));
+    assertThat(structValues[0], equalTo(clob));
   }
 
   @Test
@@ -91,7 +90,7 @@ public class CreateStructTestCase extends AbstractDbFunctionTestCase{
     when(delegate.createBlob()).thenReturn(blob);
     testThroughOracleQuery(delegate, structValues, BLOB.getDbType().getName(), typeName);
     verify(delegate).createStruct(typeName, structValues);
-    assertThat(structValues[0], Matchers.equalTo(blob));
+    assertThat(structValues[0], equalTo(blob));
   }
 
   private void createStructResolvingClobAndClobInOracleDb(String typeName) throws Exception {
@@ -101,20 +100,21 @@ public class CreateStructTestCase extends AbstractDbFunctionTestCase{
     when(delegate.createClob()).thenReturn(clob);
     testThroughOracleQuery(delegate, structValues, CLOB.getDbType().getName(), typeName);
     verify(delegate).createStruct(typeName, structValues);
-    assertThat(structValues[0], Matchers.equalTo(clob));
+    assertThat(structValues[0], equalTo(clob));
   }
 
-  private void testThroughOracleQuery(Connection delegate, Object[] structValues, String dataTypeName, String udtName) throws Exception {
-    String owner = getOwnerFrom(udtName);
+  private void testThroughOracleQuery(Connection delegate, Object[] structValues, String dataTypeName, String udtName)
+      throws Exception {
+    Optional<String> owner = getOwnerFrom(udtName);
     String typeSimpleName = getTypeSimpleName(udtName);
     PreparedStatement preparedStatement = mock(PreparedStatement.class);
     ResultSet resultSet = mock(ResultSet.class);
 
     when(preparedStatement.executeQuery()).thenReturn(resultSet);
-    if (owner == null) {
-      when(delegate.prepareStatement(QUERY_TYPE_ATTRS)).thenReturn(preparedStatement);
-    } else {
+    if (owner.isPresent()) {
       when(delegate.prepareStatement(QUERY_TYPE_ATTRS + QUERY_OWNER_CONDITION)).thenReturn(preparedStatement);
+    } else {
+      when(delegate.prepareStatement(QUERY_TYPE_ATTRS)).thenReturn(preparedStatement);
     }
 
     when(resultSet.next()).thenReturn(true).thenReturn(false);
@@ -127,8 +127,8 @@ public class CreateStructTestCase extends AbstractDbFunctionTestCase{
 
     verify(preparedStatement).setString(1, typeSimpleName);
 
-    if (owner != null) {
-      verify(preparedStatement).setString(2, owner);
+    if (owner.isPresent()) {
+      verify(preparedStatement).setString(2, owner.get());
     }
   }
 

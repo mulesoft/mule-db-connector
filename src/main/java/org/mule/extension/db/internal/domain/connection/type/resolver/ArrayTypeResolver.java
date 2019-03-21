@@ -9,27 +9,28 @@ package org.mule.extension.db.internal.domain.connection.type.resolver;
 
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
-import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.QUERY_OWNER_CONDITION;
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 /**
  * Type resolver for array entities
  * 
  * @since 1.5.2
  */
-public class CollectionTypeResolver implements TypeResolver {
+public class ArrayTypeResolver implements StructAndArrayTypeResolver {
 
-  public static final String QUERY_ALL_COLL_TYPES = "SELECT * FROM SYS.ALL_COLL_TYPES WHERE TYPE_NAME = ?";
+  private static final String QUERY_ALL_COLL_TYPES = "SELECT * FROM SYS.ALL_COLL_TYPES WHERE TYPE_NAME = ?";
+  private static final String QUERY_OWNER_CONDITION = " AND OWNER = ?";
   private static final String ELEM_TYPE_NAME = "ELEM_TYPE_NAME";
 
   private DefaultDbConnection connection;
 
-  public CollectionTypeResolver(DefaultDbConnection connection) {
+  public ArrayTypeResolver(DefaultDbConnection connection) {
     this.connection = connection;
   }
 
@@ -60,19 +61,16 @@ public class CollectionTypeResolver implements TypeResolver {
   private String getTypeFor(String collectionTypeName) throws SQLException {
     String dataType = null;
 
-    String owner = getOwnerFrom(collectionTypeName);
+    Optional<String> owner = getOwnerFrom(collectionTypeName);
     String typeName = getTypeSimpleName(collectionTypeName);
-    String query = QUERY_ALL_COLL_TYPES;
 
-    if (owner != null) {
-      query = query + QUERY_OWNER_CONDITION;
-    }
+    String query = QUERY_ALL_COLL_TYPES + (owner.isPresent() ? QUERY_OWNER_CONDITION : "");
 
     try (PreparedStatement ps = connection.prepareStatement(query)) {
       ps.setString(1, typeName);
 
-      if (owner != null) {
-        ps.setString(2, owner);
+      if (owner.isPresent()) {
+        ps.setString(2, owner.get());
       }
 
       try (ResultSet resultSet = ps.executeQuery()) {

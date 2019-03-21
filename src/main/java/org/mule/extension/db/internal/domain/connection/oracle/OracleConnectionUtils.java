@@ -7,6 +7,8 @@
 
 package org.mule.extension.db.internal.domain.connection.oracle;
 
+import java.util.Optional;
+
 /**
  * Utils for the oracle db connection
  *
@@ -14,14 +16,13 @@ package org.mule.extension.db.internal.domain.connection.oracle;
  */
 public class OracleConnectionUtils {
 
-  private OracleConnectionUtils() {
-  }
+  private OracleConnectionUtils() {}
 
-  public static String getOwnerFrom(String typeName) {
+  public static Optional<String> getOwnerFrom(String typeName) {
     if (!typeName.contains(".")) {
-      return null;
+      return Optional.empty();
     } else {
-      return typeName.substring(0, typeName.indexOf('.'));
+      return Optional.of(typeName.substring(0, typeName.indexOf('.')));
     }
   }
 

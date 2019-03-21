@@ -17,7 +17,7 @@ import java.sql.SQLException;
  *
  * @since 1.5.2
  */
-public class StructTypeResolver implements TypeResolver {
+public class StructTypeResolver implements StructAndArrayTypeResolver {
 
   private DefaultDbConnection connection;
 

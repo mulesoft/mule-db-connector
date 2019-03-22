@@ -430,4 +430,26 @@ public class OracleTestDatabase extends AbstractTestDatabase {
 
     return builder.toString();
   }
+
+  public void createPersonTable(Connection connection) throws SQLException {
+    createPersonType(connection);
+    executeDdl(connection, "create or replace type PERSON_TABLE as table of PERSON_TYPE;");
+  }
+
+  public void createPersonType(Connection connection) throws SQLException {
+    executeDdl(connection, "create or replace type PERSON_TYPE as object ( " +
+        "personId varchar2(36), " +
+        "name clob, " +
+        "age number(3) " +
+        ");");
+  }
+
+  public void dropPersonTable(Connection connection) throws SQLException {
+    executeDdl(connection, "DROP TYPE PERSON_TABLE");
+    dropPersonType(connection);
+  }
+
+  public void dropPersonType(Connection connection) throws SQLException {
+    executeDdl(connection, "DROP TYPE PERSON_TYPE");
+  }
 }

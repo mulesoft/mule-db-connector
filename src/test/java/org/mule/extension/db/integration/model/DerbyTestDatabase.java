@@ -22,7 +22,7 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
     return DbTestUtil.DbType.DERBY;
   }
 
-  public static final String DERBY_ERROR_OBJECT_ALREADY_EXISTS = "X0Y68";
+  private static final String DERBY_ERROR_OBJECT_ALREADY_EXISTS = "X0Y68";
 
   public static String SQL_CREATE_SP_UPDATE_TEST_TYPE_1 =
       "CREATE PROCEDURE updateTestType1()\n" +

@@ -19,6 +19,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLXML;
 import java.sql.Statement;
+import java.sql.Struct;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -188,9 +189,9 @@ public class StatementResultIterator implements Iterator<SingleStatementResult> 
     if (paramValue instanceof ResultSet) {
       paramValue = resultSetHandler.processResultSet(connection, (ResultSet) paramValue);
     } else if (paramValue instanceof SQLXML) {
-      SQLXML sqlxml = (SQLXML) paramValue;
-
-      paramValue = sqlxml.getString();
+      paramValue = ((SQLXML) paramValue).getString();
+    } else if (paramValue instanceof Struct) {
+      paramValue = ((Struct) paramValue).getAttributes();
     }
 
     return new OutputParamResult(outputSqlParam.getName(), paramValue);

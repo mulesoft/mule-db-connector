@@ -6,27 +6,11 @@
  */
 package org.mule.extension.db.internal;
 
-import static java.lang.String.format;
-import static org.mule.runtime.core.api.event.EventContextFactory.create;
-import static org.mule.runtime.dsl.api.component.config.DefaultComponentLocation.fromSingleComponent;
-
-import org.mule.extension.db.internal.domain.connection.DbConnection;
-import org.mule.runtime.api.connection.ConnectionException;
-import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
-import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.metadata.TypedValue;
-import org.mule.runtime.core.api.event.CoreEvent;
-import org.mule.runtime.core.api.exception.NullExceptionHandler;
 import org.mule.runtime.core.api.extension.ExtensionManager;
-import org.mule.runtime.extension.api.runtime.config.ConfigurationInstance;
 
-import java.sql.Array;
-import java.sql.SQLException;
-import java.sql.Struct;
 import java.util.List;
-import java.util.Optional;
 
 import javax.inject.Inject;
 

@@ -7,6 +7,9 @@
 
 package org.mule.extension.db.internal.domain.connection.oracle;
 
+import static java.util.Optional.of;
+import static java.util.Optional.empty;
+
 import java.util.Optional;
 
 /**
@@ -19,11 +22,7 @@ public class OracleConnectionUtils {
   private OracleConnectionUtils() {}
 
   public static Optional<String> getOwnerFrom(String typeName) {
-    if (!typeName.contains(".")) {
-      return Optional.empty();
-    } else {
-      return Optional.of(typeName.substring(0, typeName.indexOf('.')));
-    }
+    return typeName.contains(".") ? of(typeName.substring(0, typeName.indexOf('.'))) : empty();
   }
 
   public static String getTypeSimpleName(String typeName) {

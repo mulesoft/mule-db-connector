@@ -57,7 +57,7 @@ public class DefaultDbConnection implements DbConnection {
 
   protected static final int UNKNOWN_DATA_TYPE = -1;
 
-  protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+  protected static final Logger logger = LoggerFactory.getLogger(DefaultDbConnection.class);
 
   public DefaultDbConnection(Connection jdbcConnection, List<DbType> customDataTypes) {
     this.jdbcConnection = jdbcConnection;
@@ -226,7 +226,9 @@ public class DefaultDbConnection implements DbConnection {
         typeResolver.resolveLobIn(attributes, key, dataType);
       }
     } catch (SQLException e) {
-      logger.debug("Unable to resolve lobs: {}. Proceeding with original attributes.", e.getMessage());
+      if (logger.isDebugEnabled()) {
+        logger.debug("Unable to resolve lobs: {}. Proceeding with original attributes.", e.getMessage());
+      }
     }
   }
 
@@ -242,7 +244,6 @@ public class DefaultDbConnection implements DbConnection {
         if (LOB_TYPES.contains(dataTypeName)) {
           dataTypes.put(index, new ResolvedDbType(dataType, dataTypeName));
         }
-
         index++;
       }
     }
@@ -281,7 +282,6 @@ public class DefaultDbConnection implements DbConnection {
       throw new IllegalArgumentException(format("Cannot create a %s from a value of type '%s'", Struct.class.getName(),
                                                 attribute.getClass()));
     }
-
     return blob;
   }
 
@@ -295,7 +295,6 @@ public class DefaultDbConnection implements DbConnection {
       throw new IllegalArgumentException(format("Cannot create a %s from a value of type '%s'", Struct.class.getName(),
                                                 attribute.getClass()));
     }
-
     return clob;
   }
 

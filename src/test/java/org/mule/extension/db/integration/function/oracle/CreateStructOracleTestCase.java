@@ -54,7 +54,7 @@ public class CreateStructOracleTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
-  public void createArrayWithClobDataType() throws Exception {
+  public void createStructWithClobDataType() throws Exception {
     Object[] person = new Object[] {1234, "Apple", 45};
 
     CoreEvent coreEvent = flowRunner("createStruct")

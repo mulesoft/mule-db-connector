@@ -126,7 +126,9 @@ public class OracleDbConnection extends DefaultDbConnection {
         createArrayMethod = getJdbcConnection().getClass().getMethod("createARRAY", String.class, Object.class);
         createArrayMethod.setAccessible(true);
       } catch (NoSuchMethodException e) {
-        logger.debug("No such createARRAY method: {}. Proceeding with standard method.", e.getMessage());
+        if (logger.isDebugEnabled()) {
+          logger.debug("No such createARRAY method: {}. Proceeding with standard method.", e.getMessage());
+        }
       }
     }
     return createArrayMethod;

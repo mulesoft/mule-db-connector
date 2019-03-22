@@ -27,11 +27,6 @@ import org.junit.runners.Parameterized;
 
 public class CreateArrayOracleTestCase extends AbstractDbIntegrationTestCase {
 
-  @Before
-  public void init() throws SQLException {
-    ((OracleTestDatabase) this.testDatabase).createPersonTable(getDefaultDataSource().getConnection());
-  }
-
   @Parameterized.Parameter(4)
   public String flowSuffix;
 
@@ -50,6 +45,11 @@ public class CreateArrayOracleTestCase extends AbstractDbIntegrationTestCase {
   @Override
   protected String[] getFlowConfigurationResources() {
     return new String[] {"integration/function/oracle/create-array.xml"};
+  }
+
+  @Before
+  public void init() throws SQLException {
+    ((OracleTestDatabase) this.testDatabase).createPersonTable(getDefaultDataSource().getConnection());
   }
 
   @Test

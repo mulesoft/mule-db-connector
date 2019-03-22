@@ -10,10 +10,8 @@ import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
-
 import org.mule.extension.db.integration.TestDbConfig;
 import org.mule.extension.db.integration.model.OracleTestDatabase;
-import org.mule.extension.db.integration.select.Fruit;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

@@ -7,20 +7,27 @@
 package org.mule.extension.db.internal.domain.connection.oracle;
 
 import static java.util.Optional.ofNullable;
-
+import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
+import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
+import org.mule.extension.db.internal.domain.connection.type.resolver.ArrayTypeResolver;
+import org.mule.extension.db.internal.domain.connection.type.resolver.StructAndArrayTypeResolver;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
 import org.mule.extension.db.internal.domain.type.oracle.OracleXmlType;
 
+import java.lang.reflect.Method;
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -35,6 +42,17 @@ public class OracleDbConnection extends DefaultDbConnection {
 
   private static final int CURSOR_TYPE_ID = -10;
   private static final String CURSOR_TYPE_NAME = "CURSOR";
+
+  private static final String ATTR_TYPE_NAME_PARAM = "ATTR_TYPE_NAME";
+
+  private static final String ATTR_NO_PARAM = "ATTR_NO";
+
+  private static final String QUERY_TYPE_ATTRS =
+      "SELECT ATTR_NO, ATTR_TYPE_NAME FROM ALL_TYPE_ATTRS WHERE TYPE_NAME = ? AND ATTR_TYPE_NAME IN ('CLOB', 'BLOB')";
+
+  private static final String QUERY_OWNER_CONDITION = " AND OWNER = ?";
+
+  private Method createArrayMethod;
 
   public OracleDbConnection(Connection jdbcConnection, List<DbType> customDataTypes) {
     super(jdbcConnection, customDataTypes);
@@ -87,4 +105,75 @@ public class OracleDbConnection extends DefaultDbConnection {
     }
     return tables;
   }
+
+  @Override
+  public Array createArrayOf(String typeName, Object[] values) throws SQLException {
+    if (getCreateArrayMethod() == null) {
+      return super.createArrayOf(typeName, values);
+    } else {
+      try {
+        resolveLobs(typeName, values, new ArrayTypeResolver(this));
+        return (Array) getCreateArrayMethod().invoke(getJdbcConnection(), typeName, values);
+      } catch (Exception e) {
+        throw new SQLException("Error creating ARRAY", e);
+      }
+    }
+  }
+
+  private Method getCreateArrayMethod() {
+    if (createArrayMethod == null) {
+      try {
+        createArrayMethod = getJdbcConnection().getClass().getMethod("createARRAY", String.class, Object.class);
+        createArrayMethod.setAccessible(true);
+      } catch (NoSuchMethodException e) {
+        if (logger.isDebugEnabled()) {
+          logger.debug("No such createARRAY method: {}. Proceeding with standard method.", e.getMessage());
+        }
+      }
+    }
+    return createArrayMethod;
+  }
+
+  @Override
+  protected void resolveLobs(String typeName, Object[] attributes, StructAndArrayTypeResolver typeResolver) throws SQLException {
+    Map<Integer, ResolvedDbType> dataTypes = getLobFieldsDataTypeInfo(typeResolver.resolveType(typeName));
+
+    for (Map.Entry entry : dataTypes.entrySet()) {
+      Integer index = (Integer) entry.getKey();
+      ResolvedDbType dataType = (ResolvedDbType) entry.getValue();
+      // In Oracle we do not have the data type for structs or arrays, as the
+      // the driver does not provide the getAttributes functionality
+      // in their DatabaseMetaData.
+      // It has to be taken into account that the data type depends on JDBC, so the
+      // driver is the unit responsible for the mapping and we do not have that information
+      // in the DB catalog. We resolve the lobs depending on the name only.
+      typeResolver.resolveLobs(attributes, index - 1, dataType.getName());
+    }
+  }
+
+  @Override
+  protected Map<Integer, ResolvedDbType> getLobFieldsDataTypeInfo(String typeName) throws SQLException {
+    Map<Integer, ResolvedDbType> dataTypes = new HashMap<>();
+
+    Optional<String> owner = getOwnerFrom(typeName);
+    String type = getTypeSimpleName(typeName);
+
+    String query = QUERY_TYPE_ATTRS + (owner.isPresent() ? QUERY_OWNER_CONDITION : "");
+
+    try (PreparedStatement ps = this.prepareStatement(query)) {
+      ps.setString(1, type);
+      if (owner.isPresent()) {
+        ps.setString(2, owner.get());
+      }
+
+      try (ResultSet resultSet = ps.executeQuery()) {
+        while (resultSet.next()) {
+          ResolvedDbType resolvedDbType = new ResolvedDbType(UNKNOWN_DATA_TYPE, resultSet.getString(ATTR_TYPE_NAME_PARAM));
+          dataTypes.put(resultSet.getInt(ATTR_NO_PARAM), resolvedDbType);
+        }
+      }
+    }
+    return dataTypes;
+  }
+
 }

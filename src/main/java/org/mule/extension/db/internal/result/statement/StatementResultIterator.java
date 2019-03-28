@@ -206,42 +206,34 @@ public class StatementResultIterator implements Iterator<SingleStatementResult> 
 
     } else if (paramValue instanceof Collection) {
       Object[] collectionValue = ((Collection) paramValue).toArray(new Object[0]);
-      Object[] newArrayValue = new Object[collectionValue.length];
-
-      for (int i = 0; i < collectionValue.length; i++) {
-        Object value = collectionValue[i];
-        newArrayValue[i] = processValue(value);
-      }
-      return newArrayValue;
+      return processValueArray(collectionValue);
 
     } else if (paramValue instanceof Array) {
       Object objArray = ((Array) paramValue).getArray();
       if (objArray.getClass().isArray()) {
         Object[] collectionValue = (Object[]) ((Array) paramValue).getArray();
-        Object[] newArrayValue = new Object[collectionValue.length];
-
-        for (int i = 0; i < collectionValue.length; i++) {
-          Object value = collectionValue[i];
-          newArrayValue[i] = processValue(value);
-        }
-        return newArrayValue;
+        return processValueArray(collectionValue);
       } else {
         return objArray;
       }
 
     } else if (paramValue.getClass().isArray()) {
       Object[] collectionValue = (Object[]) paramValue;
-      Object[] newArrayValue = new Object[collectionValue.length];
-
-      for (int i = 0; i < collectionValue.length; i++) {
-        Object value = collectionValue[i];
-        newArrayValue[i] = processValue(value);
-      }
-      return newArrayValue;
+      return processValueArray(collectionValue);
 
     } else {
       return paramValue;
     }
+  }
+
+  private Object[] processValueArray(Object[] paramValues) throws SQLException {
+    Object[] newArrayValue = new Object[paramValues.length];
+    for (int i = 0; i < paramValues.length; i++) {
+      Object value = paramValues[i];
+      newArrayValue[i] = processValue(value);
+    }
+
+    return newArrayValue;
   }
 
   protected SingleStatementResult doProcessUpdateCount(String name, int value) {

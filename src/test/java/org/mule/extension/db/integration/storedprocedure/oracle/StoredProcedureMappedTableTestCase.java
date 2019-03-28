@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hamcrest.Matcher;
+import org.junit.Test;
 import org.junit.runners.Parameterized;
 
 public class StoredProcedureMappedTableTestCase extends AbstractStoredProcedureTableTestCase {
@@ -51,5 +52,10 @@ public class StoredProcedureMappedTableTestCase extends AbstractStoredProcedureT
   public void validateTable(Map<String, Object> storeProcedureReturn) {
     Matcher iterableMatcher = hasItem(instanceOf(Fruit.class));
     assertThat(storeProcedureReturn, hasEntry(is("out"), iterableMatcher));
+  }
+
+  @Test
+  public void processNestedTypeOutputParam() throws Exception {
+    flowRunner("storeProcedureWithNestedTypeOutputParamSerialized").run();
   }
 }

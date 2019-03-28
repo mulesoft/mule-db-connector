@@ -14,11 +14,14 @@ import org.mule.extension.db.internal.domain.query.QueryTemplate;
 import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
 import org.mule.extension.db.internal.result.resultset.ResultSetProcessingException;
 
+import java.sql.Array;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLXML;
 import java.sql.Statement;
+import java.sql.Struct;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -187,13 +190,50 @@ public class StatementResultIterator implements Iterator<SingleStatementResult> 
   protected SingleStatementResult doProcessOutputParam(OutputQueryParam outputSqlParam, Object paramValue) throws SQLException {
     if (paramValue instanceof ResultSet) {
       paramValue = resultSetHandler.processResultSet(connection, (ResultSet) paramValue);
-    } else if (paramValue instanceof SQLXML) {
-      SQLXML sqlxml = (SQLXML) paramValue;
-
-      paramValue = sqlxml.getString();
+    } else {
+      paramValue = processValue(paramValue);
     }
 
     return new OutputParamResult(outputSqlParam.getName(), paramValue);
+  }
+
+  private Object processValue(Object paramValue) throws SQLException {
+    if (paramValue instanceof Struct) {
+      return ((Struct) paramValue).getAttributes();
+
+    } else if (paramValue instanceof SQLXML) {
+      return ((SQLXML) paramValue).getString();
+
+    } else if (paramValue instanceof Collection) {
+      Object[] collectionValue = ((Collection) paramValue).toArray(new Object[0]);
+      return processValueArray(collectionValue);
+
+    } else if (paramValue instanceof Array) {
+      Object objArray = ((Array) paramValue).getArray();
+      if (objArray.getClass().isArray()) {
+        Object[] collectionValue = (Object[]) ((Array) paramValue).getArray();
+        return processValueArray(collectionValue);
+      } else {
+        return objArray;
+      }
+
+    } else if (paramValue.getClass().isArray()) {
+      Object[] collectionValue = (Object[]) paramValue;
+      return processValueArray(collectionValue);
+
+    } else {
+      return paramValue;
+    }
+  }
+
+  private Object[] processValueArray(Object[] paramValues) throws SQLException {
+    Object[] newArrayValue = new Object[paramValues.length];
+    for (int i = 0; i < paramValues.length; i++) {
+      Object value = paramValues[i];
+      newArrayValue[i] = processValue(value);
+    }
+
+    return newArrayValue;
   }
 
   protected SingleStatementResult doProcessUpdateCount(String name, int value) {

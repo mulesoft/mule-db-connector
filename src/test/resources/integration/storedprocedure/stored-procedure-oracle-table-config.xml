@@ -69,6 +69,25 @@
         </db:stored-procedure>
     </flow>
 
+    <flow name="storeProcedureWithNestedTypeOutputParamSerialized">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql >{ call SYSTEM.STORE_PROCEDURE_NESTED_TYPES(:IN_VALUE, :OUT_VALUE, :RSL) }</db:sql>
+            <db:input-parameters>#[%dw 2.0
+                output application/java
+                ---
+                {
+                    IN_VALUE: Db::createArray("dbConfig","CREATE_LIST_INPUT",
+                        [Db::createStruct("dbConfig","CREATE_LIST_INPUT_OBJ", [vars.number, vars.varchar])])
+                }]
+            </db:input-parameters>
+            <db:output-parameters >
+                <db:output-parameter key="OUT_VALUE" customType="CREATE_LIST_OUTPUT" />
+                <db:output-parameter key="RSL" customType="OUTPUT_RESPONSE" />
+            </db:output-parameters>
+        </db:stored-procedure>
+        <set-payload value="#[output application/json --- payload]"/>
+    </flow>
+
     <flow name="selectFromFruitsTable">
         <db:select config-ref="dbConfig">
             <db:sql>#["SELECT * FROM FRUITS_AS_TABLE WHERE" + (payload map $$) reduce ((item, accumulator) -> accumulator ++ "$(if (item == 0) '' else ' OR') (fruitID = :id$(item))")]</db:sql>

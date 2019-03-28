@@ -10,6 +10,12 @@
             <db:column-types >
                 <db:column-type id="2002" typeName="SYSTEM.FRUIT_RECORD_TYPE" className="org.mule.extension.db.integration.select.Fruit" />
                 <db:column-type id="2003" typeName="SYSTEM.FRUIT_ORDER_CONTENTS_TABLE" />
+                <db:column-type id="2002" typeName="CREATE_LIST_INPUT_OBJ" />
+                <db:column-type id="2003" typeName="CREATE_LIST_INPUT" />
+                <db:column-type id="2003" typeName="CREATE_LIST_OUTPUT" />
+                <db:column-type id="2002" typeName="CREATE_LIST_OUTPUT_OBJ" />
+                <db:column-type id="2002" typeName="RES_OBJ" />
+                <db:column-type id="2003" typeName="OUTPUT_RESPONSE" />
             </db:column-types>
         </db:oracle-connection>
     </db:config>

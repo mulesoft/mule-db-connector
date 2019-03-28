@@ -363,6 +363,13 @@ public class OracleTestDatabase extends AbstractTestDatabase {
     executeDdlSilently(connection, "DROP TABLE FRUITS_AS_TABLE");
     executeDdlSilently(connection, "DROP TYPE FRUIT_ORDER_CONTENTS_TABLE");
     executeDdlSilently(connection, "DROP TYPE FRUIT_RECORD_TYPE");
+    executeDdlSilently(connection, "DROP TYPE CREATE_LIST_INPUT_OBJ");
+    executeDdlSilently(connection, "DROP TYPE CREATE_LIST_INPUT");
+    executeDdlSilently(connection, "DROP TYPE CREATE_LIST_OUTPUT_OBJ");
+    executeDdlSilently(connection, "DROP TYPE CREATE_LIST_OUTPUT");
+    executeDdlSilently(connection, "DROP TYPE OUTPUT_RESPONSE_OBJ");
+    executeDdlSilently(connection, "DROP TYPE OUTPUT_RESPONSE");
+    executeDdlSilently(connection, "DROP PROCEDURE STORE_PROCEDURE_NESTED_TYPES");
 
     executeDdlSilently(connection, "CREATE OR REPLACE TYPE FRUIT_RECORD_TYPE AS OBJECT (\n" +
         "    fruitID integer,\n" +
@@ -405,6 +412,43 @@ public class OracleTestDatabase extends AbstractTestDatabase {
         "begin\n" +
         "    param1 := FRUIT_ORDER_CONTENTS_TABLE(FRUIT_RECORD_TYPE(123, 'sad', 321));\n" +
         "end;");
+
+    executeDdlSilently(connection, "CREATE OR REPLACE TYPE CREATE_LIST_INPUT_OBJ FORCE AS OBJECT\n" +
+        "(\n" +
+        "  objNumber NUMBER,\n" +
+        "  objName VARCHAR(10)\n" +
+        ");");
+
+    executeDdlSilently(connection, "CREATE OR REPLACE TYPE CREATE_LIST_INPUT AS TABLE OF CREATE_LIST_INPUT_OBJ;");
+
+    executeDdlSilently(connection, "CREATE OR REPLACE TYPE CREATE_LIST_OUTPUT_OBJ FORCE AS OBJECT\n" +
+        "(\n" +
+        "  objOne VARCHAR2(10),\n" +
+        "  objTwo VARCHAR2(10)\n" +
+        ");");
+
+    executeDdlSilently(connection, "CREATE OR REPLACE TYPE CREATE_LIST_OUTPUT AS TABLE OF CREATE_LIST_OUTPUT_OBJ;");
+
+    executeDdlSilently(connection, "CREATE OR REPLACE TYPE OUTPUT_RESPONSE_OBJ AS OBJECT \n" +
+        "( \n" +
+        "  CREATE_LIST_OUTPUT_V CREATE_LIST_OUTPUT,\n" +
+        "  CREATE_LIST_INPUT_V CREATE_LIST_INPUT\n" +
+        ");");
+
+    executeDdlSilently(connection, "CREATE OR REPLACE TYPE OUTPUT_RESPONSE AS TABLE OF OUTPUT_RESPONSE_OBJ;");
+
+    executeDdlSilently(connection, "CREATE OR REPLACE PROCEDURE STORE_PROCEDURE_NESTED_TYPES\n" +
+        "(\n" +
+        "  IN_VALUE IN CREATE_LIST_INPUT,\n" +
+        "  OUT_VALUE OUT NOCOPY CREATE_LIST_OUTPUT,\n" +
+        "  RSL OUT NOCOPY OUTPUT_RESPONSE\n" +
+        ")\n" +
+        "  IS\n" +
+        "  BEGIN\n" +
+        "    OUT_VALUE := CREATE_LIST_OUTPUT(CREATE_LIST_OUTPUT_OBJ('a','b'), CREATE_LIST_OUTPUT_OBJ('c','d'));\n" +
+        "    RSL := OUTPUT_RESPONSE(OUTPUT_RESPONSE_OBJ(CREATE_LIST_OUTPUT(CREATE_LIST_OUTPUT_OBJ('a','b')), CREATE_LIST_INPUT(CREATE_LIST_INPUT_OBJ(1, 'a'))));\n"
+        +
+        "  END;");
   }
 
   private void executeDdlSilently(Connection connection, String sql) {

@@ -61,6 +61,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,17 +129,7 @@ public class DmlOperations extends BaseDbOperations {
       private ResultSetIterator getIterator(DbConnection connection) {
         if (initialised.compareAndSet(false, true)) {
           resultSetCloser = new StatementStreamingResultSetCloser(connection);
-          flowListener.onError(e -> {
-            try {
-              close(connection);
-            } catch (Exception t) {
-              if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn(String.format("Exception was found closing connection for select operation: %s. Error was: %s",
-                                          query.getSql(), t.getMessage()),
-                            e);
-              }
-            }
-          });
+          flowListener.onError(new ResultSetCloserExceptionConsumer(resultSetCloser, query.getSql()));
           final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, SELECT, STORE_PROCEDURE_CALL);
 
           QueryStatementFactory statementFactory = getStatementFactory(query);
@@ -255,7 +246,7 @@ public class DmlOperations extends BaseDbOperations {
     InsensitiveMapRowHandler recordHandler = new InsensitiveMapRowHandler(connection);
 
     StatementStreamingResultSetCloser resultSetCloser = new StatementStreamingResultSetCloser(connection);
-    flowListener.onComplete(() -> resultSetCloser.closeResultSets());
+    flowListener.onComplete(new ResultSetCloserRunnable(resultSetCloser));
 
     StatementResultHandler resultHandler = connection.getJdbcConnection().getMetaData().supportsMultipleOpenResults()
         ? new StreamingStatementResultHandler(new IteratorResultSetHandler(recordHandler, resultSetCloser))
@@ -314,6 +305,45 @@ public class DmlOperations extends BaseDbOperations {
       return new TypedValue<>(newValue, typedValue.getDataType());
     } else {
       return streamingHelper.resolveCursorProvider(value);
+    }
+  }
+
+  private static class ResultSetCloserRunnable implements Runnable {
+
+    private final StatementStreamingResultSetCloser resultSetCloser;
+
+    public ResultSetCloserRunnable(StatementStreamingResultSetCloser resultSetCloser) {
+      this.resultSetCloser = resultSetCloser;
+    }
+
+    @Override
+    public void run() {
+      resultSetCloser.closeResultSets();
+    }
+  }
+
+  private static class ResultSetCloserExceptionConsumer implements Consumer<Exception> {
+
+    private final ResultSetCloserRunnable resultSetCloserRunnable;
+    private final String sql;
+
+    private ResultSetCloserExceptionConsumer(StatementStreamingResultSetCloser resultSetCloser, String sql) {
+      this.resultSetCloserRunnable = new ResultSetCloserRunnable(resultSetCloser);
+      this.sql = sql;
+    }
+
+
+    @Override
+    public void accept(Exception e) {
+      try {
+        resultSetCloserRunnable.run();
+      } catch (Exception t) {
+        if (LOGGER.isWarnEnabled()) {
+          LOGGER.warn(String.format("Exception was found closing connection for select operation: %s. Error was: %s",
+                                    sql, t.getMessage()),
+                      e);
+        }
+      }
     }
   }
 }

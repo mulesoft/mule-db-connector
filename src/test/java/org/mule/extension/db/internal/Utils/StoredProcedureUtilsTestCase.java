@@ -34,7 +34,13 @@ public class StoredProcedureUtilsTestCase extends AbstractMuleTestCase {
                   "call doSomething   (?,?,?)",
                   "call doSomething(?,?,?)",
                   "call   doSomething(?,?,?)",
-                  "call   doSomething   (?,?,?)");
+                  "call   doSomething   (?,?,?)",
+                  "call schema.doSomething (?,?,?)",
+                  "call schema.doSomething(?,?,?",
+                  "{ call doSomething(?,?,?) }",
+                  "{    call doSomething(?,?,?) }",
+                  "{call doSomething(?,?,?) }");
+
   }
 
   @Test

@@ -20,6 +20,8 @@ import javax.sql.DataSource;
  */
 public class OracleTestDatabase extends AbstractTestDatabase {
 
+  private static final String ORACLE_ERROR_OBJECT_ALREADY_EXISTS = "42000";
+
   @Override
   public DbTestUtil.DbType getDbType() {
     return DbTestUtil.DbType.ORACLE;
@@ -41,6 +43,12 @@ public class OracleTestDatabase extends AbstractTestDatabase {
   public void createSpaceshipTable(Connection connection) throws SQLException {
     executeDdl(connection,
                "CREATE TABLE SPACESHIP(ID INTEGER NOT NULL PRIMARY KEY,MODEL VARCHAR(255), MANUFACTURER VARCHAR(255))");
+  }
+
+  @Override
+  public void createMathSchema(Connection connection) throws SQLException {
+    String sql = "CREATE USER math IDENTIFIED BY pass";
+    createSchema(connection, sql);
   }
 
   @Override
@@ -115,6 +123,16 @@ public class OracleTestDatabase extends AbstractTestDatabase {
   public void createStoredProcedureDoubleMyInt(DataSource dataSource) throws SQLException {
     final String sql = "CREATE OR REPLACE PROCEDURE doubleMyInt(MYINT IN OUT NUMBER) IS\n" + "BEGIN\n" + "    SELECT MYINT * 2 \n"
         + "    INTO   MYINT\n" + "    FROM   DUAL;\n" + "END doubleMyInt;";
+
+    createStoredProcedure(dataSource, sql);
+  }
+
+  @Override
+  public void createStoreProcedureAddOne(DataSource dataSource) throws SQLException {
+    final String sql = "CREATE OR REPLACE PROCEDURE math.addOne(num IN OUT INTEGER) AS\n" +
+        "BEGIN\n" +
+        "   num := num + 1;\n" +
+        "END;";
 
     createStoredProcedure(dataSource, sql);
   }
@@ -495,5 +513,16 @@ public class OracleTestDatabase extends AbstractTestDatabase {
 
   public void dropPersonType(Connection connection) throws SQLException {
     executeDdl(connection, "DROP TYPE PERSON_TYPE");
+  }
+
+  public void createSchema(Connection connection, String sql) throws SQLException {
+    try {
+      executeDdl(connection, sql);
+    } catch (SQLException e) {
+      // Ignore exception when user already exists
+      if (!ORACLE_ERROR_OBJECT_ALREADY_EXISTS.equals(e.getSQLState())) {
+        throw e;
+      }
+    }
   }
 }

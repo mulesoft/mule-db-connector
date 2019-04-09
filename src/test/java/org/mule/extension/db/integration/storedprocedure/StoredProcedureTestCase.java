@@ -35,6 +35,7 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
     testDatabase.createStoredProcedureConcatenateStrings(getDefaultDataSource());
     testDatabase.createStoredProcedureCountRecords(getDefaultDataSource());
     testDatabase.createStoredProcedureMultiplyInts(getDefaultDataSource());
+    testDatabase.createStoreProcedureAddOne(getDefaultDataSource());
   }
 
   @Override
@@ -105,6 +106,12 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
   public void runStoredProcedureWithArgumentThatDoesNotExists() throws Exception {
     expectedError.expectErrorType("DB", "QUERY_EXECUTION");
     runProcedure("callNotExistingStoredProcedureWithAnArgument");
+  }
+
+  @Test
+  public void runStoredProcedureSpecifyingSchema() throws Exception {
+    Map<String, Object> payload = runProcedure("addOne");
+    assertThat("7", equalTo(payload.get("num").toString()));
   }
 
 }

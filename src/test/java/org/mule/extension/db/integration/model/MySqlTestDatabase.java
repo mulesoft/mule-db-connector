@@ -44,6 +44,11 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createMathSchema(Connection connection) throws SQLException {
+    executeDdl(connection, "CREATE SCHEMA IF NOT EXISTS math");
+  }
+
+  @Override
   protected String getInsertPlanetSql(String name, int position) {
     return "INSERT INTO PLANET(POSITION, NAME) VALUES (" + position + ", '" + name + "')";
   }
@@ -113,6 +118,17 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
     final String sql =
         "CREATE DEFINER=CURRENT_USER PROCEDURE doubleMyInt(INOUT pInt INT)\n" + "BEGIN\n" + "SET pInt := pInt * 2;\n" + "END";
 
+    createStoredProcedure(dataSource, sql);
+  }
+
+  @Override
+  public void createStoreProcedureAddOne(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS math.addOne");
+
+    final String sql = "CREATE PROCEDURE math.addOne(INOUT num INT)\n" +
+        "BEGIN\n" +
+        "  SET num := num + 1;\n" +
+        "END;";
     createStoredProcedure(dataSource, sql);
   }
 

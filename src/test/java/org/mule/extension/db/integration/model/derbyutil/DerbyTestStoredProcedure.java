@@ -156,4 +156,8 @@ public class DerbyTestStoredProcedure {
     }
   }
 
+  public static void addOne(int[] num) {
+    num[0] += 1;
+  }
+
 }

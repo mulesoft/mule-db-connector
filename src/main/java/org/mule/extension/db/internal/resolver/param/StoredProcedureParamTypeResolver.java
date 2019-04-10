@@ -10,7 +10,6 @@ import static java.lang.String.format;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.TABLE_TYPE_NAME;
 import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoredProcedureName;
 
-import org.mule.extension.db.api.exception.connection.QueryExecutionException;
 import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.param.QueryParam;
@@ -126,14 +125,14 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
     return paramTypes;
   }
 
-  private void validateQueryParams(QueryTemplate queryTemplate, Map<Integer, DbType> paramTypes) {
+  private void validateQueryParams(QueryTemplate queryTemplate, Map<Integer, DbType> paramTypes) throws SQLException {
     List<String> notExistingQueryParams = queryTemplate.getParams().stream()
         .filter(queryParam -> !paramTypes.containsKey(queryParam.getIndex()))
         .map(QueryParam::getName)
         .collect(Collectors.toList());
 
     if (!notExistingQueryParams.isEmpty()) {
-      throw new QueryExecutionException(format("Could not find query parameters %s.", String.join(",", notExistingQueryParams)));
+      throw new SQLException(format("Could not find query parameters %s.", String.join(",", notExistingQueryParams)));
     }
   }
 }

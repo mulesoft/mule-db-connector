@@ -9,7 +9,6 @@ package org.mule.extension.db.internal.resolver.query;
 import static com.github.benmanes.caffeine.cache.Caffeine.newBuilder;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import org.mule.extension.db.api.exception.connection.QueryExecutionException;
 import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.api.param.StatementDefinition;
 import org.mule.extension.db.internal.DbConnector;
@@ -113,7 +112,7 @@ abstract class AbstractQueryResolver<T extends StatementDefinition<?>> implement
       QueryParam newParam;
 
       if (type == null) {
-        throw new QueryExecutionException("Unknown parameter type of " + originalParam.getName());
+        throw new IllegalArgumentException("Unknown parameter type of " + originalParam.getName());
       }
 
       if (originalParam instanceof InOutQueryParam) {

@@ -16,6 +16,8 @@ import java.sql.SQLException;
 
 public class SqlServerTestDataBase extends AbstractTestDatabase {
 
+  private static final String MSSQL_ERROR_OBJECT_ALREADY_EXISTS = "S0001";
+
   @Override
   public DbTestUtil.DbType getDbType() {
     return DbTestUtil.DbType.SQLSERVER;
@@ -63,6 +65,12 @@ public class SqlServerTestDataBase extends AbstractTestDatabase {
                    "MODEL VARCHAR(255), \n" +
                    "MANUFACTURER VARCHAR(255), \n" +
                    "PRIMARY KEY (ID))");
+  }
+
+  @Override
+  public void createMathSchema(Connection connection) throws SQLException {
+    String sql = "CREATE SCHEMA math";
+    createSchema(connection, sql);
   }
 
   @Override
@@ -147,6 +155,15 @@ public class SqlServerTestDataBase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createStoreProcedureAddOne(DataSource dataSource) throws SQLException {
+    final String sql = "CREATE PROCEDURE math.addOne(@num INT OUTPUT) AS\n" +
+        "BEGIN\n" +
+        "    SET @num = @num + 1;\n" +
+        "END";
+    createStoredProcedure(dataSource, sql);
+  }
+
+  @Override
   public void createStoredProcedureMultiplyInts(DataSource dataSource) throws SQLException {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS multiplyInts;\n");
 
@@ -182,5 +199,27 @@ public class SqlServerTestDataBase extends AbstractTestDatabase {
   @Override
   public MetadataType getDescriptionFieldMetaDataType() {
     return typeBuilder.stringType().build();
+  }
+
+  public void createStoredProcedure(DataSource dataSource, String sql) throws SQLException {
+    try {
+      super.createStoredProcedure(dataSource, sql);
+    } catch (SQLException e) {
+      // Ignore exception when stored procedure already exists
+      if (!MSSQL_ERROR_OBJECT_ALREADY_EXISTS.equals(e.getSQLState())) {
+        throw e;
+      }
+    }
+  }
+
+  public void createSchema(Connection connection, String sql) throws SQLException {
+    try {
+      executeDdl(connection, sql);
+    } catch (SQLException e) {
+      // Ignore exception when user already exists
+      if (!MSSQL_ERROR_OBJECT_ALREADY_EXISTS.equals(e.getSQLState())) {
+        throw e;
+      }
+    }
   }
 }

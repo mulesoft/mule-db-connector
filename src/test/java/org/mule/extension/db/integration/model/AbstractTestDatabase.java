@@ -59,6 +59,8 @@ public abstract class AbstractTestDatabase {
 
   public abstract void createSpaceshipTable(Connection connection) throws SQLException;
 
+  public abstract void createMathSchema(Connection connection) throws SQLException;
+
   public abstract DbTestUtil.DbType getDbType();
 
   public static void executeDdl(DataSource dataSource, String ddl) throws SQLException {
@@ -129,6 +131,7 @@ public abstract class AbstractTestDatabase {
 
       createPlanetTestTable(connection);
       createSpaceshipTestTable(connection);
+      createMathSchema(connection);
 
       if (supportsXmlType()) {
         createAlienTestTable(connection);
@@ -366,6 +369,8 @@ public abstract class AbstractTestDatabase {
   public abstract void createStoredProcedureGetSplitRecords(DataSource dataSource) throws SQLException;
 
   public abstract void createStoredProcedureDoubleMyInt(DataSource dataSource) throws SQLException;
+
+  public abstract void createStoreProcedureAddOne(DataSource dataSource) throws SQLException;
 
   public abstract void createStoredProcedureMultiplyInts(DataSource dataSource) throws SQLException;
 

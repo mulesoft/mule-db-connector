@@ -68,6 +68,11 @@ public class SqlServerTestDataBase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createLanguagesTable(Connection connection) throws SQLException {
+    executeDdl(connection, "CREATE TABLE LANGUAGES (NAME VARCHAR(128), SAMPLE_TEXT CLOB)");
+  }
+
+  @Override
   public void createMathSchema(Connection connection) throws SQLException {
     String sql = "CREATE SCHEMA math";
     createSchema(connection, sql);
@@ -199,6 +204,11 @@ public class SqlServerTestDataBase extends AbstractTestDatabase {
   @Override
   public MetadataType getDescriptionFieldMetaDataType() {
     return typeBuilder.stringType().build();
+  }
+
+  @Override
+  public String getInsertLanguageSql(String name, String sampleText) {
+    return "INSERT INTO LANGUAGES VALUES ('" + name + "', '" + sampleText + "')";
   }
 
   public void createStoredProcedure(DataSource dataSource, String sql) throws SQLException {

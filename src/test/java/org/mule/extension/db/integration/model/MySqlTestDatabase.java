@@ -44,6 +44,11 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createLanguagesTable(Connection connection) throws SQLException {
+    executeDdl(connection, "CREATE TABLE LANGUAGES (NAME VARCHAR(128), SAMPLE_TEXT CLOB)");
+  }
+
+  @Override
   public void createMathSchema(Connection connection) throws SQLException {
     executeDdl(connection, "CREATE SCHEMA IF NOT EXISTS math");
   }
@@ -165,6 +170,11 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
   @Override
   public MetadataType getDescriptionFieldMetaDataType() {
     return getStringType();
+  }
+
+  @Override
+  public String getInsertLanguageSql(String name, String sampleText) {
+    return "INSERT INTO LANGUAGES VALUES ('" + name + "', '" + sampleText + "')";
   }
 
   private MetadataType getStringType() {

@@ -135,6 +135,11 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createLanguagesTable(Connection connection) throws SQLException {
+    executeDdl(connection, "CREATE TABLE LANGUAGES (NAME VARCHAR(128), SAMPLE_TEXT CLOB)");
+  }
+
+  @Override
   public void createMathSchema(Connection connection) throws SQLException {
     createSchema(connection, "CREATE SCHEMA AUTHORIZATION math");
   }
@@ -246,6 +251,11 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
   @Override
   public void createDelayFunction(DataSource dataSource) throws SQLException {
     createStoredProcedure(dataSource, SQL_CREATE_DELAY_FUNCTION);
+  }
+
+  @Override
+  public String getInsertLanguageSql(String name, String sampleText) {
+    return "INSERT INTO LANGUAGES VALUES ('" + name + "', '" + sampleText + "')";
   }
 
   public void createStoredProcedure(DataSource dataSource, String sql) throws SQLException {

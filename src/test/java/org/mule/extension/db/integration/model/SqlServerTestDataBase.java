@@ -69,7 +69,7 @@ public class SqlServerTestDataBase extends AbstractTestDatabase {
 
   @Override
   public void createLanguagesTable(Connection connection) throws SQLException {
-    executeDdl(connection, "CREATE TABLE LANGUAGES (NAME VARCHAR(128), SAMPLE_TEXT CLOB)");
+    executeDdl(connection, "CREATE TABLE LANGUAGES (NAME VARCHAR(128), SAMPLE_TEXT VARCHAR(max))");
   }
 
   @Override

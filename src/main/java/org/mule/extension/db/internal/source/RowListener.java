@@ -25,11 +25,13 @@ import org.mule.extension.db.internal.result.row.InsensitiveMapRowHandler;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.exception.MuleException;
+import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.metadata.MetadataKeyId;
 import org.mule.runtime.extension.api.annotation.metadata.MetadataScope;
 import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.Connection;
+import org.mule.runtime.extension.api.annotation.param.DefaultEncoding;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -44,6 +46,7 @@ import org.mule.runtime.extension.api.runtime.source.PollingSource;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
 
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -68,6 +71,9 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RowListener.class);
   public static final String WATERMARK_PARAM_NAME = "watermark";
+
+  @DefaultEncoding
+  String encoding;
 
   /**
    * The name of the table to select from
@@ -109,6 +115,7 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
   private final QueryResolver<ParameterizedStatementDefinition> queryResolver = new ParameterizedQueryResolver<>();
   private ItemHandler idHandler;
   private ItemHandler watermarkHandler;
+  private Charset charset;
 
   @Override
   protected void doStart() throws MuleException {
@@ -190,7 +197,8 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
       statementFactory.setFetchSize(settings.getFetchSize() != null ? settings.getFetchSize() : DEFAULT_FETCH_SIZE);
       statementFactory.setQueryTimeout(new Long(settings.getQueryTimeoutUnit().toSeconds(settings.getQueryTimeout())).intValue());
 
-      ResultSetHandler resultSetHandler = new ListResultSetHandler(new InsensitiveMapRowHandler(connection));
+      ResultSetHandler resultSetHandler =
+          new ListResultSetHandler(new InsensitiveMapRowHandler(connection, Charset.forName(encoding)));
 
       List<Map<String, Object>> rows =
           (List<Map<String, Object>>) new SelectExecutor(statementFactory, resultSetHandler).execute(connection, query);

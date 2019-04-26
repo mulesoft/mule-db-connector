@@ -19,6 +19,7 @@ import org.mule.runtime.core.api.util.IOUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
@@ -29,15 +30,24 @@ import java.sql.SQLXML;
 import java.sql.Struct;
 import java.util.Map;
 
+import org.apache.commons.io.input.ReaderInputStream;
+
 /**
  * Maps a row using returning a case insensitive map
  */
 public class InsensitiveMapRowHandler implements RowHandler {
 
   private DbConnection dbConnection;
+  private Charset charset;
 
   public InsensitiveMapRowHandler(DbConnection dbConnection) {
     this.dbConnection = dbConnection;
+    this.charset = Charset.defaultCharset();
+  }
+
+  public InsensitiveMapRowHandler(DbConnection dbConnection, Charset charset) {
+    this.dbConnection = dbConnection;
+    this.charset = charset;
   }
 
   @Override
@@ -114,11 +124,18 @@ public class InsensitiveMapRowHandler implements RowHandler {
   }
 
   private TypedValue<Object> handleClobType(Clob value) throws SQLException {
+    ReaderInputStream inputStream = new ReaderInputStream(value.getCharacterStream(), charset);
     if (dbConnection != null && dbConnection.supportsContentStreaming()) {
-      return new TypedValue<>(value.getAsciiStream(), DataType.builder().type(InputStream.class).mediaType(TEXT).build());
+      return new TypedValue<>(inputStream, DataType.builder().type(InputStream.class)
+          .mediaType(TEXT)
+          .charset(charset)
+          .build());
     } else {
-      return new TypedValue<>(new ByteArrayInputStream(IOUtils.toByteArray(value.getAsciiStream())),
-                              DataType.builder().type(byte[].class).mediaType(TEXT).build());
+      return new TypedValue<>(new ByteArrayInputStream(IOUtils.toByteArray(inputStream)), DataType.builder()
+          .type(byte[].class)
+          .mediaType(TEXT)
+          .charset(charset)
+          .build());
     }
   }
 }

@@ -58,4 +58,18 @@
         <set-payload value="#[payload[0].PICTURE]"/>
     </flow>
 
+    <flow name="getLanguage">
+        <db:select config-ref="dbConfig">
+            <db:sql >select SAMPLE_TEXT from languages where NAME = :language</db:sql>
+            <db:input-parameters>
+                #[
+                    {
+                        'language' : vars.languageName,
+                    }
+                ]
+            </db:input-parameters>
+        </db:select>
+        <set-payload value="#[output text/plain --- payload[0].SAMPLE_TEXT]"/>
+    </flow>
+
 </mule>

@@ -31,6 +31,8 @@ public abstract class AbstractTestDatabase {
   public static final Planet[] PLANET_TEST_VALUES = {Planet.VENUS, Planet.EARTH, Planet.MARS};
   public static final Planet[] ADDITIONAL_PLANET_VALUES = {Planet.TATOOINE, Planet.JAKU};
 
+  public static final Language[] LANGUAGES_TEST_VALUES = {Language.SPANISH, Language.GERMAN};
+
   public static final Alien[] ALIEN_TEST_VALUES = {Alien.MONGUITO, Alien.ET};
   public static final Contact[] CONTACT_TEST_VALUES = {Contact.CONTACT1, Contact.CONTACT2};
   public static final Region[] REGION_TEST_VALUES = {Region.NORTHWEST, Region.SOUTHWEST};
@@ -51,6 +53,10 @@ public abstract class AbstractTestDatabase {
     executeUpdate(connection, "DELETE FROM SPACESHIP");
   }
 
+  public void deleteLanguagesTable(Connection connection) throws SQLException {
+    executeUpdate(connection, "DELETE FROM LANGUAGES");
+  }
+
   public void truncateSpaceshipTable(Connection connection) throws SQLException {
     executeUpdate(connection, "TRUNCATE TABLE SPACESHIP");
   }
@@ -58,6 +64,8 @@ public abstract class AbstractTestDatabase {
   public abstract void createPlanetTable(Connection connection) throws SQLException;
 
   public abstract void createSpaceshipTable(Connection connection) throws SQLException;
+
+  public abstract void createLanguagesTable(Connection connection) throws SQLException;
 
   public abstract void createMathSchema(Connection connection) throws SQLException;
 
@@ -131,6 +139,7 @@ public abstract class AbstractTestDatabase {
 
       createPlanetTestTable(connection);
       createSpaceshipTestTable(connection);
+      createLanguagesTestTable(connection);
       createMathSchema(connection);
 
       if (supportsXmlType()) {
@@ -337,6 +346,30 @@ public abstract class AbstractTestDatabase {
       createSpaceshipTable(connection);
     }
   }
+
+  protected void createLanguagesTestTable(Connection connection) throws SQLException {
+    try {
+      deleteLanguagesTable(connection);
+    } catch (Exception e) {
+      createLanguagesTable(connection);
+    }
+
+    populateLanguagesTable(connection, LANGUAGES_TEST_VALUES);
+  }
+
+  public void populateLanguagesTable(Connection connection, Language[] languages) throws SQLException {
+    QueryRunner qr = new QueryRunner();
+
+    for (Language language : languages) {
+      int updated = qr.update(connection, getInsertLanguageSql(language.getName(), language.getSampleText()));
+
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug(updated + " rows updated on languages table");
+      }
+    }
+  }
+
+  public abstract String getInsertLanguageSql(String name, String sampleText);
 
   public void createStoredProcedure(DataSource dataSource, String sql) throws SQLException {
     Connection connection = dataSource.getConnection();

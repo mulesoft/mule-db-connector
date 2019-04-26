@@ -107,7 +107,7 @@ public class DmlOperations extends BaseDbOperations {
 
       @Override
       public List<Map<String, Object>> getPage(DbConnection connection) {
-        ResultSetIterator iterator = getIterator(connection);
+        ResultSetIterator iterator = getIterator(connection, connector);
         final int fetchSize = getFetchSize(query);
         final List<Map<String, Object>> page = new ArrayList<>(fetchSize);
         for (int i = 0; i < fetchSize && iterator.hasNext(); i++) {
@@ -127,14 +127,14 @@ public class DmlOperations extends BaseDbOperations {
         resultSetCloser.closeResultSets();
       }
 
-      private ResultSetIterator getIterator(DbConnection connection) {
+      private ResultSetIterator getIterator(DbConnection connection, DbConnector connector) {
         if (initialised.compareAndSet(false, true)) {
           resultSetCloser = new StatementStreamingResultSetCloser(connection);
           flowListener.onError(new ResultSetCloserExceptionConsumer(resultSetCloser, query.getSql()));
           final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, SELECT, STORE_PROCEDURE_CALL);
 
           QueryStatementFactory statementFactory = getStatementFactory(query);
-          InsensitiveMapRowHandler recordHandler = new InsensitiveMapRowHandler(connection);
+          InsensitiveMapRowHandler recordHandler = new InsensitiveMapRowHandler(connection, connector.getCharset());
           ResultSetHandler resultSetHandler = new IteratorResultSetHandler(recordHandler, resultSetCloser);
 
           try {
@@ -244,7 +244,7 @@ public class DmlOperations extends BaseDbOperations {
 
     QueryStatementFactory statementFactory = getStatementFactory(call);
 
-    InsensitiveMapRowHandler recordHandler = new InsensitiveMapRowHandler(connection);
+    InsensitiveMapRowHandler recordHandler = new InsensitiveMapRowHandler(connection, connector.getCharset());
 
     StatementStreamingResultSetCloser resultSetCloser = new StatementStreamingResultSetCloser(connection);
     flowListener.onComplete(new ResultSetCloserRunnable(resultSetCloser));

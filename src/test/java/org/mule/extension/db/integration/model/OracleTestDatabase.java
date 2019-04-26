@@ -46,6 +46,11 @@ public class OracleTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createLanguagesTable(Connection connection) throws SQLException {
+    executeDdl(connection, "CREATE TABLE LANGUAGES(NAME VARCHAR(128), SAMPLE_TEXT CLOB)");
+  }
+
+  @Override
   public void createMathSchema(Connection connection) throws SQLException {
     String sql = "CREATE USER math IDENTIFIED BY pass";
     createSchema(connection, sql);
@@ -491,6 +496,11 @@ public class OracleTestDatabase extends AbstractTestDatabase {
         .append(regionManager.getContactDetails().getEmail()).append("'))");
 
     return builder.toString();
+  }
+
+  @Override
+  public String getInsertLanguageSql(String name, String sampleText) {
+    return "INSERT INTO LANGUAGES VALUES ('" + name + "', '" + sampleText + "')";
   }
 
   public void createPersonTable(Connection connection) throws SQLException {

@@ -60,7 +60,7 @@
 
     <flow name="getLanguage">
         <db:select config-ref="dbConfig">
-            <db:sql >select SAMPLE_TEXT from languages where NAME = :language</db:sql>
+            <db:sql >select SAMPLE_TEXT from LANGUAGES where NAME = :language</db:sql>
             <db:input-parameters>
                 #[
                     {

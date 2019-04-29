@@ -10,6 +10,7 @@ package org.mule.extension.db.internal.result.resultset;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.result.row.RowHandler;
 
+import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
@@ -24,9 +25,16 @@ import java.util.Map;
 public class ListResultSetHandler implements ResultSetHandler {
 
   private final RowHandler rowHandler;
+  private final Charset charset;
 
   public ListResultSetHandler(RowHandler rowHandler) {
     this.rowHandler = rowHandler;
+    this.charset = Charset.defaultCharset();
+  }
+
+  public ListResultSetHandler(RowHandler rowHandler, Charset charset) {
+    this.rowHandler = rowHandler;
+    this.charset = charset;
   }
 
   @Override
@@ -45,5 +53,10 @@ public class ListResultSetHandler implements ResultSetHandler {
   @Override
   public boolean requiresMultipleOpenedResults() {
     return false;
+  }
+
+  @Override
+  public Charset getCharset() {
+    return charset;
   }
 }

@@ -11,6 +11,7 @@ import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.result.row.RowHandler;
 import org.mule.extension.db.internal.StatementStreamingResultSetCloser;
 
+import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -23,10 +24,19 @@ public class IteratorResultSetHandler implements ResultSetHandler {
 
   private final RowHandler rowHandler;
   private final StatementStreamingResultSetCloser streamingResultSetCloser;
+  private final Charset charset;
 
   public IteratorResultSetHandler(RowHandler rowHandler, StatementStreamingResultSetCloser streamingResultSetCloser) {
     this.rowHandler = rowHandler;
     this.streamingResultSetCloser = streamingResultSetCloser;
+    this.charset = Charset.defaultCharset();
+  }
+
+  public IteratorResultSetHandler(RowHandler rowHandler, StatementStreamingResultSetCloser streamingResultSetCloser,
+                                  Charset charset) {
+    this.rowHandler = rowHandler;
+    this.streamingResultSetCloser = streamingResultSetCloser;
+    this.charset = charset;
   }
 
   @Override
@@ -40,5 +50,10 @@ public class IteratorResultSetHandler implements ResultSetHandler {
   @Override
   public boolean requiresMultipleOpenedResults() {
     return true;
+  }
+
+  @Override
+  public Charset getCharset() {
+    return charset;
   }
 }

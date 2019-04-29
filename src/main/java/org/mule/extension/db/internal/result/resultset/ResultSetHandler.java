@@ -9,6 +9,7 @@ package org.mule.extension.db.internal.result.resultset;
 
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 
+import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -26,4 +27,9 @@ public interface ResultSetHandler {
    * @return {@code true} is multiple opened results is required, {@code false} otherwise
    */
   boolean requiresMultipleOpenedResults();
+
+  /**
+   * @return the {@link Charset} used.
+   */
+  Charset getCharset();
 }

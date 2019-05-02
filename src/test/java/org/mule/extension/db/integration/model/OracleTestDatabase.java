@@ -51,8 +51,10 @@ public class OracleTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
-  public void createMathSchema(Connection connection) throws SQLException {
-    String sql = "CREATE USER math IDENTIFIED BY pass";
+  public void createMathFunctionSchema(Connection connection) throws SQLException {
+    //TODO: Remove the following line, which is only done to be able to create a user/schema without using c## prefix
+    executeDdl(connection, "alter session set \"_ORACLE_SCRIPT\"=true");
+    String sql = "CREATE USER mathFunction IDENTIFIED BY pass";
     createSchema(connection, sql);
   }
 
@@ -133,8 +135,8 @@ public class OracleTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
-  public void createStoreProcedureAddOne(DataSource dataSource) throws SQLException {
-    final String sql = "CREATE OR REPLACE PROCEDURE math.addOne(num IN OUT INTEGER) AS\n" +
+  public void createStoredProcedureAddOne(DataSource dataSource) throws SQLException {
+    final String sql = "CREATE OR REPLACE PROCEDURE mathFunction.addOne(num IN OUT INTEGER) AS\n" +
         "BEGIN\n" +
         "   num := num + 1;\n" +
         "END;";

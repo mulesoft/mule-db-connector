@@ -7,8 +7,8 @@
 
 package org.mule.extension.db.integration.storedprocedure;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.mule.extension.db.integration.TestDbConfig.getOracleResource;
@@ -17,22 +17,17 @@ import static org.mule.extension.db.integration.model.Region.SOUTHWEST;
 
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.DbTestUtil;
-import org.mule.extension.db.integration.model.Contact;
 import org.mule.extension.db.integration.model.ContactDetails;
 import org.mule.extension.db.integration.model.OracleTestDatabase;
 import org.mule.runtime.api.message.Message;
 
-import javax.sql.DataSource;
-
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.Matcher;
-import org.hamcrest.collection.IsMapContaining;
-import org.hamcrest.core.IsCollectionContaining;
+import javax.sql.DataSource;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
@@ -66,12 +61,14 @@ public class StoredProcedureJavaArrayUdtTestCase extends AbstractDbIntegrationTe
   @Test
   public void returnsDefaultArray() throws Exception {
     Message response = flowRunner("returnsDefaultArrayValue").keepStreamsOpen().run().getMessage();
-    assertThat((Collection<String>) response.getPayload().getValue(), hasItems(SOUTHWEST.getZips()));
+    List<Object> values = new ArrayList<>(asList((Object[]) response.getPayload().getValue()));
+    assertThat(values, hasItems(SOUTHWEST.getZips()));
   }
 
   @Test
   public void returnsCustomArray() throws Exception {
     Message response = flowRunner("returnsCustomArrayValue").keepStreamsOpen().run().getMessage();
-    assertThat((Collection<ContactDetails>) response.getPayload().getValue(), hasItems(CONTACT1.getDetails()));
+    List<Object> values = new ArrayList<>(asList((Object[]) response.getPayload().getValue()));
+    assertThat(values, hasItems(CONTACT1.getDetails()));
   }
 }

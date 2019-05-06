@@ -65,7 +65,6 @@ public class StoredProcedureTableTestCase extends AbstractStoredProcedureTableTe
 
   @Override
   public void validateTable(Map<String, Object> storeProcedureReturn) {
-    Matcher iterableMatcher = hasItem(instanceOf(Object[].class));
-    assertThat(storeProcedureReturn, hasEntry(is("out"), iterableMatcher));
+    assertThat(storeProcedureReturn, hasEntry(is("out"), instanceOf(Object[].class)));
   }
 }

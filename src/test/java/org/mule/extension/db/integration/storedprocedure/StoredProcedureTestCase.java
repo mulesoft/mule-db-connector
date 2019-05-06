@@ -35,7 +35,7 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
     testDatabase.createStoredProcedureConcatenateStrings(getDefaultDataSource());
     testDatabase.createStoredProcedureCountRecords(getDefaultDataSource());
     testDatabase.createStoredProcedureMultiplyInts(getDefaultDataSource());
-    testDatabase.createStoreProcedureAddOne(getDefaultDataSource());
+    testDatabase.createStoredProcedureAddOne(getDefaultDataSource());
   }
 
   @Override

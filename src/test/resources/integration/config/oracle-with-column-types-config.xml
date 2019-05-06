@@ -6,7 +6,7 @@
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
     <db:config name="dbConfig" >
-        <db:oracle-connection host="0.0.0.0" user="system" password="oracle" instance="xe" >
+        <db:oracle-connection host="0.0.0.0" user="system" password="Oradoc_db1" instance="ORCLCDB" >
             <db:column-types >
                 <db:column-type id="2002" typeName="SYSTEM.FRUIT_RECORD_TYPE" className="org.mule.extension.db.integration.select.Fruit" />
                 <db:column-type id="2003" typeName="SYSTEM.FRUIT_ORDER_CONTENTS_TABLE" />

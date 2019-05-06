@@ -50,8 +50,8 @@ public class StoredProcedureMappedTableTestCase extends AbstractStoredProcedureT
 
   @Override
   public void validateTable(Map<String, Object> storeProcedureReturn) {
-    Matcher iterableMatcher = hasItem(instanceOf(Fruit.class));
-    assertThat(storeProcedureReturn, hasEntry(is("out"), iterableMatcher));
+    Object value = ((Object[]) storeProcedureReturn.get("out"))[0];
+    assertThat(value, is(instanceOf(Fruit.class)));
   }
 
   @Test

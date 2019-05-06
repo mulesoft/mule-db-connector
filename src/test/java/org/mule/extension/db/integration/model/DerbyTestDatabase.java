@@ -116,7 +116,7 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
       "CREATE TYPE CONTACT_DETAILS EXTERNAL NAME '" + ContactDetails.class.getName() + "' LANGUAGE JAVA";
 
   public static final String SQL_CREATE_SP_ADD_ONE =
-      "CREATE PROCEDURE math.addOne(INOUT number INTEGER)" +
+      "CREATE PROCEDURE mathFunction.addOne(INOUT number INTEGER)" +
           "PARAMETER STYLE JAVA\n" +
           "LANGUAGE JAVA\n" +
           "DYNAMIC RESULT SETS 0\n" +
@@ -140,8 +140,8 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
-  public void createMathSchema(Connection connection) throws SQLException {
-    createSchema(connection, "CREATE SCHEMA AUTHORIZATION math");
+  public void createMathFunctionSchema(Connection connection) throws SQLException {
+    createSchema(connection, "CREATE SCHEMA AUTHORIZATION mathFunction");
   }
 
   @Override
@@ -185,7 +185,7 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
-  public void createStoreProcedureAddOne(DataSource dataSource) throws SQLException {
+  public void createStoredProcedureAddOne(DataSource dataSource) throws SQLException {
     createStoredProcedure(dataSource, SQL_CREATE_SP_ADD_ONE);
   }
 

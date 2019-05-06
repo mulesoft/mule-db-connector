@@ -49,8 +49,8 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
-  public void createMathSchema(Connection connection) throws SQLException {
-    executeDdl(connection, "CREATE SCHEMA IF NOT EXISTS math");
+  public void createMathFunctionSchema(Connection connection) throws SQLException {
+    executeDdl(connection, "CREATE SCHEMA IF NOT EXISTS mathFunction");
   }
 
   @Override
@@ -127,10 +127,10 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
-  public void createStoreProcedureAddOne(DataSource dataSource) throws SQLException {
-    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS math.addOne");
+  public void createStoredProcedureAddOne(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS mathFunction.addOne");
 
-    final String sql = "CREATE PROCEDURE math.addOne(INOUT num INT)\n" +
+    final String sql = "CREATE PROCEDURE mathFunction.addOne(INOUT num INT)\n" +
         "BEGIN\n" +
         "  SET num := num + 1;\n" +
         "END;";

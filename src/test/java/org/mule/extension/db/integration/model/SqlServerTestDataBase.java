@@ -73,8 +73,8 @@ public class SqlServerTestDataBase extends AbstractTestDatabase {
   }
 
   @Override
-  public void createMathSchema(Connection connection) throws SQLException {
-    String sql = "CREATE SCHEMA math";
+  public void createMathFunctionSchema(Connection connection) throws SQLException {
+    String sql = "CREATE SCHEMA mathFunction";
     createSchema(connection, sql);
   }
 
@@ -160,8 +160,10 @@ public class SqlServerTestDataBase extends AbstractTestDatabase {
   }
 
   @Override
-  public void createStoreProcedureAddOne(DataSource dataSource) throws SQLException {
-    final String sql = "CREATE PROCEDURE math.addOne(@num INT OUTPUT) AS\n" +
+  public void createStoredProcedureAddOne(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS mathFunction.addOne;\n");
+
+    final String sql = "CREATE PROCEDURE mathFunction.addOne(@num INT OUTPUT) AS\n" +
         "BEGIN\n" +
         "    SET @num = @num + 1;\n" +
         "END";

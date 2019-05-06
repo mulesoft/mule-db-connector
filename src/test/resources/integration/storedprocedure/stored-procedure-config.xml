@@ -75,7 +75,7 @@
 
     <flow name="addOne">
         <db:stored-procedure config-ref="dbConfig">
-            <db:sql>{ call math.addOne(:num) }</db:sql>
+            <db:sql>{ call mathFunction.addOne(:num) }</db:sql>
             <db:in-out-parameters>
                 <db:in-out-parameter key="num" value="6"/>
             </db:in-out-parameters>

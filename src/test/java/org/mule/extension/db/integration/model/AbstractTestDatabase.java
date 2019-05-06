@@ -67,7 +67,7 @@ public abstract class AbstractTestDatabase {
 
   public abstract void createLanguagesTable(Connection connection) throws SQLException;
 
-  public abstract void createMathSchema(Connection connection) throws SQLException;
+  public abstract void createMathFunctionSchema(Connection connection) throws SQLException;
 
   public abstract DbTestUtil.DbType getDbType();
 
@@ -140,7 +140,7 @@ public abstract class AbstractTestDatabase {
       createPlanetTestTable(connection);
       createSpaceshipTestTable(connection);
       createLanguagesTestTable(connection);
-      createMathSchema(connection);
+      createMathFunctionSchema(connection);
 
       if (supportsXmlType()) {
         createAlienTestTable(connection);
@@ -403,7 +403,7 @@ public abstract class AbstractTestDatabase {
 
   public abstract void createStoredProcedureDoubleMyInt(DataSource dataSource) throws SQLException;
 
-  public abstract void createStoreProcedureAddOne(DataSource dataSource) throws SQLException;
+  public abstract void createStoredProcedureAddOne(DataSource dataSource) throws SQLException;
 
   public abstract void createStoredProcedureMultiplyInts(DataSource dataSource) throws SQLException;
 

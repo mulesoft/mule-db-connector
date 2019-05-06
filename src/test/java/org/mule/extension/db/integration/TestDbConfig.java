@@ -28,28 +28,46 @@ public class TestDbConfig {
   }
 
   private static boolean USE_DERBY;
+
+  /**
+   *  <strong>Developer Note:</strong>
+   *  To run the MySQL tests you need to follow the following steps:
+   *  <ul>
+   *    <li>Set this USE_MYSQL flag to true</li>
+   *    <li>Download a docker MySQL image: <code>docker pull mysql</code></li>
+   *    <li>Start the container <code>docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=mysql -d mysql:latest</code></li>
+   *  </ul>
+   *
+   *  Alternately, you can enable the system property <code>mysql</code>.
+   */
   private static boolean USE_MYSQL;
 
   /**
    * <strong>Developer Note:</strong>
-   * To run oracle tests you need to follow this steps:
+   * To run the oracle tests you need to follow the following steps:
    * <ul>
-   * <li>Set this USE_ORACLE flag to true</li>
-   * <li>You need to have an oracle instance running in your machine. (You can use the oracle-xe-11g docker image: https://hub.docker.com/r/wnameless/oracle-xe-11g)</li>
-   * <li>Then you need to install in your maven repository an <strong>oracle-jdbc-driver</strong> using the mvn install:install-file command</li>
-   * <li>Add the installed driver dependency to this project so the test can find it in the classpath</li>
-   * <li>Finally change the oracle db configurations to point to your installed instance (e.g. host, port, user, etc)</li>
+   *  <li>Set this USE_ORACLE flag to true</li>
+   *  <li>Download a docker Oracle image: <code>docker pull store/oracle/database-enterprise:12.2.0.1</code></li>
+   *  <li>Start the container:<code>docker run -d -it --name oracle-db -p 1521:1521 store/oracle/database-enterprise:12.2.0.1</code> </li>
+   *  <li>Install in your maven repository an <strong>oracle-jdbc-driver</strong> using the mvn install:install-file command</li>
+   *  <li>Add the installed driver dependency to this project so the test can find it in the classpath</li>
+   *  <li>Add the driver as a shared dependency on {@link DbArtifactClassLoaderRunnerConfig}</li>
    * </ul>
+   *
+   * Alternately, you can enable the system property oracle, and follow just the steps five and six above.
    */
   private static boolean USE_ORACLE;
 
   /**
    * <strong>Developer Note:</strong>
-   * To run Microsoft SQL Server tests you need to follow this steps:
+   * To run the MsSQL tests you need to follow the following steps:
    * <ul>
-   * <li>Set this USE_MSSQL_SERVER flag to true</li>
-   * <li>To start a SQL Server using docker, run: <code>docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -p 1433:1433 -d microsoft/mssql-server-linux</code>
+   *  <li>Set this USE_MSSQL_SERVER flag to true</li>
+   *   <li>Download a docker MsSQL image: <code>docker pull microsoft/mssql-server-linux</code></li>
+   *  <li>Start the container: <code>docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -p 1433:1433 -d microsoft/mssql-server-linux</code>
    * </ul>
+   *
+   * Alternately, you can enable the system property <code>mssql</code>.
    */
   private static boolean USE_MSSQL_SERVER;
 

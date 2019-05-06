@@ -96,6 +96,19 @@ public class SqlServerTestDataBase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createStoredProcedureGetSpanishLanguageSampleText(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS getSpanishLanguageSample;\n");
+
+    final String sql =
+        "CREATE PROCEDURE getSpanishLanguageSample(@language VARCHAR(max) OUTPUT) AS\n" +
+            "BEGIN\n" +
+            "    SET @language = (SELECT SAMPLE_TEXT FROM LANGUAGES WHERE NAME='Spanish')\n" +
+            "END;";
+
+    createStoredProcedure(dataSource, sql);
+  }
+
+  @Override
   public void createStoredProcedureParameterizedUpdatePlanetDescription(DataSource dataSource) throws SQLException {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS updatePlanetDescription;\n");
 

@@ -37,7 +37,6 @@ public class StoredProcedureUtilsTestCase extends AbstractMuleTestCase {
                   "call   doSomething   (?,?,?)",
                   "call schema.doSomething (?,?,?)",
                   "call schema.doSomething(?,?,?",
-                  "call c##schema.doSomething(?,?,?)",
                   "{ call doSomething(?,?,?) }",
                   "{    call doSomething(?,?,?) }",
                   "{call doSomething(?,?,?) }");

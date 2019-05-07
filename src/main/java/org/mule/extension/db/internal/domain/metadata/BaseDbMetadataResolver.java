@@ -25,6 +25,7 @@ import org.mule.metadata.api.model.StringType;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.metadata.MetadataContext;
 import org.mule.runtime.api.metadata.MetadataResolvingException;
+import org.mule.runtime.api.util.LazyValue;
 
 import java.net.URL;
 import java.sql.PreparedStatement;
@@ -40,7 +41,7 @@ public abstract class BaseDbMetadataResolver {
 
   protected BaseTypeBuilder typeBuilder;
   protected ClassTypeLoader typeLoader;
-  private Map<Integer, MetadataType> dbToMetaDataType;
+  private LazyValue<Map<Integer, MetadataType>> dbToMetaDataType = new LazyValue<>(this::initializeDbToMetaDataType);
 
   protected QueryTemplate parseQuery(String query) {
     return new SimpleQueryTemplateParser().parse(query);
@@ -82,19 +83,11 @@ public abstract class BaseDbMetadataResolver {
   }
 
   protected MetadataType getDataTypeMetadataModel(int columnTypeName) {
-    if (dbToMetaDataType == null) {
-      synchronized (this) {
-        if (dbToMetaDataType == null) {
-          initializeDbToMetaDataType();
-        }
-      }
-    }
-
-    return dbToMetaDataType.getOrDefault(columnTypeName, typeBuilder.anyType().build());
+    return dbToMetaDataType.get().getOrDefault(columnTypeName, typeBuilder.anyType().build());
   }
 
-  private void initializeDbToMetaDataType() {
-    dbToMetaDataType = new HashMap<>();
+  private Map<Integer, MetadataType> initializeDbToMetaDataType() {
+    final Map<Integer, MetadataType> dbToMetaDataType = new HashMap<>();
 
     NumberType numberType = typeBuilder.numberType().build();
     StringType stringType = typeBuilder.stringType().build();
@@ -145,5 +138,7 @@ public abstract class BaseDbMetadataResolver {
     dbToMetaDataType.put(Types.REF, typeLoader.load(Ref.class));
     dbToMetaDataType.put(Types.DATALINK, typeLoader.load(URL.class));
     dbToMetaDataType.put(Types.ROWID, typeLoader.load(RowId.class));
+
+    return dbToMetaDataType;
   }
 }

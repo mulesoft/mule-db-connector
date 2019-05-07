@@ -9,7 +9,6 @@ package org.mule.extension.db.internal.result.resultset;
 
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 
-import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -30,10 +29,5 @@ public class NullResultSetHandler implements ResultSetHandler {
   @Override
   public boolean requiresMultipleOpenedResults() {
     return false;
-  }
-
-  @Override
-  public Charset getCharset() {
-    return null;
   }
 }

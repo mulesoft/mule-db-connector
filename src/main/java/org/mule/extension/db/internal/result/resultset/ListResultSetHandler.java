@@ -9,7 +9,7 @@ package org.mule.extension.db.internal.result.resultset;
 
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.result.row.RowHandler;
-import org.mule.extension.db.internal.util.ResultCharsetEncodedHandler;
+import org.mule.extension.db.internal.util.ResultSetCharsetEncodedHandler;
 
 import java.nio.charset.Charset;
 import java.sql.ResultSet;
@@ -23,7 +23,7 @@ import java.util.Map;
  * <p/>
  * The processed {@link ResultSet} is closed immediately after fetching its data.
  */
-public class ListResultSetHandler implements ResultSetHandler, ResultCharsetEncodedHandler {
+public class ListResultSetHandler implements ResultSetCharsetEncodedHandler {
 
   private final RowHandler rowHandler;
   private final Charset charset;

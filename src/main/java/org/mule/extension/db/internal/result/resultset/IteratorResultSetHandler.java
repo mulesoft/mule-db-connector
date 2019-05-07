@@ -12,7 +12,7 @@ import static java.nio.charset.Charset.defaultCharset;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.result.row.RowHandler;
 import org.mule.extension.db.internal.StatementStreamingResultSetCloser;
-import org.mule.extension.db.internal.util.ResultCharsetEncodedHandler;
+import org.mule.extension.db.internal.util.ResultSetCharsetEncodedHandler;
 
 import java.nio.charset.Charset;
 import java.sql.ResultSet;
@@ -23,7 +23,7 @@ import java.sql.SQLException;
  * <p/>
  * The {@link ResultSet} backing the returned {@link ResultSetIterator} will be closed when the connection it came from is closed.
  */
-public class IteratorResultSetHandler implements ResultSetHandler, ResultCharsetEncodedHandler {
+public class IteratorResultSetHandler implements ResultSetCharsetEncodedHandler {
 
   private final RowHandler rowHandler;
   private final StatementStreamingResultSetCloser streamingResultSetCloser;

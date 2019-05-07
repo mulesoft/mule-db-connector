@@ -7,12 +7,14 @@
 
 package org.mule.extension.db.internal.util;
 
+import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
+
 import java.nio.charset.Charset;
 
 /**
  * Implementation of this Handler should make explicit which encoding use.
  */
-public interface ResultCharsetEncodedHandler {
+public interface ResultSetCharsetEncodedHandler extends ResultSetHandler {
 
   Charset getCharset();
 

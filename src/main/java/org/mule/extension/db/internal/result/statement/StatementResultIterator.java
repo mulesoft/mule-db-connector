@@ -16,7 +16,7 @@ import org.mule.extension.db.internal.domain.param.OutputQueryParam;
 import org.mule.extension.db.internal.domain.query.QueryTemplate;
 import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
 import org.mule.extension.db.internal.result.resultset.ResultSetProcessingException;
-import org.mule.extension.db.internal.util.ResultCharsetEncodedHandler;
+import org.mule.extension.db.internal.util.ResultSetCharsetEncodedHandler;
 import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.util.IOUtils;
@@ -281,13 +281,7 @@ public class StatementResultIterator implements Iterator<SingleStatementResult> 
   }
 
   private TypedValue<Object> handleClobType(Clob value) throws SQLException {
-    Charset charset;
-    if (resultSetHandler instanceof ResultCharsetEncodedHandler) {
-      charset = ((ResultCharsetEncodedHandler) resultSetHandler).getCharset();
-    } else {
-      charset = defaultCharset();
-    }
-
+    Charset charset = getCharset(resultSetHandler);
     ReaderInputStream inputStream = new ReaderInputStream(value.getCharacterStream(), charset);
     if (connection != null && connection.supportsContentStreaming()) {
       connection.beginStreaming();
@@ -301,6 +295,14 @@ public class StatementResultIterator implements Iterator<SingleStatementResult> 
           .mediaType(TEXT)
           .charset(charset)
           .build());
+    }
+  }
+
+  private Charset getCharset(ResultSetHandler resultSetHandler) {
+    if (resultSetHandler instanceof ResultSetCharsetEncodedHandler) {
+      return ((ResultSetCharsetEncodedHandler) resultSetHandler).getCharset();
+    } else {
+      return defaultCharset();
     }
   }
 }

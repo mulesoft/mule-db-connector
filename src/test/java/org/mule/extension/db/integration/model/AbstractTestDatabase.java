@@ -395,6 +395,8 @@ public abstract class AbstractTestDatabase {
 
   public abstract void createStoredProcedureParameterizedUpdatePlanetDescription(DataSource dataSource) throws SQLException;
 
+  public abstract void createStoredProcedureGetSpanishLanguageSampleText(DataSource dataSource) throws SQLException;
+
   public abstract void createStoredProcedureParameterizedUpdateTestType1(DataSource dataSource) throws SQLException;
 
   public abstract void createStoredProcedureCountRecords(DataSource dataSource) throws SQLException;

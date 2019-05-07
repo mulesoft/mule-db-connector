@@ -41,7 +41,7 @@ public abstract class BaseDbMetadataResolver {
 
   protected BaseTypeBuilder typeBuilder;
   protected ClassTypeLoader typeLoader;
-  private LazyValue<Map<Integer, MetadataType>> dbToMetaDataType;
+  private LazyValue<Map<Integer, MetadataType>> dbToMetaDataType = new LazyValue<>(this::initializeDbToMetaDataType);
 
   protected QueryTemplate parseQuery(String query) {
     return new SimpleQueryTemplateParser().parse(query);
@@ -83,18 +83,10 @@ public abstract class BaseDbMetadataResolver {
   }
 
   protected MetadataType getDataTypeMetadataModel(int columnTypeName) {
-    if (dbToMetaDataType == null) {
-      synchronized (this) {
-        if (dbToMetaDataType == null) {
-          initializeDbToMetaDataType();
-        }
-      }
-    }
-
     return dbToMetaDataType.get().getOrDefault(columnTypeName, typeBuilder.anyType().build());
   }
 
-  private void initializeDbToMetaDataType() {
+  private Map<Integer, MetadataType> initializeDbToMetaDataType() {
     final Map<Integer, MetadataType> dbToMetaDataType = new HashMap<>();
 
     NumberType numberType = typeBuilder.numberType().build();
@@ -147,6 +139,6 @@ public abstract class BaseDbMetadataResolver {
     dbToMetaDataType.put(Types.DATALINK, typeLoader.load(URL.class));
     dbToMetaDataType.put(Types.ROWID, typeLoader.load(RowId.class));
 
-    this.dbToMetaDataType = new LazyValue<>(dbToMetaDataType);
+    return dbToMetaDataType;
   }
 }

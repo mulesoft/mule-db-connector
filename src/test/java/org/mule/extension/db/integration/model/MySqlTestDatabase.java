@@ -71,6 +71,19 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createStoredProcedureGetSpanishLanguageSampleText(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS getSpanishLanguageSample;\n");
+
+    final String sql =
+        "CREATE PROCEDURE getSpanishLanguageSample(INOUT language LONGTEXT)\n" +
+            "BEGIN\n" +
+            "  SELECT SAMPLE_TEXT INTO language  WHERE NAME='Spanish';\n" +
+            "END;\n";
+
+    createStoredProcedure(dataSource, sql);
+  }
+
+  @Override
   public void createStoredProcedureParameterizedUpdatePlanetDescription(DataSource dataSource) throws SQLException {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS updatePlanetDescription;\n");
 

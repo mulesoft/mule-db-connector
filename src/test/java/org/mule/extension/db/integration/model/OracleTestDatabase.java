@@ -90,6 +90,20 @@ public class OracleTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createStoredProcedureGetSpanishLanguageSampleText(DataSource dataSource) throws SQLException {
+    final String sql =
+        "CREATE OR REPLACE PROCEDURE getSpanishLanguageSample(language IN OUT CLOB) IS\n" +
+            "BEGIN\n" +
+            "   SELECT SAMPLE_TEXT\n" +
+            "   INTO language\n" +
+            "   FROM LANGUAGES\n" +
+            "   WHERE NAME='Spanish';\n" +
+            "END getSpanishLanguageSample;";
+
+    createStoredProcedure(dataSource, sql);
+  }
+
+  @Override
   public void createStoredProcedureParameterizedUpdatePlanetDescription(DataSource dataSource) throws SQLException {
     final String sql = "CREATE OR REPLACE PROCEDURE updatePlanetDescription (p_name IN VARCHAR2, p_description CLOB)\n" +
         "AS\n" +

@@ -7,10 +7,14 @@
 
 package org.mule.extension.db.internal.result.resultset;
 
+import static java.nio.charset.Charset.defaultCharset;
+
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.result.row.RowHandler;
 import org.mule.extension.db.internal.StatementStreamingResultSetCloser;
+import org.mule.extension.db.internal.util.ResultSetCharsetEncodedHandler;
 
+import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -19,14 +23,23 @@ import java.sql.SQLException;
  * <p/>
  * The {@link ResultSet} backing the returned {@link ResultSetIterator} will be closed when the connection it came from is closed.
  */
-public class IteratorResultSetHandler implements ResultSetHandler {
+public class IteratorResultSetHandler implements ResultSetCharsetEncodedHandler {
 
   private final RowHandler rowHandler;
   private final StatementStreamingResultSetCloser streamingResultSetCloser;
+  private final Charset charset;
 
   public IteratorResultSetHandler(RowHandler rowHandler, StatementStreamingResultSetCloser streamingResultSetCloser) {
     this.rowHandler = rowHandler;
     this.streamingResultSetCloser = streamingResultSetCloser;
+    this.charset = defaultCharset();
+  }
+
+  public IteratorResultSetHandler(RowHandler rowHandler, StatementStreamingResultSetCloser streamingResultSetCloser,
+                                  Charset charset) {
+    this.rowHandler = rowHandler;
+    this.streamingResultSetCloser = streamingResultSetCloser;
+    this.charset = charset;
   }
 
   @Override
@@ -40,5 +53,10 @@ public class IteratorResultSetHandler implements ResultSetHandler {
   @Override
   public boolean requiresMultipleOpenedResults() {
     return true;
+  }
+
+  @Override
+  public Charset getCharset() {
+    return charset;
   }
 }

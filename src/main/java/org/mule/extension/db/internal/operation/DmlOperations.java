@@ -54,6 +54,7 @@ import org.mule.runtime.extension.api.runtime.operation.FlowListener;
 import org.mule.runtime.extension.api.runtime.streaming.PagingProvider;
 import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
+import java.nio.charset.Charset;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -135,7 +136,8 @@ public class DmlOperations extends BaseDbOperations {
 
           QueryStatementFactory statementFactory = getStatementFactory(query);
           InsensitiveMapRowHandler recordHandler = new InsensitiveMapRowHandler(connection, connector.getCharset());
-          ResultSetHandler resultSetHandler = new IteratorResultSetHandler(recordHandler, resultSetCloser);
+          ResultSetHandler resultSetHandler =
+              new IteratorResultSetHandler(recordHandler, resultSetCloser, connector.getCharset());
 
           try {
             iterator =
@@ -244,14 +246,18 @@ public class DmlOperations extends BaseDbOperations {
 
     QueryStatementFactory statementFactory = getStatementFactory(call);
 
-    InsensitiveMapRowHandler recordHandler = new InsensitiveMapRowHandler(connection, connector.getCharset());
+    Charset charset = connector.getCharset();
+    InsensitiveMapRowHandler recordHandler = new InsensitiveMapRowHandler(connection, charset);
 
     StatementStreamingResultSetCloser resultSetCloser = new StatementStreamingResultSetCloser(connection);
     flowListener.onComplete(new ResultSetCloserRunnable(resultSetCloser));
 
-    StatementResultHandler resultHandler = connection.getJdbcConnection().getMetaData().supportsMultipleOpenResults()
-        ? new StreamingStatementResultHandler(new IteratorResultSetHandler(recordHandler, resultSetCloser))
-        : new StreamingStatementResultHandler(new ListResultSetHandler(recordHandler));
+    StatementResultHandler resultHandler;
+    if (connection.getJdbcConnection().getMetaData().supportsMultipleOpenResults()) {
+      resultHandler = new StreamingStatementResultHandler(new IteratorResultSetHandler(recordHandler, resultSetCloser, charset));
+    } else {
+      resultHandler = new StreamingStatementResultHandler(new ListResultSetHandler(recordHandler, charset));
+    }
 
     Map<String, Object> result;
     try {

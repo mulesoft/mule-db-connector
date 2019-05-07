@@ -48,6 +48,12 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
           "DYNAMIC RESULT SETS 0\n" +
           "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".updatePlanetDescription'";
 
+  public static String SQL_CREATE_SP_GET_LANGUAGE_SAMPLE_TEXT =
+      "CREATE PROCEDURE getSpanishLanguageSample(INOUT language CLOB)\n" +
+          "PARAMETER STYLE JAVA\n" +
+          "LANGUAGE JAVA\n" +
+          "DYNAMIC RESULT SETS 0\n" +
+          "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".getSpanishLanguageSample'";
 
   public static String SQL_CREATE_SP_COUNT_RECORDS =
       "CREATE PROCEDURE countTestRecords(OUT COUNT INTEGER)\n" +
@@ -152,6 +158,11 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
   @Override
   public void createStoredProcedureUpdateTestType1(DataSource dataSource) throws SQLException {
     createStoredProcedure(dataSource, SQL_CREATE_SP_UPDATE_TEST_TYPE_1);
+  }
+
+  @Override
+  public void createStoredProcedureGetSpanishLanguageSampleText(DataSource dataSource) throws SQLException {
+    createStoredProcedure(dataSource, SQL_CREATE_SP_GET_LANGUAGE_SAMPLE_TEXT);
   }
 
   @Override

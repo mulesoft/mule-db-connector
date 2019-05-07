@@ -9,7 +9,13 @@ package org.mule.extension.db.integration.model.derbyutil;
 
 import org.mule.extension.db.integration.model.ContactDetails;
 import org.mule.extension.db.integration.model.DerbyTestDatabase;
+import org.mule.runtime.core.api.util.IOUtils;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.Writer;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -89,6 +95,22 @@ public class DerbyTestStoredProcedure {
     }
   }
 
+  public static void getSpanishLanguageSample(Clob[] language) throws SQLException {
+    Connection conn = DriverManager.getConnection("jdbc:default:connection");
+
+    try {
+      Statement ps1 = conn.createStatement();
+      ResultSet resultSet = ps1.executeQuery("SELECT SAMPLE_TEXT FROM LANGUAGES WHERE NAME='Spanish'");
+      resultSet.next();
+      String value = resultSet.getString(1);
+      Clob clobResult = new ClobTest();
+      clobResult.setString(1, value);
+      language[0] = clobResult;
+    } finally {
+      conn.close();
+    }
+  }
+
   public static void getTestRecords(ResultSet[] data1) throws SQLException {
     Connection conn = DriverManager.getConnection("jdbc:default:connection");
 
@@ -158,6 +180,79 @@ public class DerbyTestStoredProcedure {
 
   public static void addOne(int[] num) {
     num[0] += 1;
+  }
+
+
+  public static class ClobTest implements Clob {
+
+    private String str;
+
+    @Override
+    public long length() throws SQLException {
+      return 0;
+    }
+
+    @Override
+    public String getSubString(long pos, int length) throws SQLException {
+      return null;
+    }
+
+    @Override
+    public Reader getCharacterStream() throws SQLException {
+      return new StringReader(str);
+    }
+
+    @Override
+    public InputStream getAsciiStream() throws SQLException {
+      return null;
+    }
+
+    @Override
+    public long position(String searchstr, long start) throws SQLException {
+      return 0;
+    }
+
+    @Override
+    public long position(Clob searchstr, long start) throws SQLException {
+      return 0;
+    }
+
+    @Override
+    public int setString(long pos, String str) throws SQLException {
+      this.str = str;
+      return 0;
+    }
+
+    @Override
+    public int setString(long pos, String str, int offset, int len) throws SQLException {
+      this.str = str;
+      return 0;
+    }
+
+    @Override
+    public OutputStream setAsciiStream(long pos) throws SQLException {
+      return null;
+    }
+
+    @Override
+    public Writer setCharacterStream(long pos) throws SQLException {
+      return null;
+    }
+
+    @Override
+    public void truncate(long len) throws SQLException {
+
+    }
+
+    @Override
+    public void free() throws SQLException {
+
+    }
+
+    @Override
+    public Reader getCharacterStream(long pos, long length) throws SQLException {
+      return null;
+    }
   }
 
 }

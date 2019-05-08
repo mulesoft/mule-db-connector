@@ -7,10 +7,11 @@
 
     <flow name="longTransaction">
         <try transactionalAction="ALWAYS_BEGIN">
-            <splitter/>
-            <db:select config-ref="dbConfig">
-                <db:parameterized-query>select * from PLANET order by ID</db:parameterized-query>
-            </db:select>
+            <foreach>
+                <db:select config-ref="dbConfig">
+                    <db:parameterized-query>select * from PLANET order by ID</db:parameterized-query>
+                </db:select>
+            </foreach>
         </try>
     </flow>
 </mule>

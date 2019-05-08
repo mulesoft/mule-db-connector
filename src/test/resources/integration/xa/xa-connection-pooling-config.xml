@@ -11,12 +11,12 @@
                 <db:sql>select * from PLANET order by ID</db:sql>
             </db:select>
 
-            <splitter/>
-
-            <!-- This needs to processStatement a new connection -->
-            <db:delete config-ref="pooledJdbcConfig" transactionalAction="NOT_SUPPORTED">
-                <db:sql>#["delete from PLANET where id = $(payload.id)"]</db:sql>
-            </db:delete>
+            <foreach>
+                <!-- This needs to processStatement a new connection -->
+                <db:delete config-ref="pooledJdbcConfig" transactionalAction="NOT_SUPPORTED">
+                    <db:sql>#["delete from PLANET where id = $(payload.id)"]</db:sql>
+                </db:delete>
+            </foreach>
         </try>
     </flow>
 </mule>

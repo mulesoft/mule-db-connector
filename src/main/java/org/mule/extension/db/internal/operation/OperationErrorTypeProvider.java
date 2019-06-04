@@ -7,6 +7,7 @@
 package org.mule.extension.db.internal.operation;
 
 import static org.mule.extension.db.api.exception.connection.DbError.BAD_SQL_SYNTAX;
+import static org.mule.extension.db.api.exception.connection.DbError.CONNECTIVITY;
 import static org.mule.extension.db.api.exception.connection.DbError.QUERY_EXECUTION;
 import org.mule.runtime.extension.api.annotation.error.ErrorTypeProvider;
 import org.mule.runtime.extension.api.error.ErrorTypeDefinition;
@@ -24,6 +25,7 @@ public class OperationErrorTypeProvider implements ErrorTypeProvider {
   @Override
   public Set<ErrorTypeDefinition> getErrorTypes() {
     Set<ErrorTypeDefinition> errors = new HashSet<>();
+    errors.add(CONNECTIVITY);
     errors.add(BAD_SQL_SYNTAX);
     errors.add(QUERY_EXECUTION);
 

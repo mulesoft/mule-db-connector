@@ -21,10 +21,10 @@ import java.util.List;
 public class TestDbConfig {
 
   static {
-    USE_MYSQL = getValueFor("mysql");
-    USE_MSSQL_SERVER = getValueFor("mssql");
-    USE_DERBY = getValueFor("derby");
-    USE_ORACLE = getValueFor("oracle");
+    USE_MYSQL = false; //getValueFor("mysql"); X
+    USE_MSSQL_SERVER = false;//getValueFor("mssql"); check
+    USE_DERBY = false;//getValueFor("derby"); check
+    USE_ORACLE = true; //getValueFor("oracle");
   }
 
   private static boolean USE_DERBY;

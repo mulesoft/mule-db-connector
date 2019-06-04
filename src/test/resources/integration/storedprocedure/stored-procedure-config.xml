@@ -49,6 +49,21 @@
         </db:stored-procedure>
     </flow>
 
+    <flow name="returnValueNull">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql>{ call returnValueNull(:s1, :s2, :result) }</db:sql>
+            <db:input-parameters>
+                #[{
+                's1' : 'foo',
+                's2' : 'bar'
+                }]
+            </db:input-parameters>
+            <db:output-parameters>
+                <db:output-parameter key="result"/>
+            </db:output-parameters>
+        </db:stored-procedure>
+    </flow>
+
     <flow name="concatenateStrings">
         <db:stored-procedure config-ref="dbConfig">
             <db:sql>{ call concatenateStrings(:s1, :s2, :result) }</db:sql>

@@ -6,6 +6,8 @@
  */
 package org.mule.extension.db.integration.storedprocedure;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.rules.ExpectedException.none;
@@ -35,6 +37,7 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
     testDatabase.createStoredProcedureConcatenateStrings(getDefaultDataSource());
     testDatabase.createStoredProcedureCountRecords(getDefaultDataSource());
     testDatabase.createStoredProcedureMultiplyInts(getDefaultDataSource());
+    testDatabase.returnNullValue(getDefaultDataSource());
     testDatabase.createStoredProcedureAddOne(getDefaultDataSource());
   }
 
@@ -77,6 +80,16 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
     // Compares string in to avoid problems when different DB return different integer classes (BigDecimal, integer, etc)
     assertThat(payload.get("result1").toString(), IsEqual.equalTo("12"));
     assertThat(payload.get("result2").toString(), IsEqual.equalTo("60"));
+  }
+
+  @Test
+  public void returnValueNull() throws Exception {
+    Map<String, Object> payload = runProcedure("returnValueNull");
+
+    // Apparently Derby has a bug: when there are no resultset returned, then
+    // there is a fake updateCount=0 that is returned. Check how this works in other DB vendors.
+    // assertThat(payload.size(), equalTo(2));
+    assertThat(payload.get("result"), is(nullValue()));
   }
 
   @Test

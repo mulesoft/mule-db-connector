@@ -83,12 +83,8 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
-  public void returnValueNull() throws Exception {
-    Map<String, Object> payload = runProcedure("returnValueNull");
-
-    // Apparently Derby has a bug: when there are no resultset returned, then
-    // there is a fake updateCount=0 that is returned. Check how this works in other DB vendors.
-    // assertThat(payload.size(), equalTo(2));
+  public void returnNullValue() throws Exception {
+    Map<String, Object> payload = runProcedure("returnNullValue");
     assertThat(payload.get("result"), is(nullValue()));
   }
 

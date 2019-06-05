@@ -49,9 +49,9 @@
         </db:stored-procedure>
     </flow>
 
-    <flow name="returnValueNull">
+    <flow name="returnNullValue">
         <db:stored-procedure config-ref="dbConfig">
-            <db:sql>{ call returnValueNull(:s1, :s2, :result) }</db:sql>
+            <db:sql>{ call returnNullValue(:s1, :s2, :result) }</db:sql>
             <db:input-parameters>
                 #[{
                 's1' : 'foo',

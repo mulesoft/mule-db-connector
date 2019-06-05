@@ -162,10 +162,10 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
 
   @Override
   public void returnNullValue(DataSource dataSource) throws SQLException {
-    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS returnValueNull;\n");
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS returnNullValue;\n");
 
     final String sql =
-        "CREATE DEFINER=CURRENT_USER PROCEDURE returnValueNull(IN pString1 VARCHAR(50), IN pString2 VARCHAR(50), OUT pResult VARCHAR(100))\n"
+        "CREATE DEFINER=CURRENT_USER PROCEDURE returnNullValue(IN pString1 VARCHAR(50), IN pString2 VARCHAR(50), OUT pResult VARCHAR(100))\n"
             + "BEGIN\n" + "SET pResult := null;\n" + "END";
 
     createStoredProcedure(dataSource, sql);

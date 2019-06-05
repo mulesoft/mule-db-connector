@@ -171,9 +171,9 @@ public class OracleTestDatabase extends AbstractTestDatabase {
   @Override
   public void returnNullValue(DataSource dataSource) throws SQLException {
     final String sql =
-        "CREATE OR REPLACE PROCEDURE returnValueNull(STRING1 IN VARCHAR2, STRING2 IN VARCHAR2, RESULT OUT VARCHAR2) IS\n"
+        "CREATE OR REPLACE PROCEDURE returnNullValue(STRING1 IN VARCHAR2, STRING2 IN VARCHAR2, RESULT OUT VARCHAR2) IS\n"
             + "BEGIN\n" + "    SELECT null\n" + "    INTO   RESULT\n" + "    FROM   DUAL;\n"
-            + "END returnValueNull;";
+            + "END returnNullValue;";
 
     createStoredProcedure(dataSource, sql);
   }

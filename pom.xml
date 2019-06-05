@@ -131,13 +131,14 @@
             To run the tests with Oracle DB, install the Oracle driver manually and uncomment the following.
             Also, add the shared dependency in DbArtifactClassLoaderRunnerConfig class.
         -->
+        <!--
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc7</artifactId>
             <version>12.1.0.2</version>
             <scope>test</scope>
         </dependency>
-
+        -->
 
     </dependencies>
 

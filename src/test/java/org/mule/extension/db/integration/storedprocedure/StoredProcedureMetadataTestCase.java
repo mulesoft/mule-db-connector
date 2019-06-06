@@ -33,6 +33,7 @@ public class StoredProcedureMetadataTestCase extends AbstractDbIntegrationTestCa
     testDatabase.createStoredProcedureConcatenateStrings(getDefaultDataSource());
     testDatabase.createStoredProcedureCountRecords(getDefaultDataSource());
     testDatabase.createStoredProcedureMultiplyInts(getDefaultDataSource());
+    testDatabase.returnNullValue(getDefaultDataSource());
     testDatabase.createStoredProcedureGetRecords(getDefaultDataSource());
     testDatabase.createStoredProcedureUpdateTestType1(getDefaultDataSource());
     testDatabase.createStoredProcedureParameterizedUpdatePlanetDescription(getDefaultDataSource());

@@ -145,6 +145,10 @@ public class DerbyTestStoredProcedure {
     result2[0] = int1 * int2 * int3;
   }
 
+  public static void returnNullValue(String string1, String string2, String[] result) {
+    result[0] = null;
+  }
+
   public static void concatenateStrings(String string1, String string2, String[] result) {
     result[0] = string1 + string2;
   }

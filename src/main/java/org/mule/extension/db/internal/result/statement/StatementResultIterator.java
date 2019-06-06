@@ -210,7 +210,10 @@ public class StatementResultIterator implements Iterator<SingleStatementResult> 
   }
 
   private Object processValue(Object paramValue) throws SQLException {
-    if (paramValue instanceof Struct) {
+    if (null == paramValue) {
+      return paramValue;
+
+    } else if (paramValue instanceof Struct) {
       return ((Struct) paramValue).getAttributes();
 
     } else if (paramValue instanceof SQLXML) {

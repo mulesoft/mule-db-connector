@@ -198,6 +198,20 @@ public class SqlServerTestDataBase extends AbstractTestDatabase {
   }
 
   @Override
+  public void returnNullValue(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS returnNullValue;\n");
+
+    final String sql =
+        "CREATE PROCEDURE returnNullValue(@pString1 VARCHAR(50), @pString2 VARCHAR(50), @pResult VARCHAR(100) OUTPUT)\n" +
+            "AS\n" +
+            "BEGIN\n" +
+            "    SET @pResult = null\n" +
+            "END";
+
+    createStoredProcedure(dataSource, sql);
+  }
+
+  @Override
   public void createStoredProcedureConcatenateStrings(DataSource dataSource) throws SQLException {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS concatenateStrings;\n");
 

@@ -409,6 +409,8 @@ public abstract class AbstractTestDatabase {
 
   public abstract void createStoredProcedureMultiplyInts(DataSource dataSource) throws SQLException;
 
+  public abstract void returnNullValue(DataSource dataSource) throws SQLException;
+
   public abstract void createStoredProcedureConcatenateStrings(DataSource dataSource) throws SQLException;
 
   public abstract void createDelayFunction(DataSource dataSource) throws SQLException;

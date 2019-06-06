@@ -94,6 +94,13 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
           "DYNAMIC RESULT SETS 0\n" +
           "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".multiplyInts'";
 
+  public static String SQL_CREATE_SP_RETURN_NULL_VALUE =
+      "CREATE PROCEDURE returnNullValue(IN INT1 VARCHAR(100), IN INT2 VARCHAR(100), OUT RESULT VARCHAR(200))\n" +
+          "PARAMETER STYLE JAVA\n" +
+          "LANGUAGE JAVA\n" +
+          "DYNAMIC RESULT SETS 0\n" +
+          "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".returnNullValue'";
+
   public static String SQL_CREATE_SP_CONCATENATE_STRINGS =
       "CREATE PROCEDURE concatenateStrings(IN INT1 VARCHAR(100), IN INT2 VARCHAR(100), OUT RESULT VARCHAR(200))\n" +
           "PARAMETER STYLE JAVA\n" +
@@ -252,6 +259,11 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
   @Override
   public void createStoredProcedureMultiplyInts(DataSource dataSource) throws SQLException {
     createStoredProcedure(dataSource, SQL_CREATE_SP_MULTIPLY_INTS);
+  }
+
+  @Override
+  public void returnNullValue(DataSource dataSource) throws SQLException {
+    createStoredProcedure(dataSource, SQL_CREATE_SP_RETURN_NULL_VALUE);
   }
 
   @Override

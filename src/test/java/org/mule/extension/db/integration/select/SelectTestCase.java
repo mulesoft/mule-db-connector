@@ -56,7 +56,7 @@ public class SelectTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void selectReleasingConnections() throws Exception {
-    for (int i = 1; i < DEFAULT_MAX_POOL_SIZE; i++) {
+    for (int i = 0; i < DEFAULT_MAX_POOL_SIZE; i++) {
       flowRunner("selectNonRepeatable").run().getMessage();
     }
     Message response = flowRunner("selectNonRepeatable").keepStreamsOpen().run().getMessage();

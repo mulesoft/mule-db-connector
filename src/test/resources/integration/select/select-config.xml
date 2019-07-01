@@ -11,6 +11,13 @@
         </db:select>
     </flow>
 
+    <flow name="selectNonRepeatable">
+        <db:select config-ref="dbConfig">
+            <non-repeatable-iterable />
+            <db:sql>select * from PLANET order by ID</db:sql>
+        </db:select>
+    </flow>
+
     <flow name="selectWithNullParams">
         <db:select config-ref="dbConfig">
             <db:sql>select * from PLANET order by ID</db:sql>

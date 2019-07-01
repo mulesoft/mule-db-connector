@@ -35,8 +35,6 @@ import org.junit.rules.ExpectedException;
 
 public class SelectTestCase extends AbstractDbIntegrationTestCase {
 
-  private static final int DEFAULT_MAX_POOL_SIZE = 5;
-
   @Rule
   public ExpectedError expectedError = ExpectedError.none();
 
@@ -51,15 +49,6 @@ public class SelectTestCase extends AbstractDbIntegrationTestCase {
   @Test
   public void select() throws Exception {
     Message response = flowRunner("select").keepStreamsOpen().run().getMessage();
-    assertMessageContains(response, getAllPlanetRecords());
-  }
-
-  @Test
-  public void selectReleasingConnections() throws Exception {
-    for (int i = 0; i < DEFAULT_MAX_POOL_SIZE; i++) {
-      flowRunner("selectNonRepeatable").run().getMessage();
-    }
-    Message response = flowRunner("selectNonRepeatable").keepStreamsOpen().run().getMessage();
     assertMessageContains(response, getAllPlanetRecords());
   }
 

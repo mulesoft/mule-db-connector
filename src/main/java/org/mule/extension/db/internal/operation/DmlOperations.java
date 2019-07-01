@@ -132,7 +132,6 @@ public class DmlOperations extends BaseDbOperations {
         if (initialised.compareAndSet(false, true)) {
           resultSetCloser = new StatementStreamingResultSetCloser(connection);
           flowListener.onError(new ResultSetCloserExceptionConsumer(resultSetCloser, query.getSql()));
-          flowListener.onComplete(new ResultSetCloserRunnable(resultSetCloser));
           final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, SELECT, STORE_PROCEDURE_CALL);
 
           QueryStatementFactory statementFactory = getStatementFactory(query);

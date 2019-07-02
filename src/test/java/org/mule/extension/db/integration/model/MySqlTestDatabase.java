@@ -75,9 +75,9 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS getSpanishLanguageSample;\n");
 
     final String sql =
-        "CREATE PROCEDURE getSpanishLanguageSample(INOUT language LONGTEXT)\n" +
+        "CREATE DEFINER=CURRENT_USER PROCEDURE getSpanishLanguageSample(INOUT language LONGTEXT)\n" +
             "BEGIN\n" +
-            "  SELECT SAMPLE_TEXT INTO language  WHERE NAME='Spanish';\n" +
+            "  SELECT SAMPLE_TEXT INTO language FROM LANGUAGES WHERE NAME = 'Spanish';\n" +
             "END;\n";
 
     createStoredProcedure(dataSource, sql);

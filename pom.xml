@@ -33,6 +33,7 @@
         <xaPoolVersion>1.5.0</xaPoolVersion>
 
         <docker.maven.plugin.version>0.25.2</docker.maven.plugin.version>
+        <maven-replacer-plugin.version>1.5.3</maven-replacer-plugin.version>
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <mssqlVersion>7.0.0.jre8</mssqlVersion>
@@ -127,19 +128,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!--
-            To run the tests with Oracle DB, install the Oracle driver manually and uncomment the following.
-            Also, add the shared dependency in DbArtifactClassLoaderRunnerConfig class.
-        -->
-        <!--
-        <dependency>
-            <groupId>com.oracle</groupId>
-            <artifactId>ojdbc7</artifactId>
-            <version>12.1.0.2</version>
-            <scope>test</scope>
-        </dependency>
-        -->
-
     </dependencies>
 
     <build>
@@ -167,8 +155,37 @@
                 </property>
             </activation>
             <id>oracle</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.oracle</groupId>
+                    <artifactId>ojdbc7</artifactId>
+                    <version>12.1.0.2</version>
+                </dependency>
+            </dependencies>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>com.google.code.maven-replacer-plugin</groupId>
+                        <artifactId>replacer</artifactId>
+                        <version>${maven-replacer-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>replace</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <file>${project.basedir}/src/test/java/org/mule/extension/db/integration/DbArtifactClassLoaderRunnerConfig.java</file>
+                            <replacements>
+                                <replacement>
+                                    <token>com.microsoft.sqlserver:mssql-jdbc</token>
+                                    <value>com.oracle:ojdbc7</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </plugin>
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>

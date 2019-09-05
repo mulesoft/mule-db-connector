@@ -88,6 +88,22 @@
         </db:stored-procedure>
     </flow>
 
+    <flow name="concatenateDateAndString">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql>{ call concatenateDateAndString(:d1, :s2, :result) }</db:sql>
+            <db:input-parameters>
+                #[{
+                'date1' : now(),
+                's2' : ' is today'
+                }]
+            </db:input-parameters>
+            <db:output-parameters>
+                <db:output-parameter key="result"/>
+            </db:output-parameters>
+        </db:stored-procedure>
+    </flow>
+
+
     <flow name="addOne">
         <db:stored-procedure config-ref="dbConfig">
             <db:sql>{ call mathFunction.addOne(:num) }</db:sql>

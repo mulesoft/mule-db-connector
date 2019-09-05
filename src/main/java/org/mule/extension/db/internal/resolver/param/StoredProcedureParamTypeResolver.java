@@ -40,10 +40,13 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(StoredProcedureParamTypeResolver.class);
 
+  public static final int COLUMN_PROCEDURE_SCHEME = 2;
+  public static final int COLUMN_PROCEDURE_NAME = 3;
   public static final int PARAM_NAME_COLUMN_INDEX = 4;
   public static final int TYPE_ID_COLUMN_INDEX = 6;
   public static final int TYPE_NAME_COLUMN_INDEX = 7;
   public static final int COLUMN_TYPE_INDEX = 5;
+  public static final int COLUMN_ORDINAL_POSITION = 18;
 
   public static final short PROCEDURE_COLUMN_RETURN_COLUMN_TYPE = 5;
 
@@ -102,9 +105,9 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
       try {
         // TODO - MULE-15241 : Fix how DB Connector chooses ResolvedTypes
         if (TABLE_TYPE_NAME.equals(typeName)) {
-          String procedureName = procedureColumns.getString(3);
-          String argumentName = procedureColumns.getString(4);
-          String owner = procedureColumns.getString(2);
+          String procedureName = procedureColumns.getString(COLUMN_PROCEDURE_NAME);
+          String argumentName = procedureColumns.getString(PARAM_NAME_COLUMN_INDEX);
+          String owner = procedureColumns.getString(COLUMN_PROCEDURE_SCHEME);
 
           Optional<String> columnType = connection.getProcedureColumnType(procedureName, argumentName, owner);
           dbType = columnType.map(type -> (DbType) new ArrayResolvedDbType(Types.ARRAY, type)).orElse(null);
@@ -118,7 +121,7 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
         // Type was not found in the type manager, but the DB knows about it
         dbType = new ResolvedDbType(typeId, typeName);
       }
-      paramTypes.put(position, dbType);
+      paramTypes.put(procedureColumns.getInt(COLUMN_ORDINAL_POSITION), dbType);
       position++;
     }
 

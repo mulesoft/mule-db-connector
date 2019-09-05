@@ -199,6 +199,17 @@ public class OracleTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createStoredProcedureConcatenateDateAndString(DataSource dataSource) throws SQLException {
+    final String sql =
+            "CREATE OR REPLACE PROCEDURE concatenateDateAndString(DATE1 IN TIMESTAMP, S2 IN VARCHAR2, RESULT OUT VARCHAR2) IS\n"
+                    + "BEGIN\n" + "    TO_CHAR(DATE1, 'DD-MON-YYYY HH24:MI:SSxFF TZH:TZM')\n" + "    INTO   RESULT\n"
+                    + "    FROM   DUAL;\n"
+                    + "END concatenateDateAndString;";
+
+    createStoredProcedure(dataSource, sql);
+  }
+
+  @Override
   public Class getIdFieldJavaClass() {
     return BigDecimal.class;
   }

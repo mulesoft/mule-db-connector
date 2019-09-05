@@ -16,6 +16,8 @@ import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.functional.api.exception.ExpectedError;
 
 import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import org.hamcrest.core.IsEqual;
 import org.junit.Before;
@@ -39,6 +41,7 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
     testDatabase.createStoredProcedureMultiplyInts(getDefaultDataSource());
     testDatabase.returnNullValue(getDefaultDataSource());
     testDatabase.createStoredProcedureAddOne(getDefaultDataSource());
+    testDatabase.createStoredProcedureConcatenateDateAndString(getDefaultDataSource());
   }
 
   @Override
@@ -109,6 +112,17 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
     // Compares string in to avoid problems when different DB return different integer classes (BigDecimal, integer, etc)
 
     assertThat("3", equalTo(payload.get("count").toString()));
+  }
+
+  @Test
+  public void concatenateDateAndString() throws Exception {
+    Map<String, Object> payload = runProcedure("concatenateDateAndString");
+
+    // Apparently Derby has a bug: when there are no resultset returned, then
+    // there is a fake updateCount=0 that is returned. Check how this works in other DB vendors.
+    // assertThat(payload.size(), equalTo(2));
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss");
+    dateFormat.format(payload.get("result"));
   }
 
   @Test

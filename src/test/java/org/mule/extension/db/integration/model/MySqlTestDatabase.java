@@ -97,6 +97,16 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createStoredProcedureConcatenateDateAndString(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS concatenateDateAndString;\n");
+
+    final String sql =
+            "CREATE DEFINER=CURRENT_USER PROCEDURE concatenateDateAndString(IN date1 DATETIME,IN s2 VARCHAR(100), OUT pResult VARCHAR(100))\n"
+                    + "BEGIN\n" + "SET pResult := CONVERT(VARCHAR, date1, 121);\n" + "END;";
+    createStoredProcedure(dataSource, sql);
+  }
+
+  @Override
   public void createStoredProcedureParameterizedUpdateTestType1(DataSource dataSource) throws SQLException {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS updateParamTestType1;\n");
 

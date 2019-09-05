@@ -226,6 +226,20 @@ public class SqlServerTestDataBase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createStoredProcedureConcatenateDateAndString(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS concatenateDateAndString;\n");
+
+    final String sql =
+            "CREATE PROCEDURE concatenateDateAndString(@pString1 datetime, @pString2 VARCHAR(50), @pResult VARCHAR(100) OUTPUT)\n" +
+                    "AS\n" +
+                    "BEGIN\n" +
+                    "    SET @pResult = convert(varchar, datetime, 9)\n" +
+                    "END";
+
+    createStoredProcedure(dataSource, sql);
+  }
+
+  @Override
   public void createDelayFunction(DataSource dataSource) throws SQLException {
     //SQL Server doesn't support delays inside functions
   }

@@ -135,6 +135,13 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
           "DYNAMIC RESULT SETS 0\n" +
           "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".addOne'";
 
+  public static final String SQL_CREATE_SP_CONCATENATE_DATE_AND_STRING =
+          "CREATE PROCEDURE concatenateDateAndString(IN DATE1 DATE, IN S2 VARCHAR(100), OUT RESULT VARCHAR(200))\n" +
+                  "PARAMETER STYLE JAVA\n" +
+                  "LANGUAGE JAVA\n" +
+                  "DYNAMIC RESULT SETS 0\n" +
+                  "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".concatenateDateAndString'";
+
   @Override
   public void createPlanetTable(Connection connection) throws SQLException {
     executeDdl(connection,
@@ -155,6 +162,11 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
   @Override
   public void createMathFunctionSchema(Connection connection) throws SQLException {
     createSchema(connection, "CREATE SCHEMA AUTHORIZATION mathFunction");
+  }
+
+  @Override
+  public void createStoredProcedureConcatenateDateAndString(DataSource dataSource) throws SQLException {
+    createStoredProcedure(dataSource, SQL_CREATE_SP_CONCATENATE_DATE_AND_STRING);
   }
 
   @Override

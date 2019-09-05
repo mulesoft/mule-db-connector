@@ -40,6 +40,7 @@ public class StoredProcedureMetadataTestCase extends AbstractDbIntegrationTestCa
     testDatabase.createStoredProcedureParameterizedUpdateTestType1(getDefaultDataSource());
     testDatabase.createStoredProcedureGetSplitRecords(getDefaultDataSource());
     testDatabase.createDelayFunction(getDefaultDataSource());
+    testDatabase.createStoredProcedureConcatenateDateAndString(getDefaultDataSource());
   }
 
   @Test

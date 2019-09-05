@@ -23,6 +23,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.ZonedDateTime;
+import java.sql.Date;
+import java.sql.Timestamp;
+
+import org.joda.time.DateTime;
 
 /**
  * Defines stored procedures for testing purposes. Used by reflection from {@link DerbyTestDatabase}
@@ -143,6 +148,23 @@ public class DerbyTestStoredProcedure {
   public static void multiplyInts(int int1, int int2, int[] result1, int int3, int[] result2) {
     result1[0] = int1 * int2;
     result2[0] = int1 * int2 * int3;
+  }
+
+  public static void concatenateDateAndString(Date date1, String s2, String[] result) {
+    result[0] = date1.toString() + s2;
+  }
+
+  public static void concatenateDateAndString(DateTime date1, String s2, String[] result) {
+    result[0] = date1.toString() + s2;
+  }
+
+
+  public static void concatenateDateAndString(Timestamp date1, String s2, String[] result) {
+    result[0] = date1.toString() + s2;
+  }
+
+  public static void concatenateDateAndString(ZonedDateTime date1, String s2, String[] result) {
+    result[0] = date1.toString() + s2;
   }
 
   public static void returnNullValue(String string1, String string2, String[] result) {

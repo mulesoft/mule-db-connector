@@ -101,8 +101,8 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS concatenateDateAndString;\n");
 
     final String sql =
-            "CREATE DEFINER=CURRENT_USER PROCEDURE concatenateDateAndString(IN date1 DATETIME,IN s2 VARCHAR(100), OUT pResult VARCHAR(100))\n"
-                    + "BEGIN\n" + "SET pResult := CONVERT(VARCHAR, date1, 121);\n" + "END;";
+        "CREATE DEFINER=CURRENT_USER PROCEDURE concatenateDateAndString(IN date1 DATETIME,IN s2 VARCHAR(100), OUT pResult VARCHAR(100))\n"
+            + "BEGIN\n" + "SET pResult := CONVERT(VARCHAR, date1, 121);\n" + "END;";
     createStoredProcedure(dataSource, sql);
   }
 

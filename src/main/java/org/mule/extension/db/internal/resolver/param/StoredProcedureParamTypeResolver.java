@@ -8,6 +8,7 @@ package org.mule.extension.db.internal.resolver.param;
 
 import static java.lang.String.format;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.TABLE_TYPE_NAME;
+import static org.mule.extension.db.internal.util.StoredProcedureUtils.getPackageName;
 import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoredProcedureName;
 import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoreProcedureSchema;
 
@@ -59,8 +60,10 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
       throws SQLException {
     DatabaseMetaData dbMetaData = connection.getJdbcConnection().getMetaData();
 
+    String storedProcedurePkgName = getPackageName(queryTemplate.getSqlText());
     String storedProcedureName = getStoredProcedureName(queryTemplate.getSqlText());
     if (dbMetaData.storesUpperCaseIdentifiers()) {
+      storedProcedureName = storedProcedurePkgName.toUpperCase();
       storedProcedureName = storedProcedureName.toUpperCase();
     }
 
@@ -70,7 +73,10 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
     }
 
     ResultSet procedureColumns =
-        dbMetaData.getProcedureColumns(connection.getJdbcConnection().getCatalog(), storedProcedureSchema, storedProcedureName,
+
+        dbMetaData.getProcedureColumns(connection.getJdbcConnection().getCatalog(), dbMetaData.getUserName(),
+                                       storedProcedurePkgName.isEmpty() ? storedProcedureName
+                                           : storedProcedurePkgName + "." + storedProcedureName,
                                        "%");
 
     try {

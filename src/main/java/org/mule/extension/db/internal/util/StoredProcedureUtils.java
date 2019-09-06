@@ -69,4 +69,14 @@ public class StoredProcedureUtils {
     }
   }
 
+  public static String getPackageName(String sqlText) throws SQLException {
+    Matcher matcher = storedProcedurePattern.matcher(sqlText);
+
+    if (!matcher.matches()) {
+      return "";
+    }
+
+    return matcher.group(2);
+  }
+
 }

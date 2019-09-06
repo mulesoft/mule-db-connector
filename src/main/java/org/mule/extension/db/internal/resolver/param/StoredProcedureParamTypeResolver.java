@@ -9,6 +9,7 @@ package org.mule.extension.db.internal.resolver.param;
 import static java.lang.String.format;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.TABLE_TYPE_NAME;
 import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoredProcedureName;
+import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoreProcedureSchema;
 
 import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
@@ -63,8 +64,14 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
       storedProcedureName = storedProcedureName.toUpperCase();
     }
 
+    String storedProcedureSchema = getStoreProcedureSchema(queryTemplate.getSqlText()).orElse(null);
+    if (dbMetaData.storesUpperCaseIdentifiers() && storedProcedureSchema != null) {
+      storedProcedureSchema = storedProcedureSchema.toUpperCase();
+    }
+
     ResultSet procedureColumns =
-        dbMetaData.getProcedureColumns(connection.getJdbcConnection().getCatalog(), null, storedProcedureName, "%");
+        dbMetaData.getProcedureColumns(connection.getJdbcConnection().getCatalog(), storedProcedureSchema, storedProcedureName,
+                                       "%");
 
     try {
       Map<Integer, DbType> paramTypes = getStoredProcedureParamTypes(connection, storedProcedureName, procedureColumns);

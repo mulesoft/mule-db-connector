@@ -59,31 +59,40 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
   public Map<Integer, DbType> getParameterTypes(DbConnection connection, QueryTemplate queryTemplate, List<ParameterType> types)
       throws SQLException {
     ResultSet procedureColumns = null;
-    Map<Integer, DbType> paramTypes = new HashMap<>();
     DatabaseMetaData dbMetaData = connection.getJdbcConnection().getMetaData();
 
-    String storedProcedurePkgName = getPackageName(queryTemplate.getSqlText()).replace(".", "");
+    String packageName = getPackageName(queryTemplate.getSqlText());
+    packageName =
+        packageName != null && packageName.endsWith(".") ? packageName.substring(0, packageName.length() - 2) : packageName;
     String storedProcedureName = getStoredProcedureName(queryTemplate.getSqlText());
     if (dbMetaData.storesUpperCaseIdentifiers()) {
-      storedProcedurePkgName = storedProcedurePkgName.toUpperCase();
+      packageName = packageName != null ? packageName.toUpperCase() : packageName;
       storedProcedureName = storedProcedureName.toUpperCase();
     }
 
     //first select by package name, if no package name is present use no package name,
     //if this doesn't work then select default catalog for connection
-    List<String> pckNames = Arrays.asList(!storedProcedurePkgName.isEmpty() ? storedProcedurePkgName : "",
+    List<String> pckNames = Arrays.asList(packageName != null && !packageName.isEmpty() ? packageName : "",
                                           connection.getJdbcConnection().getCatalog());
 
-    int i = 0;
-    while (paramTypes.isEmpty() && i < pckNames.size()) {
-      procedureColumns =
-          dbMetaData.getProcedureColumns(pckNames.get(i), connection.getJdbcConnection().getSchema(),
-                                         storedProcedureName, "%");
-      paramTypes = getStoredProcedureParamTypes(connection, pckNames.get(i), procedureColumns);
-      i++;
-    }
-
     try {
+      Map<Integer, DbType> paramTypes = new HashMap<>();
+      for (int i = 0; i < pckNames.size() && paramTypes.isEmpty(); i++) {
+        procedureColumns =
+            dbMetaData.getProcedureColumns(pckNames.get(i), connection.getJdbcConnection().getSchema(),
+                                           storedProcedureName, "%");
+        paramTypes = getStoredProcedureParamTypes(connection, pckNames.get(i), procedureColumns);
+      }
+
+      //if still unable to resolve, remove all catalog and schema filters
+      //and use only sp name and column pattern.
+      if (paramTypes.isEmpty()) {
+        procedureColumns =
+            dbMetaData.getProcedureColumns(null, null,
+                                           storedProcedureName, "%");
+        paramTypes = getStoredProcedureParamTypes(connection, storedProcedureName, procedureColumns);
+      }
+
       validateQueryParams(queryTemplate, paramTypes);
       return paramTypes;
     } finally {
@@ -91,6 +100,7 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
         procedureColumns.close();
       }
     }
+
   }
 
   private Map<Integer, DbType> getStoredProcedureParamTypes(DbConnection connection, String storedProcedureName,

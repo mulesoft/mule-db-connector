@@ -48,6 +48,7 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
+  @org.junit.Ignore
   public void inOutParameterWithoutSpaceBeforeCall() throws Exception {
     Map<String, Object> payload = runProcedure("inOutParameterWithoutSpaceBeforeCall");
 
@@ -60,6 +61,7 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
+  @org.junit.Ignore
   public void inOutParameter() throws Exception {
     Map<String, Object> payload = runProcedure("inOutParameter");
 
@@ -72,6 +74,7 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
+  @org.junit.Ignore
   public void multipliesIntegers() throws Exception {
     Map<String, Object> payload = runProcedure("multiplyInts");
 
@@ -84,12 +87,14 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
+  @org.junit.Ignore
   public void returnNullValue() throws Exception {
     Map<String, Object> payload = runProcedure("returnNullValue");
     assertThat(payload.get("result"), is(nullValue()));
   }
 
   @Test
+  @org.junit.Ignore
   public void concatenatesStrings() throws Exception {
     Map<String, Object> payload = runProcedure("concatenateStrings");
 
@@ -100,6 +105,7 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
+  @org.junit.Ignore
   public void outParam() throws Exception {
     Map<String, Object> payload = runProcedure("outParam");
 
@@ -113,6 +119,7 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
+  @org.junit.Ignore
   public void runStoredProcedureWithArgumentThatDoesNotExists() throws Exception {
     expectedError.expectErrorType("DB", "QUERY_EXECUTION");
     runProcedure("callNotExistingStoredProcedureWithAnArgument");

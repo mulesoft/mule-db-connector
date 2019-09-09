@@ -62,33 +62,25 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
     DatabaseMetaData dbMetaData = connection.getJdbcConnection().getMetaData();
 
     String packageName = getPackageName(queryTemplate.getSqlText());
-    packageName =
-        packageName != null && packageName.endsWith(".") ? packageName.substring(0, packageName.length() - 1) : packageName;
     String storedProcedureName = getStoredProcedureName(queryTemplate.getSqlText());
     if (dbMetaData.storesUpperCaseIdentifiers()) {
-      packageName = packageName != null ? packageName.toUpperCase() : packageName;
+      packageName = packageName.toUpperCase();
       storedProcedureName = storedProcedureName.toUpperCase();
     }
 
-    //first select by package name, if no package name is present use no package name,
-    //if this doesn't work then select default catalog for connection
-    List<String> pckNames = Arrays.asList(packageName != null && !packageName.isEmpty() ? packageName : "",
-                                          connection.getJdbcConnection().getCatalog());
-
     try {
-      Map<Integer, DbType> paramTypes = new HashMap<>();
-      for (int i = 0; i < pckNames.size() && paramTypes.isEmpty(); i++) {
-        procedureColumns =
-            dbMetaData.getProcedureColumns(pckNames.get(i), connection.getJdbcConnection().getSchema(),
-                                           storedProcedureName, "%");
-        paramTypes = getStoredProcedureParamTypes(connection, pckNames.get(i), procedureColumns);
-      }
+
+      procedureColumns =
+          dbMetaData.getProcedureColumns(packageName, connection.getJdbcConnection().getSchema(),
+                                         storedProcedureName, "%");
+      Map<Integer, DbType> paramTypes = getStoredProcedureParamTypes(connection, packageName, procedureColumns);
+
 
       //if still unable to resolve, remove all catalog and schema filters
       //and use only sp name and column pattern.
       if (paramTypes.isEmpty()) {
         procedureColumns =
-            dbMetaData.getProcedureColumns(null, null,
+            dbMetaData.getProcedureColumns(connection.getJdbcConnection().getCatalog(), null,
                                            storedProcedureName, "%");
         paramTypes = getStoredProcedureParamTypes(connection, storedProcedureName, procedureColumns);
       }

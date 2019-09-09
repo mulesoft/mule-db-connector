@@ -70,13 +70,20 @@ public class StoredProcedureUtils {
   }
 
   public static String getPackageName(String sqlText) throws SQLException {
+    String pckgName = "";
     Matcher matcher = storedProcedurePattern.matcher(sqlText);
 
     if (!matcher.matches()) {
       return "";
     }
 
-    return matcher.group(2);
+    pckgName = matcher.group(2);
+
+    if (pckgName == null) {
+      return "";
+    }
+
+    return pckgName != null && pckgName.endsWith(".") ? pckgName.substring(0, pckgName.length() - 1) : pckgName;
   }
 
 }

@@ -7,6 +7,7 @@
 package org.mule.extension.db.internal.util;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import java.sql.SQLException;
 import java.util.Optional;
@@ -59,9 +60,10 @@ public class StoredProcedureUtils {
 
     String schemaText = matcher.group(2);
 
-    if (schemaText == null) {
+    if (isBlank(schemaText)) {
       return Optional.empty();
     } else {
+      // Remove the dot at the end of the text
       String schemaName = schemaText.substring(0, schemaText.length() - 1);
       return Optional.of(schemaName);
     }

@@ -159,6 +159,16 @@ public class OracleTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createStoredProcedureAddOneNoSchema(DataSource dataSource) throws SQLException {
+    final String sql = "CREATE OR REPLACE PROCEDURE addOne(num IN OUT INTEGER) AS\n" +
+        "BEGIN\n" +
+        "   num := num + 1;\n" +
+        "END;";
+
+    createStoredProcedure(dataSource, sql);
+  }
+
+  @Override
   public void createStoredProcedureMultiplyInts(DataSource dataSource) throws SQLException {
     final String sql =
         "CREATE OR REPLACE PROCEDURE multiplyInts(INT1 IN NUMBER, INT2 IN NUMBER, RESULT1 OUT NUMBER, INT3 IN NUMBER, RESULT2 OUT NUMBER) IS\n"

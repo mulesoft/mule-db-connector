@@ -12,6 +12,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.rules.ExpectedException.none;
 
+import org.junit.Ignore;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.functional.api.exception.ExpectedError;
 
@@ -39,6 +40,7 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
     testDatabase.createStoredProcedureMultiplyInts(getDefaultDataSource());
     testDatabase.returnNullValue(getDefaultDataSource());
     testDatabase.createStoredProcedureAddOne(getDefaultDataSource());
+    testDatabase.createStoredProcedureAddOneNoSchema(getDefaultDataSource());
   }
 
   @Override
@@ -121,6 +123,12 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
   public void runStoredProcedureSpecifyingSchema() throws Exception {
     Map<String, Object> payload = runProcedure("addOne");
     assertThat("7", equalTo(payload.get("num").toString()));
+  }
+
+  @Test
+  public void runStoredProcedureNotSpecifyingSchema() throws Exception {
+    Map<String, Object> payload = runProcedure("addOneNoSchema");
+    assertThat("8", equalTo(payload.get("num").toString()));
   }
 
 }

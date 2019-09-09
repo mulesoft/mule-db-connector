@@ -151,6 +151,17 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createStoredProcedureAddOneNoSchema(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS addOne");
+
+    final String sql = "CREATE PROCEDURE addOne(INOUT num INT)\n" +
+        "BEGIN\n" +
+        "  SET num := num + 1;\n" +
+        "END;";
+    createStoredProcedure(dataSource, sql);
+  }
+
+  @Override
   public void createStoredProcedureMultiplyInts(DataSource dataSource) throws SQLException {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS multiplyInts;\n");
 

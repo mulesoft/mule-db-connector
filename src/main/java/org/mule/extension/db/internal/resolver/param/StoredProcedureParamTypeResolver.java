@@ -63,7 +63,7 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
 
     String packageName = getPackageName(queryTemplate.getSqlText());
     packageName =
-        packageName != null && packageName.endsWith(".") ? packageName.substring(0, packageName.length() - 2) : packageName;
+        packageName != null && packageName.endsWith(".") ? packageName.substring(0, packageName.length() - 1) : packageName;
     String storedProcedureName = getStoredProcedureName(queryTemplate.getSqlText());
     if (dbMetaData.storesUpperCaseIdentifiers()) {
       packageName = packageName != null ? packageName.toUpperCase() : packageName;

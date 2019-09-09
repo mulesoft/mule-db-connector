@@ -83,7 +83,7 @@ public class StoredProcedureUtils {
       return "";
     }
 
-    return pckgName != null && pckgName.endsWith(".") ? pckgName.substring(0, pckgName.length() - 1) : pckgName;
+    return pckgName.endsWith(".") ? pckgName.substring(0, pckgName.length() - 1) : pckgName;
   }
 
 }

@@ -216,6 +216,7 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
 
   @Override
   public void createStoredProcedureAddOneNoSchema(DataSource dataSource) throws SQLException {
+    createStoredProcedure(dataSource, SQL_CREATE_SP_ADD_ONE);
     createStoredProcedure(dataSource, SQL_CREATE_SP_ADD_ONE_NO_SCHEMA);
   }
 

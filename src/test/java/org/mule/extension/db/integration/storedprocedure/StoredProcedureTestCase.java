@@ -12,7 +12,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.rules.ExpectedException.none;
 
-import org.junit.Ignore;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.functional.api.exception.ExpectedError;
 

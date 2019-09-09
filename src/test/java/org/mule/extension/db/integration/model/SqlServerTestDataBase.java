@@ -187,8 +187,15 @@ public class SqlServerTestDataBase extends AbstractTestDatabase {
   @Override
   public void createStoredProcedureAddOneNoSchema(DataSource dataSource) throws SQLException {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS addOne;\n");
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS mathFunction.addOne;\n");
 
-    final String sql = "CREATE PROCEDURE addOne(@num INT OUTPUT) AS\n" +
+    String sql = "CREATE PROCEDURE mathFunction.addOne(@num INT OUTPUT) AS\n" +
+        "BEGIN\n" +
+        "    SET @num = @num + 1;\n" +
+        "END";
+    createStoredProcedure(dataSource, sql);
+
+    sql = "CREATE PROCEDURE addOne(@num INT OUTPUT) AS\n" +
         "BEGIN\n" +
         "    SET @num = @num + 1;\n" +
         "END";

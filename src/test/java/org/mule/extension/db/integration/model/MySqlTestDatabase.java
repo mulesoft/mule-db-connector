@@ -152,9 +152,16 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
 
   @Override
   public void createStoredProcedureAddOneNoSchema(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS mathFunction.addOne");
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS addOne");
 
-    final String sql = "CREATE PROCEDURE addOne(INOUT num INT)\n" +
+    String sql = "CREATE PROCEDURE mathFunction.addOne(INOUT num INT)\n" +
+        "BEGIN\n" +
+        "  SET num := num + 1;\n" +
+        "END;";
+    createStoredProcedure(dataSource, sql);
+
+    sql = "CREATE PROCEDURE addOne(INOUT num INT)\n" +
         "BEGIN\n" +
         "  SET num := num + 1;\n" +
         "END;";

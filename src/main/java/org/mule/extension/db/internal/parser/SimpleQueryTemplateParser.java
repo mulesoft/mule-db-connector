@@ -8,6 +8,7 @@
 package org.mule.extension.db.internal.parser;
 
 import static org.mule.runtime.core.api.util.StringUtils.isEmpty;
+
 import org.mule.extension.db.internal.domain.param.DefaultInputQueryParam;
 import org.mule.extension.db.internal.domain.param.QueryParam;
 import org.mule.extension.db.internal.domain.query.QueryTemplate;
@@ -106,9 +107,7 @@ public class SimpleQueryTemplateParser implements QueryTemplateParser {
       throw new QueryTemplateParsingException("SQL text cannot be empty");
     }
 
-    if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("Parsing SQL: " + sqlText);
-    }
+    LOGGER.debug("Parsing SQL: {}", sqlText);
 
     StringBuilder sqlToUse = new StringBuilder();
     List<QueryParam> parameterList = new ArrayList<>();

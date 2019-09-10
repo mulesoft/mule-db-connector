@@ -78,7 +78,6 @@ public class StoredProcedureUtils {
     }
 
     pckgName = matcher.group(2);
-
     if (pckgName == null) {
       return "";
     }

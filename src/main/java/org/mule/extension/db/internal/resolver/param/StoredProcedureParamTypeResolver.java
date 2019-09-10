@@ -57,6 +57,7 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
   @Override
   public Map<Integer, DbType> getParameterTypes(DbConnection connection, QueryTemplate queryTemplate, List<ParameterType> types)
       throws SQLException {
+    ResultSet procedureColumns = null;
     DatabaseMetaData dbMetaData = connection.getJdbcConnection().getMetaData();
 
     String schemaName = getStoreProcedureSchema(queryTemplate.getSqlText()).orElseGet(() -> "");
@@ -65,15 +66,6 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
       schemaName = schemaName.toUpperCase();
       storedProcedureName = storedProcedureName.toUpperCase();
     }
-
-    String storedProcedureSchema = getStoreProcedureSchema(queryTemplate.getSqlText()).orElse(null);
-    if (dbMetaData.storesUpperCaseIdentifiers() && storedProcedureSchema != null) {
-      storedProcedureSchema = storedProcedureSchema.toUpperCase();
-    }
-
-    ResultSet procedureColumns =
-        dbMetaData.getProcedureColumns(connection.getJdbcConnection().getCatalog(), storedProcedureSchema, storedProcedureName,
-                                       "%");
 
     try {
 
@@ -103,6 +95,7 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
         procedureColumns.close();
       }
     }
+
   }
 
   private Map<Integer, DbType> getStoredProcedureParamTypes(DbConnection connection, String storedProcedureName,

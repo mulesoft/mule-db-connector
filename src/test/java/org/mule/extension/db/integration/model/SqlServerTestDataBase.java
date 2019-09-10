@@ -183,6 +183,18 @@ public class SqlServerTestDataBase extends AbstractTestDatabase {
     createStoredProcedure(dataSource, sql);
   }
 
+
+  @Override
+  public void createStoredProcedureAddOneDefaultSchema(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS addOne;\n");
+
+    String sql = "CREATE PROCEDURE addOne(@num INT OUTPUT) AS\n" +
+        "BEGIN\n" +
+        "    SET @num = @num - 1;\n" +
+        "END";
+    createStoredProcedure(dataSource, sql);
+  }
+
   @Override
   public void createStoredProcedureMultiplyInts(DataSource dataSource) throws SQLException {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS multiplyInts;\n");

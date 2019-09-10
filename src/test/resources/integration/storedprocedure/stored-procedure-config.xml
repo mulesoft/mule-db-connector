@@ -96,5 +96,4 @@
             </db:in-out-parameters>
         </db:stored-procedure>
     </flow>
-
 </mule>

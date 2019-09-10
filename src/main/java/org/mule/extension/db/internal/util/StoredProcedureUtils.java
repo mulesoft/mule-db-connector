@@ -7,7 +7,9 @@
 package org.mule.extension.db.internal.util;
 
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import java.util.Optional;
 import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,6 +31,31 @@ public class StoredProcedureUtils {
     }
 
     return matcher.group(3);
+  }
+
+  /**
+   * Gets the Schema of the stored procedure of the given SQL Query.
+   *
+   * @param sqlText the SQL Query text
+   * @return an {@link Optional} with the Schema of the stored procedure
+   * @throws SQLException if the SQL Query syntax is not valid
+   */
+  public static Optional<String> getStoreProcedureSchema(String sqlText) throws SQLException {
+    Matcher matcher = storedProcedureMatcher.matcher(sqlText);
+
+    if (!matcher.matches()) {
+      throw new SQLException(format("Unable to detect stored procedure schema from '%s'", sqlText));
+    }
+
+    String schemaText = matcher.group(2);
+
+    if (isBlank(schemaText)) {
+      return Optional.empty();
+    } else {
+      // Remove the dot at the end of the text
+      String schemaName = schemaText.substring(0, schemaText.length() - 1);
+      return Optional.of(schemaName);
+    }
   }
 
 }

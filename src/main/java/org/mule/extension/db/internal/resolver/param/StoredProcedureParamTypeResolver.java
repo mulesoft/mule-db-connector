@@ -8,6 +8,7 @@ package org.mule.extension.db.internal.resolver.param;
 
 import static java.lang.String.format;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.TABLE_TYPE_NAME;
+import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoreProcedureSchema;
 import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoredProcedureName;
 
 import org.mule.extension.db.api.param.ParameterType;
@@ -56,18 +57,37 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
   @Override
   public Map<Integer, DbType> getParameterTypes(DbConnection connection, QueryTemplate queryTemplate, List<ParameterType> types)
       throws SQLException {
+    ResultSet procedureColumns = null;
     DatabaseMetaData dbMetaData = connection.getJdbcConnection().getMetaData();
 
+    String schemaName = getStoreProcedureSchema(queryTemplate.getSqlText()).orElseGet(() -> "");
     String storedProcedureName = getStoredProcedureName(queryTemplate.getSqlText());
     if (dbMetaData.storesUpperCaseIdentifiers()) {
+      schemaName = schemaName.toUpperCase();
       storedProcedureName = storedProcedureName.toUpperCase();
     }
 
-    ResultSet procedureColumns =
-        dbMetaData.getProcedureColumns(connection.getJdbcConnection().getCatalog(), null, storedProcedureName, "%");
-
     try {
-      Map<Integer, DbType> paramTypes = getStoredProcedureParamTypes(connection, storedProcedureName, procedureColumns);
+
+      procedureColumns =
+          dbMetaData.getProcedureColumns(schemaName.isEmpty() ? connection.getJdbcConnection().getCatalog() : schemaName,
+                                         connection.getJdbcConnection().getSchema(),
+                                         storedProcedureName, "%");
+      Map<Integer, DbType> paramTypes = getStoredProcedureParamTypes(connection, schemaName, procedureColumns);
+
+
+      //if still unable to resolve, remove all catalog and schema filters
+      //and use only sp name and column pattern.
+      if (paramTypes.isEmpty()) {
+        LOGGER.debug(String.format(
+                                   "Failed to get procedure types with schema name %s and procedure name %s. Removing all catalog and schema filters.",
+                                   schemaName, storedProcedureName));
+        procedureColumns =
+            dbMetaData.getProcedureColumns(null, null,
+                                           storedProcedureName, "%");
+        paramTypes = getStoredProcedureParamTypes(connection, storedProcedureName, procedureColumns);
+      }
+
       validateQueryParams(queryTemplate, paramTypes);
       return paramTypes;
     } finally {

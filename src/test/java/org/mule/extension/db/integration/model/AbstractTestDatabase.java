@@ -439,7 +439,7 @@ public abstract class AbstractTestDatabase {
     throw new UnsupportedOperationException(NO_UDT_SUPPORT_ERROR);
   }
 
-  public abstract void createStoredProcedureAddOneNoSchema(DataSource dataSource) throws SQLException;
+  public abstract void createStoredProcedureAddOneDefaultSchema(DataSource dataSource) throws SQLException;
 
   public void createStoredProcedureGetManagerDetails(DataSource dataSource) throws SQLException {
     throw new UnsupportedOperationException(NO_UDT_SUPPORT_ERROR);

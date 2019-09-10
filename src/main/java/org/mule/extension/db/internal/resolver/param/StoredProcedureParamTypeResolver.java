@@ -60,25 +60,28 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
     ResultSet procedureColumns = null;
     DatabaseMetaData dbMetaData = connection.getJdbcConnection().getMetaData();
 
-    String packageName = getStoreProcedureSchema(queryTemplate.getSqlText()).orElseGet(() -> "");
+    String schemaName = getStoreProcedureSchema(queryTemplate.getSqlText()).orElseGet(() -> "");
     String storedProcedureName = getStoredProcedureName(queryTemplate.getSqlText());
     if (dbMetaData.storesUpperCaseIdentifiers()) {
-      packageName = packageName.toUpperCase();
+      schemaName = schemaName.toUpperCase();
       storedProcedureName = storedProcedureName.toUpperCase();
     }
 
     try {
 
       procedureColumns =
-          dbMetaData.getProcedureColumns(packageName.isEmpty() ? connection.getJdbcConnection().getCatalog() : packageName,
+          dbMetaData.getProcedureColumns(schemaName.isEmpty() ? connection.getJdbcConnection().getCatalog() : schemaName,
                                          connection.getJdbcConnection().getSchema(),
                                          storedProcedureName, "%");
-      Map<Integer, DbType> paramTypes = getStoredProcedureParamTypes(connection, packageName, procedureColumns);
+      Map<Integer, DbType> paramTypes = getStoredProcedureParamTypes(connection, schemaName, procedureColumns);
 
 
       //if still unable to resolve, remove all catalog and schema filters
       //and use only sp name and column pattern.
       if (paramTypes.isEmpty()) {
+        LOGGER.debug(String.format(
+                                   "Failed to get procedure types with schema name %s and procedure name %s. Removing all catalog and schema filters.",
+                                   schemaName, storedProcedureName));
         procedureColumns =
             dbMetaData.getProcedureColumns(null, null,
                                            storedProcedureName, "%");

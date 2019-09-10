@@ -39,7 +39,7 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
     testDatabase.createStoredProcedureMultiplyInts(getDefaultDataSource());
     testDatabase.returnNullValue(getDefaultDataSource());
     testDatabase.createStoredProcedureAddOne(getDefaultDataSource());
-    testDatabase.createStoredProcedureAddOneNoSchema(getDefaultDataSource());
+    testDatabase.createStoredProcedureAddOneDefaultSchema(getDefaultDataSource());
   }
 
   @Override
@@ -122,12 +122,6 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
   public void runStoredProcedureSpecifyingSchema() throws Exception {
     Map<String, Object> payload = runProcedure("addOne");
     assertThat("7", equalTo(payload.get("num").toString()));
-  }
-
-  @Test
-  public void runStoredProcedureNotSpecifyingSchema() throws Exception {
-    Map<String, Object> payload = runProcedure("addOneNoSchema");
-    assertThat("8", equalTo(payload.get("num").toString()));
   }
 
 }

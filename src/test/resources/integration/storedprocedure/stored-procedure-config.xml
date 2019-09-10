@@ -96,14 +96,4 @@
             </db:in-out-parameters>
         </db:stored-procedure>
     </flow>
-
-    <flow name="addOneNoSchema">
-        <db:stored-procedure config-ref="dbConfig">
-            <db:sql>{ call addOne(:num) }</db:sql>
-            <db:in-out-parameters>
-                <db:in-out-parameter key="num" value="7"/>
-            </db:in-out-parameters>
-        </db:stored-procedure>
-    </flow>
-
 </mule>

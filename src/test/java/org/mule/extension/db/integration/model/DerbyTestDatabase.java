@@ -135,6 +135,13 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
           "DYNAMIC RESULT SETS 0\n" +
           "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".addOne'";
 
+  public static final String SQL_CREATE_SP_ADD_ONE_DEFAULT_SCHEMA =
+      "CREATE PROCEDURE addOne(INOUT number INTEGER)" +
+          "PARAMETER STYLE JAVA\n" +
+          "LANGUAGE JAVA\n" +
+          "DYNAMIC RESULT SETS 0\n" +
+          "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".substractOne'";
+
   @Override
   public void createPlanetTable(Connection connection) throws SQLException {
     executeDdl(connection,
@@ -205,6 +212,11 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
   @Override
   public void createStoredProcedureAddOne(DataSource dataSource) throws SQLException {
     createStoredProcedure(dataSource, SQL_CREATE_SP_ADD_ONE);
+  }
+
+  @Override
+  public void createStoredProcedureAddOneDefaultSchema(DataSource dataSource) throws SQLException {
+    createStoredProcedure(dataSource, SQL_CREATE_SP_ADD_ONE_DEFAULT_SCHEMA);
   }
 
   @Override

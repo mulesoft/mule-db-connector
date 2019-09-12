@@ -70,8 +70,7 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
     try {
 
       procedureColumns =
-          dbMetaData.getProcedureColumns(schemaName.isEmpty() ? connection.getJdbcConnection().getCatalog() : schemaName,
-                                         connection.getJdbcConnection().getSchema(),
+          dbMetaData.getProcedureColumns(connection.getJdbcConnection().getCatalog(), connection.getJdbcConnection().getSchema(),
                                          storedProcedureName, "%");
       Map<Integer, DbType> paramTypes = getStoredProcedureParamTypes(connection, schemaName, procedureColumns);
 
@@ -79,9 +78,9 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
       //if still unable to resolve, remove all catalog and schema filters
       //and use only sp name and column pattern.
       if (paramTypes.isEmpty()) {
-        LOGGER.debug(String.format(
-                                   "Failed to get procedure types with schema name %s and procedure name %s. Removing all catalog and schema filters.",
-                                   schemaName, storedProcedureName));
+        LOGGER.debug(
+                     "Failed to get procedure types with schema name {} and procedure name {}. Removing all catalog and schema filters.",
+                     schemaName, storedProcedureName);
         procedureColumns =
             dbMetaData.getProcedureColumns(null, null,
                                            storedProcedureName, "%");

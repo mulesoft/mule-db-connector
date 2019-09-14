@@ -60,19 +60,18 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
     ResultSet procedureColumns = null;
     DatabaseMetaData dbMetaData = connection.getJdbcConnection().getMetaData();
 
-    String schemaName = getStoreProcedureSchema(queryTemplate.getSqlText()).orElseGet(() -> "");
+    String storedProcedureSchemaName = getStoreProcedureSchema(queryTemplate.getSqlText()).orElse("");
     String storedProcedureName = getStoredProcedureName(queryTemplate.getSqlText());
     if (dbMetaData.storesUpperCaseIdentifiers()) {
-      schemaName = schemaName.toUpperCase();
+      storedProcedureSchemaName = storedProcedureSchemaName.toUpperCase();
       storedProcedureName = storedProcedureName.toUpperCase();
     }
 
     try {
-
       procedureColumns =
-          dbMetaData.getProcedureColumns(connection.getJdbcConnection().getCatalog(), connection.getJdbcConnection().getSchema(),
+          dbMetaData.getProcedureColumns(connection.getJdbcConnection().getCatalog(), storedProcedureSchemaName,
                                          storedProcedureName, "%");
-      Map<Integer, DbType> paramTypes = getStoredProcedureParamTypes(connection, schemaName, procedureColumns);
+      Map<Integer, DbType> paramTypes = getStoredProcedureParamTypes(connection, storedProcedureName, procedureColumns);
 
 
       //if still unable to resolve, remove all catalog and schema filters
@@ -80,10 +79,9 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
       if (paramTypes.isEmpty()) {
         LOGGER.debug(
                      "Failed to get procedure types with schema name {} and procedure name {}. Removing all catalog and schema filters.",
-                     schemaName, storedProcedureName);
+                     storedProcedureSchemaName, storedProcedureName);
         procedureColumns =
-            dbMetaData.getProcedureColumns(null, null,
-                                           storedProcedureName, "%");
+            dbMetaData.getProcedureColumns(null, null, storedProcedureName, "%");
         paramTypes = getStoredProcedureParamTypes(connection, storedProcedureName, procedureColumns);
       }
 

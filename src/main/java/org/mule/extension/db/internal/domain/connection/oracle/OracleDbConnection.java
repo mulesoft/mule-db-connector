@@ -9,12 +9,15 @@ package org.mule.extension.db.internal.domain.connection.oracle;
 import static java.util.Optional.ofNullable;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
+import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoreProcedureSchema;
+
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.connection.type.resolver.ArrayTypeResolver;
 import org.mule.extension.db.internal.domain.connection.type.resolver.StructAndArrayTypeResolver;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
 import org.mule.extension.db.internal.domain.type.oracle.OracleXmlType;
+import org.mule.extension.db.internal.domain.query.QueryTemplate;
 
 import java.lang.reflect.Method;
 import java.sql.Array;
@@ -174,6 +177,11 @@ public class OracleDbConnection extends DefaultDbConnection {
       }
     }
     return dataTypes;
+  }
+
+  @Override
+  public Optional<String> getCatalog(QueryTemplate queryTemplate) throws SQLException {
+    return getStoreProcedureSchema(queryTemplate.getSqlText());
   }
 
 }

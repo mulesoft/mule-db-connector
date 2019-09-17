@@ -25,6 +25,7 @@ import org.mule.extension.db.internal.result.statement.GenericStatementResultIte
 import org.mule.extension.db.internal.result.statement.StatementResultIteratorFactory;
 import org.mule.runtime.api.tx.TransactionException;
 import org.mule.runtime.core.api.util.IOUtils;
+import org.mule.extension.db.internal.domain.query.QueryTemplate;
 
 import java.io.InputStream;
 import java.sql.Array;
@@ -39,6 +40,7 @@ import java.sql.Struct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
@@ -296,6 +298,11 @@ public class DefaultDbConnection implements DbConnection {
                                                 attribute.getClass()));
     }
     return clob;
+  }
+
+  @Override
+  public Optional<String> getCatalog(QueryTemplate queryTemplate) throws SQLException {
+    return Optional.of(this.getJdbcConnection().getCatalog());
   }
 
 }

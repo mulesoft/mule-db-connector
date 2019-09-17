@@ -10,11 +10,14 @@ import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.connection.sqlserver.type.SqlServerBinaryDbType;
 import org.mule.extension.db.internal.domain.connection.sqlserver.type.SqlServerVarBinaryDbType;
+import org.mule.extension.db.internal.domain.query.QueryTemplate;
 import org.mule.extension.db.internal.domain.type.DbType;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * {@link DbConnection} implementation for SQL Server which configures out of the box custom
@@ -37,5 +40,10 @@ public class SqlServerConnection extends DefaultDbConnection {
     dbTypes.add(new SqlServerBinaryDbType());
 
     return dbTypes;
+  }
+
+  @Override
+  public Optional<String> getCatalog(QueryTemplate queryTemplate) throws SQLException {
+    return Optional.of(this.getJdbcConnection().getCatalog());
   }
 }

@@ -10,6 +10,7 @@ import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 
 import org.mule.extension.db.api.exception.connection.ConnectionClosingException;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
+import org.mule.extension.db.internal.domain.query.QueryTemplate;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
 import org.mule.extension.db.internal.result.statement.StatementResultIteratorFactory;
@@ -25,6 +26,7 @@ import javax.transaction.xa.XAResource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,5 +141,10 @@ public class XADbConnection implements DbConnection, XATransactionalConnection {
   @Override
   public boolean supportsContentStreaming() {
     return connection.supportsContentStreaming();
+  }
+
+  @Override
+  public Optional<String> getCatalog(QueryTemplate queryTemplate) throws SQLException {
+    return Optional.of(this.getJdbcConnection().getCatalog());
   }
 }

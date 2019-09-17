@@ -9,6 +9,7 @@ package org.mule.extension.db.internal.domain.connection;
 
 import static java.util.Optional.empty;
 
+import org.mule.extension.db.internal.domain.query.QueryTemplate;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
 import org.mule.extension.db.internal.result.statement.StatementResultIterator;
@@ -74,6 +75,11 @@ public interface DbConnection extends TransactionalConnection {
    * Marks that the streaming is over
    */
   void endStreaming();
+
+  /**
+   * Get catalog
+   */
+  Optional<String> getCatalog(QueryTemplate queryTemplate) throws SQLException;
 
   /**
    * @return a boolean indicating if the current connection is being part of a Transaction.

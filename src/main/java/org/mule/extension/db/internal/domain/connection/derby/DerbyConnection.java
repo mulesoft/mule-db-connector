@@ -7,9 +7,12 @@
 package org.mule.extension.db.internal.domain.connection.derby;
 
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
+import org.mule.extension.db.internal.domain.query.QueryTemplate;
 import org.mule.extension.db.internal.domain.type.DbType;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Optional;
 import java.util.List;
 
 /**
@@ -29,5 +32,11 @@ public class DerbyConnection extends DefaultDbConnection {
   @Override
   public boolean supportsContentStreaming() {
     return false;
+  }
+
+
+  @Override
+  public Optional<String> getCatalog(QueryTemplate queryTemplate) throws SQLException {
+    return Optional.of(this.getJdbcConnection().getCatalog());
   }
 }

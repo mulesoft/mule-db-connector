@@ -146,7 +146,8 @@ public class XADbConnection implements DbConnection, XATransactionalConnection {
 
   @Override
   public Optional<String> getProcedureCatalog(QueryTemplate queryTemplate) throws SQLException {
-    return Optional.of(this.getJdbcConnection().getCatalog());
+    Connection conn = this.getJdbcConnection();
+    return conn != null && conn.getCatalog() != null ? Optional.of(conn.getCatalog()) : Optional.empty();
   }
 
   /**

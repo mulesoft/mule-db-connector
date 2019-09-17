@@ -77,9 +77,14 @@ public interface DbConnection extends TransactionalConnection {
   void endStreaming();
 
   /**
-   * Get catalog
+   * Get catalog name
    */
-  Optional<String> getCatalog(QueryTemplate queryTemplate) throws SQLException;
+  Optional<String> getProcedureCatalog(QueryTemplate queryTemplate) throws SQLException;
+
+  /**
+   * Get procedure schema
+   */
+  Optional<String> getProcedureSchema(QueryTemplate queryTemplate) throws SQLException;
 
   /**
    * @return a boolean indicating if the current connection is being part of a Transaction.

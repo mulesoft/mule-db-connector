@@ -60,9 +60,9 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
     ResultSet procedureColumns = null;
     DatabaseMetaData dbMetaData = connection.getJdbcConnection().getMetaData();
 
-    String storedProcedureSchemaName = connection.getJdbcConnection().getSchema();
+    String storedProcedureSchemaName = connection.getProcedureSchema(queryTemplate).orElse("");
     String storedProcedureName = getStoredProcedureName(queryTemplate.getSqlText());
-    String catalogName = connection.getCatalog(queryTemplate).orElse(connection.getJdbcConnection().getCatalog());
+    String catalogName = connection.getProcedureCatalog(queryTemplate).orElse(connection.getJdbcConnection().getCatalog());
     if (dbMetaData.storesUpperCaseIdentifiers()) {
       storedProcedureSchemaName = storedProcedureSchemaName.toUpperCase();
       storedProcedureName = storedProcedureName.toUpperCase();

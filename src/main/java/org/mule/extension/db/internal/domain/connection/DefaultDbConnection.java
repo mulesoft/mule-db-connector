@@ -12,6 +12,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static org.mule.extension.db.api.param.JdbcType.BLOB;
 import static org.mule.extension.db.api.param.JdbcType.CLOB;
+import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoreProcedureSchema;
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 import static org.mule.runtime.core.api.util.IOUtils.toByteArray;
 import org.mule.extension.db.api.exception.connection.ConnectionClosingException;
@@ -301,8 +302,14 @@ public class DefaultDbConnection implements DbConnection {
   }
 
   @Override
-  public Optional<String> getCatalog(QueryTemplate queryTemplate) throws SQLException {
+  public Optional<String> getProcedureCatalog(QueryTemplate queryTemplate) throws SQLException {
     return Optional.of(this.getJdbcConnection().getCatalog());
   }
 
+  /**
+   * Get procedure schema
+   */
+  public Optional<String> getProcedureSchema(QueryTemplate queryTemplate) throws SQLException {
+    return getStoreProcedureSchema(queryTemplate.getSqlText());
+  }
 }

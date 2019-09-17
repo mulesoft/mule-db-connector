@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.internal.domain.xa;
 
+import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoreProcedureSchema;
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 
 import org.mule.extension.db.api.exception.connection.ConnectionClosingException;
@@ -144,7 +145,14 @@ public class XADbConnection implements DbConnection, XATransactionalConnection {
   }
 
   @Override
-  public Optional<String> getCatalog(QueryTemplate queryTemplate) throws SQLException {
+  public Optional<String> getProcedureCatalog(QueryTemplate queryTemplate) throws SQLException {
     return Optional.of(this.getJdbcConnection().getCatalog());
+  }
+
+  /**
+   * Get procedure schema
+   */
+  public Optional<String> getProcedureSchema(QueryTemplate queryTemplate) throws SQLException {
+    return getStoreProcedureSchema(queryTemplate.getSqlText());
   }
 }

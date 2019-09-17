@@ -15,6 +15,8 @@ import java.sql.SQLException;
 import java.util.Optional;
 import java.util.List;
 
+import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoreProcedureSchema;
+
 /**
  * {@link DefaultDbConnection} implementation for Derby databases
  *
@@ -36,7 +38,14 @@ public class DerbyConnection extends DefaultDbConnection {
 
 
   @Override
-  public Optional<String> getCatalog(QueryTemplate queryTemplate) throws SQLException {
+  public Optional<String> getProcedureCatalog(QueryTemplate queryTemplate) throws SQLException {
     return Optional.of(this.getJdbcConnection().getCatalog());
+  }
+
+  /**
+   * Get procedure schema
+   */
+  public Optional<String> getProcedureSchema(QueryTemplate queryTemplate) throws SQLException {
+    return getStoreProcedureSchema(queryTemplate.getSqlText());
   }
 }

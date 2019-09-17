@@ -180,8 +180,14 @@ public class OracleDbConnection extends DefaultDbConnection {
   }
 
   @Override
-  public Optional<String> getCatalog(QueryTemplate queryTemplate) throws SQLException {
+  public Optional<String> getProcedureCatalog(QueryTemplate queryTemplate) throws SQLException {
     return getStoreProcedureSchema(queryTemplate.getSqlText());
   }
 
+  /**
+   * Get procedure schema
+   */
+  public Optional<String> getProcedureSchema(QueryTemplate queryTemplate) throws SQLException {
+    return Optional.of(this.getJdbcConnection().getSchema());
+  }
 }

@@ -60,7 +60,6 @@ public class StoredProcedureMappedTableTestCase extends AbstractStoredProcedureT
 
   @Test
   public void processNestedObjectTypeOutputParam() throws Exception {
-    Message response = flowRunner("storedProcedureWithNestedObjectTypeOutputParamSerialized").run().getMessage();
-    System.out.println("Hola");
+    flowRunner("storedProcedureWithNestedObjectTypeOutputParamSerialized").run();
   }
 }

@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Connection parameters for SQL Server
+ * Connection parameters for SQL Server.
  *
  * @since 1.1.0
  */
@@ -30,14 +30,14 @@ public class SqlServerConnectionParameters extends BaseDbConnectionParameters im
   private static final String SUB_PROTOCOL = "jdbc:sqlserver://";
 
   /**
-   * Configures the host of the database
+   * Configures the host of the database.
    */
   @Parameter
   @Placement(order = 1)
   private String host;
 
   /**
-   * Configures the name of the instance where the database is
+   * Configures the name of the SQL server instance where the database is.
    */
   @Parameter
   @Optional
@@ -45,7 +45,7 @@ public class SqlServerConnectionParameters extends BaseDbConnectionParameters im
   private String instanceName;
 
   /**
-   * Configures the port of the database
+   * Configures the port of the database.
    */
   @Parameter
   @Optional
@@ -53,7 +53,7 @@ public class SqlServerConnectionParameters extends BaseDbConnectionParameters im
   private Integer port;
 
   /**
-   * The user that is used for authentication against the database
+   * The user to use for authentication against the database.
    */
   @Parameter
   @Optional
@@ -61,7 +61,7 @@ public class SqlServerConnectionParameters extends BaseDbConnectionParameters im
   private String user;
 
   /**
-   * The password that is used for authentication against the database
+   * The password to use for authentication against the database.
    */
   @Parameter
   @Optional
@@ -70,7 +70,7 @@ public class SqlServerConnectionParameters extends BaseDbConnectionParameters im
   private String password;
 
   /**
-   * Name of the default database to work with
+   * Name of the default database to work with.
    */
   @Parameter
   @Optional

@@ -29,14 +29,14 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
   private static final String JDBC_URL_PREFIX = "jdbc:oracle:thin:@";
 
   /**
-   * Configures the host of the database
+   * Configures the host of the database.
    */
   @Parameter
   @Placement(order = 1)
   private String host;
 
   /**
-   * Configures the port of the database
+   * Configures the port of the database.
    */
   @Parameter
   @Optional(defaultValue = "1521")
@@ -44,7 +44,7 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
   private Integer port;
 
   /**
-   * The user that is used for authentication against the database
+   * The user to use for authentication against the database.
    */
   @Parameter
   @Optional
@@ -52,7 +52,7 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
   private String user;
 
   /**
-   * The password that is used for authentication against the database
+   * The password to use for authentication against the database.
    */
   @Parameter
   @Optional
@@ -61,7 +61,7 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
   private String password;
 
   /**
-   * The name of the database instance
+   * The name of the database instance.
    */
   @Parameter
   @Optional
@@ -69,7 +69,7 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
   private String instance;
 
   /**
-   * The name of the database service name
+   * The name of the database service name.
    */
   @Parameter
   @Optional

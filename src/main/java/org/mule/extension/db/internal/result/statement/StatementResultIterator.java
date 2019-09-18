@@ -214,7 +214,8 @@ public class StatementResultIterator implements Iterator<SingleStatementResult> 
       return paramValue;
 
     } else if (paramValue instanceof Struct) {
-      return ((Struct) paramValue).getAttributes();
+      Object[] objects = ((Struct) paramValue).getAttributes();
+      return processValueArray(objects);
 
     } else if (paramValue instanceof SQLXML) {
       return ((SQLXML) paramValue).getString();

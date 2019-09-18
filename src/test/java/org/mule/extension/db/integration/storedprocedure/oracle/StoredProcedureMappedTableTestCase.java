@@ -9,7 +9,6 @@ package org.mule.extension.db.integration.storedprocedure.oracle;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsArrayContainingInOrder.arrayContaining;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
@@ -17,12 +16,12 @@ import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import org.mule.extension.db.integration.TestDbConfig;
 import org.mule.extension.db.integration.model.OracleTestDatabase;
 import org.mule.extension.db.integration.select.Fruit;
+import org.mule.runtime.api.message.Message;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -56,6 +55,12 @@ public class StoredProcedureMappedTableTestCase extends AbstractStoredProcedureT
 
   @Test
   public void processNestedTypeOutputParam() throws Exception {
-    flowRunner("storeProcedureWithNestedTypeOutputParamSerialized").run();
+    flowRunner("storedProcedureWithNestedArrayTypeOutputParamSerialized").run();
+  }
+
+  @Test
+  public void processNestedObjectTypeOutputParam() throws Exception {
+    Message response = flowRunner("storedProcedureWithNestedObjectTypeOutputParamSerialized").run().getMessage();
+    System.out.println("Hola");
   }
 }

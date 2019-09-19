@@ -36,7 +36,7 @@ public final class DerbyConnectionParameters extends BaseDbConnectionParameters 
   private String database;
 
   /**
-   * If your application uses an embedded database, the subsubprotocol parameter specifies where Derby should look for the database. The available options are:
+   * Specifies where Derby should look for the database. The available options are:
    * 'directory', 'memory', 'classpath' and 'jar'.
    */
   @Parameter

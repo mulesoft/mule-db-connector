@@ -46,7 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Connector for connecting to relation Databases through the JDBC API
+ * The Anypoint Database Connector allows you to connect to relational databases through the JDBC API.
  *
  * @since 1.0
  */

@@ -428,7 +428,11 @@ public class OracleTestDatabase extends AbstractTestDatabase {
     executeDdlSilently(connection, "DROP TYPE CREATE_LIST_OUTPUT");
     executeDdlSilently(connection, "DROP TYPE OUTPUT_RESPONSE_OBJ");
     executeDdlSilently(connection, "DROP TYPE OUTPUT_RESPONSE");
+    executeDdlSilently(connection, "DROP TYPE OBJECT_WITH_INNER_OBJECT_TYPE");
+    executeDdlSilently(connection, "DROP TYPE OBJECTS_TABLE");
+    executeDdlSilently(connection, "DROP TYPE OBJECT_TYPE");
     executeDdlSilently(connection, "DROP PROCEDURE STORE_PROCEDURE_NESTED_TYPES");
+    executeDdlSilently(connection, "DROP PROCEDURE STORED_PROCEDURE_NESTED_OBJECT_TYPE");
 
     executeDdlSilently(connection, "CREATE OR REPLACE TYPE FRUIT_RECORD_TYPE AS OBJECT (\n" +
         "    fruitID integer,\n" +
@@ -440,6 +444,7 @@ public class OracleTestDatabase extends AbstractTestDatabase {
     executeDdlSilently(connection, "CREATE TABLE \"SYSTEM\".\"FRUITS_AS_TYPE\" \n" +
         "   (\t\"FRUIT\" \"SYSTEM\".\"FRUIT_RECORD_TYPE\" \n" +
         "   )");
+
     executeDdlSilently(connection, "CREATE TABLE \"SYSTEM\".\"FRUITS_AS_TABLE\" \n" +
         "   (\t\"FRUITID\" NUMBER(*,0), \n" +
         "\t\"FRUITNAME\" VARCHAR2(250 BYTE), \n" +
@@ -508,6 +513,27 @@ public class OracleTestDatabase extends AbstractTestDatabase {
         "    RSL := OUTPUT_RESPONSE(OUTPUT_RESPONSE_OBJ(CREATE_LIST_OUTPUT(CREATE_LIST_OUTPUT_OBJ('a','b')), CREATE_LIST_INPUT(CREATE_LIST_INPUT_OBJ(1, 'a'))));\n"
         +
         "  END;");
+
+    executeDdlSilently(connection, "CREATE OR REPLACE TYPE OBJECT_TYPE AS OBJECT\n" +
+        "(\n" +
+        "  aVarchar VARCHAR2(20)\n" +
+        ");");
+
+    executeDdlSilently(connection, "CREATE OR REPLACE TYPE OBJECTS_TABLE AS TABLE OF OBJECT_TYPE;");
+
+    executeDdlSilently(connection, "CREATE OR REPLACE TYPE OBJECT_WITH_INNER_OBJECT_TYPE AS OBJECT\n" +
+        "(\n" +
+        "  objectsTable OBJECTS_TABLE\n" +
+        ");");
+
+    executeDdlSilently(connection, "CREATE OR REPLACE PROCEDURE STORED_PROCEDURE_NESTED_OBJECT_TYPE\n" +
+        "(\n" +
+        "  RESPONSE OUT OBJECT_WITH_INNER_OBJECT_TYPE\n" +
+        ")\n" +
+        "IS\n" +
+        "BEGIN\n" +
+        "  RESPONSE := OBJECT_WITH_INNER_OBJECT_TYPE(OBJECTS_TABLE(OBJECT_TYPE('aSimpleVarchar')));\n" +
+        "END;");
   }
 
   private void executeDdlSilently(Connection connection, String sql) {

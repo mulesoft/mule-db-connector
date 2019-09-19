@@ -69,7 +69,7 @@
         </db:stored-procedure>
     </flow>
 
-    <flow name="storeProcedureWithNestedTypeOutputParamSerialized">
+    <flow name="storedProcedureWithNestedArrayTypeOutputParamSerialized">
         <db:stored-procedure config-ref="dbConfig">
             <db:sql >{ call SYSTEM.STORE_PROCEDURE_NESTED_TYPES(:IN_VALUE, :OUT_VALUE, :RSL) }</db:sql>
             <db:input-parameters>#[%dw 2.0
@@ -83,6 +83,16 @@
             <db:output-parameters >
                 <db:output-parameter key="OUT_VALUE" customType="CREATE_LIST_OUTPUT" />
                 <db:output-parameter key="RSL" customType="OUTPUT_RESPONSE" />
+            </db:output-parameters>
+        </db:stored-procedure>
+        <set-payload value="#[output application/json --- payload]"/>
+    </flow>
+
+    <flow name="storedProcedureWithNestedObjectTypeOutputParamSerialized">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql >{ call SYSTEM.STORED_PROCEDURE_NESTED_OBJECT_TYPE(:RESPONSE) }</db:sql>
+            <db:output-parameters >
+                <db:output-parameter key="RESPONSE" customType="OBJECT_WITH_INNER_OBJECT_TYPE" />
             </db:output-parameters>
         </db:stored-procedure>
         <set-payload value="#[output application/json --- payload]"/>

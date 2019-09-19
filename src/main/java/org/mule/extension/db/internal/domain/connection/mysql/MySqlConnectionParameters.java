@@ -37,21 +37,21 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
   private static final Logger LOGGER = getLogger(MySqlConnectionParameters.class);
 
   /**
-   * Configures the host of the database
+   * Configures the host of the database.
    */
   @Parameter
   @Placement(order = 1)
   private String host;
 
   /**
-   * Configures the port of the database
+   * Configures the port of the database.
    */
   @Parameter
   @Placement(order = 2)
   private Integer port;
 
   /**
-   * The user that is used for authentication against the database
+   * The user to use for authentication against the database.
    */
   @Parameter
   @Optional
@@ -59,7 +59,7 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
   private String user;
 
   /**
-   * The password that is used for authentication against the database
+   * The password to use for authentication against the database.
    */
   @Parameter
   @Optional
@@ -68,7 +68,7 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
   private String password;
 
   /**
-   * The name of the database
+   * The name of the database.
    */
   @Parameter
   @Optional

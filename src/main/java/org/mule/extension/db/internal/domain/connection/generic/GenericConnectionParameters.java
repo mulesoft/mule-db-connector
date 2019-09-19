@@ -24,7 +24,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 public final class GenericConnectionParameters extends BaseDbConnectionParameters implements DataSourceConfig {
 
   /**
-   * JDBC URL to be used to connect to the database.
+   * JDBC URL to use to connect to the database.
    */
   @Parameter
   @Placement(order = 1)

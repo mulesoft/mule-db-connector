@@ -16,6 +16,10 @@
                 <db:column-type id="2002" typeName="CREATE_LIST_OUTPUT_OBJ" />
                 <db:column-type id="2002" typeName="RES_OBJ" />
                 <db:column-type id="2003" typeName="OUTPUT_RESPONSE" />
+                <db:column-type id="2002" typeName="OBJECT_TYPE" />
+                <db:column-type id="2003" typeName="OBJECTS_TABLE" />
+                <db:column-type id="2002" typeName="OBJECT_WITH_INNER_OBJECT_TYPE" />
+                <db:column-type id="2003" typeName="OBJECT_WITH_INNER_OBJECT_TABLE" />
             </db:column-types>
         </db:oracle-connection>
     </db:config>

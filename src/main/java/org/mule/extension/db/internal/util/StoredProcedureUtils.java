@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  */
 public class StoredProcedureUtils {
 
-  private static final String STORED_PROCEDURE_REGEX = "(?msi)(\\{\\s*)?call\\s+(\\w+\\.)?(\\w+)\\s*\\(.*";
+  private static final String STORED_PROCEDURE_REGEX = "(?msi)(\\{\\s*)?call\\s+(\\w+\\.)?(\\w+\\.)?(\\w+)\\s*\\(.*";
 
   private final static Pattern storedProcedurePattern = Pattern.compile(STORED_PROCEDURE_REGEX);
 
@@ -41,11 +41,13 @@ public class StoredProcedureUtils {
       throw new SQLException(format("Unable to detect stored procedure name from '%s'", sqlText));
     }
 
-    return matcher.group(3);
+    return matcher.group(4);
   }
 
   /**
    * Gets the Schema of the stored procedure of the given SQL Query.
+   * </p>
+   * The schema will be first part of Stored Procedure identifier, {@see StoredProcedureUtilsTestCase}.
    *
    * @param sqlText the SQL Query text
    * @return an {@link Optional} with the Schema of the stored procedure
@@ -58,14 +60,49 @@ public class StoredProcedureUtils {
       throw new SQLException(format("Unable to detect stored procedure schema from '%s'", sqlText));
     }
 
-    String schemaText = matcher.group(2);
+    String firstPart = matcher.group(2);
+    String secondPart = matcher.group(3);
 
-    if (isBlank(schemaText)) {
-      return Optional.empty();
+    if (!isBlank(firstPart) && !isBlank(secondPart)) {
+      String packageName = firstPart.substring(0, firstPart.length() - 1);
+      return Optional.of(packageName);
+    } else if (!isBlank(firstPart)) {
+      String packageName = firstPart.substring(0, firstPart.length() - 1);
+      return Optional.of(packageName);
+    } else if (!isBlank(secondPart)) {
+      String packageName = secondPart.substring(0, secondPart.length() - 1);
+      return Optional.of(packageName);
     } else {
-      // Remove the dot at the end of the text
-      String schemaName = schemaText.substring(0, schemaText.length() - 1);
-      return Optional.of(schemaName);
+      return Optional.empty();
+    }
+  }
+
+  /**
+   * Gets the package of the stored procedure of the given SQL Query.This has sense only for Oracle, where Stored
+   * procedures can be defined within packages.
+   * </p>
+   * The package will be second part of the stored procedure identifier. This means that to be able to get the package
+   * the SQL call statement needs to define both the schema and the package , {@see StoredProcedureUtilsTestCase}.
+   *
+   * @param sqlText the SQL Query text
+   * @return an {@link Optional} with the package of the stored procedure
+   * @throws SQLException if the SQL Query syntax is not valid
+   */
+  public static Optional<String> getStoredProcedurePackage(String sqlText) throws SQLException {
+    Matcher matcher = storedProcedurePattern.matcher(sqlText);
+
+    if (!matcher.matches()) {
+      throw new SQLException(format("Unable to detect stored procedure package from '%s'", sqlText));
+    }
+
+    String firstPart = matcher.group(2);
+    String secondPart = matcher.group(3);
+
+    if (!isBlank(firstPart) && !isBlank(secondPart)) {
+      String packageName = secondPart.substring(0, secondPart.length() - 1);
+      return Optional.of(packageName);
+    } else {
+      return Optional.empty();
     }
   }
 

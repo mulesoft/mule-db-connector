@@ -17,7 +17,6 @@ import org.junit.Test;
 
 public class StoredProcedureUtilsTestCase extends AbstractMuleTestCase {
 
-
   @Test
   public void getStoredProcedureName() throws Exception {
     assertEquals("doSomething", StoredProcedureUtils.getStoredProcedureName("call doSomething(?,?,?)"));
@@ -30,6 +29,8 @@ public class StoredProcedureUtilsTestCase extends AbstractMuleTestCase {
     assertEquals("doSomething", StoredProcedureUtils.getStoredProcedureName("{ call doSomething(?,?,?) }"));
     assertEquals("doSomething", StoredProcedureUtils.getStoredProcedureName("{    call doSomething(?,?,?) }"));
     assertEquals("doSomething", StoredProcedureUtils.getStoredProcedureName("{call doSomething(?,?,?) }"));
+    assertEquals("doSomething", StoredProcedureUtils.getStoredProcedureName("{ call schema.doSomething(?,?,?) }"));
+    assertEquals("doSomething", StoredProcedureUtils.getStoredProcedureName("{ call schema.package.doSomething(?,?,?) }"));
   }
 
   @Test
@@ -45,6 +46,27 @@ public class StoredProcedureUtilsTestCase extends AbstractMuleTestCase {
     assertEquals(Optional.of("schema"), StoredProcedureUtils.getStoreProcedureSchema("call schema.doSomething (?,?,?)"));
     assertEquals(Optional.of("schema"), StoredProcedureUtils.getStoreProcedureSchema("call schema.doSomething(?,?,?"));
     assertEquals(Optional.of("schema"), StoredProcedureUtils.getStoreProcedureSchema("{call schema.doSomething(?,?,?) }"));
+    assertEquals(Optional.of("schema"), StoredProcedureUtils.getStoreProcedureSchema("{call schema.doSomething(?,?,?) }"));
+    assertEquals(Optional.of("schema"),
+                 StoredProcedureUtils.getStoreProcedureSchema("{call schema.package.doSomething(?,?,?) }"));
+  }
+
+  @Test
+  public void getStoredProcedurePackage() throws Exception {
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("call doSomething(?,?,?)"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("call doSomething (?,?,?)"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("call doSomething   (?,?,?)"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("call   doSomething(?,?,?)"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("call   doSomething   (?,?,?)"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("{ call doSomething(?,?,?) }"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("{    call doSomething(?,?,?) }"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("{call doSomething(?,?,?) }"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("call schema.doSomething (?,?,?)"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("call schema.doSomething(?,?,?"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("{call schema.doSomething(?,?,?) }"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("{call schema.doSomething(?,?,?) }"));
+    assertEquals(Optional.of("package"),
+                 StoredProcedureUtils.getStoredProcedurePackage("{call schema.package.doSomething(?,?,?) }"));
   }
 
 }

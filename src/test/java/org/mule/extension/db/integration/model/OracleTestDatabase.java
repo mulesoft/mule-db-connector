@@ -597,4 +597,38 @@ public class OracleTestDatabase extends AbstractTestDatabase {
       }
     }
   }
+
+  public void createPackages(Connection connection) throws SQLException {
+    executeDdl(connection,
+               "CREATE OR REPLACE PACKAGE magicPackageVersionOne AS\n" +
+                   "  PROCEDURE addMagicalNumber(num IN OUT NUMBER);\n" +
+                   "END magicPackageVersionOne;");
+
+    executeDdl(connection,
+               "CREATE OR REPLACE PACKAGE BODY magicPackageVersionOne AS\n" +
+                   "  PROCEDURE addMagicalNumber(num IN OUT NUMBER) AS\n" +
+                   "    BEGIN\n" +
+                   "      num := num + 7;\n" +
+                   "    END addMagicalNumber;\n" +
+                   "END magicPackageVersionOne;");
+
+    executeDdl(connection,
+               "CREATE OR REPLACE PACKAGE magicPackageVersionTwo AS\n" +
+                   "  PROCEDURE addMagicalNumber(num IN OUT NUMBER, name OUT VARCHAR);\n" +
+                   "  PROCEDURE addMagicalNumberAndACard(num IN OUT NUMBER, name OUT VARCHAR);" +
+                   "END magicPackageVersionTwo;");
+
+    executeDdl(connection,
+               "CREATE OR REPLACE PACKAGE BODY magicPackageVersionTwo AS\n" +
+                   "  PROCEDURE addMagicalNumber(num IN OUT NUMBER, name OUT VARCHAR) AS\n" +
+                   "    BEGIN\n" +
+                   "     num := num + 9;\n" +
+                   "    END addMagicalNumber;\n" +
+                   "\n" +
+                   "  PROCEDURE addMagicalNumberAndACard(num IN OUT NUMBER, name OUT VARCHAR) AS\n" +
+                   "     BEGIN\n" +
+                   "        num := num + 11;\n" +
+                   "     END addMagicalNumberAndACard;\n" +
+                   "END magicPackageVersionTwo;");
+  }
 }

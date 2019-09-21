@@ -7,6 +7,7 @@
 package org.mule.extension.db.internal.resolver.param;
 
 import static java.lang.String.format;
+import static java.lang.String.join;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.TABLE_TYPE_NAME;
 import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoreProcedureSchema;
 import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoredProcedureName;
@@ -61,7 +62,6 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
   @Override
   public Map<Integer, DbType> getParameterTypes(DbConnection connection, QueryTemplate queryTemplate, List<ParameterType> types)
       throws SQLException {
-    ResultSet procedureColumns = null;
     DatabaseMetaData dbMetaData = connection.getJdbcConnection().getMetaData();
 
     String storedProcedureName = getStoredProcedureName(queryTemplate.getSqlText());
@@ -80,6 +80,7 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
       }
     }
 
+    ResultSet procedureColumns = null;
     try {
       if (connection instanceof OracleDbConnection && storedProcedurePackage != null) {
         // Since oracle does not have multiples catalog but it has packages the following is the recommend way to
@@ -87,36 +88,31 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
         procedureColumns =
             dbMetaData.getProcedureColumns(storedProcedurePackage, storedProcedureSchemaName, storedProcedureName, "%");
       } else {
-        procedureColumns = dbMetaData.getProcedureColumns(connection.getJdbcConnection().getCatalog(), storedProcedureSchemaName,
-                                                          storedProcedureName, "%");
+        String catalog = connection.getJdbcConnection().getCatalog();
+        procedureColumns = dbMetaData.getProcedureColumns(catalog, storedProcedureSchemaName, storedProcedureName, "%");
       }
 
-      Map<Integer, DbType> paramTypes = getStoredProcedureParamTypes(connection, storedProcedureName, procedureColumns);
-
-      // If still unable to resolve, remove all catalog and schema filters and use only stored procedure name and column
-      // pattern.
-      if (!getMissingParameters(queryTemplate, paramTypes).isEmpty()) {
+      if (procedureColumns.getFetchSize() == 0) {
         LOGGER
             .debug("Failed to get procedure types with schema {}, package {} and procedure {}. Removing all catalog and schema filters.",
                    storedProcedureSchemaName, storedProcedurePackage, storedProcedureName);
 
-        // In some cases invoke the following method can take a long time to return. For example with Oracle XE 11g
-        // using ojdbc7.
+        // In some cases invoke the following method can take a long time to return. So we should try avoid to get to
+        // this point
         // Also, if there is more than one stored procedure on the DB you may not get the correct stored procedure
         // description. This can happen with Oracle, where you can have stored procedures within packages and also
-        // overloaded procedures.
-        procedureColumns =
-            dbMetaData.getProcedureColumns(null, null, storedProcedureName, "%");
-
-        paramTypes = getStoredProcedureParamTypes(connection, storedProcedureName, procedureColumns);
+        // overloaded procedures
+        procedureColumns = dbMetaData.getProcedureColumns(null, null, storedProcedureName, "%");
       }
+
+      Map<Integer, DbType> paramTypes = getStoredProcedureParamTypes(connection, storedProcedureName, procedureColumns);
 
       List<String> missingParameters = getMissingParameters(queryTemplate, paramTypes);
       if (!missingParameters.isEmpty()) {
-        throw new SQLException(format("Could not find query parameters %s.", String.join(",", missingParameters)));
-      } else {
-        return paramTypes;
+        throw new SQLException(format("Could not find query parameters %s.", join(",", missingParameters)));
       }
+
+      return paramTypes;
 
     } finally {
       if (procedureColumns != null) {
@@ -140,17 +136,15 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
 
       int typeId = procedureColumns.getInt(TYPE_ID_COLUMN_INDEX);
       String typeName = procedureColumns.getString(TYPE_NAME_COLUMN_INDEX);
+      String parameterName = procedureColumns.getString(PARAM_NAME_COLUMN_INDEX);
 
-      if (LOGGER.isDebugEnabled()) {
-        String name = procedureColumns.getString(PARAM_NAME_COLUMN_INDEX);
-        LOGGER.debug("Resolved parameter type: Store procedure: {} Name: {} Index: {} Type ID: {} Type Name: {}",
-                     storedProcedureName, name, position, typeId, typeName);
-      }
+      LOGGER.debug("Resolved parameter type: Store procedure: {}, Name: {}, Index: {}, Type ID: {}, Type Name: {}",
+                   storedProcedureName, parameterName, position, typeId, typeName);
 
       DbType dbType = null;
       try {
         // TODO - MULE-15241 : Fix how DB Connector chooses ResolvedTypes
-        if (TABLE_TYPE_NAME.equals(typeName)) {
+        if (typeName.equals(TABLE_TYPE_NAME)) {
           String procedureName = procedureColumns.getString(PROCEDURE_NAME);
           String argumentName = procedureColumns.getString(PARAM_NAME_COLUMN_INDEX);
           String owner = procedureColumns.getString(PROCEDURE_SCHEM_COLUMN_INDEX);
@@ -167,6 +161,7 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
         // Type was not found in the type manager, but the DB knows about it
         dbType = new ResolvedDbType(typeId, typeName);
       }
+
       paramTypes.put(position, dbType);
       position++;
     }

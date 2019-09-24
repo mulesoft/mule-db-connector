@@ -8,6 +8,7 @@
 package org.mule.extension.db.internal.domain.connection;
 
 import static java.util.Optional.empty;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
@@ -17,6 +18,7 @@ import org.mule.runtime.extension.api.connectivity.TransactionalConnection;
 
 import java.sql.Array;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Struct;
@@ -134,6 +136,31 @@ public interface DbConnection extends TransactionalConnection {
    */
   default Struct createStruct(String typeName, Object[] values) throws SQLException {
     return getJdbcConnection().createStruct(typeName, values);
+  }
+
+
+  /**
+   * Retrieves a description of the given stored procedure parameter and result columns. For more information
+   * {@see DatabaseMetaData#getProcedureColumns}
+   * </p>
+   * Some Databases assign a different meaning to each parameter. You should override this method when needed.
+   *
+   * @param storedProcedureName the stored procedure name
+   * @param storedProcedureOwner the owner of the stored procedure
+   * @param storedProcedureParentOwner the owner of the owner of the stored procedure
+   * @param catalogName the catalog name where the stored procedure is defined
+   * @return <code>ResultSet</code> - each row describes a stored procedure parameter or column
+   * @throws SQLException if a database access error occurs
+   */
+  default ResultSet getProcedureColumns(String storedProcedureName, String storedProcedureOwner,
+                                        String storedProcedureParentOwner, String catalogName)
+      throws SQLException {
+    DatabaseMetaData dbMetaData = getJdbcConnection().getMetaData();
+    if (!isBlank(storedProcedureOwner)) {
+      return dbMetaData.getProcedureColumns(catalogName, storedProcedureOwner, storedProcedureName, "%");
+    } else {
+      return dbMetaData.getProcedureColumns(catalogName, null, storedProcedureName, "%");
+    }
   }
 
   /**

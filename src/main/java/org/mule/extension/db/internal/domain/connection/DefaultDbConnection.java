@@ -10,15 +10,15 @@ package org.mule.extension.db.internal.domain.connection;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.extension.db.api.param.JdbcType.BLOB;
 import static org.mule.extension.db.api.param.JdbcType.CLOB;
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 import static org.mule.runtime.core.api.util.IOUtils.toByteArray;
+
 import org.mule.extension.db.api.exception.connection.ConnectionClosingException;
 import org.mule.extension.db.internal.domain.connection.type.resolver.ArrayTypeResolver;
-import org.mule.extension.db.internal.domain.connection.type.resolver.StructTypeResolver;
 import org.mule.extension.db.internal.domain.connection.type.resolver.StructAndArrayTypeResolver;
+import org.mule.extension.db.internal.domain.connection.type.resolver.StructTypeResolver;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
 import org.mule.extension.db.internal.result.resultset.ResultSetHandler;

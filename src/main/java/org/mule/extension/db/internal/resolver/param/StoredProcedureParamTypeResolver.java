@@ -123,7 +123,7 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
       DbType dbType = null;
       try {
         // TODO - MULE-15241 : Fix how DB Connector chooses ResolvedTypes
-        if (typeName.equals(TABLE_TYPE_NAME)) {
+        if (TABLE_TYPE_NAME.equals(typeName)) {
           String procedureName = procedureColumns.getString(PROCEDURE_NAME);
           String argumentName = procedureColumns.getString(PARAM_NAME_COLUMN_INDEX);
           String owner = procedureColumns.getString(PROCEDURE_SCHEM_COLUMN_INDEX);

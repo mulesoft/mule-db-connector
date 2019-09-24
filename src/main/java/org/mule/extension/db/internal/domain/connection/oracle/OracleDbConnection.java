@@ -208,7 +208,7 @@ public class OracleDbConnection extends DefaultDbConnection {
     String connectionSchema;
     try {
       connectionSchema = getJdbcConnection().getSchema();
-    } catch (Exception e) {
+    } catch (Throwable t) {
       LOGGER
           .warn("You are using a not supported jdbc driver version. Consider to upgrade to a new version to guarantee a better performance.");
       connectionSchema = null;

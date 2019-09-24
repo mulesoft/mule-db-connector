@@ -7,8 +7,10 @@
 package org.mule.extension.db.internal.domain.connection.oracle;
 
 import static java.util.Optional.ofNullable;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
+
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.connection.type.resolver.ArrayTypeResolver;
 import org.mule.extension.db.internal.domain.connection.type.resolver.StructAndArrayTypeResolver;
@@ -19,6 +21,7 @@ import org.mule.extension.db.internal.domain.type.oracle.OracleXmlType;
 import java.lang.reflect.Method;
 import java.sql.Array;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,12 +34,17 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * {@link DefaultDbConnection} implementation for Oracle databases
  *
  * @since 1.0
  */
 public class OracleDbConnection extends DefaultDbConnection {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(OracleDbConnection.class);
 
   public static final String TABLE_TYPE_NAME = "TABLE";
 
@@ -174,6 +182,59 @@ public class OracleDbConnection extends DefaultDbConnection {
       }
     }
     return dataTypes;
+  }
+
+  @Override
+  public ResultSet getProcedureColumns(String storedProcedureName, String storedProcedureOwner, String storedProcedureParentOwner,
+                                       String catalogName)
+      throws SQLException {
+    /*
+     * Since Oracle does not have multiples catalog but it has packages, the recommended way to get a procedure description
+     * of a procedure within a package is to use the argument named catalog of DatabaseMetaData#getProcedureColumns to
+     * specify the package name.
+     *
+     * Under certain circumstances calling DatabaseMetaData#getProcedureColumns not specifying schema, package, and
+     * catalog might take too long to resolve. For this reason we try to call this method avoiding any null value.
+     *
+     * When the owner is defined but the parent owner it is not, we cannot know whether a stored procedure owner is a
+     * schema or a package. In this case we try first considering the owner as the package and using the schema from the
+     * connection. If that fails to find the procedure, we considered the owner as the schema.
+     *
+     * If we cannot find the stored procedure under the specified schema and/or package we try specifying only the stored
+     * procedure name.
+     */
+    DatabaseMetaData dbMetaData = getJdbcConnection().getMetaData();
+
+    String connectionSchema;
+    try {
+      connectionSchema = getJdbcConnection().getSchema();
+    } catch (Exception e) {
+      LOGGER
+          .warn("You are using a not supported jdbc driver version. Consider to upgrade to a new version to guarantee a better performance.");
+      connectionSchema = null;
+    }
+
+    ResultSet procedureColumns;
+    if (!isBlank(storedProcedureParentOwner) && !isBlank(storedProcedureOwner)) {
+      procedureColumns =
+          dbMetaData.getProcedureColumns(storedProcedureParentOwner, storedProcedureOwner, storedProcedureName, "%");
+    } else if (!isBlank(storedProcedureOwner)) {
+      procedureColumns = dbMetaData.getProcedureColumns(storedProcedureOwner, connectionSchema, storedProcedureName, "%");
+      if (!procedureColumns.isBeforeFirst()) {
+        procedureColumns = dbMetaData.getProcedureColumns(catalogName, storedProcedureOwner, storedProcedureName, "%");
+      }
+    } else {
+      procedureColumns = dbMetaData.getProcedureColumns(catalogName, connectionSchema, storedProcedureName, "%");
+    }
+
+    if (!procedureColumns.isBeforeFirst()) {
+      LOGGER
+          .debug("Failed to get procedure types with schema {}, package {} and procedure {}. Removing all catalog and schema filters.",
+                 storedProcedureOwner, storedProcedureParentOwner, storedProcedureName);
+      procedureColumns = dbMetaData.getProcedureColumns(null, null, storedProcedureName, "%");
+    }
+
+    return procedureColumns;
   }
 
 }

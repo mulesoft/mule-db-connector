@@ -35,38 +35,38 @@ public class StoredProcedureUtilsTestCase extends AbstractMuleTestCase {
 
   @Test
   public void getStoredProcedureSchema() throws Exception {
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoreProcedureSchema("call doSomething(?,?,?)"));
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoreProcedureSchema("call doSomething (?,?,?)"));
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoreProcedureSchema("call doSomething   (?,?,?)"));
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoreProcedureSchema("call   doSomething(?,?,?)"));
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoreProcedureSchema("call   doSomething   (?,?,?)"));
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoreProcedureSchema("{ call doSomething(?,?,?) }"));
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoreProcedureSchema("{    call doSomething(?,?,?) }"));
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoreProcedureSchema("{call doSomething(?,?,?) }"));
-    assertEquals(Optional.of("schema"), StoredProcedureUtils.getStoreProcedureSchema("call schema.doSomething (?,?,?)"));
-    assertEquals(Optional.of("schema"), StoredProcedureUtils.getStoreProcedureSchema("call schema.doSomething(?,?,?"));
-    assertEquals(Optional.of("schema"), StoredProcedureUtils.getStoreProcedureSchema("{call schema.doSomething(?,?,?) }"));
-    assertEquals(Optional.of("schema"), StoredProcedureUtils.getStoreProcedureSchema("{call schema.doSomething(?,?,?) }"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoreProcedureOwner("call doSomething(?,?,?)"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoreProcedureOwner("call doSomething (?,?,?)"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoreProcedureOwner("call doSomething   (?,?,?)"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoreProcedureOwner("call   doSomething(?,?,?)"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoreProcedureOwner("call   doSomething   (?,?,?)"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoreProcedureOwner("{ call doSomething(?,?,?) }"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoreProcedureOwner("{    call doSomething(?,?,?) }"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoreProcedureOwner("{call doSomething(?,?,?) }"));
+    assertEquals(Optional.of("schema"), StoredProcedureUtils.getStoreProcedureOwner("call schema.doSomething (?,?,?)"));
+    assertEquals(Optional.of("schema"), StoredProcedureUtils.getStoreProcedureOwner("call schema.doSomething(?,?,?"));
+    assertEquals(Optional.of("schema"), StoredProcedureUtils.getStoreProcedureOwner("{call schema.doSomething(?,?,?) }"));
+    assertEquals(Optional.of("schema"), StoredProcedureUtils.getStoreProcedureOwner("{call schema.doSomething(?,?,?) }"));
     assertEquals(Optional.of("schema"),
-                 StoredProcedureUtils.getStoreProcedureSchema("{call schema.package.doSomething(?,?,?) }"));
+                 StoredProcedureUtils.getStoreProcedureOwner("{call schema.package.doSomething(?,?,?) }"));
   }
 
   @Test
   public void getStoredProcedurePackage() throws Exception {
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("call doSomething(?,?,?)"));
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("call doSomething (?,?,?)"));
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("call doSomething   (?,?,?)"));
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("call   doSomething(?,?,?)"));
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("call   doSomething   (?,?,?)"));
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("{ call doSomething(?,?,?) }"));
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("{    call doSomething(?,?,?) }"));
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("{call doSomething(?,?,?) }"));
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("call schema.doSomething (?,?,?)"));
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("call schema.doSomething(?,?,?"));
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("{call schema.doSomething(?,?,?) }"));
-    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedurePackage("{call schema.doSomething(?,?,?) }"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedureParentOwner("call doSomething(?,?,?)"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedureParentOwner("call doSomething (?,?,?)"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedureParentOwner("call doSomething   (?,?,?)"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedureParentOwner("call   doSomething(?,?,?)"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedureParentOwner("call   doSomething   (?,?,?)"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedureParentOwner("{ call doSomething(?,?,?) }"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedureParentOwner("{    call doSomething(?,?,?) }"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedureParentOwner("{call doSomething(?,?,?) }"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedureParentOwner("call schema.doSomething (?,?,?)"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedureParentOwner("call schema.doSomething(?,?,?"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedureParentOwner("{call schema.doSomething(?,?,?) }"));
+    assertEquals(Optional.empty(), StoredProcedureUtils.getStoredProcedureParentOwner("{call schema.doSomething(?,?,?) }"));
     assertEquals(Optional.of("package"),
-                 StoredProcedureUtils.getStoredProcedurePackage("{call schema.package.doSomething(?,?,?) }"));
+                 StoredProcedureUtils.getStoredProcedureParentOwner("{call schema.package.doSomething(?,?,?) }"));
   }
 
 }

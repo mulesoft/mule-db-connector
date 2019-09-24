@@ -45,15 +45,14 @@ public class StoredProcedureUtils {
   }
 
   /**
-   * Gets the Schema of the stored procedure of the given SQL Query.
-   * </p>
-   * The schema will be first part of Stored Procedure identifier, {@see StoredProcedureUtilsTestCase}.
+   * Gets the owner of the stored procedure of the given SQL Query. Normally the owner will be a schema, although in
+   * case of Oracle it can be a package.
    *
    * @param sqlText the SQL Query text
    * @return an {@link Optional} with the Schema of the stored procedure
    * @throws SQLException if the SQL Query syntax is not valid
    */
-  public static Optional<String> getStoreProcedureSchema(String sqlText) throws SQLException {
+  public static Optional<String> getStoreProcedureOwner(String sqlText) throws SQLException {
     Matcher matcher = storedProcedurePattern.matcher(sqlText);
 
     if (!matcher.matches()) {
@@ -78,17 +77,14 @@ public class StoredProcedureUtils {
   }
 
   /**
-   * Gets the package of the stored procedure of the given SQL Query.This has sense only for Oracle, where Stored
-   * procedures can be defined within packages.
-   * </p>
-   * The package will be second part of the stored procedure identifier. This means that to be able to get the package
-   * the SQL call statement needs to define both the schema and the package , {@see StoredProcedureUtilsTestCase}.
+   * Gets the owner of the owner of the stored procedure of the given SQL Query. This has sense only for Oracle, where
+   * Stored procedures can be defined within packages which in turn will be defined under a schema.
    *
    * @param sqlText the SQL Query text
    * @return an {@link Optional} with the package of the stored procedure
    * @throws SQLException if the SQL Query syntax is not valid
    */
-  public static Optional<String> getStoredProcedurePackage(String sqlText) throws SQLException {
+  public static Optional<String> getStoredProcedureParentOwner(String sqlText) throws SQLException {
     Matcher matcher = storedProcedurePattern.matcher(sqlText);
 
     if (!matcher.matches()) {

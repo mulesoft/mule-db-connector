@@ -9,13 +9,12 @@ package org.mule.extension.db.internal.resolver.param;
 import static java.lang.String.format;
 import static java.lang.String.join;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.TABLE_TYPE_NAME;
-import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoreProcedureSchema;
+import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoreProcedureOwner;
 import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoredProcedureName;
-import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoredProcedurePackage;
+import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoredProcedureParentOwner;
 
 import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
-import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
 import org.mule.extension.db.internal.domain.param.QueryParam;
 import org.mule.extension.db.internal.domain.query.QueryTemplate;
 import org.mule.extension.db.internal.domain.type.ArrayResolvedDbType;
@@ -65,45 +64,25 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
     DatabaseMetaData dbMetaData = connection.getJdbcConnection().getMetaData();
 
     String storedProcedureName = getStoredProcedureName(queryTemplate.getSqlText());
-    String storedProcedureSchemaName = getStoreProcedureSchema(queryTemplate.getSqlText()).orElse(null);
-    String storedProcedurePackage = getStoredProcedurePackage(queryTemplate.getSqlText()).orElse(null);
+    String storedProcedureOwner = getStoreProcedureOwner(queryTemplate.getSqlText()).orElse(null);
+    String storedProcedureParentOwner = getStoredProcedureParentOwner(queryTemplate.getSqlText()).orElse(null);
 
     if (dbMetaData.storesUpperCaseIdentifiers()) {
       storedProcedureName = storedProcedureName.toUpperCase();
 
-      if (storedProcedureSchemaName != null) {
-        storedProcedureSchemaName = storedProcedureSchemaName.toUpperCase();
+      if (storedProcedureOwner != null) {
+        storedProcedureOwner = storedProcedureOwner.toUpperCase();
       }
 
-      if (storedProcedurePackage != null) {
-        storedProcedurePackage = storedProcedurePackage.toUpperCase();
+      if (storedProcedureParentOwner != null) {
+        storedProcedureParentOwner = storedProcedureParentOwner.toUpperCase();
       }
     }
 
     ResultSet procedureColumns = null;
     try {
-      if (connection instanceof OracleDbConnection && storedProcedurePackage != null) {
-        // Since oracle does not have multiples catalog but it has packages the following is the recommend way to
-        // retrieve a stored procedure description of a stored procedure within a package
-        procedureColumns =
-            dbMetaData.getProcedureColumns(storedProcedurePackage, storedProcedureSchemaName, storedProcedureName, "%");
-      } else {
-        String catalog = connection.getJdbcConnection().getCatalog();
-        procedureColumns = dbMetaData.getProcedureColumns(catalog, storedProcedureSchemaName, storedProcedureName, "%");
-      }
-
-      if (procedureColumns.getFetchSize() == 0) {
-        LOGGER
-            .debug("Failed to get procedure types with schema {}, package {} and procedure {}. Removing all catalog and schema filters.",
-                   storedProcedureSchemaName, storedProcedurePackage, storedProcedureName);
-
-        // In some cases invoke the following method can take a long time to return. So we should try avoid to get to
-        // this point
-        // Also, if there is more than one stored procedure on the DB you may not get the correct stored procedure
-        // description. This can happen with Oracle, where you can have stored procedures within packages and also
-        // overloaded procedures
-        procedureColumns = dbMetaData.getProcedureColumns(null, null, storedProcedureName, "%");
-      }
+      procedureColumns = connection.getProcedureColumns(storedProcedureName, storedProcedureOwner, storedProcedureParentOwner,
+                                                        connection.getJdbcConnection().getCatalog());
 
       Map<Integer, DbType> paramTypes = getStoredProcedureParamTypes(connection, storedProcedureName, procedureColumns);
 

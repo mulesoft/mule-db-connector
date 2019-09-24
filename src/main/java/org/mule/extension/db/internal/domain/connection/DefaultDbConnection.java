@@ -10,6 +10,7 @@ package org.mule.extension.db.internal.domain.connection;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.extension.db.api.param.JdbcType.BLOB;
 import static org.mule.extension.db.api.param.JdbcType.CLOB;
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;

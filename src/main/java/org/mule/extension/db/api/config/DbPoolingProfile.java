@@ -73,6 +73,22 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
   @Expression(NOT_SUPPORTED)
   private TimeUnit maxWaitUnit;
 
+  /**
+   * Seconds a Connection can remain pooled but unused before being discarded. Zero means idle connections never expire. 
+   */
+  @Parameter
+  @Optional(defaultValue = "0")
+  @Expression(NOT_SUPPORTED)
+  private int maxIdleTime;
+
+  /**
+   * Number of seconds that Connections in excess of minPoolSize should be permitted to remain idle in the pool before being culled.
+   */
+  @Parameter
+  @Optional(defaultValue = "0")
+  @Expression(NOT_SUPPORTED)
+  private int maxIdleTimeExcessConnections;
+
 
   @Override
   public int getMaxPoolSize() {
@@ -106,7 +122,8 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
 
   @Override
   public int hashCode() {
-    return Objects.hash(minPoolSize, maxPoolSize, acquireIncrement, preparedStatementCacheSize, maxWaitUnit, maxWait);
+    return Objects.hash(minPoolSize, maxPoolSize, acquireIncrement, preparedStatementCacheSize, maxWaitUnit, maxWait, maxIdleTime,
+                        maxIdleTimeExcessConnections);
   }
 
   @Override
@@ -125,6 +142,16 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
         acquireIncrement == that.acquireIncrement &&
         preparedStatementCacheSize == that.preparedStatementCacheSize &&
         maxWait == that.maxWait &&
-        maxWaitUnit == that.maxWaitUnit;
+        maxWaitUnit == that.maxWaitUnit &&
+        maxIdleTime == that.maxIdleTime &&
+        maxIdleTimeExcessConnections == that.maxIdleTimeExcessConnections;
+  }
+
+  public int getMaxIdleTime() {
+    return maxIdleTime;
+  }
+
+  public int getMaxIdleTimeExcessConnections() {
+    return maxIdleTimeExcessConnections;
   }
 }

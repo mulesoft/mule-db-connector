@@ -7,7 +7,7 @@
 
     <db:config name="pooledJdbcConfig">
         <db:derby-connection database="target/muleEmbeddedDB" create="true" useXaTransactions="true">
-            <db:pooling-profile maxPoolSize="10" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
+            <db:pooling-profile maxPoolSize="10" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS" maxIdleTimeExcessConnections="60" maxIdleTime="60"/>
             <db:column-types>
                 <!-- Derby uses JAVA_OBJECT for UDT-->
                 <db:column-type typeName="CONTACT_DETAILS" id="2000"/>

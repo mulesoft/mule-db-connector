@@ -100,7 +100,7 @@ public class DataSourceFactory implements Disposable {
     }
   }
 
-  protected DataSource createPooledStandardDataSource(DataSource dataSource, DatabasePoolingProfile poolingProfile)
+  protected DataSource createPooledStandardDataSource(DataSource dataSource, DbPoolingProfile poolingProfile)
       throws SQLException {
     Map<String, Object> config = new HashMap<>();
     config.put("maxPoolSize", poolingProfile.getMaxPoolSize());
@@ -109,6 +109,7 @@ public class DataSourceFactory implements Disposable {
     config.put("checkoutTimeout", new Long(poolingProfile.getMaxWaitUnit().toMillis(poolingProfile.getMaxWait())).intValue());
     config.put("acquireIncrement", poolingProfile.getAcquireIncrement());
     config.put("maxStatements", 0);
+    config.put("maxIdleTime", poolingProfile.getMaxIdleTime());
     config.put("testConnectionOnCheckout", "true");
     config.put("maxStatementsPerConnection", poolingProfile.getPreparedStatementCacheSize());
 

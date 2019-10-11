@@ -73,6 +73,14 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
   @Expression(NOT_SUPPORTED)
   private TimeUnit maxWaitUnit;
 
+  /**
+   * Determines how many seconds a Connection can remain pooled but unused before being discarded.
+   * Zero means idle connections never expire.
+   */
+  @Parameter
+  @Optional(defaultValue = "0")
+  @Expression(NOT_SUPPORTED)
+  private int maxIdleTime;
 
   @Override
   public int getMaxPoolSize() {
@@ -107,6 +115,10 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
   @Override
   public int hashCode() {
     return Objects.hash(minPoolSize, maxPoolSize, acquireIncrement, preparedStatementCacheSize, maxWaitUnit, maxWait);
+  }
+
+  public int getMaxIdleTime() {
+    return maxIdleTime;
   }
 
   @Override

@@ -19,13 +19,7 @@ import static org.mule.extension.db.internal.domain.connection.oracle.OracleConn
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
 
-import com.mysql.jdbc.PreparedStatement;
-
-import java.sql.Array;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Optional;
 

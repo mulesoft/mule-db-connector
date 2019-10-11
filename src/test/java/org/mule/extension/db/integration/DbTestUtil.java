@@ -13,10 +13,10 @@ import static org.junit.Assert.assertTrue;
 import javax.sql.DataSource;
 
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
-import com.mysql.jdbc.Statement;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapListHandler;
 

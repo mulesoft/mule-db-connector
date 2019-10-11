@@ -78,19 +78,9 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
    * Zero means idle connections never expire.
    */
   @Parameter
-  @Optional(defaultValue = "120")
+  @Optional(defaultValue = "0")
   @Expression(NOT_SUPPORTED)
   private int maxIdleTime;
-
-  /**
-   * Number of seconds that Connections in excess of minPoolSize should be permitted to remain idle
-   * in the pool before being culled. Zero means no enforcement, excess Connections are not idled out.
-   */
-  @Parameter
-  @Optional(defaultValue = "120")
-  @Expression(NOT_SUPPORTED)
-  private int maxIdleTimeExcessConnections;
-
 
   @Override
   public int getMaxPoolSize() {
@@ -129,10 +119,6 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
 
   public int getMaxIdleTime() {
     return maxIdleTime;
-  }
-
-  public int getMaxIdleTimeExcessConnections() {
-    return maxIdleTimeExcessConnections;
   }
 
   @Override

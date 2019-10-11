@@ -110,7 +110,6 @@ public class DataSourceFactory implements Disposable {
     config.put("acquireIncrement", poolingProfile.getAcquireIncrement());
     config.put("maxStatements", 0);
     config.put("maxIdleTime", poolingProfile.getMaxIdleTime());
-    config.put("maxIdleTimeExcessConnections", poolingProfile.getMaxIdleTimeExcessConnections());
     config.put("testConnectionOnCheckout", "true");
     config.put("maxStatementsPerConnection", poolingProfile.getPreparedStatementCacheSize());
 

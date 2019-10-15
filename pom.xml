@@ -272,7 +272,7 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>mysql:5.7</name>
+                                    <name>mysql:8.0.17</name>
                                     <run>
                                         <env>
                                             <MYSQL_ROOT_PASSWORD>password</MYSQL_ROOT_PASSWORD>

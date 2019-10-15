@@ -195,13 +195,9 @@ public class BulkOperations extends BaseDbOperations {
   }
 
   private List<List<QueryParamValue>> resolveParamSets(List<Map<String, Object>> values) {
-    return values.stream().map(map -> {
-      return map.entrySet().stream()
-          .map(entry -> {
-            return new QueryParamValue(entry.getKey(), entry.getValue());
-          })
-          .collect(toList());
-    })
+    return values.stream().map(map -> map.entrySet().stream()
+        .map(entry -> new QueryParamValue(entry.getKey(), entry.getValue()))
+        .collect(toList()))
         .collect(toList());
   }
 }

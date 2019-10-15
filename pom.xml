@@ -27,7 +27,7 @@
         <mockito-core.version>2.23.4</mockito-core.version>
         <xmlunit.version>1.6</xmlunit.version>
         <derbyVersion>10.11.1.1</derbyVersion>
-        <mySqlVersion>8.0.17Z</mySqlVersion>
+        <mySqlVersion>8.0.17</mySqlVersion>
         <caffeineVersion>2.8.0</caffeineVersion>
         <javax.transaction.version>1.2</javax.transaction.version>
         <xaPoolVersion>1.5.0</xaPoolVersion>

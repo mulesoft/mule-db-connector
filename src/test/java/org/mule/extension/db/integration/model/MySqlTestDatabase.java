@@ -197,7 +197,7 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
   public void createDelayFunction(DataSource dataSource) throws SQLException {
     executeDdl(dataSource, "DROP FUNCTION IF EXISTS DELAY;\n");
 
-    final String sql = "CREATE FUNCTION DELAY(seconds INTEGER) RETURNS INTEGER\n" + "BEGIN\n" + " DO SLEEP(seconds * 1000);\n"
+    final String sql = "CREATE FUNCTION DELAY(seconds INTEGER) RETURNS INTEGER DETERMINISTIC\n" + "BEGIN\n" + " DO SLEEP(seconds * 1000);\n"
         + " RETURN 1;\n" + "END;";
     createStoredProcedure(dataSource, sql);
   }

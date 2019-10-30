@@ -36,7 +36,7 @@ public class DbExceptionHandler extends ExceptionHandler {
                 return new ConnectionException(sqlException.getMessage(), sqlException);
               }
 
-              if (e instanceof BadSqlSyntaxException) {
+              if (e instanceof SQLSyntaxErrorException) {
                 return new BadSqlSyntaxException(sqlException.getMessage(), sqlException);
               }
 

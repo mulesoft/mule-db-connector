@@ -108,7 +108,7 @@ public class DefaultDbConnection implements DbConnection {
       }
       isTransactionActive = true;
     } catch (Exception e) {
-      throw new TransactionException(createStaticMessage("Could not start transaction: " + e.getMessage()), e);
+      throw new TransactionException(createStaticMessage("Could not begin transaction: " + e.getMessage()), e);
     }
   }
 
@@ -120,7 +120,7 @@ public class DefaultDbConnection implements DbConnection {
     try {
       jdbcConnection.commit();
     } catch (Exception e) {
-      throw new TransactionException(createStaticMessage("Could not start transaction: " + e.getMessage()), e);
+      throw new TransactionException(createStaticMessage("Could not commit transaction: " + e.getMessage()), e);
     } finally {
       isTransactionActive = false;
       abortStreaming();
@@ -135,7 +135,7 @@ public class DefaultDbConnection implements DbConnection {
     try {
       jdbcConnection.rollback();
     } catch (Exception e) {
-      throw new TransactionException(createStaticMessage("Could not start transaction: " + e.getMessage()), e);
+      throw new TransactionException(createStaticMessage("Could not rollback transaction: " + e.getMessage()), e);
     } finally {
       isTransactionActive = false;
       abortStreaming();

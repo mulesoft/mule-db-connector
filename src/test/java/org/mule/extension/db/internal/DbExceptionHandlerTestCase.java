@@ -13,7 +13,6 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.microsoft.sqlserver.jdbc.SQLServerException;
 import org.mule.extension.db.api.exception.connection.BadSqlSyntaxException;
 import org.mule.extension.db.api.exception.connection.QueryExecutionException;
 import org.mule.extension.db.internal.exception.DbExceptionHandler;

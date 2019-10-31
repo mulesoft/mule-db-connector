@@ -12,6 +12,9 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import com.microsoft.sqlserver.jdbc.SQLServerException;
+import org.mule.extension.db.api.exception.connection.BadSqlSyntaxException;
 import org.mule.extension.db.api.exception.connection.QueryExecutionException;
 import org.mule.extension.db.internal.exception.DbExceptionHandler;
 import org.mule.runtime.api.connection.ConnectionException;
@@ -20,6 +23,7 @@ import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
 import java.sql.SQLException;
+import java.sql.SQLSyntaxErrorException;
 
 import org.junit.Test;
 
@@ -50,6 +54,15 @@ public class DbExceptionHandlerTestCase extends AbstractMuleTestCase {
     Exception handledException = handler.enrichException(sqlException);
 
     assertThat(handledException, is(instanceOf(QueryExecutionException.class)));
+    assertThat(handledException.getCause(), is(sameInstance(sqlException)));
+  }
+
+  @Test
+  public void badSyntaxSqlException() {
+    SQLException sqlException = mock(SQLSyntaxErrorException.class);
+    Exception handledException = handler.enrichException(sqlException);
+
+    assertThat(handledException, is(instanceOf(BadSqlSyntaxException.class)));
     assertThat(handledException.getCause(), is(sameInstance(sqlException)));
   }
 

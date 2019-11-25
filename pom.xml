@@ -221,7 +221,7 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>slf4j-api</artifactId>
-                                <version>1.7.24</version>
+                                <version>1.7.29</version>
                             </dependency>
                             <dependency>
                                 <groupId>org.slf4j</groupId>
@@ -304,7 +304,7 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>slf4j-api</artifactId>
-                                <version>1.7.24</version>
+                                <version>1.7.29</version>
                             </dependency>
                             <dependency>
                                 <groupId>org.slf4j</groupId>
@@ -387,7 +387,7 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>slf4j-api</artifactId>
-                                <version>1.7.24</version>
+                                <version>1.7.29</version>
                             </dependency>
                             <dependency>
                                 <groupId>org.slf4j</groupId>

@@ -94,8 +94,9 @@ public class StatementResultIterator implements Iterator<SingleStatementResult> 
           }
         }
 
-        if (generatedKeys == null) {
-          moveToNextResult();
+        if (generatedKeys == null && !moveToNextResult() && statement.getUpdateCount() == NO_UPDATE_COUNT) {
+          cachedResult = currentOutputParam < outputParamsSize;
+          return cachedResult;
         }
       } else {
         isFirstInvocation = false;
@@ -174,14 +175,14 @@ public class StatementResultIterator implements Iterator<SingleStatementResult> 
     return generatedKeysResult;
   }
 
-  private void moveToNextResult() throws SQLException {
+  private boolean moveToNextResult() throws SQLException {
     if (connection.getJdbcConnection().getMetaData().supportsMultipleOpenResults()) {
-      statement.getMoreResults(Statement.KEEP_CURRENT_RESULT);
+      return statement.getMoreResults(Statement.KEEP_CURRENT_RESULT);
     } else {
       if (hasProcessedResultSet && resultSetHandler.requiresMultipleOpenedResults()) {
         throw new IllegalStateException("Database does not supports streaming of resultSets on stored procedures");
       } else {
-        statement.getMoreResults();
+        return statement.getMoreResults();
       }
     }
   }

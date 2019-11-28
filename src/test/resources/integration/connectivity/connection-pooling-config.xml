@@ -27,13 +27,6 @@
         </try>
     </flow>
 
-<<<<<<< Updated upstream
-    <flow name="selectQueryAndJoinWithDynamicConfig">
-        <try transactionalAction="ALWAYS_BEGIN">
-            <db:delete config-ref="limitedPoolPooledJdbcDynamicConfig">
-                <db:sql>select * from PLANET</db:sql>
-            </db:delete>
-=======
     <flow name="queryAndJoinDynamicConfig">
         <try transactionalAction="ALWAYS_BEGIN">
             <db:delete config-ref="pooledJdbcDynamicConfig">
@@ -51,7 +44,6 @@
                     </test:processor>
                 </on-error-continue>
             </error-handler>
->>>>>>> Stashed changes
         </try>
     </flow>
 

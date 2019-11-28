@@ -50,7 +50,7 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
 
   @Override
   protected String[] getFlowConfigurationResources() {
-    return new String[] {"integration/config/derby-pooling-db-config.xml",
+    return new String[] {"integration/config/derby-pooling-db-config.xml", "integration/config/mysql-db-config.xml",
         "integration/connectivity/connection-pooling-config.xml"};
   }
 

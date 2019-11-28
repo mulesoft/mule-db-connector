@@ -74,9 +74,15 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
+<<<<<<< Updated upstream
   public void limitsConnectionsWithDynamicConfigs() throws Exception {
     setConcurrentRequests(20);
     Message[] responses = request("selectQueryAndJoinWithDynamicConfig", 20);
+=======
+  public void limitsConnectionsWithDyanamicConfigs() throws Exception {
+    setConcurrentRequests(2);
+    Message[] responses = request("queryAndJoinDynamicConfig", 20);
+>>>>>>> Stashed changes
     assertThat(countSuccesses(responses), is(10));
     assertThat(countFailures(responses), is(10));
   }

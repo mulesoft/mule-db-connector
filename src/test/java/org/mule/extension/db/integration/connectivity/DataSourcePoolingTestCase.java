@@ -73,6 +73,14 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
     assertThat(countFailures(responses), is(1));
   }
 
+  @Test
+  public void limitsConnectionsWithDynamicConfigs() throws Exception {
+    setConcurrentRequests(20);
+    Message[] responses = request("selectQueryAndJoinWithDynamicConfig", 20);
+    assertThat(countSuccesses(responses), is(10));
+    assertThat(countFailures(responses), is(10));
+  }
+
   private Message[] request(String flowName, int times) throws Exception {
     Thread[] requests = new Thread[times];
     Message[] responses = new Message[times];

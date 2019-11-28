@@ -27,6 +27,14 @@
         </try>
     </flow>
 
+    <flow name="selectQueryAndJoinWithDynamicConfig">
+        <try transactionalAction="ALWAYS_BEGIN">
+            <db:delete config-ref="limitedPoolPooledJdbcDynamicConfig">
+                <db:sql>select * from PLANET</db:sql>
+            </db:delete>
+        </try>
+    </flow>
+
     <flow name="queryAndJoinSmallPollConnections">
         <try transactionalAction="ALWAYS_BEGIN">
             <db:delete config-ref="smallPoolPooledJdbcConfig">

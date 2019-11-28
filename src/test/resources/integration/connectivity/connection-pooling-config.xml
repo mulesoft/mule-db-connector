@@ -7,12 +7,6 @@
             http://www.mulesoft.org/schema/mule/test http://www.mulesoft.org/schema/mule/test/current/mule-test.xsd
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
-    <db:config name="pooledJdbcDynamicConfig">
-        <db:my-sql-connection host="#[p('0.0.0.0')]" port="3306" user="#[p('root')]" password="password" database="xe">
-            <db:pooling-profile maxPoolSize="20"/>
-        </db:my-sql-connection>
-    </db:config>
-
     <flow name="queryAndJoin">
         <try transactionalAction="ALWAYS_BEGIN">
             <db:delete config-ref="pooledJdbcConfig">

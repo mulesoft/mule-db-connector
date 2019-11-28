@@ -35,14 +35,4 @@
         </db:derby-connection>
     </db:config>
 
-    <db:config name="limitedPoolPooledJdbcDynamicConfig">
-        <db:derby-connection database="#[p('target/muleEmbeddedDB')]" create="true">
-            <db:pooling-profile maxPoolSize="10" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
-            <db:column-types>
-                <!-- Derby uses JAVA_OBJECT for UDT-->
-                <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
-            </db:column-types>
-        </db:derby-connection>
-    </db:config>
-
 </mule>

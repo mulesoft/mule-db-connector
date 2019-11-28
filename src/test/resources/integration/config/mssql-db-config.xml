@@ -11,4 +11,9 @@
         </db:mssql-connection>
     </db:config>
 
+    <db:config name="pooledJdbcDynamicConfig">
+        <db:mssql-connection host="#[p('0.0.0.0')]" user="sa" password="yourStrong(!)Password">
+            <db:pooling-profile maxPoolSize="10" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
+        </db:mssql-connection>
+    </db:config>
 </mule>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
-    <db:config name="dbConfig">
-        <db:my-sql-connection host="0.0.0.0" port="3306" user="root" password="password" database="xe">
-            <db:pooling-profile/>
+    <db:config name="pooledJdbcDynamicConfig">
+        <db:my-sql-connection host="#[p('0.0.0.0')]" port="3306" user="#[p('root')]" password="password" database="xe">
+            <db:pooling-profile maxPoolSize="20"/>
         </db:my-sql-connection>
     </db:config>
 

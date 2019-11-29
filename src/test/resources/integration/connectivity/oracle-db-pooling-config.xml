@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+            http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+
+    <db:config name="pooledJdbcConfig">
+        <db:oracle-connection host="0.0.0.0" port="1521" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
+            <db:pooling-profile maxPoolSize="2" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
+            <db:column-types>
+                <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
+            </db:column-types>
+        </db:oracle-connection>
+    </db:config>
+
+    <db:config name="waitForeverJdbcConfig">
+        <db:oracle-connection host="0.0.0.0" port="1521" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
+            <db:pooling-profile maxPoolSize="2" minPoolSize="0" />
+            <db:column-types>
+                <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
+            </db:column-types>
+        </db:oracle-connection>
+    </db:config>
+
+    <db:config name="smallPoolPooledJdbcConfig">
+        <db:oracle-connection host="0.0.0.0" port="1521" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
+            <db:pooling-profile maxPoolSize="1" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
+            <db:column-types>
+                <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
+            </db:column-types>
+        </db:oracle-connection>
+    </db:config>
+
+    <db:config name="smallPoolPooledJdbcDynamicConfig">
+        <db:oracle-connection host="0.0.0.0" port="1521" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
+            <db:pooling-profile maxPoolSize="1" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
+            <db:column-types>
+                <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
+            </db:column-types>
+        </db:oracle-connection>
+    </db:config>
+
+    <db:config name="largePooledJdbcDynamicConfig">
+        <db:oracle-connection host="0.0.0.0" port="1521" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
+            <db:pooling-profile maxPoolSize="10" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
+            <db:column-types>
+                <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
+            </db:column-types>
+        </db:oracle-connection>
+    </db:config>
+</mule>

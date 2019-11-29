@@ -32,6 +32,8 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
 
   private static final int TIMEOUT = 10;
   private static final TimeUnit TIMEOUT_UNIT = SECONDS;
+  private static final String DB_NAME_KEY = "db.name";
+  private static final String DB_NAME_VALUE = "target/muleEmbeddedDB";
   private static CountDownLatch connectionLatch;
 
   @Parameterized.Parameters(name = "{2}")
@@ -41,6 +43,7 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
 
   @Before
   public void setUp() {
+    System.setProperty(DB_NAME_KEY, DB_NAME_VALUE);
     setConcurrentRequests(2);
   }
 

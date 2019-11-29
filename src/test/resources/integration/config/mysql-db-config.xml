@@ -11,9 +11,4 @@
         </db:my-sql-connection>
     </db:config>
 
-    <db:config name="pooledJdbcDynamicConfig">
-        <db:my-sql-connection host="#[p('0.0.0.0')]" port="3306" user="#[p('root')]" password="password" database="xe">
-            <db:pooling-profile maxPoolSize="10" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
-        </db:my-sql-connection>
-    </db:config>
 </mule>

@@ -47,7 +47,7 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
     setConcurrentRequests(2);
   }
 
-  private void setConcurrentRequests(int count) {
+  protected void setConcurrentRequests(int count) {
     connectionLatch = new CountDownLatch(count);
   }
 
@@ -93,7 +93,7 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
   }
 
 
-  private Message[] request(String flowName, int times) throws Exception {
+  protected Message[] request(String flowName, int times) throws Exception {
     Thread[] requests = new Thread[times];
     Message[] responses = new Message[times];
 
@@ -136,11 +136,11 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
     }
   }
 
-  private int countSuccesses(Message... messages) {
+  protected int countSuccesses(Message... messages) {
     return count(message -> message.getPayload().getValue().equals("OK"), messages);
   }
 
-  private int countFailures(Message... messages) {
+  protected int countFailures(Message... messages) {
     return count(message -> message.getPayload().getValue().equals("FAIL"), messages);
   }
 

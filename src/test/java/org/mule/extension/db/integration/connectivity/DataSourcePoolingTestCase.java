@@ -67,10 +67,10 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void limitsConnections() throws Exception {
-    setConcurrentRequests(2);
-    Message[] responses = request("queryAndJoinSmallPollConnections", 2);
-    assertThat(countSuccesses(responses), is(1));
-    assertThat(countFailures(responses), is(1));
+    setConcurrentRequests(20);
+    Message[] responses = request("queryAndJoinSmallPollConnections", 20);
+    assertThat(countSuccesses(responses), is(10));
+    assertThat(countFailures(responses), is(10));
   }
 
   @Test

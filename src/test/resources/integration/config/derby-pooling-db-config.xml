@@ -36,7 +36,7 @@
     </db:config>
 
     <db:config name="pooledJdbcDynamicConfig">
-        <db:derby-connection database="#[p('target/muleEmbeddedDB')]" create="true">
+        <db:derby-connection database="target/muleEmbeddedDB" create="true">
             <db:pooling-profile maxPoolSize="10" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
             <db:column-types>
                 <!-- Derby uses JAVA_OBJECT for UDT-->

@@ -57,12 +57,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
 
 import org.junit.Before;
 import org.junit.runners.Parameterized;
+import org.slf4j.LoggerFactory;
 
 @RunnerDelegateTo(Parameterized.class)
 public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunctionalTestCase

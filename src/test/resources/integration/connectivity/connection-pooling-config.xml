@@ -28,20 +28,13 @@
     </flow>
 
     <flow name="queryAndJoinDynamicConfig">
-        <try transactionalAction="ALWAYS_BEGIN">
-            <db:select config-ref="pooledJdbcConfig">
+        <try>
+            <db:select config-ref="pooledJdbcDynamicConfig">
                 <db:sql>select * from PLANET</db:sql>
             </db:select>
-            <set-payload value="OK" />
-            <test:processor>
-                <test:callback class="org.mule.extension.db.integration.connectivity.DataSourcePoolingTestCase$JoinRequests"/>
-            </test:processor>
             <error-handler>
                 <on-error-continue>
-                    <set-payload value="FAIL" />
-                    <test:processor>
-                        <test:callback class="org.mule.extension.db.integration.connectivity.DataSourcePoolingTestCase$JoinRequests"/>
-                    </test:processor>
+                    <logger level="ERROR" message="#[payload]"/>
                 </on-error-continue>
             </error-handler>
         </try>

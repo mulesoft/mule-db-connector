@@ -30,7 +30,8 @@
     <flow name="queryAndJoinDynamicConfig">
         <try transactionalAction="ALWAYS_BEGIN">
             <db:delete config-ref="pooledJdbcDynamicConfig">
-                <db:sql>select * from PLANET</db:sql>
+                <db:sql>INSERT INTO PLANET(name)
+                    VALUES ('Saturn')</db:sql>
             </db:delete>
             <set-payload value="OK" />
             <test:processor>

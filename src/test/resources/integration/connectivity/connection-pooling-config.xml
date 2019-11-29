@@ -29,7 +29,7 @@
 
     <flow name="queryAndJoinDynamicConfig">
         <try transactionalAction="ALWAYS_BEGIN">
-            <db:select config-ref="pooledJdbcDynamicConfig">
+            <db:select config-ref="pooledJdbcConfig">
                 <db:sql>select * from PLANET</db:sql>
             </db:select>
             <set-payload value="OK" />

@@ -27,20 +27,68 @@
         </try>
     </flow>
 
-    <flow name="queryAndJoinDynamicConfig">
+    <flow name="queryAndJoinLargePoolDynamicConfig">
         <try>
-            <db:select config-ref="pooledJdbcDynamicConfig">
+            <db:select config-ref="largePooledJdbcDynamicConfig">
                 <db:sql>select * from PLANET</db:sql>
             </db:select>
+            <set-payload value="OK" />
+            <test:processor>
+                <test:callback class="org.mule.extension.db.integration.connectivity.DataSourcePoolingTestCase$JoinRequests"/>
+            </test:processor>
             <error-handler>
                 <on-error-continue>
                     <logger level="ERROR" message="#[payload]"/>
+                    <set-payload value="FAIL" />
+                    <test:processor>
+                        <test:callback class="org.mule.extension.db.integration.connectivity.DataSourcePoolingTestCase$JoinRequests"/>
+                    </test:processor>
                 </on-error-continue>
             </error-handler>
         </try>
     </flow>
 
-    <flow name="queryAndJoinSmallPollConnections">
+    <flow name="queryAndJoinSmallPoolDynamicConnections">
+        <try transactionalAction="ALWAYS_BEGIN">
+            <db:delete config-ref="smallPoolPooledJdbcDynamicConfig">
+                <db:sql>delete from PLANET</db:sql>
+            </db:delete>
+            <set-payload value="OK" />
+            <test:processor>
+                <test:callback class="org.mule.extension.db.integration.connectivity.DataSourcePoolingTestCase$JoinRequests"/>
+            </test:processor>
+            <error-handler>
+                <on-error-continue>
+                    <set-payload value="FAIL" />
+                    <test:processor>
+                        <test:callback class="org.mule.extension.db.integration.connectivity.DataSourcePoolingTestCase$JoinRequests"/>
+                    </test:processor>
+                </on-error-continue>
+            </error-handler>
+        </try>
+    </flow>
+
+    <flow name="queryAndJoinSmallPoolConnections">
+        <try transactionalAction="ALWAYS_BEGIN">
+            <db:delete config-ref="smallPoolPooledJdbcConfig">
+                <db:sql>delete from PLANET</db:sql>
+            </db:delete>
+            <set-payload value="OK" />
+            <test:processor>
+                <test:callback class="org.mule.extension.db.integration.connectivity.DataSourcePoolingTestCase$JoinRequests"/>
+            </test:processor>
+            <error-handler>
+                <on-error-continue>
+                    <set-payload value="FAIL" />
+                    <test:processor>
+                        <test:callback class="org.mule.extension.db.integration.connectivity.DataSourcePoolingTestCase$JoinRequests"/>
+                    </test:processor>
+                </on-error-continue>
+            </error-handler>
+        </try>
+    </flow>
+
+    <flow name="queryAndJoinSmallPoolConnections">
         <try transactionalAction="ALWAYS_BEGIN">
             <db:delete config-ref="smallPoolPooledJdbcConfig">
                 <db:sql>delete from PLANET</db:sql>

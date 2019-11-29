@@ -68,18 +68,27 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
   @Test
   public void limitsConnections() throws Exception {
     setConcurrentRequests(2);
-    Message[] responses = request("queryAndJoinSmallPollConnections", 2);
+    Message[] responses = request("queryAndJoinSmallPoolConnections", 2);
     assertThat(countSuccesses(responses), is(1));
     assertThat(countFailures(responses), is(1));
   }
 
   @Test
   public void limitsConnectionsWithDyanamicConfigs() throws Exception {
+    setConcurrentRequests(2);
+    Message[] responses = request("queryAndJoinSmallPoolDynamicConnections", 2);
+    assertThat(countSuccesses(responses), is(1));
+    assertThat(countFailures(responses), is(1));
+  }
+
+  @Test
+  public void limitsConnectionsWithLargePoolDyanamicConfigs() throws Exception {
     setConcurrentRequests(20);
-    Message[] responses = request("queryAndJoinDynamicConfig", 20);
+    Message[] responses = request("queryAndJoinLargePoolDynamicConfig", 20);
     assertThat(countSuccesses(responses), is(10));
     assertThat(countFailures(responses), is(10));
   }
+
 
   private Message[] request(String flowName, int times) throws Exception {
     Thread[] requests = new Thread[times];

@@ -85,7 +85,7 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
-  public void limitsConnectionsWithLargePoolDyanamicConfigs() throws Exception {
+  public void limitsConnectionsWithDynamicConfigs() throws Exception {
     setConcurrentRequests(100);
     Message[] responses = request("queryAndJoinLargePoolDynamicConfig", 100);
     assertThat(countSuccesses(responses), is(10));

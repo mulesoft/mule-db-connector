@@ -26,10 +26,10 @@ import java.util.Map;
  */
 public class DefaultParamTypeResolver implements ParamTypeResolver {
 
-  protected final DbTypeManager dbTypeManager;
+  private final DbTypeManager dbTypeManager;
   private ParamTypeResolver metadataParamTypeResolver;
 
-  protected DefaultParamTypeResolver(DbTypeManager dbTypeManager, ParamTypeResolver metadataParamTypeResolver) {
+  DefaultParamTypeResolver(DbTypeManager dbTypeManager, ParamTypeResolver metadataParamTypeResolver) {
     this.dbTypeManager = dbTypeManager;
     this.metadataParamTypeResolver = metadataParamTypeResolver;
   }
@@ -59,8 +59,8 @@ public class DefaultParamTypeResolver implements ParamTypeResolver {
     return resolvedParamTypes;
   }
 
-  protected Map<Integer, DbType> getParamTypesUsingMetadata(DbConnection connection, QueryTemplate queryTemplate,
-                                                            List<ParameterType> parameterTypes) {
+  private Map<Integer, DbType> getParamTypesUsingMetadata(DbConnection connection, QueryTemplate queryTemplate,
+                                                          List<ParameterType> parameterTypes) {
     Map<Integer, DbType> metadataParamTypes;
     try {
       metadataParamTypes = metadataParamTypeResolver.getParameterTypes(connection, queryTemplate, parameterTypes);

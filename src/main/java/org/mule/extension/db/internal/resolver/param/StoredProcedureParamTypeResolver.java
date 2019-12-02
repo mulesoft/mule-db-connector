@@ -8,6 +8,7 @@ package org.mule.extension.db.internal.resolver.param;
 
 import static java.lang.String.format;
 import static java.lang.String.join;
+import static java.lang.System.getProperty;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.TABLE_TYPE_NAME;
 import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoreProcedureOwner;
 import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoredProcedureName;
@@ -21,6 +22,7 @@ import org.mule.extension.db.internal.domain.type.ArrayResolvedDbType;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.DbTypeManager;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
+import org.mule.extension.db.internal.domain.type.UnknownDbType;
 import org.mule.extension.db.internal.domain.type.UnknownDbTypeException;
 
 import java.sql.DatabaseMetaData;
@@ -43,6 +45,8 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(StoredProcedureParamTypeResolver.class);
 
+  public static final String RETRIEVE_PARAM_TYPES = "mule.db.connector.retrieve.param.types";
+
   private static final int PROCEDURE_SCHEM_COLUMN_INDEX = 2;
   private static final int PROCEDURE_NAME = 3;
   private static final int PARAM_NAME_COLUMN_INDEX = 4;
@@ -59,7 +63,36 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
   }
 
   @Override
-  public Map<Integer, DbType> getParameterTypes(DbConnection connection, QueryTemplate queryTemplate, List<ParameterType> types)
+  public Map<Integer, DbType> getParameterTypes(DbConnection connection, QueryTemplate queryTemplate,
+                                                List<ParameterType> parameterTypesConfigured)
+      throws SQLException {
+
+    Map<Integer, DbType> parameters;
+    if (!shouldRetrieveParamTypesUsingUsingDBMetadata()) {
+      parameters = getParameterTypesFromConfiguration(queryTemplate, parameterTypesConfigured);
+      List<String> missingParameters = getMissingParameters(queryTemplate, parameters);
+      if (!missingParameters.isEmpty()) {
+        LOGGER
+            .warn("Failed to resolve Stored Procedure parameters types. Be sure all parameters are configured. Using DB metadata to retrieve Stored Procedure parameters types");
+        parameters = getStoredProcedureParamTypesUsingMetadata(connection, queryTemplate);
+        missingParameters = getMissingParameters(queryTemplate, parameters);
+        if (!missingParameters.isEmpty()) {
+          throw new SQLException(format("Could not find query parameters %s.", join(",", missingParameters)));
+        }
+      }
+      return parameters;
+    } else {
+      parameters = getStoredProcedureParamTypesUsingMetadata(connection, queryTemplate);
+      List<String> missingParameters = getMissingParameters(queryTemplate, parameters);
+      if (!missingParameters.isEmpty()) {
+        throw new SQLException(format("Could not find query parameters %s.", join(",", missingParameters)));
+      }
+
+      return parameters;
+    }
+  }
+
+  private Map<Integer, DbType> getStoredProcedureParamTypesUsingMetadata(DbConnection connection, QueryTemplate queryTemplate)
       throws SQLException {
     DatabaseMetaData dbMetaData = connection.getJdbcConnection().getMetaData();
 
@@ -79,26 +112,12 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
       }
     }
 
-    ResultSet procedureColumns = null;
-    try {
-      procedureColumns = connection.getProcedureColumns(storedProcedureName, storedProcedureOwner, storedProcedureParentOwner,
-                                                        connection.getJdbcConnection().getCatalog());
+    try (ResultSet procedureColumns =
+        connection.getProcedureColumns(storedProcedureName, storedProcedureOwner, storedProcedureParentOwner,
+                                       connection.getJdbcConnection().getCatalog())) {
 
-      Map<Integer, DbType> paramTypes = getStoredProcedureParamTypes(connection, storedProcedureName, procedureColumns);
-
-      List<String> missingParameters = getMissingParameters(queryTemplate, paramTypes);
-      if (!missingParameters.isEmpty()) {
-        throw new SQLException(format("Could not find query parameters %s.", join(",", missingParameters)));
-      }
-
-      return paramTypes;
-
-    } finally {
-      if (procedureColumns != null) {
-        procedureColumns.close();
-      }
+      return getStoredProcedureParamTypes(connection, storedProcedureName, procedureColumns);
     }
-
   }
 
   private Map<Integer, DbType> getStoredProcedureParamTypes(DbConnection connection, String storedProcedureName,
@@ -154,4 +173,37 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
         .map(QueryParam::getName)
         .collect(Collectors.toList());
   }
+
+  private boolean shouldRetrieveParamTypesUsingUsingDBMetadata() {
+    return Boolean.valueOf(getProperty(RETRIEVE_PARAM_TYPES, "true"));
+  }
+
+  private Map<Integer, DbType> getParameterTypesFromConfiguration(QueryTemplate queryTemplate,
+                                                                  List<ParameterType> parameterTypesConfigured) {
+    Map<Integer, DbType> paramTypes = new HashMap<>();
+
+    for (QueryParam queryParam : queryTemplate.getParams()) {
+
+      Optional<ParameterType> type =
+          parameterTypesConfigured.stream().filter(p -> p.getKey().equals(queryParam.getName())).findAny();
+
+      if (type.isPresent()) {
+        String parameterTypeName = type.get().getDbType().getName();
+
+        DbType dbType;
+
+        if (parameterTypeName == null) {
+          // Use unknown data type
+          dbType = UnknownDbType.getInstance();
+        } else {
+          dbType = type.get().getDbType();
+        }
+
+        paramTypes.put(queryParam.getIndex(), dbType);
+      }
+    }
+
+    return paramTypes;
+  }
+
 }

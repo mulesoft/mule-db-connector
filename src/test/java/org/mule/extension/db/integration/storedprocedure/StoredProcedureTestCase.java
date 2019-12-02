@@ -6,9 +6,9 @@
  */
 package org.mule.extension.db.integration.storedprocedure;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.rules.ExpectedException.none;
 import static org.hamcrest.CoreMatchers.startsWith;

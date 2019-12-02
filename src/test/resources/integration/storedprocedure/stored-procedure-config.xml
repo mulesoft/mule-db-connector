@@ -3,7 +3,7 @@
       xmlns:db="http://www.mulesoft.org/schema/mule/db"
       xmlns="http://www.mulesoft.org/schema/mule/core"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-            http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+                          http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
     <flow name="inOutParameterWithoutSpaceBeforeCall">
         <db:stored-procedure config-ref="dbConfig">
@@ -161,4 +161,17 @@
             </db:output-parameters>
         </db:stored-procedure>
     </flow>
+    
+    <flow name="addOneInputParameterWithTypedConfigured">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql>{ call mathFunction.addOne(:num) }</db:sql>
+            <db:parameter-types >
+                <db:parameter-type key="num" type="INTEGER" />
+            </db:parameter-types>
+            <db:in-out-parameters>
+                <db:in-out-parameter key="num" value="6"/>
+            </db:in-out-parameters>
+        </db:stored-procedure>
+    </flow>
+
 </mule>

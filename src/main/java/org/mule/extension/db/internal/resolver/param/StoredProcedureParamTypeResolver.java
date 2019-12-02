@@ -8,6 +8,9 @@ package org.mule.extension.db.internal.resolver.param;
 
 import static java.lang.String.format;
 import static java.lang.String.join;
+import static java.lang.System.getProperty;
+import static java.sql.Types.ARRAY;
+import static java.sql.Types.STRUCT;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.TABLE_TYPE_NAME;
 import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoreProcedureOwner;
 import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoredProcedureName;
@@ -20,10 +23,15 @@ import org.mule.extension.db.internal.domain.query.QueryTemplate;
 import org.mule.extension.db.internal.domain.type.ArrayResolvedDbType;
 import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.DbTypeManager;
+import org.mule.extension.db.internal.domain.type.DynamicDbType;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
+import org.mule.extension.db.internal.domain.type.StructDbType;
+import org.mule.extension.db.internal.domain.type.UnknownDbType;
 import org.mule.extension.db.internal.domain.type.UnknownDbTypeException;
 
 import java.sql.DatabaseMetaData;
+import java.sql.ParameterMetaData;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -43,6 +51,8 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(StoredProcedureParamTypeResolver.class);
 
+  private static final String RETRIEVE_PARAM_TYPES = "mule.db.connector.retrieve.param.types";
+
   private static final int PROCEDURE_SCHEM_COLUMN_INDEX = 2;
   private static final int PROCEDURE_NAME = 3;
   private static final int PARAM_NAME_COLUMN_INDEX = 4;
@@ -59,7 +69,18 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
   }
 
   @Override
-  public Map<Integer, DbType> getParameterTypes(DbConnection connection, QueryTemplate queryTemplate, List<ParameterType> types)
+  public Map<Integer, DbType> getParameterTypes(DbConnection connection, QueryTemplate queryTemplate,
+                                                List<ParameterType> parameterTypesConfigured)
+      throws SQLException {
+
+    if (!shouldRetrieveParamTypesUsingUsingDBMetadata()) {
+      return getParameterTypesFromConfiguration(connection, queryTemplate, parameterTypesConfigured);
+    } else {
+      return getStoredProcedureParamTypesUsingMetadata(connection, queryTemplate);
+    }
+  }
+
+  private Map<Integer, DbType> getStoredProcedureParamTypesUsingMetadata(DbConnection connection, QueryTemplate queryTemplate)
       throws SQLException {
     DatabaseMetaData dbMetaData = connection.getJdbcConnection().getMetaData();
 
@@ -79,10 +100,9 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
       }
     }
 
-    ResultSet procedureColumns = null;
-    try {
-      procedureColumns = connection.getProcedureColumns(storedProcedureName, storedProcedureOwner, storedProcedureParentOwner,
-                                                        connection.getJdbcConnection().getCatalog());
+    try (ResultSet procedureColumns =
+        connection.getProcedureColumns(storedProcedureName, storedProcedureOwner, storedProcedureParentOwner,
+                                       connection.getJdbcConnection().getCatalog())) {
 
       Map<Integer, DbType> paramTypes = getStoredProcedureParamTypes(connection, storedProcedureName, procedureColumns);
 
@@ -92,13 +112,7 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
       }
 
       return paramTypes;
-
-    } finally {
-      if (procedureColumns != null) {
-        procedureColumns.close();
-      }
     }
-
   }
 
   private Map<Integer, DbType> getStoredProcedureParamTypes(DbConnection connection, String storedProcedureName,
@@ -153,5 +167,69 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
         .filter(queryParam -> !paramTypes.containsKey(queryParam.getIndex()))
         .map(QueryParam::getName)
         .collect(Collectors.toList());
+  }
+
+  private boolean shouldRetrieveParamTypesUsingUsingDBMetadata() {
+    return Boolean.valueOf(getProperty(RETRIEVE_PARAM_TYPES, "true"));
+  }
+
+  private Map<Integer, DbType> getParameterTypesFromConfiguration(DbConnection connection, QueryTemplate queryTemplate,
+                                                                  List<ParameterType> parameterTypesConfigured)
+      throws SQLException {
+    Map<Integer, DbType> paramTypes = new HashMap<>();
+    PreparedStatement statement = null;
+    try {
+      statement = connection.getJdbcConnection().prepareCall(queryTemplate.getSqlText());
+      ParameterMetaData parameterMetaData = statement.getParameterMetaData();
+
+      for (QueryParam queryParam : queryTemplate.getParams()) {
+        int parameterTypeId = parameterMetaData.getParameterType(queryParam.getIndex());
+        Optional<ParameterType> type =
+            parameterTypesConfigured.stream().filter(p -> p.getKey().equals(queryParam.getName())).findAny();
+        String parameterTypeName =
+            type.isPresent() ? type.get().getDbType().getName() : parameterMetaData.getParameterTypeName(queryParam.getIndex());
+        DbType dbType;
+
+        if (parameterTypeName == null) {
+          // Use unknown data type
+          dbType = UnknownDbType.getInstance();
+        } else if (type.isPresent() && !(type.get().getDbType() instanceof DynamicDbType)) {
+          dbType = type.get().getDbType();
+        } else {
+          dbType = resolveDbType(connection, parameterTypeId, parameterTypeName);
+        }
+
+        paramTypes.put(queryParam.getIndex(), dbType);
+      }
+    } finally {
+      if (statement != null) {
+        try {
+          statement.close();
+        } catch (SQLException e) {
+          LOGGER.warn("Could not close statement", e);
+        }
+      }
+    }
+
+    return paramTypes;
+  }
+
+  private DbType resolveDbType(DbConnection connection, int typeId, String typeName) {
+    DbType dbType;
+    try {
+      dbType = dbTypeManager.lookup(connection, typeId, typeName);
+      // TODO - MULE-15241 : Fix how DB Connector chooses ResolvedTypes
+    } catch (UnknownDbTypeException e) {
+      // Type was not found in the type manager, but the DB knows about it
+      if (typeId == STRUCT) {
+        //Maybe is not defined the type on the Config, but we can still use it.
+        dbType = new StructDbType(typeId, typeName);
+      } else if (typeId == ARRAY) {
+        dbType = new ArrayResolvedDbType(typeId, typeName);
+      } else {
+        dbType = new ResolvedDbType(typeId, typeName);
+      }
+    }
+    return dbType;
   }
 }

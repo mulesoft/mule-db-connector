@@ -6,9 +6,9 @@
  */
 package org.mule.extension.db.integration.storedprocedure;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.rules.ExpectedException.none;
 
@@ -18,6 +18,7 @@ import org.mule.functional.api.exception.ExpectedError;
 import java.util.Map;
 
 import org.hamcrest.core.IsEqual;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,6 +41,11 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
     testDatabase.returnNullValue(getDefaultDataSource());
     testDatabase.createStoredProcedureAddOne(getDefaultDataSource());
     testDatabase.createStoredProcedureAddOneDefaultSchema(getDefaultDataSource());
+  }
+
+  @After
+  public void afterTest() {
+    System.clearProperty("mule.db.connector.retrieve.param.types");
   }
 
   @Override
@@ -121,6 +127,20 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
   @Test
   public void runStoredProcedureSpecifyingSchema() throws Exception {
     Map<String, Object> payload = runProcedure("addOne");
+    assertThat("7", equalTo(payload.get("num").toString()));
+  }
+
+  @Test
+  public void runStoredProcedureWhenRetrieveParamTypesSystemPropertyIsSetToFalse() throws Exception {
+    System.setProperty("mule.db.connector.retrieve.param.types", "false");
+    Map<String, Object> payload = runProcedure("addOneInputParameterWithTypedConfigured");
+    assertThat("7", equalTo(payload.get("num").toString()));
+  }
+
+  @Test
+  public void runStoredProcedureWhenRetrieveParamTypesSystemPropertyIsSetToTrue() throws Exception {
+    System.setProperty("mule.db.connector.retrieve.param.types", "true");
+    Map<String, Object> payload = runProcedure("addOneInputParameterWithTypedConfigured");
     assertThat("7", equalTo(payload.get("num").toString()));
   }
 

@@ -35,7 +35,7 @@ public class TestDbConfig {
    *  <ul>
    *    <li>Set this USE_MYSQL flag to true</li>
    *    <li>Download a docker MySQL image: <code>docker pull mysql</code></li>
-   *    <li>Start the container <code>docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=mysql -d mysql:latest</code></li>
+   *    <li>Start the container <code>docker run -p 3306:3306 --name some-mysql -e MYSQL_ROOT_PASSWORD=mysql -d mysql:latest</code></li>
    *  </ul>
    *
    *  Alternately, you can enable the system property <code>mysql</code>.

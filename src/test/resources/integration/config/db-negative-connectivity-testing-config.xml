@@ -22,7 +22,6 @@
         <db:my-sql-connection host="192.168.99.100" port="3306"/>
     </db:config>
 
-
     <db:config name="mySqlConfigInvalidDatabaseName">
         <db:my-sql-connection host="192.168.99.100" port="3306" database="invalidDB" password="my-secret-pw"
                               user="root"/>

@@ -11,10 +11,8 @@ import static java.lang.System.clearProperty;
 import static java.lang.System.setProperty;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mule.extension.db.integration.model.RegionManager.SOUTHWEST_MANAGER;
 
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
-import org.mule.runtime.api.message.Message;
 
 import java.util.Map;
 
@@ -26,14 +24,12 @@ public class StoredProcedureParamTypeResolutionTestCase extends AbstractDbIntegr
 
   @Override
   protected String[] getFlowConfigurationResources() {
-    return new String[] {"integration/storedprocedure/stored-procedure-udt-config.xml",
-        "integration/storedprocedure/stored-procedure-config.xml"};
+    return new String[] {"integration/storedprocedure/stored-procedure-config.xml"};
   }
 
   @Before
   public void setupStoredProcedure() throws Exception {
     testDatabase.createStoredProcedureAddOne(getDefaultDataSource());
-    testDatabase.createStoredProcedureGetManagerDetails(getDefaultDataSource());
   }
 
   @After
@@ -42,29 +38,15 @@ public class StoredProcedureParamTypeResolutionTestCase extends AbstractDbIntegr
   }
 
   @Test
-  public void runStoredProcedureThatReturnsCustomObjectResolvingParamNotUsingDBMetadata() throws Exception {
-    setProperty("mule.db.connector.retrieve.param.types", "false");
-    Message response = flowRunner("returnsObject").run().getMessage();
-    assertThat(response.getPayload().getValue(), equalTo(SOUTHWEST_MANAGER.getContactDetails()));
-  }
-
-  @Test
-  public void runStoredProcedureThatReturnsCustomObjectResolvingParamUsingDBMetadata() throws Exception {
+  public void runStoredProcedureResolvingParamUsingDBMetadata() throws Exception {
     setProperty("mule.db.connector.retrieve.param.types", "true");
-    Message response = flowRunner("returnsObject").run().getMessage();
-    assertThat(response.getPayload().getValue(), equalTo(SOUTHWEST_MANAGER.getContactDetails()));
-  }
-
-  @Test
-  public void runStoredProcedureResolvingParamNotUsingDBMetadata() throws Exception {
-    setProperty("mule.db.connector.retrieve.param.types", "false");
     Map<String, Object> payload = runProcedure("addOneInputParameterWithTypedConfigured");
     assertThat("7", equalTo(payload.get("num").toString()));
   }
 
   @Test
   public void runStoredProcedureResolvingParamUsingConfiguredTypes() throws Exception {
-    setProperty("mule.db.connector.retrieve.param.types", "true");
+    setProperty("mule.db.connector.retrieve.param.types", "false");
     Map<String, Object> payload = runProcedure("addOneInputParameterWithTypedConfigured");
     assertThat("7", equalTo(payload.get("num").toString()));
   }

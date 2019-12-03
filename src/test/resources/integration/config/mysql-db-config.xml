@@ -10,4 +10,5 @@
             <db:pooling-profile/>
         </db:my-sql-connection>
     </db:config>
+
 </mule>

@@ -9,8 +9,6 @@ package org.mule.extension.db.internal.resolver.param;
 import static java.lang.String.format;
 import static java.lang.String.join;
 import static java.lang.System.getProperty;
-import static java.sql.Types.ARRAY;
-import static java.sql.Types.STRUCT;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.TABLE_TYPE_NAME;
 import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoreProcedureOwner;
 import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoredProcedureName;
@@ -25,7 +23,6 @@ import org.mule.extension.db.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.type.DbTypeManager;
 import org.mule.extension.db.internal.domain.type.DynamicDbType;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
-import org.mule.extension.db.internal.domain.type.StructDbType;
 import org.mule.extension.db.internal.domain.type.UnknownDbType;
 import org.mule.extension.db.internal.domain.type.UnknownDbTypeException;
 
@@ -196,7 +193,7 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
         } else if (type.isPresent() && !(type.get().getDbType() instanceof DynamicDbType)) {
           dbType = type.get().getDbType();
         } else {
-          dbType = resolveDbType(connection, parameterTypeId, parameterTypeName);
+          dbType = ParameterTypeResolverUtils.resolveDbType(dbTypeManager, connection, parameterTypeId, parameterTypeName);
         }
 
         paramTypes.put(queryParam.getIndex(), dbType);
@@ -212,24 +209,5 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
     }
 
     return paramTypes;
-  }
-
-  private DbType resolveDbType(DbConnection connection, int typeId, String typeName) {
-    DbType dbType;
-    try {
-      dbType = dbTypeManager.lookup(connection, typeId, typeName);
-      // TODO - MULE-15241 : Fix how DB Connector chooses ResolvedTypes
-    } catch (UnknownDbTypeException e) {
-      // Type was not found in the type manager, but the DB knows about it
-      if (typeId == STRUCT) {
-        //Maybe is not defined the type on the Config, but we can still use it.
-        dbType = new StructDbType(typeId, typeName);
-      } else if (typeId == ARRAY) {
-        dbType = new ArrayResolvedDbType(typeId, typeName);
-      } else {
-        dbType = new ResolvedDbType(typeId, typeName);
-      }
-    }
-    return dbType;
   }
 }

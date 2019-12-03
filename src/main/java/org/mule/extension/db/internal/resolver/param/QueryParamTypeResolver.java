@@ -69,7 +69,7 @@ public class QueryParamTypeResolver implements ParamTypeResolver {
         } else if (type.isPresent() && !(type.get().getDbType() instanceof DynamicDbType)) {
           dbType = type.get().getDbType();
         } else {
-          dbType = resolveDbType(connection, parameterTypeId, parameterTypeName);
+          dbType = ParameterTypeResolverUtils.resolveDbType(dbTypeManager, connection, parameterTypeId, parameterTypeName);
         }
 
         paramTypes.put(queryParam.getIndex(), dbType);
@@ -87,22 +87,4 @@ public class QueryParamTypeResolver implements ParamTypeResolver {
     return paramTypes;
   }
 
-  private DbType resolveDbType(DbConnection connection, int typeId, String typeName) {
-    DbType dbType;
-    try {
-      dbType = dbTypeManager.lookup(connection, typeId, typeName);
-      // TODO - MULE-15241 : Fix how DB Connector chooses ResolvedTypes
-    } catch (UnknownDbTypeException e) {
-      // Type was not found in the type manager, but the DB knows about it
-      if (typeId == STRUCT) {
-        //Maybe is not defined the type on the Config, but we can still use it.
-        dbType = new StructDbType(typeId, typeName);
-      } else if (typeId == ARRAY) {
-        dbType = new ArrayResolvedDbType(typeId, typeName);
-      } else {
-        dbType = new ResolvedDbType(typeId, typeName);
-      }
-    }
-    return dbType;
-  }
 }

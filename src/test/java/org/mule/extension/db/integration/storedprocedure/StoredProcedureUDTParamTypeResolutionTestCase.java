@@ -61,14 +61,14 @@ public class StoredProcedureUDTParamTypeResolutionTestCase extends AbstractDbInt
   @Test
   public void runStoredProcedureThatReturnsCustomObjectResolvingParamNotUsingDBMetadata() throws Exception {
     setProperty("mule.db.connector.retrieve.param.types", "false");
-    Message response = flowRunner("returnsObject").run().getMessage();
+    Message response = flowRunner("returnsObjectConfiguredTypes").run().getMessage();
     assertThat(response.getPayload().getValue(), equalTo(SOUTHWEST_MANAGER.getContactDetails()));
   }
 
   @Test
   public void runStoredProcedureThatReturnsCustomObjectResolvingParamUsingDBMetadata() throws Exception {
     setProperty("mule.db.connector.retrieve.param.types", "true");
-    Message response = flowRunner("returnsObject").run().getMessage();
+    Message response = flowRunner("returnsObjectConfiguredTypes").run().getMessage();
     assertThat(response.getPayload().getValue(), equalTo(SOUTHWEST_MANAGER.getContactDetails()));
   }
 }

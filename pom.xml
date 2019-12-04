@@ -32,7 +32,7 @@
         <javax.transaction.version>1.2</javax.transaction.version>
         <xaPoolVersion>1.5.0</xaPoolVersion>
 
-        <docker.maven.plugin.version>0.25.2</docker.maven.plugin.version>
+        <docker.maven.plugin.version>0.31.0</docker.maven.plugin.version>
         <maven-replacer-plugin.version>1.5.3</maven-replacer-plugin.version>
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>

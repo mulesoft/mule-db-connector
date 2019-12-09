@@ -20,6 +20,7 @@ import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.connection.DbConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
+import org.mule.extension.db.internal.exception.SQLErrorCodeSQLExceptionTranslator;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
@@ -72,5 +73,10 @@ public class DerbyConnectionProvider extends DbConnectionProvider {
       return Optional.of(CANNOT_REACH);
     }
     return empty();
+  }
+
+  @Override
+  public SQLErrorCodeSQLExceptionTranslator getTranslator() {
+    return new SQLErrorCodeSQLExceptionTranslator("Apache Derby");
   }
 }

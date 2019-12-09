@@ -8,6 +8,7 @@ package org.mule.extension.db.internal.operation;
 
 import static org.mule.extension.db.api.param.DbNameConstants.SQL_QUERY_TEXT;
 import static org.mule.extension.db.internal.domain.query.QueryType.DDL;
+
 import org.mule.extension.db.api.param.QueryDefinition;
 import org.mule.extension.db.api.param.QuerySettings;
 import org.mule.extension.db.internal.DbConnector;

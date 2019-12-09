@@ -11,6 +11,7 @@ import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.extension.db.internal.domain.connection.DbConnectionProvider;
+import org.mule.extension.db.internal.exception.SQLErrorCodeSQLExceptionTranslator;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
@@ -42,5 +43,10 @@ public class GenericConnectionProvider extends DbConnectionProvider {
   @Override
   public Optional<DataSourceConfig> getDataSourceConfig() {
     return Optional.ofNullable(connectionParameters);
+  }
+
+  @Override
+  public SQLErrorCodeSQLExceptionTranslator getTranslator() {
+    return new SQLErrorCodeSQLExceptionTranslator(dataSource);
   }
 }

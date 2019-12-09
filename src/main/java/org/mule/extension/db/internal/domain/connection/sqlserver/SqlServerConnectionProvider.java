@@ -22,6 +22,7 @@ import org.mule.extension.db.api.exception.connection.DbError;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.connection.DbConnectionProvider;
+import org.mule.extension.db.internal.exception.SQLErrorCodeSQLExceptionTranslator;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
@@ -80,4 +81,8 @@ public class SqlServerConnectionProvider extends DbConnectionProvider {
     return empty();
   }
 
+  @Override
+  public SQLErrorCodeSQLExceptionTranslator getTranslator() {
+    return new SQLErrorCodeSQLExceptionTranslator("Microsoft SQL Server");
+  }
 }

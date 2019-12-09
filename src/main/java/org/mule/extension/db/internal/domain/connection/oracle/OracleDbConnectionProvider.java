@@ -21,6 +21,7 @@ import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.connection.DbConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.JdbcConnectionFactory;
+import org.mule.extension.db.internal.exception.SQLErrorCodeSQLExceptionTranslator;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
@@ -81,5 +82,10 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
       return of(CANNOT_REACH);
     }
     return empty();
+  }
+
+  @Override
+  public SQLErrorCodeSQLExceptionTranslator getTranslator() {
+    return new SQLErrorCodeSQLExceptionTranslator("Oracle");
   }
 }

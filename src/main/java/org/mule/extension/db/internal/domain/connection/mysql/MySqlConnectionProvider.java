@@ -20,6 +20,7 @@ import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CON
 import org.mule.extension.db.api.exception.connection.DbError;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.extension.db.internal.domain.connection.DbConnectionProvider;
+import org.mule.extension.db.internal.exception.SQLErrorCodeSQLExceptionTranslator;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
@@ -71,5 +72,10 @@ public class MySqlConnectionProvider extends DbConnectionProvider {
       return of(CANNOT_REACH);
     }
     return empty();
+  }
+
+  @Override
+  public SQLErrorCodeSQLExceptionTranslator getTranslator() {
+    return new SQLErrorCodeSQLExceptionTranslator("MySQL");
   }
 }

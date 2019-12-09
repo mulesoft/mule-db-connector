@@ -33,6 +33,7 @@ import org.mule.extension.db.internal.domain.type.MappedStructResolvedDbType;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
 import org.mule.extension.db.internal.domain.type.StructDbType;
 import org.mule.extension.db.internal.domain.xa.XADbConnection;
+import org.mule.extension.db.internal.exception.SQLErrorCodeSQLExceptionTranslator;
 import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
@@ -49,16 +50,17 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
-import javax.inject.Inject;
-import javax.sql.DataSource;
-import javax.sql.XAConnection;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+
+import javax.inject.Inject;
+import javax.sql.DataSource;
+import javax.sql.XAConnection;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -100,10 +102,11 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
   @Placement(tab = ADVANCED_TAB)
   private List<ColumnType> columnTypes = emptyList();
 
-
   private DataSourceFactory dataSourceFactory;
   private List<DbType> resolvedCustomTypes = emptyList();
   private JdbcConnectionFactory jdbcConnectionFactory = createJdbcConnectionFactory();
+  protected DataSource dataSource;
+  public SQLErrorCodeSQLExceptionTranslator translator;
 
   /**
    * Creates the {@link JdbcConnectionFactory} to use on this provider
@@ -113,8 +116,6 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
   protected JdbcConnectionFactory createJdbcConnectionFactory() {
     return new JdbcConnectionFactory();
   }
-
-  private DataSource dataSource;
 
   private java.util.Optional<DbError> getDbErrorType(Throwable t) {
     if (!(t instanceof SQLException)) {
@@ -215,6 +216,12 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
 
   public abstract java.util.Optional<DataSourceConfig> getDataSourceConfig();
 
+  public abstract SQLErrorCodeSQLExceptionTranslator getTranslator();
+
+  public SQLErrorCodeSQLExceptionTranslator obtainTranslator() {
+    return translator == null ? getTranslator() : translator;
+  }
+
   protected DbConnection createDbConnection(Connection connection) throws Exception {
     return new DefaultDbConnection(connection, resolvedCustomTypes);
   }
@@ -302,5 +309,16 @@ public abstract class DbConnectionProvider implements ConnectionProvider<DbConne
     return dbError
         .map(errorType -> new ConnectionCreationException(CONNECTION_ERROR_MESSAGE, e, errorType))
         .orElse(new ConnectionCreationException(CONNECTION_ERROR_MESSAGE, e, CONNECTIVITY));
+  }
+
+  private void enableDriverLogging() {
+    String driverPackage = System.getProperty("db.driver.logger.package");
+    String loggerLevel = System.getProperty("db.driver.logger.level");
+    if (driverPackage != null) {
+      java.util.logging.Logger logger = java.util.logging.Logger.getLogger(driverPackage);
+      if (loggerLevel != null) {
+        logger.setLevel(Level.parse(loggerLevel));
+      }
+    }
   }
 }

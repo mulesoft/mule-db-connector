@@ -1,0 +1,1273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="1.8.0_191" class="java.beans.XMLDecoder">
+ <object class="java.util.LinkedHashMap">
+  <void method="put">
+   <string>DB2</string>
+   <object class="org.mule.extension.db.internal.exception.SQLErrorCodes">
+    <void property="badSqlGrammarCodes">
+     <array class="java.lang.String" length="14">
+      <void index="0">
+       <string>-007</string>
+      </void>
+      <void index="1">
+       <string>-029</string>
+      </void>
+      <void index="2">
+       <string>-097</string>
+      </void>
+      <void index="3">
+       <string>-104</string>
+      </void>
+      <void index="4">
+       <string>-109</string>
+      </void>
+      <void index="5">
+       <string>-115</string>
+      </void>
+      <void index="6">
+       <string>-128</string>
+      </void>
+      <void index="7">
+       <string>-199</string>
+      </void>
+      <void index="8">
+       <string>-204</string>
+      </void>
+      <void index="9">
+       <string>-206</string>
+      </void>
+      <void index="10">
+       <string>-301</string>
+      </void>
+      <void index="11">
+       <string>-408</string>
+      </void>
+      <void index="12">
+       <string>-441</string>
+      </void>
+      <void index="13">
+       <string>-491</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataAccessResourceFailureCodes">
+     <array class="java.lang.String" length="2">
+      <void index="0">
+       <string>-904</string>
+      </void>
+      <void index="1">
+       <string>-971</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataIntegrityViolationCodes">
+     <array class="java.lang.String" length="9">
+      <void index="0">
+       <string>-407</string>
+      </void>
+      <void index="1">
+       <string>-530</string>
+      </void>
+      <void index="2">
+       <string>-531</string>
+      </void>
+      <void index="3">
+       <string>-532</string>
+      </void>
+      <void index="4">
+       <string>-543</string>
+      </void>
+      <void index="5">
+       <string>-544</string>
+      </void>
+      <void index="6">
+       <string>-545</string>
+      </void>
+      <void index="7">
+       <string>-603</string>
+      </void>
+      <void index="8">
+       <string>-667</string>
+      </void>
+     </array>
+    </void>
+    <void property="databaseProductName">
+     <string>DB2*</string>
+    </void>
+    <void property="deadlockLoserCodes">
+     <array class="java.lang.String" length="2">
+      <void index="0">
+       <string>-911</string>
+      </void>
+      <void index="1">
+       <string>-913</string>
+      </void>
+     </array>
+    </void>
+    <void property="duplicateKeyCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>-803</string>
+      </void>
+     </array>
+    </void>
+    <void property="transientDataAccessResourceCodes">
+     <array class="java.lang.String" length="4">
+      <void index="0">
+       <string>-1035</string>
+      </void>
+      <void index="1">
+       <string>-1218</string>
+      </void>
+      <void index="2">
+       <string>-30080</string>
+      </void>
+      <void index="3">
+       <string>-30081</string>
+      </void>
+     </array>
+    </void>
+   </object>
+  </void>
+  <void method="put">
+   <string>Derby</string>
+   <object class="org.mule.extension.db.internal.exception.SQLErrorCodes">
+    <void property="badSqlGrammarCodes">
+     <array class="java.lang.String" length="10">
+      <void index="0">
+       <string>42802</string>
+      </void>
+      <void index="1">
+       <string>42821</string>
+      </void>
+      <void index="2">
+       <string>42X01</string>
+      </void>
+      <void index="3">
+       <string>42X02</string>
+      </void>
+      <void index="4">
+       <string>42X03</string>
+      </void>
+      <void index="5">
+       <string>42X04</string>
+      </void>
+      <void index="6">
+       <string>42X05</string>
+      </void>
+      <void index="7">
+       <string>42X06</string>
+      </void>
+      <void index="8">
+       <string>42X07</string>
+      </void>
+      <void index="9">
+       <string>42X08</string>
+      </void>
+     </array>
+    </void>
+    <void property="cannotAcquireLockCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>40XL1</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataAccessResourceFailureCodes">
+     <array class="java.lang.String" length="3">
+      <void index="0">
+       <string>04501</string>
+      </void>
+      <void index="1">
+       <string>08004</string>
+      </void>
+      <void index="2">
+       <string>42Y07</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataIntegrityViolationCodes">
+     <array class="java.lang.String" length="6">
+      <void index="0">
+       <string>22001</string>
+      </void>
+      <void index="1">
+       <string>22005</string>
+      </void>
+      <void index="2">
+       <string>23502</string>
+      </void>
+      <void index="3">
+       <string>23503</string>
+      </void>
+      <void index="4">
+       <string>23513</string>
+      </void>
+      <void index="5">
+       <string>X0Y32</string>
+      </void>
+     </array>
+    </void>
+    <void property="databaseProductName">
+     <string>Apache Derby</string>
+    </void>
+    <void property="deadlockLoserCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>40001</string>
+      </void>
+     </array>
+    </void>
+    <void property="duplicateKeyCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>23505</string>
+      </void>
+     </array>
+    </void>
+    <void property="useSqlStateForTranslation">
+     <boolean>true</boolean>
+    </void>
+   </object>
+  </void>
+  <void method="put">
+   <string>H2</string>
+   <object class="org.mule.extension.db.internal.exception.SQLErrorCodes">
+    <void property="badSqlGrammarCodes">
+     <array class="java.lang.String" length="9">
+      <void index="0">
+       <string>42000</string>
+      </void>
+      <void index="1">
+       <string>42001</string>
+      </void>
+      <void index="2">
+       <string>42101</string>
+      </void>
+      <void index="3">
+       <string>42102</string>
+      </void>
+      <void index="4">
+       <string>42111</string>
+      </void>
+      <void index="5">
+       <string>42112</string>
+      </void>
+      <void index="6">
+       <string>42121</string>
+      </void>
+      <void index="7">
+       <string>42122</string>
+      </void>
+      <void index="8">
+       <string>42132</string>
+      </void>
+     </array>
+    </void>
+    <void property="cannotAcquireLockCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>50200</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataAccessResourceFailureCodes">
+     <array class="java.lang.String" length="5">
+      <void index="0">
+       <string>90046</string>
+      </void>
+      <void index="1">
+       <string>90100</string>
+      </void>
+      <void index="2">
+       <string>90117</string>
+      </void>
+      <void index="3">
+       <string>90121</string>
+      </void>
+      <void index="4">
+       <string>90126</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataIntegrityViolationCodes">
+     <array class="java.lang.String" length="13">
+      <void index="0">
+       <string>22001</string>
+      </void>
+      <void index="1">
+       <string>22003</string>
+      </void>
+      <void index="2">
+       <string>22012</string>
+      </void>
+      <void index="3">
+       <string>22018</string>
+      </void>
+      <void index="4">
+       <string>22025</string>
+      </void>
+      <void index="5">
+       <string>23000</string>
+      </void>
+      <void index="6">
+       <string>23002</string>
+      </void>
+      <void index="7">
+       <string>23003</string>
+      </void>
+      <void index="8">
+       <string>23502</string>
+      </void>
+      <void index="9">
+       <string>23503</string>
+      </void>
+      <void index="10">
+       <string>23506</string>
+      </void>
+      <void index="11">
+       <string>23507</string>
+      </void>
+      <void index="12">
+       <string>23513</string>
+      </void>
+     </array>
+    </void>
+    <void property="duplicateKeyCodes">
+     <array class="java.lang.String" length="2">
+      <void index="0">
+       <string>23001</string>
+      </void>
+      <void index="1">
+       <string>23505</string>
+      </void>
+     </array>
+    </void>
+   </object>
+  </void>
+  <void method="put">
+   <string>HDB</string>
+   <object class="org.mule.extension.db.internal.exception.SQLErrorCodes">
+    <void property="badSqlGrammarCodes">
+     <array class="java.lang.String" length="62">
+      <void index="0">
+       <string>257</string>
+      </void>
+      <void index="1">
+       <string>259</string>
+      </void>
+      <void index="2">
+       <string>260</string>
+      </void>
+      <void index="3">
+       <string>261</string>
+      </void>
+      <void index="4">
+       <string>262</string>
+      </void>
+      <void index="5">
+       <string>263</string>
+      </void>
+      <void index="6">
+       <string>264</string>
+      </void>
+      <void index="7">
+       <string>267</string>
+      </void>
+      <void index="8">
+       <string>268</string>
+      </void>
+      <void index="9">
+       <string>269</string>
+      </void>
+      <void index="10">
+       <string>270</string>
+      </void>
+      <void index="11">
+       <string>271</string>
+      </void>
+      <void index="12">
+       <string>272</string>
+      </void>
+      <void index="13">
+       <string>273</string>
+      </void>
+      <void index="14">
+       <string>275</string>
+      </void>
+      <void index="15">
+       <string>276</string>
+      </void>
+      <void index="16">
+       <string>277</string>
+      </void>
+      <void index="17">
+       <string>278</string>
+      </void>
+      <void index="18">
+       <string>278</string>
+      </void>
+      <void index="19">
+       <string>279</string>
+      </void>
+      <void index="20">
+       <string>280</string>
+      </void>
+      <void index="21">
+       <string>281</string>
+      </void>
+      <void index="22">
+       <string>282</string>
+      </void>
+      <void index="23">
+       <string>283</string>
+      </void>
+      <void index="24">
+       <string>284</string>
+      </void>
+      <void index="25">
+       <string>285</string>
+      </void>
+      <void index="26">
+       <string>286</string>
+      </void>
+      <void index="27">
+       <string>288</string>
+      </void>
+      <void index="28">
+       <string>289</string>
+      </void>
+      <void index="29">
+       <string>290</string>
+      </void>
+      <void index="30">
+       <string>294</string>
+      </void>
+      <void index="31">
+       <string>295</string>
+      </void>
+      <void index="32">
+       <string>296</string>
+      </void>
+      <void index="33">
+       <string>297</string>
+      </void>
+      <void index="34">
+       <string>299</string>
+      </void>
+      <void index="35">
+       <string>308</string>
+      </void>
+      <void index="36">
+       <string>309</string>
+      </void>
+      <void index="37">
+       <string>313</string>
+      </void>
+      <void index="38">
+       <string>315</string>
+      </void>
+      <void index="39">
+       <string>316</string>
+      </void>
+      <void index="40">
+       <string>318</string>
+      </void>
+      <void index="41">
+       <string>319</string>
+      </void>
+      <void index="42">
+       <string>320</string>
+      </void>
+      <void index="43">
+       <string>321</string>
+      </void>
+      <void index="44">
+       <string>322</string>
+      </void>
+      <void index="45">
+       <string>323</string>
+      </void>
+      <void index="46">
+       <string>324</string>
+      </void>
+      <void index="47">
+       <string>328</string>
+      </void>
+      <void index="48">
+       <string>329</string>
+      </void>
+      <void index="49">
+       <string>330</string>
+      </void>
+      <void index="50">
+       <string>333</string>
+      </void>
+      <void index="51">
+       <string>335</string>
+      </void>
+      <void index="52">
+       <string>336</string>
+      </void>
+      <void index="53">
+       <string>337</string>
+      </void>
+      <void index="54">
+       <string>338</string>
+      </void>
+      <void index="55">
+       <string>340</string>
+      </void>
+      <void index="56">
+       <string>343</string>
+      </void>
+      <void index="57">
+       <string>350</string>
+      </void>
+      <void index="58">
+       <string>351</string>
+      </void>
+      <void index="59">
+       <string>352</string>
+      </void>
+      <void index="60">
+       <string>362</string>
+      </void>
+      <void index="61">
+       <string>368</string>
+      </void>
+     </array>
+    </void>
+    <void property="cannotAcquireLockCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>131</string>
+      </void>
+     </array>
+    </void>
+    <void property="cannotSerializeTransactionCodes">
+     <array class="java.lang.String" length="2">
+      <void index="0">
+       <string>138</string>
+      </void>
+      <void index="1">
+       <string>143</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataAccessResourceFailureCodes">
+     <array class="java.lang.String" length="10">
+      <void index="0">
+       <string>-708</string>
+      </void>
+      <void index="1">
+       <string>-709</string>
+      </void>
+      <void index="2">
+       <string>-813</string>
+      </void>
+      <void index="3">
+       <string>1024</string>
+      </void>
+      <void index="4">
+       <string>1025</string>
+      </void>
+      <void index="5">
+       <string>1026</string>
+      </void>
+      <void index="6">
+       <string>1027</string>
+      </void>
+      <void index="7">
+       <string>1029</string>
+      </void>
+      <void index="8">
+       <string>1030</string>
+      </void>
+      <void index="9">
+       <string>1031</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataIntegrityViolationCodes">
+     <array class="java.lang.String" length="2">
+      <void index="0">
+       <string>461</string>
+      </void>
+      <void index="1">
+       <string>462</string>
+      </void>
+     </array>
+    </void>
+    <void property="databaseProductName">
+     <string>SAP HANA</string>
+    </void>
+    <void property="databaseProductNames">
+     <array class="java.lang.String" length="2">
+      <void index="0">
+       <string>SAP HANA</string>
+      </void>
+      <void index="1">
+       <string>SAP DB</string>
+      </void>
+     </array>
+    </void>
+    <void property="deadlockLoserCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>133</string>
+      </void>
+     </array>
+    </void>
+    <void property="duplicateKeyCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>301</string>
+      </void>
+     </array>
+    </void>
+    <void property="invalidResultSetAccessCodes">
+     <array class="java.lang.String" length="5">
+      <void index="0">
+       <string>-11210</string>
+      </void>
+      <void index="1">
+       <string>582</string>
+      </void>
+      <void index="2">
+       <string>587</string>
+      </void>
+      <void index="3">
+       <string>588</string>
+      </void>
+      <void index="4">
+       <string>594</string>
+      </void>
+     </array>
+    </void>
+    <void property="permissionDeniedCodes">
+     <array class="java.lang.String" length="2">
+      <void index="0">
+       <string>10</string>
+      </void>
+      <void index="1">
+       <string>258</string>
+      </void>
+     </array>
+    </void>
+   </object>
+  </void>
+  <void method="put">
+   <string>HSQL</string>
+   <object class="org.mule.extension.db.internal.exception.SQLErrorCodes">
+    <void property="badSqlGrammarCodes">
+     <array class="java.lang.String" length="2">
+      <void index="0">
+       <string>-22</string>
+      </void>
+      <void index="1">
+       <string>-28</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataAccessResourceFailureCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>-80</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataIntegrityViolationCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>-9</string>
+      </void>
+     </array>
+    </void>
+    <void property="databaseProductName">
+     <string>HSQL Database Engine</string>
+    </void>
+    <void property="duplicateKeyCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>-104</string>
+      </void>
+     </array>
+    </void>
+   </object>
+  </void>
+  <void method="put">
+   <string>Informix</string>
+   <object class="org.mule.extension.db.internal.exception.SQLErrorCodes">
+    <void property="badSqlGrammarCodes">
+     <array class="java.lang.String" length="3">
+      <void index="0">
+       <string>-201</string>
+      </void>
+      <void index="1">
+       <string>-217</string>
+      </void>
+      <void index="2">
+       <string>-696</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataIntegrityViolationCodes">
+     <array class="java.lang.String" length="2">
+      <void index="0">
+       <string>-11030</string>
+      </void>
+      <void index="1">
+       <string>-692</string>
+      </void>
+     </array>
+    </void>
+    <void property="databaseProductName">
+     <string>Informix Dynamic Server</string>
+    </void>
+    <void property="duplicateKeyCodes">
+     <array class="java.lang.String" length="3">
+      <void index="0">
+       <string>-239</string>
+      </void>
+      <void index="1">
+       <string>-268</string>
+      </void>
+      <void index="2">
+       <string>-6017</string>
+      </void>
+     </array>
+    </void>
+   </object>
+  </void>
+  <void method="put">
+   <string>MS-SQL</string>
+   <object class="org.mule.extension.db.internal.exception.SQLErrorCodes">
+    <void property="badSqlGrammarCodes">
+     <array class="java.lang.String" length="5">
+      <void index="0">
+       <string>156</string>
+      </void>
+      <void index="1">
+       <string>170</string>
+      </void>
+      <void index="2">
+       <string>207</string>
+      </void>
+      <void index="3">
+       <string>208</string>
+      </void>
+      <void index="4">
+       <string>209</string>
+      </void>
+     </array>
+    </void>
+    <void property="cannotAcquireLockCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>1222</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataAccessResourceFailureCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>4060</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataIntegrityViolationCodes">
+     <array class="java.lang.String" length="3">
+      <void index="0">
+       <string>544</string>
+      </void>
+      <void index="1">
+       <string>8114</string>
+      </void>
+      <void index="2">
+       <string>8115</string>
+      </void>
+     </array>
+    </void>
+    <void property="databaseProductName">
+     <string>Microsoft SQL Server</string>
+    </void>
+    <void property="deadlockLoserCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>1205</string>
+      </void>
+     </array>
+    </void>
+    <void property="duplicateKeyCodes">
+     <array class="java.lang.String" length="2">
+      <void index="0">
+       <string>2601</string>
+      </void>
+      <void index="1">
+       <string>2627</string>
+      </void>
+     </array>
+    </void>
+    <void property="permissionDeniedCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>229</string>
+      </void>
+     </array>
+    </void>
+   </object>
+  </void>
+  <void method="put">
+   <string>MySQL</string>
+   <object class="org.mule.extension.db.internal.exception.SQLErrorCodes">
+    <void property="badSqlGrammarCodes">
+     <array class="java.lang.String" length="3">
+      <void index="0">
+       <string>1054</string>
+      </void>
+      <void index="1">
+       <string>1064</string>
+      </void>
+      <void index="2">
+       <string>1146</string>
+      </void>
+     </array>
+    </void>
+    <void property="cannotAcquireLockCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>1205</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataAccessResourceFailureCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>1</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataIntegrityViolationCodes">
+     <array class="java.lang.String" length="12">
+      <void index="0">
+       <string>1169</string>
+      </void>
+      <void index="1">
+       <string>1215</string>
+      </void>
+      <void index="2">
+       <string>1216</string>
+      </void>
+      <void index="3">
+       <string>1217</string>
+      </void>
+      <void index="4">
+       <string>1364</string>
+      </void>
+      <void index="5">
+       <string>1451</string>
+      </void>
+      <void index="6">
+       <string>1452</string>
+      </void>
+      <void index="7">
+       <string>1557</string>
+      </void>
+      <void index="8">
+       <string>630</string>
+      </void>
+      <void index="9">
+       <string>839</string>
+      </void>
+      <void index="10">
+       <string>840</string>
+      </void>
+      <void index="11">
+       <string>893</string>
+      </void>
+     </array>
+    </void>
+    <void property="databaseProductName">
+     <string>MySQL</string>
+    </void>
+    <void property="databaseProductNames">
+     <array class="java.lang.String" length="2">
+      <void index="0">
+       <string>MySQL</string>
+      </void>
+      <void index="1">
+       <string>MariaDB</string>
+      </void>
+     </array>
+    </void>
+    <void property="deadlockLoserCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>1213</string>
+      </void>
+     </array>
+    </void>
+    <void property="duplicateKeyCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>1062</string>
+      </void>
+     </array>
+    </void>
+   </object>
+  </void>
+  <void method="put">
+   <string>Oracle</string>
+   <object class="org.mule.extension.db.internal.exception.SQLErrorCodes">
+    <void property="badSqlGrammarCodes">
+     <array class="java.lang.String" length="8">
+      <void index="0">
+       <string>17006</string>
+      </void>
+      <void index="1">
+       <string>6550</string>
+      </void>
+      <void index="2">
+       <string>900</string>
+      </void>
+      <void index="3">
+       <string>903</string>
+      </void>
+      <void index="4">
+       <string>904</string>
+      </void>
+      <void index="5">
+       <string>917</string>
+      </void>
+      <void index="6">
+       <string>936</string>
+      </void>
+      <void index="7">
+       <string>942</string>
+      </void>
+     </array>
+    </void>
+    <void property="cannotAcquireLockCodes">
+     <array class="java.lang.String" length="2">
+      <void index="0">
+       <string>30006</string>
+      </void>
+      <void index="1">
+       <string>54</string>
+      </void>
+     </array>
+    </void>
+    <void property="cannotSerializeTransactionCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>8177</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataAccessResourceFailureCodes">
+     <array class="java.lang.String" length="2">
+      <void index="0">
+       <string>17002</string>
+      </void>
+      <void index="1">
+       <string>17447</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataIntegrityViolationCodes">
+     <array class="java.lang.String" length="4">
+      <void index="0">
+       <string>1400</string>
+      </void>
+      <void index="1">
+       <string>1722</string>
+      </void>
+      <void index="2">
+       <string>2291</string>
+      </void>
+      <void index="3">
+       <string>2292</string>
+      </void>
+     </array>
+    </void>
+    <void property="deadlockLoserCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>60</string>
+      </void>
+     </array>
+    </void>
+    <void property="duplicateKeyCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>1</string>
+      </void>
+     </array>
+    </void>
+    <void property="invalidResultSetAccessCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>17003</string>
+      </void>
+     </array>
+    </void>
+   </object>
+  </void>
+  <void method="put">
+   <string>PostgreSQL</string>
+   <object class="org.mule.extension.db.internal.exception.SQLErrorCodes">
+    <void property="badSqlGrammarCodes">
+     <array class="java.lang.String" length="7">
+      <void index="0">
+       <string>03000</string>
+      </void>
+      <void index="1">
+       <string>42000</string>
+      </void>
+      <void index="2">
+       <string>42601</string>
+      </void>
+      <void index="3">
+       <string>42602</string>
+      </void>
+      <void index="4">
+       <string>42622</string>
+      </void>
+      <void index="5">
+       <string>42804</string>
+      </void>
+      <void index="6">
+       <string>42P01</string>
+      </void>
+     </array>
+    </void>
+    <void property="cannotAcquireLockCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>55P03</string>
+      </void>
+     </array>
+    </void>
+    <void property="cannotSerializeTransactionCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>40001</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataAccessResourceFailureCodes">
+     <array class="java.lang.String" length="4">
+      <void index="0">
+       <string>53000</string>
+      </void>
+      <void index="1">
+       <string>53100</string>
+      </void>
+      <void index="2">
+       <string>53200</string>
+      </void>
+      <void index="3">
+       <string>53300</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataIntegrityViolationCodes">
+     <array class="java.lang.String" length="4">
+      <void index="0">
+       <string>23000</string>
+      </void>
+      <void index="1">
+       <string>23502</string>
+      </void>
+      <void index="2">
+       <string>23503</string>
+      </void>
+      <void index="3">
+       <string>23514</string>
+      </void>
+     </array>
+    </void>
+    <void property="deadlockLoserCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>40P01</string>
+      </void>
+     </array>
+    </void>
+    <void property="duplicateKeyCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>23505</string>
+      </void>
+     </array>
+    </void>
+    <void property="useSqlStateForTranslation">
+     <boolean>true</boolean>
+    </void>
+   </object>
+  </void>
+  <void method="put">
+   <string>Sybase</string>
+   <object class="org.mule.extension.db.internal.exception.SQLErrorCodes">
+    <void property="badSqlGrammarCodes">
+     <array class="java.lang.String" length="22">
+      <void index="0">
+       <string>101</string>
+      </void>
+      <void index="1">
+       <string>102</string>
+      </void>
+      <void index="2">
+       <string>103</string>
+      </void>
+      <void index="3">
+       <string>104</string>
+      </void>
+      <void index="4">
+       <string>105</string>
+      </void>
+      <void index="5">
+       <string>106</string>
+      </void>
+      <void index="6">
+       <string>107</string>
+      </void>
+      <void index="7">
+       <string>108</string>
+      </void>
+      <void index="8">
+       <string>109</string>
+      </void>
+      <void index="9">
+       <string>110</string>
+      </void>
+      <void index="10">
+       <string>111</string>
+      </void>
+      <void index="11">
+       <string>112</string>
+      </void>
+      <void index="12">
+       <string>113</string>
+      </void>
+      <void index="13">
+       <string>116</string>
+      </void>
+      <void index="14">
+       <string>120</string>
+      </void>
+      <void index="15">
+       <string>121</string>
+      </void>
+      <void index="16">
+       <string>123</string>
+      </void>
+      <void index="17">
+       <string>207</string>
+      </void>
+      <void index="18">
+       <string>208</string>
+      </void>
+      <void index="19">
+       <string>213</string>
+      </void>
+      <void index="20">
+       <string>257</string>
+      </void>
+      <void index="21">
+       <string>512</string>
+      </void>
+     </array>
+    </void>
+    <void property="cannotAcquireLockCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>12205</string>
+      </void>
+     </array>
+    </void>
+    <void property="dataIntegrityViolationCodes">
+     <array class="java.lang.String" length="8">
+      <void index="0">
+       <string>233</string>
+      </void>
+      <void index="1">
+       <string>2615</string>
+      </void>
+      <void index="2">
+       <string>2714</string>
+      </void>
+      <void index="3">
+       <string>511</string>
+      </void>
+      <void index="4">
+       <string>515</string>
+      </void>
+      <void index="5">
+       <string>530</string>
+      </void>
+      <void index="6">
+       <string>546</string>
+      </void>
+      <void index="7">
+       <string>547</string>
+      </void>
+     </array>
+    </void>
+    <void property="databaseProductName">
+     <string>Sybase SQL Server</string>
+    </void>
+    <void property="databaseProductNames">
+     <array class="java.lang.String" length="5">
+      <void index="0">
+       <string>Sybase SQL Server</string>
+      </void>
+      <void index="1">
+       <string>Adaptive Server Enterprise</string>
+      </void>
+      <void index="2">
+       <string>ASE</string>
+      </void>
+      <void index="3">
+       <string>SQL Server</string>
+      </void>
+      <void index="4">
+       <string>sql server</string>
+      </void>
+     </array>
+    </void>
+    <void property="deadlockLoserCodes">
+     <array class="java.lang.String" length="1">
+      <void index="0">
+       <string>1205</string>
+      </void>
+     </array>
+    </void>
+    <void property="duplicateKeyCodes">
+     <array class="java.lang.String" length="3">
+      <void index="0">
+       <string>2601</string>
+      </void>
+      <void index="1">
+       <string>2615</string>
+      </void>
+      <void index="2">
+       <string>2626</string>
+      </void>
+     </array>
+    </void>
+    <void property="transientDataAccessResourceCodes">
+     <array class="java.lang.String" length="2">
+      <void index="0">
+       <string>1105</string>
+      </void>
+      <void index="1">
+       <string>921</string>
+      </void>
+     </array>
+    </void>
+   </object>
+  </void>
+ </object>
+</java>

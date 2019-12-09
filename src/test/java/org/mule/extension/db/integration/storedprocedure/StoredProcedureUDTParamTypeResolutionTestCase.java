@@ -15,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mule.extension.db.integration.TestDbConfig.getDerbyResource;
 import static org.mule.extension.db.integration.TestDbConfig.getOracleResource;
 import static org.mule.extension.db.integration.model.RegionManager.SOUTHWEST_MANAGER;
-import static org.mule.extension.db.internal.resolver.param.StoredProcedureParamTypeResolver.RETRIEVE_PARAM_TYPES;
+import static org.mule.extension.db.internal.resolver.param.StoredProcedureParamTypeResolver.FORCE_SP_PARAM_TYPES;
 
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.OracleTestDatabase;
@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
@@ -61,19 +60,19 @@ public class StoredProcedureUDTParamTypeResolutionTestCase extends AbstractDbInt
 
   @After
   public void afterTest() {
-    clearProperty(RETRIEVE_PARAM_TYPES);
+    clearProperty(FORCE_SP_PARAM_TYPES);
   }
 
   @Test
   public void runStoredProcedureThatReturnsCustomObjectResolvingParamNotUsingDBMetadata() throws Exception {
-    setProperty(RETRIEVE_PARAM_TYPES, "false");
+    setProperty(FORCE_SP_PARAM_TYPES, "true");
     Message response = flowRunner("returnsObjectWithAllConfiguredTypes").run().getMessage();
     assertThat(response.getPayload().getValue(), equalTo(SOUTHWEST_MANAGER.getContactDetails()));
   }
 
   @Test
   public void runStoredProcedureThatReturnsCustomObjectResolvingParamUsingDBMetadata() throws Exception {
-    setProperty(RETRIEVE_PARAM_TYPES, "true");
+    setProperty(FORCE_SP_PARAM_TYPES, "false");
     Message response = flowRunner("returnsObjectWithAllConfiguredTypes").run().getMessage();
     assertThat(response.getPayload().getValue(), equalTo(SOUTHWEST_MANAGER.getContactDetails()));
   }
@@ -81,7 +80,7 @@ public class StoredProcedureUDTParamTypeResolutionTestCase extends AbstractDbInt
   @Test
   public void runStoredProcedureThatReturnsCustomObjectResolvingParamNotUsingDBMetadataWhenNotAllParameterTypesAreConfigured()
       throws Exception {
-    setProperty(RETRIEVE_PARAM_TYPES, "false");
+    setProperty(FORCE_SP_PARAM_TYPES, "true");
     Message response = flowRunner("returnsObjectWitSomeParameterTypesConfigured").run().getMessage();
     assertThat(response.getPayload().getValue(), equalTo(SOUTHWEST_MANAGER.getContactDetails()));
   }

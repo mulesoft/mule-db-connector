@@ -11,9 +11,7 @@ import static java.lang.System.clearProperty;
 import static java.lang.System.setProperty;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assume.assumeTrue;
-import static org.mule.extension.db.integration.DbTestUtil.DbType.ORACLE;
-import static org.mule.extension.db.internal.resolver.param.StoredProcedureParamTypeResolver.RETRIEVE_PARAM_TYPES;
+import static org.mule.extension.db.internal.resolver.param.StoredProcedureParamTypeResolver.FORCE_SP_PARAM_TYPES;
 
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 
@@ -37,19 +35,19 @@ public class StoredProcedureParamTypeResolutionTestCase extends AbstractDbIntegr
 
   @After
   public void afterTest() {
-    clearProperty(RETRIEVE_PARAM_TYPES);
+    clearProperty(FORCE_SP_PARAM_TYPES);
   }
 
   @Test
   public void runStoredProcedureResolvingParamUsingDBMetadata() throws Exception {
-    setProperty(RETRIEVE_PARAM_TYPES, "true");
+    setProperty(FORCE_SP_PARAM_TYPES, "false");
     Map<String, Object> payload = runProcedure("addOneInputParameterWithTypedConfigured");
     assertThat("7", equalTo(payload.get("num").toString()));
   }
 
   @Test
   public void runStoredProcedureResolvingParamUsingConfiguredTypes() throws Exception {
-    setProperty(RETRIEVE_PARAM_TYPES, "false");
+    setProperty(FORCE_SP_PARAM_TYPES, "true");
     Map<String, Object> payload = runProcedure("addOneInputParameterWithTypedConfigured");
     assertThat("7", equalTo(payload.get("num").toString()));
   }

@@ -137,13 +137,14 @@
             <db:input-parameters>
                 <![CDATA[#[%dw 2.0
                      output application/json
-                     fun formatDate(d: DateTime) = d as String {format: "yyyy-MM-dd HH:mm:ss.SS"}
+                     fun formatDate(d: DateTime) = d as String {format: "yyyy-MM-dd"}
+                     fun formatDateTime(d: DateTime) = d as String {format: "yyyy-MM-dd HH:mm:ss"}
                      ---
                      {
                        'name': 'Dorothy Johnson Vaughan',
                        'birth_date': formatDate(|1910-09-20T13:00:00.000Z|),
                        'place_birth': 'Kansas City, Missouri',
-                       'died': formatDate(|2008-11-10T13:00:00.000Z|),
+                       'died': formatDateTime(|2008-11-10T13:00:00.000Z|),
                        'place_death': 'Hampton, Virginia',
                        'profession': 'Mathematician',
                        'alma_mater': 'Wilberforce University',

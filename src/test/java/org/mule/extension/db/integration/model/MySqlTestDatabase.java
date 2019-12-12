@@ -151,7 +151,7 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS getReducedBiography;\n");
 
     final String sql =
-        "CREATE PROCEDURE getReducedBiography(IN pName VARCHAR(50), IN pBirthDate DATE, IN pPlaceBirth VARCHAR(50), IN timestamp TIMESTAMP, IN pPlaceDeath VARCHAR(50), IN pProfession VARCHAR(50), IN pAlmaMater VARCHAR(50), IN pNationality VARCHAR(50), IN pChildren INTEGER, IN pSpouse VARCHAR(50), IN father VARCHAR(50), IN mother VARCHAR(50), IN bio VARCHAR(500), OUT pResult VARCHAR(100))\n"
+        "CREATE PROCEDURE getReducedBiography(IN pName VARCHAR(50), IN pBirthDate DATE, IN pPlaceBirth VARCHAR(50), IN timestamp DATETIME(3), IN pPlaceDeath VARCHAR(50), IN pProfession VARCHAR(50), IN pAlmaMater VARCHAR(50), IN pNationality VARCHAR(50), IN pChildren INTEGER, IN pSpouse VARCHAR(50), IN father VARCHAR(50), IN mother VARCHAR(50), IN bio VARCHAR(500), OUT pResult VARCHAR(100))\n"
             + "BEGIN\n"
             + " SET pResult := CONCAT(pName, \" was born \", pBirthDate, \", in \", pPlaceBirth, \" and died in \", pPlaceDeath);\n"
             + "END;";

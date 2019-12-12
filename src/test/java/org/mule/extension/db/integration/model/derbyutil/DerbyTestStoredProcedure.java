@@ -16,13 +16,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * Defines stored procedures for testing purposes. Used by reflection from {@link DerbyTestDatabase}
@@ -180,6 +174,21 @@ public class DerbyTestStoredProcedure {
     } finally {
       conn.close();
     }
+  }
+
+  public static void concatStringDate(Date date, String text, String[] result) {
+    result[0] = text + date.toString();
+  }
+
+  public static void concatStringTimestamp(String text, Timestamp timestamp, String[] result) {
+    result[0] = text + timestamp.toString();
+  }
+
+  public static void getReducedBiography(String name, Date birth_date, String place_birth, Timestamp died, String place_death,
+                                         String profession, String alma_mater, String nationality, int children, String spouse,
+                                         String mother, String father, Clob bio, String[] result)
+      throws SQLException {
+    result[0] = name + " was born " + birth_date.toString() + ", in " + place_birth + " and died in " + place_death;
   }
 
   public static void addOne(int[] num) {

@@ -173,6 +173,50 @@ public class SqlServerTestDataBase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createStoredProcedureConcatenateStringDate(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS concatStringDate;\n");
+
+    final String sql =
+        "CREATE PROCEDURE concatStringDate(@pDate DATE, @pText VARCHAR(50), @pResult VARCHAR(100) OUTPUT)\n" +
+            "AS\n" +
+            "BEGIN\n" +
+            "    SET @pResult = CONCAT(@pText, @pDate)\n" +
+            "END";
+
+    createStoredProcedure(dataSource, sql);
+  }
+
+  @Override
+  public void createStoredProcedureConcatenateStringTimestamp(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS concatStringTimestamp;\n");
+
+    final String sql =
+        "CREATE PROCEDURE concatStringTimestamp(@pText VARCHAR(50), @pTimestamp DATETIME, @pResult VARCHAR(100) OUTPUT)\n" +
+            "AS\n" +
+            "BEGIN\n" +
+            "    SET @pResult = CONCAT(@pText, CONVERT(varchar, @pTimestamp, 20))\n" +
+            "END";
+
+    createStoredProcedure(dataSource, sql);
+  }
+
+  @Override
+  public void createStoredProcedureExtractReducedBio(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS getReducedBiography;\n");
+
+    final String sql =
+        "CREATE PROCEDURE getReducedBiography(@pName VARCHAR(50), @pBirthDate DATE, @pPlaceBirth VARCHAR(50), @pDied DATETIME, @pPlaceDeath VARCHAR(50), @pProfession VARCHAR(50), @pAlmaMater VARCHAR(50), @pNationality VARCHAR(50), @pChildren INT, @pSpouse VARCHAR(50),  @pMother VARCHAR(50), @pFather VARCHAR(50), @pBio VARCHAR(500), @pResult VARCHAR(100) OUTPUT)\n"
+            +
+            "AS\n" +
+            "BEGIN\n" +
+            "  SET @pResult = CONCAT(@pName, ' was born ', @pBirthDate, ', in ', @pPlaceBirth, ' and died in ', @pPlaceDeath)\n" +
+            "END";
+
+    createStoredProcedure(dataSource, sql);
+  }
+
+
+  @Override
   public void createStoredProcedureAddOne(DataSource dataSource) throws SQLException {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS mathFunction.addOne;\n");
 

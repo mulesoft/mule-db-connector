@@ -415,6 +415,12 @@ public abstract class AbstractTestDatabase {
 
   public abstract void createDelayFunction(DataSource dataSource) throws SQLException;
 
+  public abstract void createStoredProcedureConcatenateStringDate(DataSource dataSource) throws SQLException;
+
+  public abstract void createStoredProcedureConcatenateStringTimestamp(DataSource dataSource) throws SQLException;
+
+  public abstract void createStoredProcedureExtractReducedBio(DataSource dataSource) throws SQLException;
+
   public void createStoredProcedureGetAlienDescription(DataSource dataSource) throws SQLException {
     throw new UnsupportedOperationException(NO_SQLXML_SUPPORT_ERROR);
   }

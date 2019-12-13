@@ -15,8 +15,12 @@ package org.mule.extension.db.integration.select;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeThat;
+import static org.mule.extension.db.integration.DbTestUtil.DbType.MYSQL;
+
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.metadata.api.model.NullType;
 import org.mule.metadata.api.model.ObjectFieldType;
@@ -63,6 +67,7 @@ public class SelectMetadataInputTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void returnsSelectInputMetadataFromBeanParameterizedQuery() throws Exception {
+    assumeThat(dbType, is(not(MYSQL))); // MySQL does not return correct metadata.
     MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata = getMetadata("selectMetadata",
                                                                                        "select * from PLANET where id = :id and name = :name");
 

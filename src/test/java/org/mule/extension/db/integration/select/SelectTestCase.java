@@ -10,6 +10,7 @@ package org.mule.extension.db.integration.select;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.junit.rules.ExpectedException.none;
 import static org.mule.extension.db.api.exception.connection.DbError.BAD_SQL_SYNTAX;
 import static org.mule.extension.db.integration.TestRecordUtil.assertMessageContains;
@@ -17,6 +18,7 @@ import static org.mule.extension.db.integration.TestRecordUtil.getAllPlanetRecor
 import static org.mule.extension.db.integration.TestRecordUtil.getEarthRecord;
 import static org.mule.extension.db.integration.TestRecordUtil.getMarsRecord;
 import static org.mule.extension.db.integration.TestRecordUtil.getVenusRecord;
+import static org.mule.extension.db.integration.TestRecordUtil.getCountRecord;
 import static org.mule.extension.db.integration.model.Planet.MARS;
 
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
@@ -114,6 +116,40 @@ public class SelectTestCase extends AbstractDbIntegrationTestCase {
   @Test
   public void badSqlSyntax() throws Exception {
     assertErrorType(() -> flowRunner("badSqlSyntax").run(), "DB", BAD_SQL_SYNTAX.name());
+  }
+
+  @Test
+  public void selectNestedQuery() throws Exception {
+    Message response = flowRunner("selectNestedQuery").keepStreamsOpen().run().getMessage();
+
+    assertThat(response.getPayload().getValue(), instanceOf(CursorIteratorProvider.class));
+    assertMessageContains(response, getCountRecord(3));
+  }
+
+
+  @Test
+  public void selectDoubleNestedQuery() throws Exception {
+    Message response = flowRunner("selectDoubleNestedQuery").keepStreamsOpen().run().getMessage();
+
+    assertThat(response.getPayload().getValue(), instanceOf(CursorIteratorProvider.class));
+    assertMessageContains(response, getCountRecord(3));
+  }
+
+  @Test
+  public void selectNestedParametrizedFirstQuery() throws Exception {
+    Message response = flowRunner("selectNestedParametrizedFirstQuery").keepStreamsOpen().run().getMessage();
+
+    assertThat(response.getPayload().getValue(), instanceOf(CursorIteratorProvider.class));
+    assertMessageContains(response, getCountRecord(1));
+  }
+
+
+  @Test
+  public void selectNestedParametrizedSecondQuery() throws Exception {
+    Message response = flowRunner("selectNestedParametrizedSecondQuery").keepStreamsOpen().run().getMessage();
+
+    assertThat(response.getPayload().getValue(), instanceOf(CursorIteratorProvider.class));
+    assertMessageContains(response, getCountRecord(1));
   }
 
   private void assertErrorType(Callable task, String errorNamespace, String errorIdentifier) throws Exception {

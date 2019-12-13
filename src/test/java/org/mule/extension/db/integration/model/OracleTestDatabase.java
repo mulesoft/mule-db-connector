@@ -345,6 +345,8 @@ public class OracleTestDatabase extends AbstractTestDatabase {
 
   @Override
   public void createStoredProcedureExtractReducedBio(DataSource dataSource) throws SQLException {
+    // In Oracle DATE and TIMESTAMP are associated to the same type id, that of TIMESTAMP
+    // therefore we cannot pass a date formatted as 'YYYY-MM-DD' to TIMESTAMP or DATE for this test.
     final String sql =
         "CREATE OR REPLACE PROCEDURE getReducedBiography(pName IN VARCHAR2, pBirthDate IN DATE, pPlaceBirth IN VARCHAR2, pDied IN TIMESTAMP, pPlaceDeath IN VARCHAR2, pProfession IN VARCHAR2, pAlmaMater IN VARCHAR2, pNationality IN VARCHAR2, pChildren IN INTEGER, pSpouse IN VARCHAR2, pMother IN VARCHAR2, pFather IN VARCHAR2, pBio IN VARCHAR2, pResult OUT VARCHAR2) "
             + "AS "

@@ -11,6 +11,7 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.rules.ExpectedException.none;
+import static org.hamcrest.CoreMatchers.startsWith;
 
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.functional.api.exception.ExpectedError;
@@ -40,6 +41,9 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
     testDatabase.returnNullValue(getDefaultDataSource());
     testDatabase.createStoredProcedureAddOne(getDefaultDataSource());
     testDatabase.createStoredProcedureAddOneDefaultSchema(getDefaultDataSource());
+    testDatabase.createStoredProcedureConcatenateStringDate(getDefaultDataSource());
+    testDatabase.createStoredProcedureConcatenateStringTimestamp(getDefaultDataSource());
+    testDatabase.createStoredProcedureExtractReducedBio(getDefaultDataSource());
   }
 
   @Override
@@ -122,6 +126,37 @@ public class StoredProcedureTestCase extends AbstractDbIntegrationTestCase {
   public void runStoredProcedureSpecifyingSchema() throws Exception {
     Map<String, Object> payload = runProcedure("addOne");
     assertThat("7", equalTo(payload.get("num").toString()));
+  }
+
+  @Test
+  public void callProcedureWithDateParameterUsingFormattedDate() throws Exception {
+    Map<String, Object> payload = runProcedure("callProcedureFormattedDate");
+
+    // Apparently Derby has a bug: when there are no resultset returned, then
+    // there is a fake updateCount=0 that is returned. Check how this works in other DB vendors.
+    // assertThat(payload.size(), equalTo(2));
+    assertThat(payload.get("result"), equalTo("today is 2019-10-31"));
+  }
+
+  @Test
+  public void callProcedureWithTimestampParameterUsingFormattedDate() throws Exception {
+    Map<String, Object> payload = runProcedure("callProcedureFormattedTimestamp");
+
+    // Apparently Derby has a bug: when there are no resultset returned, then
+    // there is a fake updateCount=0 that is returned. Check how this works in other DB vendors.
+    // assertThat(payload.size(), equalTo(2));
+    assertThat(payload.get("result").toString(), startsWith("today is 2019-10-31 13:00:00"));
+  }
+
+  @Test
+  public void callProcedureWithManyParameters() throws Exception {
+    Map<String, Object> payload = runProcedure("callProcedureMultipleParameters");
+
+    // Apparently Derby has a bug: when there are no resultset returned, then
+    // there is a fake updateCount=0 that is returned. Check how this works in other DB vendors.
+    // assertThat(payload.size(), equalTo(2));
+    assertThat(payload.get("result"),
+               equalTo("Dorothy Johnson Vaughan was born 1910-09-20, in Kansas City, Missouri and died in Hampton, Virginia"));
   }
 
 }

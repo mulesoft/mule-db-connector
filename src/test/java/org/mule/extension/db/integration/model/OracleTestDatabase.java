@@ -324,6 +324,40 @@ public class OracleTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createStoredProcedureConcatenateStringDate(DataSource dataSource) throws SQLException {
+    final String sql =
+        "CREATE OR REPLACE PROCEDURE concatStringDate(PDATE IN DATE, PTEXT IN VARCHAR2, RESULT OUT VARCHAR2) " + "IS "
+            + "BEGIN\n"
+            + "    SELECT PTEXT || TO_CHAR(PDATE, 'YYYY-MM-DD') INTO RESULT" + " FROM   DUAL;\n"
+            + "END;";
+    executeDdl(dataSource, sql);
+  }
+
+  @Override
+  public void createStoredProcedureConcatenateStringTimestamp(DataSource dataSource) throws SQLException {
+    final String sql =
+        "CREATE OR REPLACE PROCEDURE concatStringTimestamp(PTEXT IN VARCHAR2, PDATE IN TIMESTAMP, RESULT OUT VARCHAR2) " + "IS "
+            + "BEGIN\n"
+            + "    SELECT PTEXT || TO_CHAR(PDATE, 'YYYY-MM-DD HH24:Mi:SS') INTO RESULT" + " FROM   DUAL;\n"
+            + "END;";
+    executeDdl(dataSource, sql);
+  }
+
+  @Override
+  public void createStoredProcedureExtractReducedBio(DataSource dataSource) throws SQLException {
+    // In Oracle DATE and TIMESTAMP are associated to the same type id, that of TIMESTAMP
+    // therefore we cannot pass a date formatted as 'YYYY-MM-DD' to TIMESTAMP or DATE for this test.
+    final String sql =
+        "CREATE OR REPLACE PROCEDURE getReducedBiography(pName IN VARCHAR2, pBirthDate IN DATE, pPlaceBirth IN VARCHAR2, pDied IN TIMESTAMP, pPlaceDeath IN VARCHAR2, pProfession IN VARCHAR2, pAlmaMater IN VARCHAR2, pNationality IN VARCHAR2, pChildren IN INTEGER, pSpouse IN VARCHAR2, pMother IN VARCHAR2, pFather IN VARCHAR2, pBio IN VARCHAR2, pResult OUT VARCHAR2) "
+            + "AS "
+            + "BEGIN\n"
+            + "    SELECT pName || ' was born ' || TO_CHAR(pBirthDate, 'YYYY-MM-DD') || ', in ' || pPlaceBirth || ' and died in ' || pPlaceDeath  INTO   pResult"
+            + " FROM   DUAL;\n"
+            + "END;";
+    executeDdl(dataSource, sql);
+  }
+
+  @Override
   public void createStoredProcedureGetContactDetails(DataSource dataSource) throws SQLException {
     final String sql =
         "CREATE OR REPLACE PROCEDURE getContactDetails(pName IN VARCHAR2, pContactDetails OUT CONTACT_DETAILS_ARRAY) " + "IS "

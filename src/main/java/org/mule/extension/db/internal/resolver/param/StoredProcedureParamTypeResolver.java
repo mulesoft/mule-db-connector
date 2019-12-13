@@ -57,8 +57,6 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
 
   private static final short PROCEDURE_COLUMN_RETURN_COLUMN_TYPE = 5;
 
-  private static final boolean shouldForceParametersTypes = valueOf(getProperty(FORCE_SP_PARAM_TYPES, "false"));
-
   private final DbTypeManager dbTypeManager;
 
   public StoredProcedureParamTypeResolver(DbTypeManager dbTypeManager) {
@@ -71,7 +69,7 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
       throws SQLException {
 
     Map<Integer, DbType> parameters;
-    if (shouldForceParametersTypes) {
+    if (shouldForceParametersTypes()) {
       parameters = getParameterTypesFromConfiguration(queryTemplate, parameterTypesConfigured);
       List<String> missingParameters = getMissingParameters(queryTemplate, parameters);
       if (missingParameters.isEmpty()) {
@@ -180,6 +178,10 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
         .filter(queryParam -> !paramTypes.containsKey(queryParam.getIndex()))
         .map(QueryParam::getName)
         .collect(Collectors.toList());
+  }
+
+  private boolean shouldForceParametersTypes() {
+    return valueOf(getProperty(FORCE_SP_PARAM_TYPES, "false"));
   }
 
   private Map<Integer, DbType> getParameterTypesFromConfiguration(QueryTemplate queryTemplate,

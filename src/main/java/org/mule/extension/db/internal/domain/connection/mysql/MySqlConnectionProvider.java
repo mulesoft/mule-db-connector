@@ -45,7 +45,7 @@ public class MySqlConnectionProvider extends DbConnectionProvider {
   private static final String ACCESS_DENIED = "Access denied";
   private static final String UNKNOWN_DATABASE = "Unknown database";
   private static final String COMMUNICATIONS_LINK_FAILURE = "Communications link failure";
-  static final String MYSQL_GAV = "mysql:mysql-connector-java:5.1.33";
+  static final String MYSQL_GAV = "mysql:mysql-connector-java:5.1.48";
 
   @ParameterGroup(name = CONNECTION)
   private MySqlConnectionParameters mySqlParameters;

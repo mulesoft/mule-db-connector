@@ -9,6 +9,7 @@ package org.mule.extension.db.internal.resolver.query;
 import static com.github.benmanes.caffeine.cache.Caffeine.newBuilder;
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.api.param.StatementDefinition;
 import org.mule.extension.db.internal.DbConnector;
@@ -38,18 +39,18 @@ import org.mule.runtime.api.i18n.I18nMessageFactory;
 import org.mule.runtime.extension.api.exception.ModuleException;
 import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
-import com.github.benmanes.caffeine.cache.Cache;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.github.benmanes.caffeine.cache.Cache;
 
 abstract class AbstractQueryResolver<T extends StatementDefinition<?>> implements QueryResolver<T> {
 
-  protected Cache<String, QueryTemplate> queryTemplates = newBuilder().maximumSize(50).build();
+  private Cache<String, QueryTemplate> queryTemplates = newBuilder().maximumSize(50).build();
+
   private QueryTemplateParser queryTemplateParser = new SimpleQueryTemplateParser();
 
   @Override

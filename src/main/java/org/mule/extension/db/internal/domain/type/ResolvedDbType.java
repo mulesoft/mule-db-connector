@@ -33,20 +33,21 @@ public class ResolvedDbType extends AbstractDbType {
     try {
       if (value == null) {
         statement.setNull(index, id);
-      } else {
-        if (DECIMAL == id || NUMERIC == id) {
-          if (value instanceof BigDecimal) {
-            statement.setObject(index, value, id, ((BigDecimal) value).scale());
-          } else if (value instanceof Float || value instanceof Double) {
-            BigDecimal bigDecimal = new BigDecimal(value.toString());
-            statement.setObject(index, bigDecimal, id, bigDecimal.scale());
-          } else {
-            statement.setObject(index, value, id);
-          }
-        } else {
-          statement.setObject(index, value, id);
+        return;
+      }
+
+      if (DECIMAL == id || NUMERIC == id) {
+        if (value instanceof BigDecimal) {
+          statement.setObject(index, value, id, ((BigDecimal) value).scale());
+          return;
+        } else if (value instanceof Float || value instanceof Double) {
+          BigDecimal bigDecimal = new BigDecimal(value.toString());
+          statement.setObject(index, bigDecimal, id, bigDecimal.scale());
+          return;
         }
       }
+
+      statement.setObject(index, value, id);
     } catch (Exception e) {
       statement.setObject(index, value, OTHER);
     }

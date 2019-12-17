@@ -24,7 +24,7 @@
         <commonsDbUtilsVersion>1.7</commonsDbUtilsVersion>
         <commonsLangVersion>3.9</commonsLangVersion>
         <commonsIoVersion>2.6</commonsIoVersion>
-        <mockito-core.version>3.2.0</mockito-core.version>
+        <mockito-core.version>3.2.4</mockito-core.version>
         <xmlunit.version>1.6</xmlunit.version>
         <derbyVersion>10.11.1.1</derbyVersion>
         <mySqlVersion>5.1.48</mySqlVersion>

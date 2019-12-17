@@ -33,6 +33,7 @@ public class ResolvedDbTypeTestCase extends AbstractMuleTestCase {
   private static final int PARAM_INDEX = 1;
   private static final String TYPE_NAME_VARCHAR = "VARCHAR";
   private static final String TYPE_NAME_NUMERIC = "NUMERIC";
+  private static final String EXCEPTION_MSG = "Error setting parameter!";
 
   private PreparedStatement statement;
   private Connection connection;
@@ -61,12 +62,26 @@ public class ResolvedDbTypeTestCase extends AbstractMuleTestCase {
   @Test
   public void resolvedDbTypeOnSqlExceptionResolvesTypeOther() throws SQLException {
     int paramValue = 8;
-    String exceptionMessage = "Error setting parameter!";
     ResolvedDbType resolvedDbType = new ResolvedDbType(NUMERIC, TYPE_NAME_NUMERIC);
 
-    doThrow(new SQLException(exceptionMessage)).when(statement).setObject(eq(PARAM_INDEX), eq(paramValue), eq(NUMERIC));
+    doThrow(new SQLException(EXCEPTION_MSG)).when(statement).setObject(eq(PARAM_INDEX), eq(paramValue), eq(NUMERIC));
 
-    expectedException.reportMissingExceptionWithMessage(exceptionMessage);
+    expectedException.reportMissingExceptionWithMessage(EXCEPTION_MSG);
+    resolvedDbType.setParameterValue(statement, PARAM_INDEX, paramValue, dbConnection);
+
+    verify(statement).setObject(PARAM_INDEX, paramValue, OTHER);
+  }
+
+  @Test
+  public void resolvedDbTypeOnSqlExceptionSettingTypeOtherThrowsSqlException() throws SQLException {
+    int paramValue = 8;
+    ResolvedDbType resolvedDbType = new ResolvedDbType(NUMERIC, TYPE_NAME_NUMERIC);
+
+    doThrow(new SQLException(EXCEPTION_MSG)).when(statement).setObject(eq(PARAM_INDEX), eq(paramValue), eq(NUMERIC));
+    doThrow(new SQLException(EXCEPTION_MSG)).when(statement).setObject(eq(PARAM_INDEX), eq(paramValue), eq(OTHER));
+
+    expectedException.expect(SQLException.class);
+    expectedException.expectMessage(EXCEPTION_MSG);
     resolvedDbType.setParameterValue(statement, PARAM_INDEX, paramValue, dbConnection);
 
     verify(statement).setObject(PARAM_INDEX, paramValue, OTHER);

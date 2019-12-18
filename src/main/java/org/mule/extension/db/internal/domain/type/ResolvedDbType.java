@@ -30,7 +30,6 @@ public class ResolvedDbType extends AbstractDbType {
   @Override
   public void setParameterValue(PreparedStatement statement, int index, Object value, DbConnection connection)
       throws SQLException {
-    try {
       if (value == null) {
         statement.setNull(index, id);
         return;
@@ -46,11 +45,7 @@ public class ResolvedDbType extends AbstractDbType {
           return;
         }
       }
-
       statement.setObject(index, value, id);
-    } catch (Exception e) {
-      statement.setObject(index, value, OTHER);
-    }
   }
 
   @Override

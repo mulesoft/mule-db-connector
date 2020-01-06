@@ -9,7 +9,6 @@ package org.mule.extension.db.internal.domain.type;
 
 import static java.sql.Types.DECIMAL;
 import static java.sql.Types.NUMERIC;
-import static java.sql.Types.OTHER;
 
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 

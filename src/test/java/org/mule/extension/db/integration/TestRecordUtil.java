@@ -116,6 +116,10 @@ public class TestRecordUtil {
     return new Record(new Field("NAME", VENUS.getName()));
   }
 
+  public static Record getCountRecord(int count) {
+    return new Record(new Field("TOTAL", count));
+  }
+
   public static Record getEarthRecord() {
     return new Record(new Field("NAME", EARTH.getName()));
   }

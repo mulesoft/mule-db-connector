@@ -13,7 +13,7 @@
     <groupId>org.mule.connectors</groupId>
     <artifactId>mule-db-connector</artifactId>
     <packaging>mule-extension</packaging>
-    <version>1.6.2-SNAPSHOT</version>
+    <version>1.6.3-SNAPSHOT</version>
 
     <name>Database Connector</name>
     <description>A Mule extension that provides functionality for connecting to Databases through the JDBC standard</description>

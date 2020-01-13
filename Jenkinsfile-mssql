@@ -1,5 +1,6 @@
 Map pipelineParams = [ enableMavenDeployStage : false,
                        enableValidateSnapshotMetadataStage : false,
-                       mavenTestGoal : "verify -Dmaven.javadoc.skip -Dmssql"]
+                       mavenTestGoal : "verify -Dmaven.javadoc.skip -Dmssql",
+                       projectType : "Extensions" ]
 
-runtimeExtensionsBuild(pipelineParams)
+runtimeBuild(pipelineParams)

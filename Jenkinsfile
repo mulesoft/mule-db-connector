@@ -1,3 +1,3 @@
-Map pipelineParams = [ : ]
+Map pipelineParams = [ "projectType" : "Extensions" ]
 
-runtimeExtensionsBuild(pipelineParams)
+runtimeBuild(pipelineParams)

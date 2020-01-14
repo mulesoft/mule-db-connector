@@ -49,4 +49,14 @@
             </db:column-types>
         </db:my-sql-connection>
     </db:config>
+
+    <db:config name="dbConfigAdditionalProperties">
+        <db:my-sql-connection host="#[p('db.host')]" port="#[p('db.port')]" user="root" password="password" database="xe">
+            <db:pooling-profile minPoolSize="0">
+                <db:additional-properties>
+                    <db:property name="maxPoolSize" value="1" />
+                </db:additional-properties>
+            </db:pooling-profile>
+        </db:my-sql-connection>
+    </db:config>
 </mule>

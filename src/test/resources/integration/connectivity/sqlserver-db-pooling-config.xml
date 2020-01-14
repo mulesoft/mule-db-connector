@@ -49,4 +49,14 @@
             </db:column-types>
         </db:mssql-connection>
     </db:config>
+
+    <db:config name="dbConfigAdditionalProperties">
+        <db:mssql-connection host="#[p('db.host')]" user="#[p('db.user')]" password="yourStrong(!)Password">
+            <db:pooling-profile minPoolSize="0">
+                <db:additional-properties>
+                    <db:property name="maxPoolSize" value="1" />
+                </db:additional-properties>
+            </db:pooling-profile>
+        </db:mssql-connection>
+    </db:config>
 </mule>

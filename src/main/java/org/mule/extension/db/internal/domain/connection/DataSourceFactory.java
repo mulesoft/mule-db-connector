@@ -112,7 +112,8 @@ public class DataSourceFactory implements Disposable {
     config.put("maxIdleTime", poolingProfile.getMaxIdleTime());
     config.put("testConnectionOnCheckout", "true");
     config.put("maxStatementsPerConnection", poolingProfile.getPreparedStatementCacheSize());
-
+    poolingProfile.getAdditionalProperties().stream()
+        .forEach((property) -> config.put(property.getName(), property.getValue()));
     return DataSources.pooledDataSource(dataSource, config);
   }
 

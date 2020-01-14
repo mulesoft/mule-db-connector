@@ -6,14 +6,20 @@
  */
 package org.mule.extension.db.api.config;
 
+import static java.util.Collections.emptyList;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
+import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
+
 import org.mule.runtime.api.config.DatabasePoolingProfile;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.Optional;
+import org.mule.extension.db.api.param.PoolingProperty;
+import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
 import java.util.Objects;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -82,6 +88,12 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
   @Expression(NOT_SUPPORTED)
   private int maxIdleTime;
 
+  @Parameter
+  @Optional
+  @Expression(NOT_SUPPORTED)
+  @Placement(tab = ADVANCED_TAB)
+  private List<PoolingProperty> additionalProperties = emptyList();
+
   @Override
   public int getMaxPoolSize() {
     return maxPoolSize;
@@ -119,6 +131,10 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
 
   public int getMaxIdleTime() {
     return maxIdleTime;
+  }
+
+  public List<PoolingProperty> getAdditionalProperties() {
+    return additionalProperties;
   }
 
   @Override

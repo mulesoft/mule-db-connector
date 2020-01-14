@@ -12,6 +12,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mule.extension.db.integration.TestDbConfig.getDerbyResource;
 
+import org.junit.Ignore;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.functional.api.component.EventCallback;
 import org.mule.runtime.api.message.Message;
@@ -63,6 +64,15 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
+  public void providesAdditionalPoolingProfileProperties() throws Exception {
+    //assertThat(countSuccesses(request("queryAndJoinPoolWithAdditionalProperties", 2)), is(2));
+    setConcurrentRequests(2);
+    Message[] responses = request("queryAndJoinPoolWithAdditionalProperties", 2);
+    assertThat(countFailures(responses), is(1));
+    assertThat(countSuccesses(responses), is(1));
+  }
+
+  @Test
   public void connectionsGoBackToThePool() throws Exception {
     providesMultipleConnections();
     providesMultipleConnections();
@@ -85,6 +95,7 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
+  @Ignore
   public void limitsConnectionsWithDynamicConfigs() throws Exception {
     setConcurrentRequests(100);
     Message[] responses = request("queryAndJoinLargePoolDynamicConfig", 100);

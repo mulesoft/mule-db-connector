@@ -55,4 +55,14 @@
         </db:derby-connection>
     </db:config>
 
+    <db:config name="dbConfigAdditionalProperties">
+        <db:derby-connection database="#[p('db.name')]" create="true">
+            <db:pooling-profile minPoolSize="0">
+                <db:additional-properties>
+                    <db:property name="maxPoolSize" value="1" />
+                </db:additional-properties>
+            </db:pooling-profile>
+        </db:derby-connection>
+    </db:config>
+
 </mule>

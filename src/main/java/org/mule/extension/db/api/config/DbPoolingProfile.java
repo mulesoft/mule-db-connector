@@ -93,7 +93,7 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
   @Optional
   @Placement(tab = ADVANCED_TAB)
   @Expression(NOT_SUPPORTED)
-  @Summary("Additional properties used to configure pooling profile. Does not support expressions.")
+  @Summary("Additional properties used to configure pooling profile.")
   private Map<String, Object> additionalProperties = emptyMap();
 
   @Override

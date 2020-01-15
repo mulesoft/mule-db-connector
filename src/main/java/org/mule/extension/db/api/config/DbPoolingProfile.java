@@ -6,7 +6,6 @@
  */
 package org.mule.extension.db.api.config;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
@@ -20,7 +19,6 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
 import java.util.Objects;
 import java.util.Map;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**

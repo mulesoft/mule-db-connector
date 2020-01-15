@@ -35,6 +35,7 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
    */
   @Parameter
   @Optional(defaultValue = "5")
+  @Placement(order = 1)
   @Expression(NOT_SUPPORTED)
   private int maxPoolSize = 5;
 
@@ -43,6 +44,7 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
    */
   @Parameter
   @Optional(defaultValue = "0")
+  @Placement(order = 2)
   @Expression(NOT_SUPPORTED)
   private int minPoolSize = 0;
 
@@ -51,6 +53,7 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
    */
   @Parameter
   @Optional(defaultValue = "1")
+  @Placement(order = 3)
   @Expression(NOT_SUPPORTED)
   private int acquireIncrement = 1;
 
@@ -59,6 +62,7 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
    */
   @Parameter
   @Optional(defaultValue = "5")
+  @Placement(order = 4)
   @Expression(NOT_SUPPORTED)
   private int preparedStatementCacheSize = 5;
 
@@ -68,6 +72,7 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
    */
   @Parameter
   @Optional(defaultValue = "0")
+  @Placement(order = 5)
   @Expression(NOT_SUPPORTED)
   private int maxWait = 0;
 
@@ -76,6 +81,7 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
    */
   @Parameter
   @Optional(defaultValue = "SECONDS")
+  @Placement(order = 6)
   @Expression(NOT_SUPPORTED)
   private TimeUnit maxWaitUnit;
 
@@ -85,12 +91,13 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
    */
   @Parameter
   @Optional(defaultValue = "0")
+  @Placement(order = 7)
   @Expression(NOT_SUPPORTED)
   private int maxIdleTime;
 
   @Parameter
   @Optional
-  @Placement(tab = ADVANCED_TAB)
+  @Placement(tab = ADVANCED_TAB, order = 8)
   @Expression(NOT_SUPPORTED)
   @Summary("Additional properties used to configure pooling profile.")
   private Map<String, Object> additionalProperties = emptyMap();

@@ -115,11 +115,11 @@ public class DataSourceFactory implements Disposable {
     config.put("testConnectionOnCheckout", "true");
     config.put("maxStatementsPerConnection", poolingProfile.getPreparedStatementCacheSize());
     poolingProfile.getAdditionalProperties().entrySet().forEach((param) -> {
-      if (!config.containsKey(param.getKey())) {
-        config.put(param.getKey(), param.getValue());
-      } else {
+      if (config.containsKey(param.getKey()) && !config.get(param.getKey()).equals(param.getValue())) {
         LOGGER.warn(format("Attempted to override property {0} using additional-properties. Proceeding to use {0} = {1}.",
                            param.getKey(), param.getValue()));
+      } else {
+        config.put(param.getKey(), param.getValue());
       }
     });
     return DataSources.pooledDataSource(dataSource, config);

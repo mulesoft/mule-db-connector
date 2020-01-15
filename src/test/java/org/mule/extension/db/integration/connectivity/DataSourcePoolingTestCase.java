@@ -12,7 +12,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mule.extension.db.integration.TestDbConfig.getDerbyResource;
 
-import org.junit.Ignore;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.functional.api.component.EventCallback;
 import org.mule.runtime.api.message.Message;
@@ -77,7 +76,6 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
-  @Ignore
   public void limitsConnections() throws Exception {
     setConcurrentRequests(2);
     Message[] responses = request("queryAndJoinSmallPoolConnections", 2);
@@ -94,7 +92,6 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
-  @Ignore
   public void limitsConnectionsWithDynamicConfigs() throws Exception {
     setConcurrentRequests(100);
     Message[] responses = request("queryAndJoinLargePoolDynamicConfig", 100);

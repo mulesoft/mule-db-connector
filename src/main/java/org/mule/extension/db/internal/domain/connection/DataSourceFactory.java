@@ -8,6 +8,8 @@
 package org.mule.extension.db.internal.domain.connection;
 
 import static java.util.concurrent.ConcurrentHashMap.newKeySet;
+import static java.text.MessageFormat.format;
+
 import org.mule.extension.db.api.config.DbPoolingProfile;
 import org.mule.extension.db.internal.domain.xa.CompositeDataSourceDecorator;
 import org.mule.runtime.api.config.DatabasePoolingProfile;
@@ -113,7 +115,12 @@ public class DataSourceFactory implements Disposable {
     config.put("testConnectionOnCheckout", "true");
     config.put("maxStatementsPerConnection", poolingProfile.getPreparedStatementCacheSize());
     poolingProfile.getAdditionalProperties().entrySet().forEach((param) -> {
-      config.put(param.getKey(), param.getValue());
+      if (!config.containsKey(param.getKey())) {
+        config.put(param.getKey(), param.getValue());
+      } else {
+        LOGGER.warn(format("Attempted to override property {0} using additional-properties. Proceeding to use {0} = {1}.",
+                           param.getKey(), param.getValue()));
+      }
     });
     return DataSources.pooledDataSource(dataSource, config);
   }

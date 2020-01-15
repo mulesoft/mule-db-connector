@@ -92,8 +92,9 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
   @Parameter
   @Optional
   @Placement(tab = ADVANCED_TAB)
+  @Expression(NOT_SUPPORTED)
   @Summary("Additional properties used to configure pooling profile. Does not support expressions.")
-  @Example("#[{ \"idleConnectionTestPeriod\" : 100 }]")
+  @Example("{ \"idleConnectionTestPeriod\" : 100 }")
   private Map<String, Object> additionalProperties = emptyMap();
 
   @Override

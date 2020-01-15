@@ -55,11 +55,13 @@
         </db:derby-connection>
     </db:config>
 
-    <db:config name="dbConfigAdditionalProperties">
+    <db:config name="poolWithAdditionalProperties">
         <db:derby-connection database="#[p('db.name')]" create="true">
-            <db:pooling-profile minPoolSize="0">
+            <db:pooling-profile maxPoolSize="10" minPoolSize="0" maxWaitUnit="SECONDS">
                 <db:additional-properties>
-                    <db:property name="maxPoolSize" value="1" />
+                    <db:additional-property key="checkoutTimeout" value="1000"/>
+                    <db:additional-property key="maxPoolSize" value="1" />
+                    <db:additional-property key="idleConnectionTestPeriod" value="2" />
                 </db:additional-properties>
             </db:pooling-profile>
         </db:derby-connection>

@@ -50,7 +50,7 @@
 
     <flow name="queryAndJoinPoolWithAdditionalProperties">
         <try>
-            <db:select config-ref="dbConfigAdditionalProperties">
+            <db:select config-ref="poolWithAdditionalProperties">
                 <db:sql>select * from PLANET</db:sql>
             </db:select>
             <set-payload value="OK" />

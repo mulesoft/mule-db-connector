@@ -50,19 +50,15 @@
         </db:oracle-connection>
     </db:config>
 
-    <db:config name="dbConfigAdditionalProperties">
+    <db:config name="poolWithAdditionalProperties">
         <db:oracle-connection host="0.0.0.0" port="1521" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
-            <db:pooling-profile minPoolSize="0">
+            <db:pooling-profile maxPoolSize="10" minPoolSize="0" maxWaitUnit="SECONDS">
                 <db:additional-properties>
-                    <db:property name="maxPoolSize" value="1" />
+                    <db:additional-property key="checkoutTimeout" value="1000"/>
+                    <db:additional-property key="maxPoolSize" value="1" />
+                    <db:additional-property key="idleConnectionTestPeriod" value="2" />
                 </db:additional-properties>
-                <!--db:additional-properties>
-                    <db:pooling-property name="maxPoolSize" value="1"/>
-                </db:additional-properties-->
             </db:pooling-profile>
-            <db:column-types>
-                <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
-            </db:column-types>
         </db:oracle-connection>
     </db:config>
 </mule>

@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
 import javax.sql.DataSource;
@@ -112,8 +113,9 @@ public class DataSourceFactory implements Disposable {
     config.put("maxIdleTime", poolingProfile.getMaxIdleTime());
     config.put("testConnectionOnCheckout", "true");
     config.put("maxStatementsPerConnection", poolingProfile.getPreparedStatementCacheSize());
-    poolingProfile.getAdditionalProperties().stream()
-        .forEach((property) -> config.put(property.getName(), property.getValue()));
+    for (Map.Entry<String, Object> entry : poolingProfile.getAdditionalProperties().entrySet()) {
+      config.put(entry.getKey(), entry.getValue());
+    }
     return DataSources.pooledDataSource(dataSource, config);
   }
 

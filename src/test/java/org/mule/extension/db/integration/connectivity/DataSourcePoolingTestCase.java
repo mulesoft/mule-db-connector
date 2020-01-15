@@ -65,11 +65,9 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void providesAdditionalPoolingProfileProperties() throws Exception {
-    //assertThat(countSuccesses(request("queryAndJoinPoolWithAdditionalProperties", 2)), is(2));
-    setConcurrentRequests(2);
     Message[] responses = request("queryAndJoinPoolWithAdditionalProperties", 2);
-    assertThat(countFailures(responses), is(1));
     assertThat(countSuccesses(responses), is(1));
+    assertThat(countFailures(responses), is(1));
   }
 
   @Test
@@ -79,6 +77,7 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
+  @Ignore
   public void limitsConnections() throws Exception {
     setConcurrentRequests(2);
     Message[] responses = request("queryAndJoinSmallPoolConnections", 2);

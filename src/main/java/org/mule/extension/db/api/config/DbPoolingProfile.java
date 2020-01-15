@@ -16,6 +16,8 @@ import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
+import org.mule.runtime.extension.api.annotation.param.display.Summary;
+import org.mule.runtime.extension.api.annotation.param.display.Example;
 
 import java.util.Objects;
 import java.util.Map;
@@ -90,6 +92,8 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
   @Parameter
   @Optional
   @Placement(tab = ADVANCED_TAB)
+  @Summary("Additional properties used to configure pooling profile. Does not support expressions.")
+  @Example("#[{ \"idleConnectionTestPeriod\" : 100 }]")
   private Map<String, Object> additionalProperties = emptyMap();
 
   @Override

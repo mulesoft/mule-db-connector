@@ -80,7 +80,6 @@
             </test:processor>
             <error-handler>
                 <on-error-continue>
-                    <logger level="ERROR" message="#[payload]"/>
                     <set-payload value="FAIL" />
                     <test:processor>
                         <test:callback class="org.mule.extension.db.integration.connectivity.DataSourcePoolingTestCase$JoinRequests"/>

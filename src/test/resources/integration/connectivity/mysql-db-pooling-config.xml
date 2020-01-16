@@ -49,4 +49,15 @@
             </db:column-types>
         </db:my-sql-connection>
     </db:config>
+
+    <db:config name="poolWithAdditionalProperties">
+        <db:my-sql-connection host="#[p('db.host')]" port="#[p('db.port')]" user="root" password="password" database="xe">
+            <db:pooling-profile maxPoolSize="1" maxWait="1" minPoolSize="0" maxWaitUnit="SECONDS">
+                <db:additional-properties>
+                    <db:additional-property key="checkoutTimeout" value="1000"/>
+                    <db:additional-property key="idleConnectionTestPeriod" value="2" />
+                </db:additional-properties>
+            </db:pooling-profile>
+        </db:my-sql-connection>
+    </db:config>
 </mule>

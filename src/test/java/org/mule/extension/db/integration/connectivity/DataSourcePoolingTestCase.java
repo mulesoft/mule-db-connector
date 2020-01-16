@@ -63,6 +63,13 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
+  public void providesAdditionalPoolingProfileProperties() throws Exception {
+    Message[] responses = request("queryAndJoinPoolWithAdditionalProperties", 2);
+    assertThat(countSuccesses(responses), is(1));
+    assertThat(countFailures(responses), is(1));
+  }
+
+  @Test
   public void connectionsGoBackToThePool() throws Exception {
     providesMultipleConnections();
     providesMultipleConnections();

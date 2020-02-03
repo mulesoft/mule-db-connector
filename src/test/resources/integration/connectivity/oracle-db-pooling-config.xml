@@ -6,7 +6,7 @@
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
     <db:config name="pooledJdbcConfig">
-        <db:oracle-connection host="0.0.0.0" port="1521" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
+        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
             <db:pooling-profile maxPoolSize="2" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
             <db:column-types>
                 <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
@@ -15,7 +15,7 @@
     </db:config>
 
     <db:config name="waitForeverJdbcConfig">
-        <db:oracle-connection host="0.0.0.0" port="1521" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
+        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
             <db:pooling-profile maxPoolSize="2" minPoolSize="0" />
             <db:column-types>
                 <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
@@ -24,7 +24,7 @@
     </db:config>
 
     <db:config name="smallPoolPooledJdbcConfig">
-        <db:oracle-connection host="0.0.0.0" port="1521" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
+        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
             <db:pooling-profile maxPoolSize="1" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
             <db:column-types>
                 <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
@@ -33,7 +33,7 @@
     </db:config>
 
     <db:config name="smallPoolPooledJdbcDynamicConfig">
-        <db:oracle-connection host="0.0.0.0" port="1521" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
+        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
             <db:pooling-profile maxPoolSize="1" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
             <db:column-types>
                 <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
@@ -42,7 +42,7 @@
     </db:config>
 
     <db:config name="largePooledJdbcDynamicConfig">
-        <db:oracle-connection host="0.0.0.0" port="1521" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
+        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
             <db:pooling-profile maxPoolSize="10" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
             <db:column-types>
                 <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
@@ -51,7 +51,7 @@
     </db:config>
 
     <db:config name="poolWithAdditionalProperties">
-        <db:oracle-connection host="0.0.0.0" port="1521" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
+        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
             <db:pooling-profile maxPoolSize="1" maxWait="1" minPoolSize="0" maxWaitUnit="SECONDS">
                 <db:additional-properties>
                     <db:additional-property key="checkoutTimeout" value="1000"/>

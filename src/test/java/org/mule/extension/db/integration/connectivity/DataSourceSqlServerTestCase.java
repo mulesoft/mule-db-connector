@@ -6,12 +6,14 @@
  */
 package org.mule.extension.db.integration.connectivity;
 
-import org.junit.Before;
-import org.junit.runners.Parameterized;
+import static java.lang.System.getProperty;
+import static java.lang.System.setProperty;
+import static org.mule.extension.db.integration.TestDbConfig.getSqlServerResource;
 
 import java.util.List;
 
-import static org.mule.extension.db.integration.TestDbConfig.getSqlServerResource;
+import org.junit.Before;
+import org.junit.runners.Parameterized;
 
 public class DataSourceSqlServerTestCase extends DataSourcePoolingTestCase {
 
@@ -19,11 +21,14 @@ public class DataSourceSqlServerTestCase extends DataSourcePoolingTestCase {
   private static final String DB_HOST_VALUE = "0.0.0.0";
   private static final String DB_USER_KEY = "db.user";
   private static final String DB_USER_VALUE = "sa";
+  private static final String DB_PORT_KEY = "db.port";
+  private static final String DB_PORT_VALUE = getProperty("mssql.db.port");
 
   @Before
   public void setUp() {
-    System.setProperty(DB_HOST_KEY, DB_HOST_VALUE);
-    System.setProperty(DB_USER_KEY, DB_USER_VALUE);
+    setProperty(DB_HOST_KEY, DB_HOST_VALUE);
+    setProperty(DB_USER_KEY, DB_USER_VALUE);
+    setProperty(DB_PORT_KEY, DB_PORT_VALUE);
     setConcurrentRequests(2);
   }
 

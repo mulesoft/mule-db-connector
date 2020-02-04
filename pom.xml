@@ -7,6 +7,7 @@
         <groupId>org.mule.extensions</groupId>
         <artifactId>mule-core-modules-parent</artifactId>
         <version>1.1.6</version>
+        <relativePath></relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -453,11 +454,6 @@
             <id>mule</id>
             <name>Mule Repository</name>
             <url>https://repository.mulesoft.org/nexus/content/repositories/public/</url>
-        </repository>
-        <repository>
-            <id>spring-snapshot</id>
-            <name>Spring Snapshot Repository</name>
-            <url>http://repo.spring.io/snapshot/</url>
         </repository>
     </repositories>
 

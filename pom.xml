@@ -143,6 +143,17 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <oracle.db.port>${oracle.db.port}</oracle.db.port>
+                        <mysql.db.port>${mysql.db.port}</mysql.db.port>
+                        <mssql.db.port>${mssql.db.port}</mssql.db.port>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -196,7 +207,7 @@
                                     <name>store/oracle/database-enterprise:12.2.0.1-slim</name>
                                     <run>
                                         <ports>
-                                            <port>1521:1521</port>
+                                            <port>oracle.db.port:1521</port>
                                         </ports>
                                         <ulimits>
                                             <ulimit>
@@ -279,7 +290,7 @@
                                             <MYSQL_DATABASE>xe</MYSQL_DATABASE>
                                         </env>
                                         <ports>
-                                            <port>3306:3306</port>
+                                            <port>mysql.db.port:3306</port>
                                         </ports>
                                         <ulimits>
                                             <ulimit>
@@ -362,7 +373,7 @@
                                             <ACCEPT_EULA>Y</ACCEPT_EULA>
                                         </env>
                                         <ports>
-                                            <port>1433:1433</port>
+                                            <port>mssql.db.port:1433</port>
                                         </ports>
                                         <ulimits>
                                             <ulimit>

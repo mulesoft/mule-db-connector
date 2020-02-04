@@ -6,7 +6,7 @@
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
     <db:config name="pooledJdbcConfig">
-        <db:mssql-connection host="0.0.0.0" user="sa" password="yourStrong(!)Password">
+        <db:mssql-connection host="0.0.0.0" port="${mssql.db.port}" user="sa" password="yourStrong(!)Password">
             <db:pooling-profile maxPoolSize="2" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
             <db:column-types>
                 <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
@@ -15,7 +15,7 @@
     </db:config>
 
     <db:config name="waitForeverJdbcConfig">
-        <db:mssql-connection host="0.0.0.0" user="sa" password="yourStrong(!)Password">
+        <db:mssql-connection host="0.0.0.0" port="${mssql.db.port}" user="sa" password="yourStrong(!)Password">
             <db:pooling-profile maxPoolSize="2" minPoolSize="0" />
             <db:column-types>
                 <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
@@ -24,7 +24,7 @@
     </db:config>
 
     <db:config name="smallPoolPooledJdbcConfig">
-        <db:mssql-connection host="0.0.0.0" user="sa" password="yourStrong(!)Password">
+        <db:mssql-connection host="0.0.0.0" port="${mssql.db.port}" user="sa" password="yourStrong(!)Password">
             <db:pooling-profile maxPoolSize="1" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
             <db:column-types>
                 <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
@@ -33,7 +33,7 @@
     </db:config>
 
     <db:config name="smallPoolPooledJdbcDynamicConfig">
-        <db:mssql-connection host="#[p('db.host')]" user="#[p('db.user')]" password="yourStrong(!)Password">
+        <db:mssql-connection host="#[p('db.host')]" port="#[p('db.port')]" user="#[p('db.user')]" password="yourStrong(!)Password">
             <db:pooling-profile maxPoolSize="1" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
             <db:column-types>
                 <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
@@ -42,7 +42,7 @@
     </db:config>
 
     <db:config name="largePooledJdbcDynamicConfig">
-        <db:mssql-connection host="#[p('db.host')]" user="#[p('db.user')]" password="yourStrong(!)Password">
+        <db:mssql-connection host="#[p('db.host')]" port="#[p('db.port')]" user="#[p('db.user')]" password="yourStrong(!)Password">
             <db:pooling-profile maxPoolSize="10" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
             <db:column-types>
                 <db:column-type typeName="CONTACT_DETAILS" id="2000"/>

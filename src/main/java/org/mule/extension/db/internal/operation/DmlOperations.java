@@ -44,6 +44,7 @@ import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.util.ClassUtils;
+import org.mule.runtime.extension.api.annotation.Streaming;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -167,6 +168,7 @@ public class DmlOperations extends BaseDbOperations {
    * @return a {@link StatementResult}
    * @throws SQLException if an error is produced
    */
+  @Streaming
   public StatementResult insert(@ParameterGroup(name = QUERY_GROUP) @Placement(tab = ADVANCED_TAB) QueryDefinition query,
                                 @ParameterGroup(name = AUTO_GENERATE_KEYS) AutoGenerateKeysAttributes autoGenerateKeysAttributes,
                                 @Config DbConnector connector,
@@ -188,6 +190,7 @@ public class DmlOperations extends BaseDbOperations {
    * @return a {@link StatementResult}
    * @throws SQLException if an error is produced
    */
+  @Streaming
   public StatementResult update(@ParameterGroup(name = QUERY_GROUP) QueryDefinition query,
                                 @ParameterGroup(name = AUTO_GENERATE_KEYS) AutoGenerateKeysAttributes autoGenerateKeysAttributes,
                                 @Config DbConnector connector,
@@ -209,6 +212,7 @@ public class DmlOperations extends BaseDbOperations {
    * @return the number of affected rows
    * @throws SQLException if an error is produced
    */
+  @Streaming
   public int delete(@ParameterGroup(name = QUERY_GROUP) QueryDefinition query,
                     @Config DbConnector connector,
                     @Connection DbConnection connection,
@@ -232,6 +236,7 @@ public class DmlOperations extends BaseDbOperations {
    * @return A {@link Map} with the procedure's output
    * @throws SQLException if an error is produced
    */
+  @Streaming
   @OutputResolver(output = StoredProcedureMetadataResolver.class)
   public Map<String, Object> storedProcedure(@ParameterGroup(name = QUERY_GROUP) StoredProcedureCall call,
                                              @ParameterGroup(

@@ -44,6 +44,7 @@ import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.util.ClassUtils;
+import org.mule.runtime.extension.api.annotation.Streaming;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -232,6 +233,7 @@ public class DmlOperations extends BaseDbOperations {
    * @return A {@link Map} with the procedure's output
    * @throws SQLException if an error is produced
    */
+  @Streaming
   @OutputResolver(output = StoredProcedureMetadataResolver.class)
   public Map<String, Object> storedProcedure(@ParameterGroup(name = QUERY_GROUP) StoredProcedureCall call,
                                              @ParameterGroup(

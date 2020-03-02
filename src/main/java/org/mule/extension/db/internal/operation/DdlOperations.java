@@ -13,7 +13,6 @@ import org.mule.extension.db.api.param.QuerySettings;
 import org.mule.extension.db.internal.DbConnector;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.query.Query;
-import org.mule.runtime.extension.api.annotation.Streaming;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
@@ -42,7 +41,6 @@ public class DdlOperations extends BaseDbOperations {
    * @return the number of affected rows
    */
   @DisplayName("Execute DDL")
-  @Streaming
   public int executeDdl(@DisplayName(SQL_QUERY_TEXT) @Text String sql,
                         @ParameterGroup(name = QUERY_SETTINGS) QuerySettings settings,
                         @Config DbConnector connector,

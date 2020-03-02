@@ -168,7 +168,6 @@ public class DmlOperations extends BaseDbOperations {
    * @return a {@link StatementResult}
    * @throws SQLException if an error is produced
    */
-  @Streaming
   public StatementResult insert(@ParameterGroup(name = QUERY_GROUP) @Placement(tab = ADVANCED_TAB) QueryDefinition query,
                                 @ParameterGroup(name = AUTO_GENERATE_KEYS) AutoGenerateKeysAttributes autoGenerateKeysAttributes,
                                 @Config DbConnector connector,
@@ -190,7 +189,6 @@ public class DmlOperations extends BaseDbOperations {
    * @return a {@link StatementResult}
    * @throws SQLException if an error is produced
    */
-  @Streaming
   public StatementResult update(@ParameterGroup(name = QUERY_GROUP) QueryDefinition query,
                                 @ParameterGroup(name = AUTO_GENERATE_KEYS) AutoGenerateKeysAttributes autoGenerateKeysAttributes,
                                 @Config DbConnector connector,
@@ -212,7 +210,6 @@ public class DmlOperations extends BaseDbOperations {
    * @return the number of affected rows
    * @throws SQLException if an error is produced
    */
-  @Streaming
   public int delete(@ParameterGroup(name = QUERY_GROUP) QueryDefinition query,
                     @Config DbConnector connector,
                     @Connection DbConnection connection,

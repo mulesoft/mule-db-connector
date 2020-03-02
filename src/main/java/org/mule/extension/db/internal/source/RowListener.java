@@ -27,7 +27,6 @@ import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.extension.api.annotation.Alias;
-import org.mule.runtime.extension.api.annotation.Streaming;
 import org.mule.runtime.extension.api.annotation.metadata.MetadataKeyId;
 import org.mule.runtime.extension.api.annotation.metadata.MetadataScope;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -68,7 +67,6 @@ import org.slf4j.LoggerFactory;
 @DisplayName("On Table Row")
 @Summary("Triggers a message per each row in a table")
 @Alias("listener")
-@Streaming
 public class RowListener extends PollingSource<Map<String, Object>, Void> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(RowListener.class);

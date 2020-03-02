@@ -35,7 +35,7 @@
         <mssqlVersion>7.0.0.jre8</mssqlVersion>
         <oracle.driver.version>12.2.0.1</oracle.driver.version>
         
-        <docker.maven.plugin.version>0.31.0</docker.maven.plugin.version>
+        <docker.maven.plugin.version>0.33.0</docker.maven.plugin.version>
         <maven-replacer-plugin.version>1.5.3</maven-replacer-plugin.version>
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>

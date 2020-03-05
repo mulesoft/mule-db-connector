@@ -12,7 +12,10 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mule.tck.junit4.matcher.IsEmptyOptional.empty;
 
+import org.junit.After;
+import org.junit.Before;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
+import org.mule.extension.db.integration.model.OracleTestDatabase;
 import org.mule.metadata.api.ClassTypeLoader;
 import org.mule.metadata.api.model.ArrayType;
 import org.mule.metadata.api.model.MetadataType;
@@ -23,6 +26,7 @@ import org.mule.runtime.api.metadata.descriptor.ComponentMetadataDescriptor;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
 import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFactory;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -34,6 +38,16 @@ public abstract class AbstractOracleUDTMetadataTestCase extends AbstractDbIntegr
   public String flowSuffix;
 
   ClassTypeLoader typeLoader = ExtensionsTypeLoaderFactory.getDefault().createTypeLoader();
+
+  @Before
+  public void init() throws SQLException {
+    ((OracleTestDatabase) this.testDatabase).initUdts(getDefaultDataSource().getConnection());
+  }
+
+  @After
+  public void cleanUp() throws SQLException {
+    ((OracleTestDatabase) this.testDatabase).dropTables(getDefaultDataSource().getConnection());
+  }
 
   @Override
   protected String[] getFlowConfigurationResources() {

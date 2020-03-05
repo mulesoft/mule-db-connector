@@ -120,7 +120,7 @@
 
     <flow name="insertStruct">
         <db:insert config-ref="dbConfig">
-            <db:sql>INSERT INTO FRUITS_AS_TYPE (fruit) VALUES (:fruit)</db:sql>
+            <db:sql>INSERT INTO SYSTEM.FRUITS_AS_TABLE (fruit) VALUES (:fruit)</db:sql>
             <db:input-parameters>
                 #[{
                     fruit : [payload.fruitID, payload.fruitName, payload.fruitQuantity]

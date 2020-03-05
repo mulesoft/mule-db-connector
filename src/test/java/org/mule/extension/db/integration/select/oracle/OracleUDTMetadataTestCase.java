@@ -10,13 +10,11 @@ import static java.util.Collections.emptyList;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.junit.Before;
 import org.mule.extension.db.integration.TestDbConfig;
 import org.mule.extension.db.integration.model.OracleTestDatabase;
 import org.mule.metadata.api.model.ArrayType;
 import org.mule.metadata.api.model.MetadataType;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -447,7 +447,7 @@ public class OracleTestDatabase extends AbstractTestDatabase {
     executeDdl(connection, ddl);
   }
 
-  public void dropTables(Connection connection) throws SQLException {
+  public void dropTablesTypesProcedures(Connection connection) throws SQLException {
     executeDdlSilently(connection, "DROP PROCEDURE INSERT_FRUIT_AS_TYPE");
     executeDdlSilently(connection, "DROP PROCEDURE INSERT_FRUIT_AS_TABLE");
     executeDdlSilently(connection, "DROP PROCEDURE CREATE_FRUIT_TABLE");
@@ -470,7 +470,7 @@ public class OracleTestDatabase extends AbstractTestDatabase {
   }
 
   public void initUdts(Connection connection) throws SQLException {
-    dropTables(connection);
+    dropTablesTypesProcedures(connection);
 
     executeDdlSilently(connection, "CREATE OR REPLACE TYPE FRUIT_RECORD_TYPE AS OBJECT (\n" +
         "    fruitID integer,\n" +

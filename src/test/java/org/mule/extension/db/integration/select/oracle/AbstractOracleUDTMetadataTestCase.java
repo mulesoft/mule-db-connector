@@ -46,7 +46,7 @@ public abstract class AbstractOracleUDTMetadataTestCase extends AbstractDbIntegr
 
   @After
   public void cleanUp() throws SQLException {
-    ((OracleTestDatabase) this.testDatabase).dropTables(getDefaultDataSource().getConnection());
+    ((OracleTestDatabase) this.testDatabase).dropTablesTypesProcedures(getDefaultDataSource().getConnection());
   }
 
   @Override

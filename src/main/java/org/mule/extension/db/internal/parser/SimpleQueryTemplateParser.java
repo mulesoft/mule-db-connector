@@ -166,6 +166,9 @@ public class SimpleQueryTemplateParser implements QueryTemplateParser {
         if (tokenEnd < sqlTextChars.length && '=' == sqlTextChars[tokenEnd]) {
           sqlToUse = sqlToUse.append(currentChar);
           tokenStart++;
+        } else if (tokenEnd < sqlTextChars.length && ':' == sqlTextChars[tokenEnd]) {
+          sqlToUse = sqlToUse.append(currentChar).append(sqlTextChars[tokenEnd]);
+          tokenStart = tokenStart + 2;
         } else {
           String parameter;
 

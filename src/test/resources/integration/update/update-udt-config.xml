@@ -31,7 +31,6 @@
     </flow>
 
     <flow name="updatesWithObject">
-        <try transactionalAction="ALWAYS_BEGIN">
             <db:update config-ref="dbConfig">
                 <db:sql>update REGION_MANAGERS set DETAILS = :details where REGION_NAME = 'Northwest'</db:sql>
                 <db:parameter-types>
@@ -48,6 +47,5 @@
 
             <!--Obtains the UDT-->
             <set-payload value="#[payload[0]['DETAILS']]"/>
-        </try>
     </flow>
 </mule>

@@ -23,9 +23,9 @@
         <c3p0Version>0.9.5.4</c3p0Version>
         <commonsCollectionsVersion>3.2.2</commonsCollectionsVersion>
         <commonsDbUtilsVersion>1.7</commonsDbUtilsVersion>
-        <commonsLangVersion>3.7</commonsLangVersion>
+        <commonsLangVersion>3.10</commonsLangVersion>
         <commonsIoVersion>2.6</commonsIoVersion>
-        <mockito-core.version>2.23.4</mockito-core.version>
+        <mockito-core.version>3.3.3</mockito-core.version>
         <xmlunit.version>1.6</xmlunit.version>
         <caffeineVersion>2.8.0</caffeineVersion>
         <javax.transaction.version>1.2</javax.transaction.version>
@@ -33,9 +33,9 @@
         <derbyVersion>10.11.1.1</derbyVersion>
         <mySqlVersion>5.1.33</mySqlVersion>
         <mssqlVersion>7.0.0.jre8</mssqlVersion>
-        <oracle.driver.version>12.2.0.1</oracle.driver.version>
-
-        <docker.maven.plugin.version>0.25.2</docker.maven.plugin.version>
+        <oracle.driver.version>19.3.0.0</oracle.driver.version>
+        
+        <docker.maven.plugin.version>0.33.0</docker.maven.plugin.version>
         <maven-replacer-plugin.version>1.5.3</maven-replacer-plugin.version>
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
@@ -260,7 +260,7 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>mysql:5.7</name>
+                                    <name>mysql:latest</name>
                                     <run>
                                         <env>
                                             <MYSQL_ROOT_PASSWORD>password</MYSQL_ROOT_PASSWORD>

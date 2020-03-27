@@ -214,7 +214,7 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>jcl-over-slf4j</artifactId>
-                                <version>1.7.24</version>
+                                <version>1.7.30</version>
                             </dependency>
                         </dependencies>
                         <executions>
@@ -297,7 +297,7 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>jcl-over-slf4j</artifactId>
-                                <version>1.7.24</version>
+                                <version>1.7.30</version>
                             </dependency>
                         </dependencies>
                         <executions>
@@ -380,7 +380,7 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>jcl-over-slf4j</artifactId>
-                                <version>1.7.24</version>
+                                <version>1.7.30</version>
                             </dependency>
                         </dependencies>
                         <executions>

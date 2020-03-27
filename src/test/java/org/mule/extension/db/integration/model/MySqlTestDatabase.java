@@ -123,6 +123,43 @@ public class MySqlTestDatabase extends AbstractTestDatabase {
   }
 
   @Override
+  public void createStoredProcedureConcatenateStringDate(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS concatStringDate;\n");
+
+    final String sql =
+        "CREATE PROCEDURE concatStringDate(IN pDate DATE, IN pText VARCHAR(50), OUT pResult VARCHAR(100))\n"
+            + "BEGIN\n"
+            + " SET pResult := CONCAT(pText, pDate);\n"
+            + "END;";
+    createStoredProcedure(dataSource, sql);
+  }
+
+  @Override
+  public void createStoredProcedureConcatenateStringTimestamp(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS concatStringTimestamp;\n");
+
+    final String sql =
+        "CREATE PROCEDURE concatStringTimestamp(IN pText VARCHAR(50), IN pTimestamp TIMESTAMP, OUT pResult VARCHAR(100))\n"
+            + "BEGIN\n"
+            + " SET pResult := CONCAT(pText, pTimestamp);\n"
+            + "END;";
+    createStoredProcedure(dataSource, sql);
+  }
+
+  @Override
+  public void createStoredProcedureExtractReducedBio(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "DROP PROCEDURE IF EXISTS getReducedBiography;\n");
+
+    final String sql =
+        "CREATE PROCEDURE getReducedBiography(IN pName VARCHAR(50), IN pBirthDate DATE, IN pPlaceBirth VARCHAR(50), IN timestamp TIMESTAMP, IN pPlaceDeath VARCHAR(50), IN pProfession VARCHAR(50), IN pAlmaMater VARCHAR(50), IN pNationality VARCHAR(50), IN pChildren INTEGER, IN pSpouse VARCHAR(50), IN father VARCHAR(50), IN mother VARCHAR(50), IN bio VARCHAR(500), OUT pResult VARCHAR(100))\n"
+            + "BEGIN\n"
+            + " SET pResult := CONCAT(pName, \" was born \", pBirthDate, \", in \", pPlaceBirth, \" and died in \", pPlaceDeath);\n"
+            + "END;";
+    createStoredProcedure(dataSource, sql);
+  }
+
+
+  @Override
   public void createStoredProcedureGetSplitRecords(DataSource dataSource) throws SQLException {
     executeDdl(dataSource, "DROP PROCEDURE IF EXISTS getSplitTestRecords;\n");
     createStoredProcedure(dataSource, SQL_CREATE_SP_GET_SPLIT_RECORDS);

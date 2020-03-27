@@ -3,7 +3,7 @@
       xmlns:db="http://www.mulesoft.org/schema/mule/db"
       xmlns="http://www.mulesoft.org/schema/mule/core"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-            http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+                          http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
     <flow name="inOutParameterWithoutSpaceBeforeCall">
         <db:stored-procedure config-ref="dbConfig">
@@ -96,4 +96,82 @@
             </db:in-out-parameters>
         </db:stored-procedure>
     </flow>
+
+    <flow name="callProcedureFormattedDate">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql>{ call concatStringDate(:date, :text, :result) }</db:sql>
+            <db:input-parameters>
+                <![CDATA[#[%dw 2.0
+                  output application/json
+                  fun format(d: DateTime) = d as String {format: "yyyy-MM-dd HH:mm:ss"}
+                  ---
+                  {'date': format(|2019-10-31T13:00:00.000Z|),'text': 'today is '}
+                ]]]>
+            </db:input-parameters>
+            <db:output-parameters>
+                <db:output-parameter key="result" type="VARCHAR"></db:output-parameter>
+            </db:output-parameters>
+        </db:stored-procedure>
+    </flow>
+
+    <flow name="callProcedureFormattedTimestamp">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql>{ call concatStringTimestamp(:text, :timestamp, :result) }</db:sql>
+            <db:input-parameters>
+                <![CDATA[#[%dw 2.0
+                  output application/json
+                  fun format(d: DateTime) = d as String {format: "yyyy-MM-dd HH:mm:ss"}
+                  ---
+                  {'timestamp': format(|2019-10-31T13:00:00.000Z|), 'text': 'today is '}
+                ]]]>
+            </db:input-parameters>
+            <db:output-parameters>
+                <db:output-parameter key="result" type="VARCHAR"></db:output-parameter>
+            </db:output-parameters>
+        </db:stored-procedure>
+    </flow>
+
+    <flow name="callProcedureMultipleParameters">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql>{ call getReducedBiography(:name, :birth_date, :place_birth, :died, :place_death, :profession, :alma_mater, :nationality, :children, :spouse, :mother, :father, :bio, :result) }</db:sql>
+            <db:input-parameters>
+                <![CDATA[#[%dw 2.0
+                     output application/json
+                     fun formatDateTime(d: DateTime) = d as String {format: "yyyy-MM-dd HH:mm:ss"}
+                     ---
+                     {
+                       'name': 'Dorothy Johnson Vaughan',
+                       'birth_date': formatDateTime(|1910-09-20T13:00:00.000Z|),
+                       'place_birth': 'Kansas City, Missouri',
+                       'died': formatDateTime(|2008-11-10T13:00:00.000Z|),
+                       'place_death': 'Hampton, Virginia',
+                       'profession': 'Mathematician',
+                       'alma_mater': 'Wilberforce University',
+                       'nationality': 'American',
+                       'children': 6,
+                       'spouse': 'Howard Vaughan',
+                       'mother': 'Annie Johnson',
+                       'father': 'Leonard Johnson',
+                       'bio': 'In 1943, Vaughan began a 28-year-career as a mathematician and programmer at Langley Research Center, in which she specialized in calculations for flight paths, the Scout Project, and FORTRAN computer programming. Her career in this field kicked off during the height of World War II. She came to the Langley Memorial Aeronautical Laboratory thinking that it would be a temporary war job. One of her children later worked at NASA.'
+                     }
+                ]]]>
+            </db:input-parameters>
+            <db:output-parameters>
+                <db:output-parameter key="result" type="VARCHAR"></db:output-parameter>
+            </db:output-parameters>
+        </db:stored-procedure>
+    </flow>
+    
+    <flow name="addOneInputParameterWithTypedConfigured">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql>{ call mathFunction.addOne(:num) }</db:sql>
+            <db:parameter-types >
+                <db:parameter-type key="num" type="INTEGER" />
+            </db:parameter-types>
+            <db:in-out-parameters>
+                <db:in-out-parameter key="num" value="6"/>
+            </db:in-out-parameters>
+        </db:stored-procedure>
+    </flow>
+
 </mule>

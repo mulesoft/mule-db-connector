@@ -19,17 +19,16 @@
 
 
     <db:config name="mySqlConfigInvalidCredentials">
-        <db:my-sql-connection host="192.168.99.100" port="3306"/>
+        <db:my-sql-connection host="192.168.99.100" port="${mysql.db.port}"/>
     </db:config>
 
-
     <db:config name="mySqlConfigInvalidDatabaseName">
-        <db:my-sql-connection host="192.168.99.100" port="3306" database="invalidDB" password="my-secret-pw"
+        <db:my-sql-connection host="192.168.99.100" port="${mysql.db.port}" database="invalidDB" password="my-secret-pw"
                               user="root"/>
     </db:config>
 
     <db:config name="mySqlConfigInvalidSocketTimeoutValue">
-        <db:my-sql-connection host="192.168.99.100" port="3306" password="my-secret-pw" user="root">
+        <db:my-sql-connection host="192.168.99.100" port="${mysql.db.port}" password="my-secret-pw" user="root">
             <db:connection-properties>
                 <db:connection-property key="connectTimeout" value="-1"/>
                 <db:connection-property key="socketTimeout" value="-1"/>
@@ -43,15 +42,15 @@
     </db:config>
 
     <db:config name="oracleConfigUnknownInstance">
-        <db:oracle-connection host="0.0.0.0" instance="invalidInstance" user="system" password="Oradoc_db1"/>
+        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" instance="invalidInstance" user="system" password="Oradoc_db1"/>
     </db:config>
 
     <db:config name="oracleConfigUnknownHost">
-        <db:oracle-connection host="invalidHost" instance="ORCLCDB" user="system" password="Oradoc_db1"/>
+        <db:oracle-connection host="invalidHost" port="${oracle.db.port}" instance="ORCLCDB" user="system" password="Oradoc_db1"/>
     </db:config>
 
     <db:config name="oracleInstanceAndServiceNameAtTheSameType">
-        <db:oracle-connection host="0.0.0.0" instance="ORCLCDB" serviceName="ORCLCDB" user="system" password="Oradoc_db1"/>
+        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" instance="ORCLCDB" serviceName="ORCLCDB" user="system" password="Oradoc_db1"/>
     </db:config>
 
     <db:config name="driverClassNotFound">
@@ -59,18 +58,18 @@
     </db:config>
 
     <db:config name="sqlServerInvalidHost">
-        <db:mssql-connection host="invalidHost" />
+        <db:mssql-connection host="invalidHost" port="${mssql.db.port}" />
     </db:config>
 
     <db:config name="sqlServerInvalidCredentials">
-        <db:mssql-connection host="0.0.0.0" />
+        <db:mssql-connection host="0.0.0.0" port="${mssql.db.port}" />
     </db:config>
 
     <db:config name="sqlServerInvalidCredentialsForUser">
-        <db:mssql-connection host="0.0.0.0" user="sa" password="dsadsadsa" />
+        <db:mssql-connection host="0.0.0.0" port="${mssql.db.port}" user="sa" password="dsadsadsa" />
     </db:config>
 
     <db:config name="sqlServerInvalidDatabase">
-        <db:mssql-connection host="0.0.0.0" user="sa" password="yourStrong(!)Password" databaseName="dsadsadsa"/>
+        <db:mssql-connection host="0.0.0.0" port="${mssql.db.port}" user="sa" password="yourStrong(!)Password" databaseName="dsadsadsa"/>
     </db:config>
 </mule>

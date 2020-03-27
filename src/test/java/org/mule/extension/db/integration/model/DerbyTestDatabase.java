@@ -12,6 +12,7 @@ import org.mule.extension.db.integration.model.derbyutil.DerbyTestStoredProcedur
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Date;
 
 import javax.sql.DataSource;
 
@@ -142,6 +143,29 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
           "DYNAMIC RESULT SETS 0\n" +
           "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".substractOne'";
 
+  public static String SQL_CREATE_SP_CONCATENATE_STRING_DATE =
+      "CREATE PROCEDURE concatStringDate(IN DATE DATE, IN TEXT VARCHAR(100), OUT RESULT VARCHAR(200))\n" +
+          "PARAMETER STYLE JAVA\n" +
+          "LANGUAGE JAVA\n" +
+          "DYNAMIC RESULT SETS 0\n" +
+          "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".concatStringDate'";
+
+  public static String SQL_CREATE_SP_CONCATENATE_STRING_TIMESTAMP =
+      "CREATE PROCEDURE concatStringTimestamp(IN TEXT VARCHAR(100), IN DATE_TIME TIMESTAMP, OUT RESULT VARCHAR(200))\n" +
+          "PARAMETER STYLE JAVA\n" +
+          "LANGUAGE JAVA\n" +
+          "DYNAMIC RESULT SETS 0\n" +
+          "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".concatStringTimestamp'";
+
+  public static String SQL_CREATE_SP_EXTRACT_REDUCED_BIO =
+      "CREATE PROCEDURE getReducedBiography(IN NAME VARCHAR(100), IN BIRTH_DATE DATE, IN PLACE_BIRTH VARCHAR(100), IN DIED TIMESTAMP, IN PLACE_DEATH VARCHAR(100), IN PROFESSION VARCHAR(50), IN ALMA_MATER VARCHAR(50), IN NATIONALITY VARCHAR(50), IN CHILDREN INTEGER, IN SPOUSE VARCHAR(50), IN MOTHER VARCHAR(50), IN FATHER VARCHAR(50), IN BIO CLOB, OUT RESULT VARCHAR(200))\n"
+          +
+          "PARAMETER STYLE JAVA\n" +
+          "LANGUAGE JAVA\n" +
+          "DYNAMIC RESULT SETS 0\n" +
+          "EXTERNAL NAME '" + DerbyTestStoredProcedure.class.getName() + ".getReducedBiography'";
+
+
   @Override
   public void createPlanetTable(Connection connection) throws SQLException {
     executeDdl(connection,
@@ -271,6 +295,21 @@ public class DerbyTestDatabase extends AbstractTestDatabase {
   @Override
   public void createStoredProcedureMultiplyInts(DataSource dataSource) throws SQLException {
     createStoredProcedure(dataSource, SQL_CREATE_SP_MULTIPLY_INTS);
+  }
+
+  @Override
+  public void createStoredProcedureConcatenateStringDate(DataSource dataSource) throws SQLException {
+    createStoredProcedure(dataSource, SQL_CREATE_SP_CONCATENATE_STRING_DATE);
+  }
+
+  @Override
+  public void createStoredProcedureConcatenateStringTimestamp(DataSource dataSource) throws SQLException {
+    createStoredProcedure(dataSource, SQL_CREATE_SP_CONCATENATE_STRING_TIMESTAMP);
+  }
+
+  @Override
+  public void createStoredProcedureExtractReducedBio(DataSource dataSource) throws SQLException {
+    createStoredProcedure(dataSource, SQL_CREATE_SP_EXTRACT_REDUCED_BIO);
   }
 
   @Override

@@ -18,4 +18,45 @@
             <set-payload value="#[payload['out']]"/>
         </try>
     </flow>
+
+    <flow name="returnsObjectWithAllConfiguredTypes">
+        <try transactionalAction="ALWAYS_BEGIN">
+            <db:stored-procedure config-ref="dbConfig">
+                <db:sql>{ CALL getManagerDetails(:region, :out) }</db:sql>
+                <db:parameter-types >
+                    <db:parameter-type key="region" type="VARCHAR" />
+                    <db:parameter-type key="out" customType="CONTACT_DETAILS" />
+                </db:parameter-types>
+                <db:input-parameters>
+                    #[ { 'region' : 'Southwest' }]
+                </db:input-parameters>
+                <db:output-parameters>
+                    <db:output-parameter key="out" customType="CONTACT_DETAILS"/>
+                </db:output-parameters>
+            </db:stored-procedure>
+
+            <!--Obtains the UDT -->
+            <set-payload value="#[payload['out']]"/>
+        </try>
+    </flow>
+
+    <flow name="returnsObjectWitSomeParameterTypesConfigured">
+        <try transactionalAction="ALWAYS_BEGIN">
+            <db:stored-procedure config-ref="dbConfig">
+                <db:sql>{ CALL getManagerDetails(:region, :out) }</db:sql>
+                <db:parameter-types >
+                    <db:parameter-type key="out" customType="CONTACT_DETAILS" />
+                </db:parameter-types>
+                <db:input-parameters>
+                    #[ { 'region' : 'Southwest' }]
+                </db:input-parameters>
+                <db:output-parameters>
+                    <db:output-parameter key="out" customType="CONTACT_DETAILS"/>
+                </db:output-parameters>
+            </db:stored-procedure>
+
+            <!--Obtains the UDT -->
+            <set-payload value="#[payload['out']]"/>
+        </try>
+    </flow>
 </mule>

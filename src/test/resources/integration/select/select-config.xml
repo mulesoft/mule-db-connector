@@ -64,6 +64,38 @@
         </db:select>
     </flow>
 
+
+    <flow name="selectNestedQuery">
+        <db:select config-ref="dbConfig">
+            <db:sql>SELECT COUNT(PLANET.ID) AS TOTAL FROM PLANET WHERE (NOT EXISTS (SELECT ID FROM PLANET WHERE 0 > PLANET.ID))</db:sql>
+        </db:select>
+    </flow>
+
+    <flow name="selectDoubleNestedQuery">
+        <db:select config-ref="dbConfig">
+            <db:sql>SELECT COUNT(PLANET.ID) AS TOTAL FROM PLANET WHERE (NOT EXISTS (SELECT ID FROM PLANET WHERE 0 > PLANET.ID)) AND (EXISTS (SELECT NAME FROM PLANET WHERE PLANET.ID > 0))</db:sql>
+        </db:select>
+    </flow>
+
+    <flow name="selectNestedParametrizedFirstQuery">
+        <db:select config-ref="dbConfig">
+            <db:sql>SELECT COUNT(PLANET.ID) AS TOTAL FROM PLANET WHERE PLANET.NAME = :planetName AND (NOT EXISTS (SELECT ID FROM PLANET WHERE 0 > PLANET.ID))</db:sql>
+            <db:input-parameters>
+                #[{'planetName' : 'Venus'}]
+            </db:input-parameters>
+        </db:select>
+    </flow>
+
+    <flow name="selectNestedParametrizedSecondQuery">
+        <set-payload value="Mars"/>
+        <db:select config-ref="dbConfig">
+            <db:sql>SELECT COUNT(PLANET.ID) AS TOTAL FROM PLANET WHERE (NOT EXISTS (SELECT ID FROM PLANET WHERE 0 > PLANET.ID)) AND PLANET.NAME = :planetName</db:sql>
+            <db:input-parameters>
+                #[{'planetName' : payload}]
+            </db:input-parameters>
+        </db:select>
+    </flow>
+
     <flow name="usesAlias">
         <db:select config-ref="dbConfig">
             <db:sql>select name as planetName from PLANET order by ID</db:sql>

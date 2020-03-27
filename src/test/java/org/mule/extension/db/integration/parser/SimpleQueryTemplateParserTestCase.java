@@ -96,6 +96,14 @@ public class SimpleQueryTemplateParserTestCase extends AbstractMuleTestCase {
     doKeywordParsingTest("with", QueryType.SELECT);
   }
 
+  @Test
+  public void detectDoubleColon() throws Exception {
+    String sql = "SELECT MAX(modified_date)::DATE FROM test";
+    QueryTemplate queryTemplate = parser.parse(sql);
+    assertEquals(sql, queryTemplate.getSqlText());
+    assertEquals(0, queryTemplate.getInputParams().size());
+  }
+
   private void doKeywordParsingTest(String keyword, QueryType expectedQueryType) {
     doSqlParsingTest(expectedQueryType, keyword + " some unused SQL");
     doSqlParsingTest(expectedQueryType, keyword + "\nsome\nunused\nSQL");

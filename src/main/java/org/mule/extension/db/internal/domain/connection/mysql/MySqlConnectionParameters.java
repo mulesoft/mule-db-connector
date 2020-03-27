@@ -83,9 +83,12 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
   @Placement(tab = ADVANCED_TAB)
   private Map<String, String> connectionProperties = new HashMap<>();
 
+  public MySqlConnectionParameters() {
+    addMuleLoggerProperty(connectionProperties);
+  }
+
   @Override
   public String getUrl() {
-    addMuleLoggerProperty(connectionProperties);
     return MySqlDbUtils.getEffectiveUrl(MY_SQL_PREFIX, host, port, database, connectionProperties);
   }
 

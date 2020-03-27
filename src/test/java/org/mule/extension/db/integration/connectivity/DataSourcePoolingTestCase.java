@@ -32,6 +32,8 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
 
   private static final int TIMEOUT = 10;
   private static final TimeUnit TIMEOUT_UNIT = SECONDS;
+  private static final String DB_NAME_KEY = "db.name";
+  private static final String DB_NAME_VALUE = "target/muleEmbeddedDB";
   private static CountDownLatch connectionLatch;
 
   @Parameterized.Parameters(name = "{2}")
@@ -41,10 +43,11 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
 
   @Before
   public void setUp() {
+    System.setProperty(DB_NAME_KEY, DB_NAME_VALUE);
     setConcurrentRequests(2);
   }
 
-  private void setConcurrentRequests(int count) {
+  protected void setConcurrentRequests(int count) {
     connectionLatch = new CountDownLatch(count);
   }
 
@@ -60,6 +63,13 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
+  public void providesAdditionalPoolingProfileProperties() throws Exception {
+    Message[] responses = request("queryAndJoinPoolWithAdditionalProperties", 2);
+    assertThat(countSuccesses(responses), is(1));
+    assertThat(countFailures(responses), is(1));
+  }
+
+  @Test
   public void connectionsGoBackToThePool() throws Exception {
     providesMultipleConnections();
     providesMultipleConnections();
@@ -68,12 +78,29 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
   @Test
   public void limitsConnections() throws Exception {
     setConcurrentRequests(2);
-    Message[] responses = request("queryAndJoinSmallPollConnections", 2);
+    Message[] responses = request("queryAndJoinSmallPoolConnections", 2);
     assertThat(countSuccesses(responses), is(1));
     assertThat(countFailures(responses), is(1));
   }
 
-  private Message[] request(String flowName, int times) throws Exception {
+  @Test
+  public void limitsConnectionsWithDyanamicConfigs() throws Exception {
+    setConcurrentRequests(2);
+    Message[] responses = request("queryAndJoinSmallPoolDynamicConnections", 2);
+    assertThat(countSuccesses(responses), is(1));
+    assertThat(countFailures(responses), is(1));
+  }
+
+  @Test
+  public void limitsConnectionsWithDynamicConfigs() throws Exception {
+    setConcurrentRequests(100);
+    Message[] responses = request("queryAndJoinLargePoolDynamicConfig", 100);
+    assertThat(countSuccesses(responses), is(10));
+    assertThat(countFailures(responses), is(90));
+  }
+
+
+  protected Message[] request(String flowName, int times) throws Exception {
     Thread[] requests = new Thread[times];
     Message[] responses = new Message[times];
 
@@ -116,11 +143,11 @@ public class DataSourcePoolingTestCase extends AbstractDbIntegrationTestCase {
     }
   }
 
-  private int countSuccesses(Message... messages) {
+  protected int countSuccesses(Message... messages) {
     return count(message -> message.getPayload().getValue().equals("OK"), messages);
   }
 
-  private int countFailures(Message... messages) {
+  protected int countFailures(Message... messages) {
     return count(message -> message.getPayload().getValue().equals("FAIL"), messages);
   }
 

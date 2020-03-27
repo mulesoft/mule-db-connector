@@ -10,6 +10,7 @@ package org.mule.extension.db.internal.resolver.param;
 import static java.sql.Types.ARRAY;
 import static java.sql.Types.STRUCT;
 import static org.slf4j.LoggerFactory.getLogger;
+
 import org.mule.extension.db.api.param.ParameterType;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.param.QueryParam;
@@ -26,7 +27,6 @@ import org.mule.extension.db.internal.domain.type.UnknownDbTypeException;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

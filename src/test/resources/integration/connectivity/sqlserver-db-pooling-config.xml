@@ -6,64 +6,58 @@
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
     <db:config name="pooledJdbcConfig">
-        <db:derby-connection database="target/muleEmbeddedDB" create="true">
+        <db:mssql-connection host="0.0.0.0" port="${mssql.db.port}" user="sa" password="yourStrong(!)Password">
             <db:pooling-profile maxPoolSize="2" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
             <db:column-types>
-                <!-- Derby uses JAVA_OBJECT for UDT-->
                 <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
             </db:column-types>
-        </db:derby-connection>
+        </db:mssql-connection>
     </db:config>
 
     <db:config name="waitForeverJdbcConfig">
-        <db:derby-connection database="target/muleEmbeddedDB" create="true">
+        <db:mssql-connection host="0.0.0.0" port="${mssql.db.port}" user="sa" password="yourStrong(!)Password">
             <db:pooling-profile maxPoolSize="2" minPoolSize="0" />
             <db:column-types>
-                <!-- Derby uses JAVA_OBJECT for UDT-->
                 <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
             </db:column-types>
-        </db:derby-connection>
+        </db:mssql-connection>
     </db:config>
 
     <db:config name="smallPoolPooledJdbcConfig">
-        <db:derby-connection database="target/muleEmbeddedDB" create="true">
+        <db:mssql-connection host="0.0.0.0" port="${mssql.db.port}" user="sa" password="yourStrong(!)Password">
             <db:pooling-profile maxPoolSize="1" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
             <db:column-types>
-                <!-- Derby uses JAVA_OBJECT for UDT-->
                 <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
             </db:column-types>
-        </db:derby-connection>
+        </db:mssql-connection>
     </db:config>
 
     <db:config name="smallPoolPooledJdbcDynamicConfig">
-        <db:derby-connection database="#[p('db.name')]" create="true">
+        <db:mssql-connection host="#[p('db.host')]" port="#[p('db.port')]" user="#[p('db.user')]" password="yourStrong(!)Password">
             <db:pooling-profile maxPoolSize="1" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
             <db:column-types>
-                <!-- Derby uses JAVA_OBJECT for UDT-->
                 <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
             </db:column-types>
-        </db:derby-connection>
+        </db:mssql-connection>
     </db:config>
 
     <db:config name="largePooledJdbcDynamicConfig">
-        <db:derby-connection database="#[p('db.name')]" create="true">
+        <db:mssql-connection host="#[p('db.host')]" port="#[p('db.port')]" user="#[p('db.user')]" password="yourStrong(!)Password">
             <db:pooling-profile maxPoolSize="10" minPoolSize="0" maxWait="1" maxWaitUnit="SECONDS"/>
             <db:column-types>
-                <!-- Derby uses JAVA_OBJECT for UDT-->
                 <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
             </db:column-types>
-        </db:derby-connection>
+        </db:mssql-connection>
     </db:config>
 
     <db:config name="poolWithAdditionalProperties">
-        <db:derby-connection database="#[p('db.name')]" create="true">
+        <db:mssql-connection host="#[p('db.host')]" port="#[p('db.port')]" user="#[p('db.user')]" password="yourStrong(!)Password">
             <db:pooling-profile maxPoolSize="1" maxWait="1" minPoolSize="0" maxWaitUnit="SECONDS">
                 <db:additional-properties>
                     <db:additional-property key="checkoutTimeout" value="1000"/>
                     <db:additional-property key="idleConnectionTestPeriod" value="2" />
                 </db:additional-properties>
             </db:pooling-profile>
-        </db:derby-connection>
+        </db:mssql-connection>
     </db:config>
-
 </mule>

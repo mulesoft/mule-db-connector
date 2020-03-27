@@ -16,7 +16,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import com.mysql.jdbc.Statement;
+import com.mysql.cj.jdbc.JdbcStatement;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.MapListHandler;
 
@@ -33,7 +33,7 @@ public class DbTestUtil {
 
   public static void assertExpectedUpdateCount(int expected, int actual) {
     assertTrue(format("Update count is neither the expected one %s nor Statement.SUCCESS_NO_INFO", expected),
-               expected == actual || Statement.SUCCESS_NO_INFO == actual);
+               expected == actual || JdbcStatement.SUCCESS_NO_INFO == actual);
   }
 
   public enum DbType {

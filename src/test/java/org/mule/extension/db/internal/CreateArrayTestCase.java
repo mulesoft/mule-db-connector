@@ -19,7 +19,7 @@ import static org.mule.extension.db.internal.domain.connection.oracle.OracleConn
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
 
-import com.mysql.jdbc.PreparedStatement;
+import com.mysql.cj.jdbc.PreparedStatementWrapper;
 
 import java.sql.Array;
 import java.sql.Blob;
@@ -97,7 +97,7 @@ public class CreateArrayTestCase extends AbstractDbFunctionTestCase {
       throws Exception {
     Optional<String> owner = getOwnerFrom(udtName);
     String typeSimpleName = getTypeSimpleName(udtName);
-    PreparedStatement preparedStatement = mock(PreparedStatement.class);
+    PreparedStatementWrapper preparedStatement = mock(PreparedStatementWrapper.class);
     ResultSet resultSet = mock(ResultSet.class);
 
     when(preparedStatement.executeQuery()).thenReturn(resultSet);

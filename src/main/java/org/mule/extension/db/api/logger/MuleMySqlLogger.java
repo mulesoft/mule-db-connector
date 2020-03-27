@@ -6,7 +6,7 @@
  */
 package org.mule.extension.db.api.logger;
 
-import com.mysql.jdbc.log.Log;
+import com.mysql.cj.log.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

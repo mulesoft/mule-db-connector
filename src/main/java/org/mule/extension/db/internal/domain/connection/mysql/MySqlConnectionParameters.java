@@ -116,9 +116,9 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
   private void addMuleLoggerProperty(Map<String, String> connectionProperties) {
     if (connectionProperties != null) {
       try {
-        Enhancer e = new Enhancer();
         Class<?> finalInterface = getAvailableInterface();
         String arg = "MySql";
+        Enhancer e = new Enhancer();
         e.setSuperclass(MuleMySqlLogger.class);
 
         e.setInterfaces(new Class[] {finalInterface});

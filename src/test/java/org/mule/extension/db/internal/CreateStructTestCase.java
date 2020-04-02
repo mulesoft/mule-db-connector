@@ -18,12 +18,11 @@ import static org.mule.extension.db.internal.domain.connection.oracle.OracleConn
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
 
-import com.mysql.cj.jdbc.PreparedStatementWrapper;
-
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -107,7 +106,7 @@ public class CreateStructTestCase extends AbstractDbFunctionTestCase {
       throws Exception {
     Optional<String> owner = getOwnerFrom(udtName);
     String typeSimpleName = getTypeSimpleName(udtName);
-    PreparedStatementWrapper preparedStatement = mock(PreparedStatementWrapper.class);
+    PreparedStatement preparedStatement = mock(PreparedStatement.class);
     ResultSet resultSet = mock(ResultSet.class);
 
     when(preparedStatement.executeQuery()).thenReturn(resultSet);

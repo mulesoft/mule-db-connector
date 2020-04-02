@@ -6,12 +6,8 @@
  */
 package org.mule.extension.db.api.logger;
 
-import com.mysql.cj.log.Log;
-import org.mule.extension.db.internal.domain.connection.mysql.MuleMySqlLoggerInvocationHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.Proxy;
 
 /**
  * Logger which captures the driver logs and dispatches them using the application logger.
@@ -19,7 +15,7 @@ import java.lang.reflect.Proxy;
  *
  * @since 1.0
  */
-public class MuleMySqlLogger implements Log {
+public class MuleMySqlLogger {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MuleMySqlLogger.class);
   private String name;
@@ -29,26 +25,6 @@ public class MuleMySqlLogger implements Log {
    */
   public MuleMySqlLogger(String name) {
     this.name = name;
-
-    //    MuleMySqlLoggerInvocationHandler handler = new MuleMySqlLoggerInvocationHandler();
-    //    MuleMySqlLogger e = null;
-    //
-    //    try {
-    //      Class.forName("com.mysql.cj.jdbc.Driver");
-    //      e = (MuleMySqlLogger) Proxy.newProxyInstance(MuleMySqlLogger.class.getClassLoader(),
-    //                                                   new Class[] {Class.forName("com.mysql.cj.log.Log")},
-    //                                                   handler);
-    //    } catch (ClassNotFoundException ex) {
-    //      try {
-    //        e = (MuleMySqlLogger) Proxy.newProxyInstance(MuleMySqlLogger.class.getClassLoader(),
-    //                                                     new Class[] {Class.forName("com.mysql.jdbc.log.Log")},
-    //                                                     handler);
-    //      } catch (ClassNotFoundException exc) {
-    //        // there is no driver loaded, fuck it
-    //        exc.printStackTrace();
-    //      }
-    //    }
-
   }
 
   /**

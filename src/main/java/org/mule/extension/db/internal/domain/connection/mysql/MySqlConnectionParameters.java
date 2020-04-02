@@ -117,15 +117,9 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
     if (connectionProperties != null) {
       try {
         Enhancer e = new Enhancer();
-        Class<?> finalInterface;
+        Class<?> finalInterface = getAvailableInterface();
         String arg = "MySql";
         e.setSuperclass(MuleMySqlLogger.class);
-
-        try {
-          finalInterface = Class.forName("com.mysql.cj.log.Log");
-        } catch (ClassNotFoundException ex) {
-          finalInterface = Class.forName("com.mysql.jdbc.log.Log");
-        }
 
         e.setInterfaces(new Class[] {finalInterface});
         e.setCallback((MethodInterceptor) (o, method, objects, methodProxy) -> null);
@@ -140,4 +134,13 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
       }
     }
   }
+
+  private Class<?> getAvailableInterface() throws ClassNotFoundException {
+    try {
+      return Class.forName("com.mysql.cj.log.Log");
+    } catch (ClassNotFoundException ex) {
+      return Class.forName("com.mysql.jdbc.log.Log");
+    }
+  }
+
 }

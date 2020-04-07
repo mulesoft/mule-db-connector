@@ -135,11 +135,16 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
     }
   }
 
-  private Class<?> getAvailableInterface() throws ClassNotFoundException {
+  private Class<?> getAvailableInterface() {
     try {
       return Class.forName("com.mysql.cj.log.Log");
-    } catch (ClassNotFoundException ex) {
-      return Class.forName("com.mysql.jdbc.log.Log");
+    } catch (ClassNotFoundException e) {
+      try {
+        return Class.forName("com.mysql.jdbc.log.Log");
+      } catch (ClassNotFoundException ex) {
+        throw new IllegalArgumentException("Neither class, com.mysql.cj.log.Log or com.mysql.jdbc.log.Log, were found. " +
+            "An unsupported driver was provided.", ex);
+      }
     }
   }
 

@@ -7,7 +7,7 @@
 package org.mule.extension.db.internal.domain.connection.mysql;
 
 import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.NoOp;
 import org.mule.extension.db.api.logger.MuleMySqlLogger;
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
@@ -116,16 +116,15 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
   private void addMuleLoggerProperty(Map<String, String> connectionProperties) {
     if (connectionProperties != null) {
       try {
+        Enhancer enhancer = new Enhancer();
         Class<?> finalInterface = getAvailableInterface();
-        String arg = "MySql";
-        Enhancer e = new Enhancer();
-        e.setSuperclass(MuleMySqlLogger.class);
 
-        e.setInterfaces(new Class[] {finalInterface});
-        e.setCallback((MethodInterceptor) (o, method, objects, methodProxy) -> null);
+        enhancer.setInterfaces(new Class[] {finalInterface});
+        enhancer.setSuperclass(MuleMySqlLogger.class);
+        enhancer.setCallback(NoOp.INSTANCE);
 
-        Object bean = e.create(new Class[] {String.class}, new Object[] {arg});
-        connectionProperties.putIfAbsent(LOGGER_PROPERTY, bean.getClass().getName());
+        Object enhancedClass = enhancer.create(new Class[] {String.class}, new Object[] {"MySql"});
+        connectionProperties.putIfAbsent(LOGGER_PROPERTY, enhancedClass.getClass().getName());
       } catch (Throwable e) {
         LOGGER.warn(format("Unable to attach Mule Logger to MySql Driver. Cause: %s", e.getMessage()));
         if (LOGGER.isDebugEnabled()) {

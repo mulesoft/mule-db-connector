@@ -20,6 +20,7 @@ import org.mule.extension.db.internal.domain.statement.StatementFactory;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.BatchUpdateException;
 import java.util.List;
 
 /**
@@ -75,6 +76,23 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
       queryLogger.logQuery();
 
       return preparedStatement.executeBatch();
+    } catch (BatchUpdateException batchEx) {
+      int[] updateCounts = batchEx.getUpdateCounts();
+      int successfulRecords, failedRecords, noInfoAvailable;
+      successfulRecords = 0;
+      failedRecords = 0;
+      for (int i = 0; i < updateCounts.length; i++) {
+        if (updateCounts[i] >= 0) {
+          successfulRecords++;
+        } else if (updateCounts[i] == Statement.EXECUTE_FAILED) {
+          failedRecords++;
+        }
+      }
+      LOGGER.error(String.format("BULK UPDATE EXCEPTION: %d RECORDS SUCCESSFUL, %d RECORDS FAILED",
+                                 successfulRecords, failedRecords));
+      throw new SQLException(batchEx);
+    } catch (Exception e) {
+      throw new SQLException(e);
     } finally {
       preparedStatement.clearParameters();
       statement.close();

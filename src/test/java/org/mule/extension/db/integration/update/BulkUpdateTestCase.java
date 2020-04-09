@@ -7,6 +7,7 @@
 
 package org.mule.extension.db.integration.update;
 
+import static java.sql.Statement.EXECUTE_FAILED;
 import static org.mule.extension.db.integration.DbTestUtil.selectData;
 import static org.mule.extension.db.integration.TestRecordUtil.assertRecords;
 import static org.mule.extension.db.integration.model.Planet.EARTH;
@@ -61,6 +62,12 @@ public class BulkUpdateTestCase extends AbstractDbIntegrationTestCase {
     assertBulkUpdate(response);
   }
 
+  @Test
+  public void updateBulkAfterSelectThrowsSqlException() throws Exception {
+    Message response = flowRunner("updateBulkAfterSelectThrowsError").withPayload(ids()).run().getMessage();
+    assertBulkUpdateFailed(response);
+  }
+
   private List<Map<String, Object>> values() {
     List<Map<String, Object>> values = new ArrayList<>();
     addRecord(values, "name", VENUS.getName());
@@ -70,10 +77,30 @@ public class BulkUpdateTestCase extends AbstractDbIntegrationTestCase {
     return values;
   }
 
+  private List<Map<String, Object>> ids() {
+    List<Map<String, Object>> values = new ArrayList<>();
+    addRecord(values, "id", 1);
+    addRecord(values, "id",1);
+    addRecord(values, "id", 1);
+
+    return values;
+  }
+
   private void addRecord(List<Map<String, Object>> values, String key, Object value) {
     Map<String, Object> record = new HashMap<>();
     record.put(key, value);
     values.add(record);
+  }
+
+  private void assertBulkUpdateFailed(Message response) throws SQLException {
+    assertTrue(response.getPayload().getValue() instanceof int[]);
+    int[] counters = (int[]) response.getPayload().getValue();
+    assertThat(counters[0], anyOf(equalTo(1), equalTo(EXECUTE_FAILED)));
+    assertThat(counters[1], anyOf(equalTo(1), equalTo(EXECUTE_FAILED)));
+    assertThat(counters[2], anyOf(equalTo(1), equalTo(EXECUTE_FAILED)));
+
+    List<Map<String, String>> result = selectData("SELECT COUNT(*) IDS FROM PLANET WHERE ID = 1", getDefaultDataSource());
+    assertRecords(result, new Record(new Field("IDS", 1)));
   }
 
   private void assertBulkUpdate(Message response) throws SQLException {

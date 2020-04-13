@@ -113,6 +113,10 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
     return user;
   }
 
+  public Map<String, String> getConnectionProperties() {
+    return connectionProperties;
+  }
+
   private void addMuleLoggerProperty(Map<String, String> connectionProperties) {
     if (connectionProperties != null) {
       try {

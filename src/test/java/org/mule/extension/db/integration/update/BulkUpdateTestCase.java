@@ -80,7 +80,7 @@ public class BulkUpdateTestCase extends AbstractDbIntegrationTestCase {
   private List<Map<String, Object>> ids() {
     List<Map<String, Object>> values = new ArrayList<>();
     addRecord(values, "id", 1);
-    addRecord(values, "id",1);
+    addRecord(values, "id", 1);
     addRecord(values, "id", 1);
 
     return values;
@@ -105,6 +105,7 @@ public class BulkUpdateTestCase extends AbstractDbIntegrationTestCase {
 
   private void assertBulkUpdate(Message response) throws SQLException {
     assertTrue(response.getPayload().getValue() instanceof int[]);
+
     int[] counters = (int[]) response.getPayload().getValue();
     assertThat(counters[0], anyOf(equalTo(1), equalTo(SUCCESS_NO_INFO)));
     assertThat(counters[1], anyOf(equalTo(1), equalTo(SUCCESS_NO_INFO)));

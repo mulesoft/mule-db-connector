@@ -31,10 +31,6 @@
     </flow>
 
     <flow name="updateBulkAfterSelectThrowsError">
-        <db:select config-ref="dbConfig" target="select">
-            <db:sql>select * from PLANET</db:sql>
-        </db:select>
-
         <db:bulk-update config-ref="dbConfig">
             <db:sql>update PLANET set ID=:id where NAME='Venus'</db:sql>
         </db:bulk-update>

@@ -7,7 +7,6 @@
 
 package org.mule.extension.db.integration.update;
 
-import static java.sql.Statement.EXECUTE_FAILED;
 import static org.mule.extension.db.integration.DbTestUtil.selectData;
 import static org.mule.extension.db.integration.TestRecordUtil.assertRecords;
 import static org.mule.extension.db.integration.model.Planet.EARTH;
@@ -20,6 +19,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.Field;
 import org.mule.extension.db.integration.model.Record;
@@ -38,6 +39,9 @@ import io.qameta.allure.Story;
 @Feature(DB_EXTENSION)
 @Story("Update Statement")
 public class BulkUpdateTestCase extends AbstractDbIntegrationTestCase {
+
+  @Rule
+  public ExpectedException exceptionRule = ExpectedException.none();
 
   @Override
   protected String[] getFlowConfigurationResources() {
@@ -64,8 +68,8 @@ public class BulkUpdateTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void updateBulkAfterSelectThrowsSqlException() throws Exception {
-    Message response = flowRunner("updateBulkAfterSelectThrowsError").withPayload(ids()).run().getMessage();
-    assertBulkUpdateFailed(response);
+    exceptionRule.expect(Exception.class);
+    flowRunner("updateBulkAfterSelectThrowsError").withPayload(ids()).run().getMessage();
   }
 
   private List<Map<String, Object>> values() {
@@ -80,7 +84,7 @@ public class BulkUpdateTestCase extends AbstractDbIntegrationTestCase {
   private List<Map<String, Object>> ids() {
     List<Map<String, Object>> values = new ArrayList<>();
     addRecord(values, "id", 1);
-    addRecord(values, "id", 1);
+    addRecord(values, "id", MARS.getName());
     addRecord(values, "id", 1);
 
     return values;
@@ -92,20 +96,8 @@ public class BulkUpdateTestCase extends AbstractDbIntegrationTestCase {
     values.add(record);
   }
 
-  private void assertBulkUpdateFailed(Message response) throws SQLException {
-    assertTrue(response.getPayload().getValue() instanceof int[]);
-    int[] counters = (int[]) response.getPayload().getValue();
-    assertThat(counters[0], anyOf(equalTo(1), equalTo(EXECUTE_FAILED)));
-    assertThat(counters[1], anyOf(equalTo(1), equalTo(EXECUTE_FAILED)));
-    assertThat(counters[2], anyOf(equalTo(1), equalTo(EXECUTE_FAILED)));
-
-    List<Map<String, String>> result = selectData("SELECT COUNT(*) IDS FROM PLANET WHERE ID = 1", getDefaultDataSource());
-    assertRecords(result, new Record(new Field("IDS", 1)));
-  }
-
   private void assertBulkUpdate(Message response) throws SQLException {
     assertTrue(response.getPayload().getValue() instanceof int[]);
-
     int[] counters = (int[]) response.getPayload().getValue();
     assertThat(counters[0], anyOf(equalTo(1), equalTo(SUCCESS_NO_INFO)));
     assertThat(counters[1], anyOf(equalTo(1), equalTo(SUCCESS_NO_INFO)));

@@ -123,6 +123,7 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
         Enhancer enhancer = new Enhancer();
         Class<?> finalInterface = getAvailableInterface();
 
+        enhancer.setClassLoader(Thread.currentThread().getContextClassLoader());
         enhancer.setInterfaces(new Class[] {finalInterface});
         enhancer.setSuperclass(MuleMySqlLogger.class);
         enhancer.setCallback(NoOp.INSTANCE);
@@ -140,10 +141,10 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
 
   private Class<?> getAvailableInterface() {
     try {
-      return Class.forName("com.mysql.cj.log.Log");
+      return Thread.currentThread().getContextClassLoader().loadClass("com.mysql.cj.log.Log");
     } catch (ClassNotFoundException e) {
       try {
-        return Class.forName("com.mysql.jdbc.log.Log");
+        return Thread.currentThread().getContextClassLoader().loadClass("com.mysql.jdbc.log.Log");
       } catch (ClassNotFoundException ex) {
         throw new IllegalArgumentException("Neither class, com.mysql.cj.log.Log or com.mysql.jdbc.log.Log, were found. " +
             "An unsupported driver was provided.", ex);

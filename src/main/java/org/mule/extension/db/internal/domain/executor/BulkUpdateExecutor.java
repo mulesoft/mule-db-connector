@@ -58,6 +58,7 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
   @Override
   public Object execute(DbConnection connection, Query query, List<List<QueryParamValue>> paramValues) throws SQLException {
     Statement statement = statementFactory.create(connection, query.getQueryTemplate());
+    int batchCount = 0;
 
     if (!(statement instanceof PreparedStatement)) {
       throw new QueryExecutionException("The given query can't be executed in bulk, bulk queries must take parameters.");
@@ -71,6 +72,7 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
         doProcessParameters(preparedStatement, query.getQueryTemplate(), params, queryLogger, connection);
         preparedStatement.addBatch();
         queryLogger.addParameterSet();
+        batchCount++;
       }
 
       queryLogger.logQuery();
@@ -78,28 +80,38 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
       return preparedStatement.executeBatch();
     } catch (BatchUpdateException batchEx) {
       int[] updateCounts = batchEx.getUpdateCounts();
-      int successfulRecords, failedRecords, noInfoAvailable;
-      successfulRecords = 0;
-      failedRecords = 0;
-      noInfoAvailable = 0;
-      for (int i = 0; i < updateCounts.length; i++) {
-        if (updateCounts[i] >= 0) {
-          successfulRecords++;
-        } else if (updateCounts[i] == Statement.SUCCESS_NO_INFO) {
-          noInfoAvailable++;
-        } else if (updateCounts[i] == Statement.EXECUTE_FAILED) {
-          failedRecords++;
-        }
-      }
-      LOGGER.error(String
-          .format("BULK UPDATE EXCEPTION: %d SUCCESSFUL OPERATIONS, %d FAILED OPERATIONS, %d SUCCESSFULLY EXECUTED OPERATIONS BUT NO INFO ON AFFECTED ROW COUNT",
-                  successfulRecords, failedRecords));
+      logBulkUpdateErrorInfo(updateCounts,batchCount);
       throw new SQLException(batchEx);
     } catch (Exception e) {
       throw new SQLException(e);
     } finally {
       preparedStatement.clearParameters();
       statement.close();
+    }
+  }
+
+  private void logBulkUpdateErrorInfo(int[] updateCounts, int batchCount) {
+    int successfulOperations, failedOperations, noInfoAvailable;
+    successfulOperations = 0;
+    failedOperations = 0;
+    noInfoAvailable = 0;
+    for (int i = 0; i < updateCounts.length; i++) {
+      if (updateCounts[i] >= 0) {
+        successfulOperations++;
+        LOGGER.debug("BULK UPDATE SUCCESSFUL OPERATION PERFORMED: %d AFFECTED ROWS", updateCounts[i]);
+      } else if (updateCounts[i] == Statement.SUCCESS_NO_INFO) {
+        noInfoAvailable++;
+        LOGGER.debug("BULK UPDATE SUCCESSFUL OPERATION PERFORMED: NO INFO AVAILABLE ON AFFECTED ROW COUNT");
+      } else if (updateCounts[i] == Statement.EXECUTE_FAILED) {
+        failedOperations++;
+        LOGGER.debug("BULK UPDATE OPERATION FAILED:  %d AFFECTED ROWS", updateCounts[i]);
+      }
+    }
+    if (batchCount == updateCounts.length) {
+      LOGGER.error("BULK UPDATE EXCEPTION: %d SUCCESSFUL OPERATIONS, %d FAILED OPERATIONS.",
+              successfulOperations + noInfoAvailable, failedOperations);
+    } else {
+      LOGGER.error("BULK UPDATE EXCEPTION. DATABASE PROCESSED %d OPERATIONS SUCCESSFULLY AND STOPPED.", successfulOperations + noInfoAvailable);
     }
   }
 }

@@ -76,8 +76,9 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
       }
 
       queryLogger.logQuery();
-
-      return preparedStatement.executeBatch();
+      Object result = preparedStatement.executeBatch();
+      LOGGER.info("SUCCESSFULLY EXECUTED BATCH OPERATION %s. AFFECTED ROWS: %d", query.getQueryTemplate().getType().name(), batchCount);
+      return result;
     } catch (BatchUpdateException batchEx) {
       int[] updateCounts = batchEx.getUpdateCounts();
       logBulkUpdateErrorInfo(updateCounts, batchCount);
@@ -98,20 +99,20 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
     for (int i = 0; i < updateCounts.length; i++) {
       if (updateCounts[i] >= 0) {
         successfulOperations++;
-        LOGGER.debug("BULK UPDATE SUCCESSFUL OPERATION PERFORMED: %d AFFECTED ROWS", updateCounts[i]);
+        LOGGER.debug("BULK OPERATION %d SUCCESSFULLY PERFORMED: %d AFFECTED ROWS", i, updateCounts[i]);
       } else if (updateCounts[i] == Statement.SUCCESS_NO_INFO) {
         noInfoAvailable++;
-        LOGGER.debug("BULK UPDATE SUCCESSFUL OPERATION PERFORMED: NO INFO AVAILABLE ON AFFECTED ROW COUNT");
+        LOGGER.debug("BULK OPERATION %d PERFORMED SUCCESSFULLY: NO INFO AVAILABLE ON AFFECTED ROW COUNT", i);
       } else if (updateCounts[i] == Statement.EXECUTE_FAILED) {
         failedOperations++;
-        LOGGER.debug("BULK UPDATE OPERATION FAILED:  %d AFFECTED ROWS", updateCounts[i]);
+        LOGGER.debug("BULK OPERATION %d FAILED: %d AFFECTED ROWS.", i, updateCounts[i]);
       }
     }
     if (batchCount == updateCounts.length) {
       LOGGER.error("BULK UPDATE EXCEPTION: %d SUCCESSFUL OPERATIONS, %d FAILED OPERATIONS.",
                    successfulOperations + noInfoAvailable, failedOperations);
     } else {
-      LOGGER.error("BULK UPDATE EXCEPTION. DATABASE PROCESSED %d OPERATIONS SUCCESSFULLY AND STOPPED.",
+      LOGGER.error("BULK UPDATE EXCEPTION. DATABASE PROCESSED %d OPERATIONS SUCCESSFULLY AND STOPPED PROCESSING DUE TO EXCEPTION.",
                    successfulOperations + noInfoAvailable);
     }
   }

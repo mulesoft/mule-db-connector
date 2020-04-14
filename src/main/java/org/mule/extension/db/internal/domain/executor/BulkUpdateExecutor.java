@@ -76,13 +76,12 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
       }
 
       queryLogger.logQuery();
-      Object result = preparedStatement.executeBatch();
-      LOGGER.info("SUCCESSFULLY EXECUTED BATCH OPERATION OF TYPE %s. TOTAL EXECUTED STATEMENTS: %d.",
-                  query.getQueryTemplate().getType().name(), batchCount);
+      int[] result = preparedStatement.executeBatch();
+      logBulkUpdateInfo(query, result, batchCount);
       return result;
     } catch (BatchUpdateException batchEx) {
       int[] updateCounts = batchEx.getUpdateCounts();
-      logBulkUpdateErrorInfo(updateCounts, batchCount);
+      logBulkUpdateInfo(query, updateCounts, batchCount);
       throw new SQLException(batchEx);
     } catch (Exception e) {
       throw new SQLException(e);
@@ -92,7 +91,7 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
     }
   }
 
-  private void logBulkUpdateErrorInfo(int[] updateCounts, int batchCount) {
+  private void logBulkUpdateInfo(Query query, int[] updateCounts, int batchCount) {
     int successfulOperations, failedOperations, noInfoAvailable;
     successfulOperations = 0;
     failedOperations = 0;
@@ -109,13 +108,16 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
         LOGGER.debug("BULK OPERATION %d FAILED: %d AFFECTED ROWS.", i, updateCounts[i]);
       }
     }
-    if (batchCount == updateCounts.length) {
+    if (failedOperations > 0) {
       LOGGER.error("BULK UPDATE EXCEPTION: %d SUCCESSFUL OPERATIONS, %d FAILED OPERATIONS.",
                    successfulOperations + noInfoAvailable, failedOperations);
-    } else {
+    } else if (updateCounts.length < batchCount) {
       LOGGER
           .error("BULK UPDATE EXCEPTION. DATABASE PROCESSED %d OPERATIONS SUCCESSFULLY AND STOPPED PROCESSING DUE TO EXCEPTION.",
                  successfulOperations + noInfoAvailable);
+    } else {
+      LOGGER.info("SUCCESSFULLY EXECUTED BATCH OPERATION OF TYPE %s. TOTAL EXECUTED STATEMENTS: %d.",
+              query.getQueryTemplate().getType().name(), batchCount);
     }
   }
 }

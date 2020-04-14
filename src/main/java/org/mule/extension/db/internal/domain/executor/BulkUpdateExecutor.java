@@ -77,7 +77,8 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
 
       queryLogger.logQuery();
       Object result = preparedStatement.executeBatch();
-      LOGGER.info("SUCCESSFULLY EXECUTED BATCH OPERATION %s. AFFECTED ROWS: %d", query.getQueryTemplate().getType().name(), batchCount);
+      LOGGER.info("SUCCESSFULLY EXECUTED BATCH OPERATION OF TYPE %s. TOTAL EXECUTED STATEMENTS: %d.",
+                  query.getQueryTemplate().getType().name(), batchCount);
       return result;
     } catch (BatchUpdateException batchEx) {
       int[] updateCounts = batchEx.getUpdateCounts();
@@ -112,8 +113,9 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
       LOGGER.error("BULK UPDATE EXCEPTION: %d SUCCESSFUL OPERATIONS, %d FAILED OPERATIONS.",
                    successfulOperations + noInfoAvailable, failedOperations);
     } else {
-      LOGGER.error("BULK UPDATE EXCEPTION. DATABASE PROCESSED %d OPERATIONS SUCCESSFULLY AND STOPPED PROCESSING DUE TO EXCEPTION.",
-                   successfulOperations + noInfoAvailable);
+      LOGGER
+          .error("BULK UPDATE EXCEPTION. DATABASE PROCESSED %d OPERATIONS SUCCESSFULLY AND STOPPED PROCESSING DUE TO EXCEPTION.",
+                 successfulOperations + noInfoAvailable);
     }
   }
 }

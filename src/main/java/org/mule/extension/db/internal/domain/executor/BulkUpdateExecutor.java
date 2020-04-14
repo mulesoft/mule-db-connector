@@ -80,7 +80,7 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
       return preparedStatement.executeBatch();
     } catch (BatchUpdateException batchEx) {
       int[] updateCounts = batchEx.getUpdateCounts();
-      logBulkUpdateErrorInfo(updateCounts,batchCount);
+      logBulkUpdateErrorInfo(updateCounts, batchCount);
       throw new SQLException(batchEx);
     } catch (Exception e) {
       throw new SQLException(e);
@@ -109,9 +109,10 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
     }
     if (batchCount == updateCounts.length) {
       LOGGER.error("BULK UPDATE EXCEPTION: %d SUCCESSFUL OPERATIONS, %d FAILED OPERATIONS.",
-              successfulOperations + noInfoAvailable, failedOperations);
+                   successfulOperations + noInfoAvailable, failedOperations);
     } else {
-      LOGGER.error("BULK UPDATE EXCEPTION. DATABASE PROCESSED %d OPERATIONS SUCCESSFULLY AND STOPPED.", successfulOperations + noInfoAvailable);
+      LOGGER.error("BULK UPDATE EXCEPTION. DATABASE PROCESSED %d OPERATIONS SUCCESSFULLY AND STOPPED.",
+                   successfulOperations + noInfoAvailable);
     }
   }
 }

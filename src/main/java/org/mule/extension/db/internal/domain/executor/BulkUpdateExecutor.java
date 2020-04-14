@@ -117,7 +117,7 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
                  successfulOperations + noInfoAvailable);
     } else {
       LOGGER.info("SUCCESSFULLY EXECUTED BATCH OPERATION OF TYPE %s. TOTAL EXECUTED STATEMENTS: %d.",
-              query.getQueryTemplate().getType().name(), batchCount);
+                  query.getQueryTemplate().getType().name(), batchCount);
     }
   }
 }

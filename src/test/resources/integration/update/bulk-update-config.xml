@@ -29,4 +29,10 @@
             <db:sql>update PLANET set NAME='Mercury' where NAME= :name</db:sql>
         </db:bulk-update>
     </flow>
+
+    <flow name="updateBulkAfterSelectThrowsError">
+        <db:bulk-update config-ref="dbConfig">
+            <db:sql>update PLANET set ID=:id where NAME='Venus'</db:sql>
+        </db:bulk-update>
+    </flow>
 </mule>

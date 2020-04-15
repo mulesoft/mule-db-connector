@@ -135,7 +135,7 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
     }
   }
 
-  private Class<?> getAvailableInterface() {
+  public static Class<?> getAvailableInterface() {
     try {
       return Thread.currentThread().getContextClassLoader().loadClass("com.mysql.cj.log.Log");
     } catch (ClassNotFoundException e) {

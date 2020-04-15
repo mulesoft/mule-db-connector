@@ -77,11 +77,11 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
 
       queryLogger.logQuery();
       int[] result = preparedStatement.executeBatch();
-      logBulkUpdateInfo(query, result, batchCount);
+      logBulkUpdateInfo(result, batchCount);
       return result;
     } catch (BatchUpdateException batchEx) {
       int[] updateCounts = batchEx.getUpdateCounts();
-      logBulkUpdateInfo(query, updateCounts, batchCount);
+      logBulkUpdateInfo(updateCounts, batchCount);
       throw new SQLException(batchEx);
     } catch (Exception e) {
       throw new SQLException(e);
@@ -91,7 +91,7 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
     }
   }
 
-  private void logBulkUpdateInfo(Query query, int[] updateCounts, int batchCount) {
+  private void logBulkUpdateInfo(int[] updateCounts, int batchCount) {
     int successfulOperations, failedOperations, noInfoAvailable;
     successfulOperations = 0;
     failedOperations = 0;
@@ -99,13 +99,19 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
     for (int i = 0; i < updateCounts.length; i++) {
       if (updateCounts[i] >= 0) {
         successfulOperations++;
-        LOGGER.debug("BULK OPERATION %d SUCCESSFULLY PERFORMED: %d AFFECTED ROWS", i, updateCounts[i]);
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("BULK OPERATION %d SUCCESSFULLY PERFORMED: %d AFFECTED ROWS", i, updateCounts[i]);
+        }
       } else if (updateCounts[i] == Statement.SUCCESS_NO_INFO) {
         noInfoAvailable++;
-        LOGGER.debug("BULK OPERATION %d PERFORMED SUCCESSFULLY: NO INFO AVAILABLE ON AFFECTED ROW COUNT", i);
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("BULK OPERATION %d PERFORMED SUCCESSFULLY: NO INFO AVAILABLE ON AFFECTED ROW COUNT", i);
+        }
       } else if (updateCounts[i] == Statement.EXECUTE_FAILED) {
         failedOperations++;
-        LOGGER.debug("BULK OPERATION %d FAILED: %d AFFECTED ROWS.", i, updateCounts[i]);
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("BULK OPERATION %d FAILED: %d AFFECTED ROWS.", i, updateCounts[i]);
+        }
       }
     }
     if (failedOperations > 0) {
@@ -116,8 +122,7 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
           .error("BULK UPDATE EXCEPTION. DATABASE PROCESSED %d OPERATIONS SUCCESSFULLY AND STOPPED PROCESSING DUE TO EXCEPTION.",
                  successfulOperations + noInfoAvailable);
     } else {
-      LOGGER.info("SUCCESSFULLY EXECUTED BATCH OPERATION OF TYPE %s. TOTAL EXECUTED STATEMENTS: %d.",
-                  query.getQueryTemplate().getType().name(), batchCount);
+      LOGGER.info("SUCCESSFULLY EXECUTED BATCH OPERATION. TOTAL EXECUTED STATEMENTS: %d.", batchCount);
     }
   }
 }

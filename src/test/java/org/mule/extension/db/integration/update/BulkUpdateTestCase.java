@@ -19,6 +19,8 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.Field;
 import org.mule.extension.db.integration.model.Record;
@@ -37,6 +39,9 @@ import io.qameta.allure.Story;
 @Feature(DB_EXTENSION)
 @Story("Update Statement")
 public class BulkUpdateTestCase extends AbstractDbIntegrationTestCase {
+
+  @Rule
+  public ExpectedException exceptionRule = ExpectedException.none();
 
   @Override
   protected String[] getFlowConfigurationResources() {
@@ -61,11 +66,26 @@ public class BulkUpdateTestCase extends AbstractDbIntegrationTestCase {
     assertBulkUpdate(response);
   }
 
+  @Test
+  public void updateBulkAfterSelectThrowsSqlException() throws Exception {
+    exceptionRule.expect(Exception.class);
+    flowRunner("updateBulkAfterSelectThrowsError").withPayload(ids()).run().getMessage();
+  }
+
   private List<Map<String, Object>> values() {
     List<Map<String, Object>> values = new ArrayList<>();
     addRecord(values, "name", VENUS.getName());
     addRecord(values, "name", MARS.getName());
     addRecord(values, "name", EARTH.getName());
+
+    return values;
+  }
+
+  private List<Map<String, Object>> ids() {
+    List<Map<String, Object>> values = new ArrayList<>();
+    addRecord(values, "id", 1);
+    addRecord(values, "id", MARS.getName());
+    addRecord(values, "id", 1);
 
     return values;
   }

@@ -20,6 +20,7 @@ import org.mule.extension.db.internal.domain.statement.StatementFactory;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.BatchUpdateException;
 import java.util.List;
 
 /**
@@ -57,6 +58,7 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
   @Override
   public Object execute(DbConnection connection, Query query, List<List<QueryParamValue>> paramValues) throws SQLException {
     Statement statement = statementFactory.create(connection, query.getQueryTemplate());
+    int batchCount = 0;
 
     if (!(statement instanceof PreparedStatement)) {
       throw new QueryExecutionException("The given query can't be executed in bulk, bulk queries must take parameters.");
@@ -70,14 +72,57 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
         doProcessParameters(preparedStatement, query.getQueryTemplate(), params, queryLogger, connection);
         preparedStatement.addBatch();
         queryLogger.addParameterSet();
+        batchCount++;
       }
 
       queryLogger.logQuery();
-
-      return preparedStatement.executeBatch();
+      int[] result = preparedStatement.executeBatch();
+      logBulkUpdateInfo(result, batchCount);
+      return result;
+    } catch (BatchUpdateException batchEx) {
+      int[] updateCounts = batchEx.getUpdateCounts();
+      logBulkUpdateInfo(updateCounts, batchCount);
+      throw new SQLException(batchEx);
+    } catch (Exception e) {
+      throw new SQLException(e);
     } finally {
       preparedStatement.clearParameters();
       statement.close();
+    }
+  }
+
+  private void logBulkUpdateInfo(int[] updateCounts, int batchCount) {
+    int successfulOperations, failedOperations, noInfoAvailable;
+    successfulOperations = 0;
+    failedOperations = 0;
+    noInfoAvailable = 0;
+    for (int i = 0; i < updateCounts.length; i++) {
+      if (updateCounts[i] >= 0) {
+        successfulOperations++;
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("BULK OPERATION %d SUCCESSFULLY PERFORMED: %d AFFECTED ROWS", i, updateCounts[i]);
+        }
+      } else if (updateCounts[i] == Statement.SUCCESS_NO_INFO) {
+        noInfoAvailable++;
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("BULK OPERATION %d PERFORMED SUCCESSFULLY: NO INFO AVAILABLE ON AFFECTED ROW COUNT", i);
+        }
+      } else if (updateCounts[i] == Statement.EXECUTE_FAILED) {
+        failedOperations++;
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("BULK OPERATION %d FAILED: %d AFFECTED ROWS.", i, updateCounts[i]);
+        }
+      }
+    }
+    if (failedOperations > 0) {
+      LOGGER.error("BULK UPDATE EXCEPTION: %d SUCCESSFUL OPERATIONS, %d FAILED OPERATIONS.",
+                   successfulOperations + noInfoAvailable, failedOperations);
+    } else if (updateCounts.length < batchCount) {
+      LOGGER
+          .error("BULK UPDATE EXCEPTION. DATABASE PROCESSED %d OPERATIONS SUCCESSFULLY AND STOPPED PROCESSING DUE TO EXCEPTION.",
+                 successfulOperations + noInfoAvailable);
+    } else {
+      LOGGER.info("SUCCESSFULLY EXECUTED BATCH OPERATION. TOTAL EXECUTED STATEMENTS: %d.", batchCount);
     }
   }
 }

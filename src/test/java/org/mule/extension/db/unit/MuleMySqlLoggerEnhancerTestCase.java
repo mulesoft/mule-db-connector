@@ -19,7 +19,6 @@ import static org.mockito.Mockito.verify;
 public class MuleMySqlLoggerEnhancerTestCase {
 
   private MuleMySqlLogger muleMySqlLogger;
-  private final String TESTING_ENHANCER = "Testing Enhancer";
 
   @Before
   public void setUp() {
@@ -37,6 +36,7 @@ public class MuleMySqlLoggerEnhancerTestCase {
 
   @Test
   public void verifyMuleMySqlLoggerClassIsCalled() {
+    String TESTING_ENHANCER = "Testing Enhancer";
     muleMySqlLogger.logInfo(TESTING_ENHANCER);
 
     verify(muleMySqlLogger).logInfo(TESTING_ENHANCER);

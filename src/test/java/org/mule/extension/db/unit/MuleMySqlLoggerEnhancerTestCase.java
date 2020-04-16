@@ -6,13 +6,11 @@
  */
 package org.mule.extension.db.unit;
 
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.NoOp;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mule.extension.db.api.logger.MuleMySqlLogger;
-import org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionParameters;
+import org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory;
 
 import static org.mockito.Mockito.verify;
 
@@ -22,23 +20,14 @@ public class MuleMySqlLoggerEnhancerTestCase {
 
   @Before
   public void setUp() {
-    Enhancer enhancer = new Enhancer();
-    Class<?> finalInterface = MySqlConnectionParameters.getAvailableInterface();
-
-    enhancer.setClassLoader(Thread.currentThread().getContextClassLoader());
-    enhancer.setInterfaces(new Class[] {finalInterface});
-    enhancer.setSuperclass(MuleMySqlLogger.class);
-    enhancer.setCallback(NoOp.INSTANCE);
-
-    Object enhancedClass = enhancer.create(new Class[] {String.class}, new Object[] {"MySql"});
-    muleMySqlLogger = (MuleMySqlLogger) Mockito.spy(enhancedClass);
+    muleMySqlLogger = Mockito.spy(MuleMySqlLoggerEnhancerFactory.getEnhancedLogger());
   }
 
   @Test
   public void verifyMuleMySqlLoggerClassIsCalled() {
     String TESTING_ENHANCER = "Testing Enhancer";
-    muleMySqlLogger.logInfo(TESTING_ENHANCER);
 
+    muleMySqlLogger.logInfo(TESTING_ENHANCER);
     verify(muleMySqlLogger).logInfo(TESTING_ENHANCER);
   }
 

@@ -6,23 +6,22 @@
  */
 package org.mule.extension.db.unit;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mule.extension.db.api.logger.MuleMySqlLogger;
 import org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory;
 
-import static org.mockito.Mockito.verify;
-
 public class MuleMySqlLoggerEnhancerFactoryTestCase {
 
   @Test
   public void verifyMuleMySqlLoggerClassIsCalled() {
-    MuleMySqlLogger muleMySqlLogger = Mockito.spy(MuleMySqlLoggerEnhancerFactory.getEnhancedLogger());
     String TESTING_ENHANCER = "Testing Enhancer";
+    MuleMySqlLogger delegate = Mockito.mock(MuleMySqlLogger.class);
+    MuleMySqlLogger logger =
+        new MuleMySqlLoggerEnhancerFactory(Thread.currentThread().getContextClassLoader(), delegate).create();
 
-    muleMySqlLogger.logInfo(TESTING_ENHANCER);
-    verify(muleMySqlLogger).logInfo(TESTING_ENHANCER);
+    logger.logInfo(TESTING_ENHANCER);
+    Mockito.verify(delegate).logInfo(TESTING_ENHANCER);
   }
 
 }

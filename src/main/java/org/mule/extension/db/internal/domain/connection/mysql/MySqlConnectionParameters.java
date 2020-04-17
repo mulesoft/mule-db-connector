@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory.MYSQL_DRIVER_CLASS;
+import static org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory.NEW_MYSQL_DRIVER_CLASS;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -113,7 +115,10 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
   private void addMuleLoggerProperty(Map<String, String> connectionProperties) {
     if (connectionProperties != null) {
       try {
-        MuleMySqlLogger enhancedLogger = MuleMySqlLoggerEnhancerFactory.getEnhancedLogger();
+        MuleMySqlLogger muleMySqlLogger = new MuleMySqlLogger("MySql");
+        MuleMySqlLogger enhancedLogger =
+            new MuleMySqlLoggerEnhancerFactory(Thread.currentThread().getContextClassLoader(), muleMySqlLogger).create();
+
         connectionProperties.putIfAbsent(LOGGER_PROPERTY, enhancedLogger.getClass().getName());
       } catch (Throwable e) {
         LOGGER.warn(format("Unable to attach Mule Logger to MySql Driver. Cause: %s", e.getMessage()));

@@ -30,8 +30,6 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public final class MySqlConnectionParameters extends BaseDbConnectionParameters implements DataSourceConfig {
 
-  static final String MYSQL_DRIVER_CLASS = "com.mysql.jdbc.Driver";
-  static final String NEW_MYSQL_DRIVER_CLASS = "com.mysql.cj.jdbc.Driver";
   private static final String MY_SQL_PREFIX = "jdbc:mysql://";
   private static final String LOGGER_PROPERTY = "logger";
   private static final Logger LOGGER = getLogger(MySqlConnectionParameters.class);

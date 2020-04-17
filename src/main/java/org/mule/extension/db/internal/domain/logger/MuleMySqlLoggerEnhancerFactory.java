@@ -16,6 +16,9 @@ import org.mule.extension.db.api.logger.MuleMySqlLogger;
  */
 public class MuleMySqlLoggerEnhancerFactory {
 
+  static final String MYSQL_DRIVER_CLASS = "com.mysql.jdbc.Driver";
+  static final String NEW_MYSQL_DRIVER_CLASS = "com.mysql.cj.jdbc.Driver";
+
   public static MuleMySqlLogger getEnhancedLogger() {
     Enhancer enhancer = new Enhancer();
 

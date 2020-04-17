@@ -7,35 +7,44 @@
 package org.mule.extension.db.internal.domain.logger;
 
 import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.NoOp;
+import net.sf.cglib.proxy.MethodInterceptor;
 import org.mule.extension.db.api.logger.MuleMySqlLogger;
 
 /**
  * Factory class that creates instances of {@link MuleMySqlLogger} wrapped by CGLIB's {@link Enhancer} implementing the
- * available Log interface (either com.mysql.cj.log.Log or com.mysql.jdbc.log.Log) at runtime.
+ * available Log interface (either com.mysql.cj.log.Log or com.mysql.jdbc.log.Log) at runtime and delegating the method
+ * call to the passed instance.
  */
 public class MuleMySqlLoggerEnhancerFactory {
 
-  static final String MYSQL_DRIVER_CLASS = "com.mysql.jdbc.Driver";
-  static final String NEW_MYSQL_DRIVER_CLASS = "com.mysql.cj.jdbc.Driver";
+  public static final String MYSQL_DRIVER_CLASS = "com.mysql.jdbc.Driver";
+  public static final String NEW_MYSQL_DRIVER_CLASS = "com.mysql.cj.jdbc.Driver";
+  private ClassLoader classLoader;
+  private MuleMySqlLogger delegatedLogger;
 
-  public static MuleMySqlLogger getEnhancedLogger() {
+  public MuleMySqlLoggerEnhancerFactory(ClassLoader classLoader, MuleMySqlLogger delegatedLogger) {
+    this.classLoader = classLoader;
+    this.delegatedLogger = delegatedLogger;
+  }
+
+  public MuleMySqlLogger create() {
     Enhancer enhancer = new Enhancer();
 
-    enhancer.setSuperclass(MuleMySqlLogger.class);
-    enhancer.setClassLoader(Thread.currentThread().getContextClassLoader());
+    enhancer.setSuperclass(delegatedLogger.getClass());
+    enhancer.setClassLoader(classLoader);
     enhancer.setInterfaces(new Class[] {getAvailableMySqlLogInterface()});
-    enhancer.setCallback(NoOp.INSTANCE);
+    enhancer
+        .setCallback((MethodInterceptor) (obj, method, args, methodProxy) -> methodProxy.invoke(delegatedLogger, args));
 
     return (MuleMySqlLogger) enhancer.create(new Class[] {String.class}, new Object[] {"MySql"});
   }
 
-  private static Class<?> getAvailableMySqlLogInterface() {
+  private Class<?> getAvailableMySqlLogInterface() {
     try {
-      return Thread.currentThread().getContextClassLoader().loadClass("com.mysql.cj.log.Log");
+      return classLoader.loadClass("com.mysql.cj.log.Log");
     } catch (ClassNotFoundException e) {
       try {
-        return Thread.currentThread().getContextClassLoader().loadClass("com.mysql.jdbc.log.Log");
+        return classLoader.loadClass("com.mysql.jdbc.log.Log");
       } catch (ClassNotFoundException ex) {
         throw new IllegalArgumentException("Neither class, com.mysql.cj.log.Log or com.mysql.jdbc.log.Log, were found. " +
             "An unsupported driver was provided.", ex);

@@ -14,17 +14,11 @@ import org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFacto
 
 import static org.mockito.Mockito.verify;
 
-public class MuleMySqlLoggerEnhancerTestCase {
-
-  private MuleMySqlLogger muleMySqlLogger;
-
-  @Before
-  public void setUp() {
-    muleMySqlLogger = Mockito.spy(MuleMySqlLoggerEnhancerFactory.getEnhancedLogger());
-  }
+public class MuleMySqlLoggerEnhancerFactoryTestCase {
 
   @Test
   public void verifyMuleMySqlLoggerClassIsCalled() {
+    MuleMySqlLogger muleMySqlLogger = Mockito.spy(MuleMySqlLoggerEnhancerFactory.getEnhancedLogger());
     String TESTING_ENHANCER = "Testing Enhancer";
 
     muleMySqlLogger.logInfo(TESTING_ENHANCER);

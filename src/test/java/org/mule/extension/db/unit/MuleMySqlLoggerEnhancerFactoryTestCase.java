@@ -9,7 +9,11 @@ package org.mule.extension.db.unit;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mule.extension.db.api.logger.MuleMySqlLogger;
+import org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionParameters;
 import org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThat;
 
 public class MuleMySqlLoggerEnhancerFactoryTestCase {
 
@@ -24,4 +28,10 @@ public class MuleMySqlLoggerEnhancerFactoryTestCase {
     Mockito.verify(delegate).logInfo(TESTING_ENHANCER);
   }
 
+  @Test
+  public void verifyMuleMySqlLoggerIsPlacedAsConnectionProperty() {
+    MySqlConnectionParameters mySqlConnectionParameters = new MySqlConnectionParameters();
+
+    assertThat(mySqlConnectionParameters.getConnectionProperties().get("logger"), containsString("MuleMySqlLogger"));
+  }
 }

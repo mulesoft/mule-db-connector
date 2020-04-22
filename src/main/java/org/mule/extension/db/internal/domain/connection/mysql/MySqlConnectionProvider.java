@@ -12,8 +12,8 @@ import static org.mule.extension.db.api.exception.connection.DbError.CANNOT_REAC
 import static org.mule.extension.db.api.exception.connection.DbError.INVALID_CREDENTIALS;
 import static org.mule.extension.db.api.exception.connection.DbError.INVALID_DATABASE;
 import static org.mule.extension.db.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
-import static org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionParameters.MYSQL_DRIVER_CLASS;
 import static org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionProvider.MYSQL_GAV;
+import static org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory.MYSQL_DRIVER_CLASS;
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
 

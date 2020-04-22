@@ -43,7 +43,10 @@
             </db:bulk-insert>
         </foreach>
         <db:select config-ref="dbConfig">
-            <db:sql>select * from PLANET</db:sql>
+            <db:sql>#["SELECT NAME from PLANET WHERE POSITION >= :pos ORDER BY POSITION"]</db:sql>
+            <db:input-parameters>
+                #[{'pos' : vars.positionOffset}]
+            </db:input-parameters>
         </db:select>
     </flow>
 

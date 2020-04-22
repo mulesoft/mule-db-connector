@@ -35,6 +35,12 @@ import org.junit.rules.ExpectedException;
 
 public class BulkInsertTestCase extends AbstractDbIntegrationTestCase {
 
+  private static int POSITION_OFFSET_1 = 300;
+  private static String NAME_FIELD = "NAME";
+  private static List<String> PLANET_NAMES =
+      Arrays.asList("Vogsphere", "Caprica", "Coruscant", "Worlorn", "Ego", "Krypton", "Gallifrey",
+                    "Cybertron", "Dagobah", "Terra Prime");
+
   @Rule
   public ExpectedException expectedException = none();
 
@@ -66,30 +72,22 @@ public class BulkInsertTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void bulkInsertInsideForEachScope() throws Exception {
-    List<String> planetNames = Arrays.asList("Vogsphere", "Caprica", "Coruscant", "Worlorn", "Ego", "Krypton", "Gallifrey",
-            "Cybertron", "Dagobah", "Terra Prime");
     Message response =
-        flowRunner("bulkInsertInsideForEachScope").withPayload(valuesWithIncrementalPosition(planetNames)).keepStreamsOpen().run().getMessage();
-    response.getPayload().getValue();
+        flowRunner("bulkInsertInsideForEachScope").withPayload(valuesWithIncrementalPosition(PLANET_NAMES, POSITION_OFFSET_1))
+            .withVariable("positionOffset", POSITION_OFFSET_1).keepStreamsOpen().run()
+            .getMessage();
 
     assertRecords(response.getPayload().getValue(),
-        new Record(new Field("NAME", planetNames.get(0)), new Field("POSITION", 0)),
-        new Record(new Field("NAME", planetNames.get(1)), new Field("POSITION", 1)),
-        new Record(new Field("NAME", planetNames.get(2)), new Field("POSITION", 2)),
-        new Record(new Field("NAME", planetNames.get(3)), new Field("POSITION", 3)),
-        new Record(new Field("NAME", planetNames.get(4)), new Field("POSITION", 4)),
-        new Record(new Field("NAME", planetNames.get(5)), new Field("POSITION", 5)),
-        new Record(new Field("NAME", planetNames.get(6)), new Field("POSITION", 6)),
-        new Record(new Field("NAME", planetNames.get(7)), new Field("POSITION", 7)),
-        new Record(new Field("NAME", planetNames.get(8)), new Field("POSITION", 8)),
-        new Record(new Field("NAME", planetNames.get(9)), new Field("POSITION", 9))
-    );
-
-    //assertThat(resultList.size(), is(planetNames.size()));
-   //   assertThat(result, anyOf(equalTo(1), equalTo(SUCCESS_NO_INFO)));
-    //}
-    //assertPlanetRecordsFromQuery("Vogsphere", "Caprica", "Coruscant", "Worlorn", "Ego", "Krypton", "Gallifrey", "Cybertron",
-     //                            "Dagobah", "Terra Prime");
+                  new Record(new Field(NAME_FIELD, PLANET_NAMES.get(0))),
+                  new Record(new Field(NAME_FIELD, PLANET_NAMES.get(1))),
+                  new Record(new Field(NAME_FIELD, PLANET_NAMES.get(2))),
+                  new Record(new Field(NAME_FIELD, PLANET_NAMES.get(3))),
+                  new Record(new Field(NAME_FIELD, PLANET_NAMES.get(4))),
+                  new Record(new Field(NAME_FIELD, PLANET_NAMES.get(5))),
+                  new Record(new Field(NAME_FIELD, PLANET_NAMES.get(6))),
+                  new Record(new Field(NAME_FIELD, PLANET_NAMES.get(7))),
+                  new Record(new Field(NAME_FIELD, PLANET_NAMES.get(8))),
+                  new Record(new Field(NAME_FIELD, PLANET_NAMES.get(9))));
   }
 
   private List<Map<String, Object>> values() {
@@ -99,14 +97,13 @@ public class BulkInsertTestCase extends AbstractDbIntegrationTestCase {
     return values;
   }
 
-  private List<Map<String, Object>> valuesWithIncrementalPosition(List<String> planetNames) {
+  private List<Map<String, Object>> valuesWithIncrementalPosition(List<String> planetNames, int offset) {
     List<Map<String, Object>> values = new ArrayList<>();
     for (int i = 0; i < planetNames.size(); i++) {
-      addRecord(values, planetNames.get(i), 333 + i);
+      addRecord(values, planetNames.get(i), offset + i);
     }
     return values;
   }
-
 
   private void addRecord(List<Map<String, Object>> values, String planetName, int position) {
     Map<String, Object> record = new HashMap<>();

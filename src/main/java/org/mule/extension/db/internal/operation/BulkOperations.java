@@ -34,6 +34,7 @@ import org.mule.extension.db.internal.resolver.query.BulkQueryResolver;
 import org.mule.extension.db.internal.resolver.query.DefaultBulkQueryFactory;
 import org.mule.extension.db.internal.resolver.query.FileBulkQueryFactory;
 import org.mule.extension.db.internal.util.DefaultFileReader;
+import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.TypeResolver;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -43,10 +44,10 @@ import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
+import org.mule.weave.v2.model.values.TypeValue;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Contains a set of operations for performing bulk DML operations from a single statement.
@@ -175,9 +176,7 @@ public class BulkOperations extends BaseDbOperations {
       throws SQLException {
 
     final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, queryType);
-
     List<List<QueryParamValue>> paramSets = resolveParamSets(values);
-
     BulkUpdateExecutor bulkUpdateExecutor =
         new BulkUpdateExecutor(getStatementFactory(query));
     return (int[]) bulkUpdateExecutor.execute(connection, resolvedQuery, paramSets);
@@ -195,9 +194,17 @@ public class BulkOperations extends BaseDbOperations {
   }
 
   private List<List<QueryParamValue>> resolveParamSets(List<Map<String, Object>> values) {
-    return values.stream().map(map -> map.entrySet().stream()
-        .map(entry -> new QueryParamValue(entry.getKey(), entry.getValue()))
-        .collect(toList()))
-        .collect(toList());
+    List<List<QueryParamValue>> parameterSet = new ArrayList<>();
+    for (Object value : values) {
+      Map<String, Object> map;
+      if (value instanceof TypedValue) {
+        map = TypedValue.unwrap(((TypedValue) value).getValue());
+      } else {
+        map = (Map<String, Object>) value;
+      }
+      parameterSet
+          .add(map.entrySet().stream().map(entry -> new QueryParamValue(entry.getKey(), entry.getValue())).collect(toList()));
+    }
+    return parameterSet;
   }
 }

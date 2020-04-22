@@ -31,4 +31,20 @@
             </db:parameter-types>
         </db:bulk-insert>
     </flow>
+
+    <flow name="bulkInsertInsideForEachScope">
+        <foreach collection="#[payload]" batchSize="2">
+            <db:bulk-insert config-ref="dbConfig">
+                <db:sql>INSERT INTO PLANET(POSITION, NAME) VALUES (:position, :name)</db:sql>
+                <db:parameter-types>
+                    <db:parameter-type key="name" type="VARCHAR" />
+                    <db:parameter-type key="position" type="INTEGER" />
+                </db:parameter-types>
+            </db:bulk-insert>
+        </foreach>
+        <db:select config-ref="dbConfig">
+            <db:sql>select * from PLANET</db:sql>
+        </db:select>
+    </flow>
+
 </mule>

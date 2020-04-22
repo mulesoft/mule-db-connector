@@ -18,7 +18,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.rules.ExpectedException.none;
 
-import org.junit.Ignore;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.Field;
 import org.mule.extension.db.integration.model.Record;

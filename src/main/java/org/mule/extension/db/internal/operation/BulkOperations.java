@@ -46,8 +46,8 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
 import java.sql.SQLException;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
 
 /**
@@ -177,7 +177,9 @@ public class BulkOperations extends BaseDbOperations {
       throws SQLException {
 
     final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, queryType);
+
     List<List<QueryParamValue>> paramSets = resolveParamSets(values);
+
     BulkUpdateExecutor bulkUpdateExecutor =
         new BulkUpdateExecutor(getStatementFactory(query));
     return (int[]) bulkUpdateExecutor.execute(connection, resolvedQuery, paramSets);

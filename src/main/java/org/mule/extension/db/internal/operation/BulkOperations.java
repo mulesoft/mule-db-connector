@@ -44,10 +44,11 @@ import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
-import org.mule.weave.v2.model.values.TypeValue;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Contains a set of operations for performing bulk DML operations from a single statement.

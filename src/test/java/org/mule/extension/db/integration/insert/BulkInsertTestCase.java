@@ -24,10 +24,12 @@ import org.mule.extension.db.integration.model.Field;
 import org.mule.extension.db.integration.model.Record;
 import org.mule.runtime.api.message.Message;
 
-import java.sql.Array;
+import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Arrays;
+import java.util.ArrayList;
 import java.sql.SQLException;
-import java.util.*;
-import java.util.stream.Collectors;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -62,7 +64,6 @@ public class BulkInsertTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
-  @Ignore
   public void bulkInsertUnusedParameterType() throws Exception {
     expectedException.expectCause(instanceOf(IllegalArgumentException.class));
     expectedException

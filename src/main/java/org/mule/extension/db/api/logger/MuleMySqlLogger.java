@@ -6,7 +6,6 @@
  */
 package org.mule.extension.db.api.logger;
 
-import com.mysql.jdbc.log.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +15,7 @@ import org.slf4j.LoggerFactory;
  *
  * @since 1.0
  */
-public class MuleMySqlLogger implements Log {
+public class MuleMySqlLogger {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MuleMySqlLogger.class);
   private String name;

@@ -22,6 +22,7 @@ public class TestDbConfig {
 
   static {
     USE_MYSQL = getValueFor("mysql");
+    USE_MYSQL_OLD_DRIVER = getValueFor("mysql-old-version");
     USE_MSSQL_SERVER = getValueFor("mssql");
     USE_DERBY = getValueFor("derby");
     USE_ORACLE = getValueFor("oracle");
@@ -41,6 +42,7 @@ public class TestDbConfig {
    *  Alternately, you can enable the system property <code>mysql</code>.
    */
   private static boolean USE_MYSQL;
+  private static boolean USE_MYSQL_OLD_DRIVER;
 
   /**
    * <strong>Developer Note:</strong>
@@ -73,7 +75,7 @@ public class TestDbConfig {
 
   public static List<Object[]> getResources() {
 
-    if (!(USE_DERBY || USE_MYSQL || USE_MSSQL_SERVER || USE_ORACLE)) {
+    if (!(USE_DERBY || USE_MYSQL || USE_MYSQL_OLD_DRIVER || USE_MSSQL_SERVER || USE_ORACLE)) {
       USE_DERBY = true;
     }
 
@@ -98,7 +100,7 @@ public class TestDbConfig {
   }
 
   public static List<Object[]> getMySqlResource() {
-    if (USE_MYSQL) {
+    if (USE_MYSQL || USE_MYSQL_OLD_DRIVER) {
       final MySqlTestDatabase mySqlTestDatabase = new MySqlTestDatabase();
       return singletonList(new Object[] {"integration/config/mysql-db-config.xml", mySqlTestDatabase,
           mySqlTestDatabase.getDbType(), emptyList()});

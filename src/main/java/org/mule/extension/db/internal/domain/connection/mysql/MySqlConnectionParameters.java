@@ -6,21 +6,24 @@
  */
 package org.mule.extension.db.internal.domain.connection.mysql;
 
-import static java.lang.String.format;
-import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
-import static org.slf4j.LoggerFactory.getLogger;
-
+import org.mule.extension.db.api.logger.MuleMySqlLogger;
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
+import org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Password;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
+import org.slf4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.slf4j.Logger;
+import static java.lang.String.format;
+import static org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory.MYSQL_DRIVER_CLASS;
+import static org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory.NEW_MYSQL_DRIVER_CLASS;
+import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * {@link DataSourceConfig} implementation for MySQL databases.
@@ -29,11 +32,8 @@ import org.slf4j.Logger;
  */
 public final class MySqlConnectionParameters extends BaseDbConnectionParameters implements DataSourceConfig {
 
-  static final String MYSQL_DRIVER_CLASS = "com.mysql.jdbc.Driver";
-  static final String NEW_MYSQL_DRIVER_CLASS = "com.mysql.cj.jdbc.Driver";
   private static final String MY_SQL_PREFIX = "jdbc:mysql://";
   private static final String LOGGER_PROPERTY = "logger";
-  private static final String MY_SQL_LOGGER = "org.mule.extension.db.api.logger.MuleMySqlLogger";
   private static final Logger LOGGER = getLogger(MySqlConnectionParameters.class);
 
   /**
@@ -112,11 +112,18 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
     return user;
   }
 
+  public Map<String, String> getConnectionProperties() {
+    return connectionProperties;
+  }
+
   private void addMuleLoggerProperty(Map<String, String> connectionProperties) {
     if (connectionProperties != null) {
       try {
-        Thread.currentThread().getContextClassLoader().loadClass(MY_SQL_LOGGER);
-        connectionProperties.putIfAbsent(LOGGER_PROPERTY, MY_SQL_LOGGER);
+        MuleMySqlLogger muleMySqlLogger = new MuleMySqlLogger("MySql");
+        MuleMySqlLogger enhancedLogger =
+            new MuleMySqlLoggerEnhancerFactory(Thread.currentThread().getContextClassLoader(), muleMySqlLogger).create();
+
+        connectionProperties.putIfAbsent(LOGGER_PROPERTY, enhancedLogger.getClass().getName());
       } catch (Throwable e) {
         LOGGER.warn(format("Unable to attach Mule Logger to MySql Driver. Cause: %s", e.getMessage()));
         if (LOGGER.isDebugEnabled()) {
@@ -125,4 +132,5 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
       }
     }
   }
+
 }

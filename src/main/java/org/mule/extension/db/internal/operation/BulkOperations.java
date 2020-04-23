@@ -15,6 +15,7 @@ import static org.mule.extension.db.internal.domain.query.QueryType.MERGE;
 import static org.mule.extension.db.internal.domain.query.QueryType.STORE_PROCEDURE_CALL;
 import static org.mule.extension.db.internal.domain.query.QueryType.TRUNCATE;
 import static org.mule.extension.db.internal.domain.query.QueryType.UPDATE;
+import static org.mule.runtime.api.metadata.TypedValue.unwrap;
 
 import org.mule.extension.db.api.param.BulkQueryDefinition;
 import org.mule.extension.db.api.param.BulkScript;
@@ -199,12 +200,7 @@ public class BulkOperations extends BaseDbOperations {
   private List<List<QueryParamValue>> resolveParamSets(List<Map<String, Object>> values) {
     List<List<QueryParamValue>> parameterSet = new ArrayList<>();
     for (Object value : values) {
-      Map<String, Object> map;
-      if (value instanceof TypedValue) {
-        map = TypedValue.unwrap(((TypedValue) value).getValue());
-      } else {
-        map = (Map<String, Object>) value;
-      }
+      Map<String, Object> map = unwrap(value);
       parameterSet
           .add(map.entrySet().stream().map(entry -> new QueryParamValue(entry.getKey(), entry.getValue())).collect(toList()));
     }

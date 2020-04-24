@@ -15,6 +15,7 @@ import static org.mule.extension.db.internal.domain.query.QueryType.MERGE;
 import static org.mule.extension.db.internal.domain.query.QueryType.STORE_PROCEDURE_CALL;
 import static org.mule.extension.db.internal.domain.query.QueryType.TRUNCATE;
 import static org.mule.extension.db.internal.domain.query.QueryType.UPDATE;
+import static org.mule.runtime.api.metadata.TypedValue.unwrap;
 
 import org.mule.extension.db.api.param.BulkQueryDefinition;
 import org.mule.extension.db.api.param.BulkScript;
@@ -47,6 +48,7 @@ import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * Contains a set of operations for performing bulk DML operations from a single statement.
@@ -195,9 +197,12 @@ public class BulkOperations extends BaseDbOperations {
   }
 
   private List<List<QueryParamValue>> resolveParamSets(List<Map<String, Object>> values) {
-    return values.stream().map(map -> map.entrySet().stream()
-        .map(entry -> new QueryParamValue(entry.getKey(), entry.getValue()))
-        .collect(toList()))
-        .collect(toList());
+    List<List<QueryParamValue>> parameterSet = new ArrayList<>();
+    for (Object value : values) {
+      Map<String, Object> map = unwrap(value);
+      parameterSet
+          .add(map.entrySet().stream().map(entry -> new QueryParamValue(entry.getKey(), entry.getValue())).collect(toList()));
+    }
+    return parameterSet;
   }
 }

@@ -268,6 +268,7 @@
                             <images>
                                 <image>
                                     <name>mysql:latest</name>
+                                    <alias>mysql-container</alias>
                                     <run>
                                         <env>
                                             <MYSQL_ROOT_PASSWORD>password</MYSQL_ROOT_PASSWORD>
@@ -351,6 +352,7 @@
                             <images>
                                 <image>
                                     <name>mysql:latest</name>
+                                    <alias>mysql-old-version-container</alias>
                                     <run>
                                         <env>
                                             <MYSQL_ROOT_PASSWORD>password</MYSQL_ROOT_PASSWORD>

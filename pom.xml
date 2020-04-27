@@ -270,6 +270,7 @@
                                     <name>mysql:latest</name>
                                     <alias>mysql-container</alias>
                                     <run>
+                                        <containerNamePattern>%a</containerNamePattern>
                                         <env>
                                             <MYSQL_ROOT_PASSWORD>password</MYSQL_ROOT_PASSWORD>
                                             <MYSQL_DATABASE>xe</MYSQL_DATABASE>
@@ -354,6 +355,7 @@
                                     <name>mysql:latest</name>
                                     <alias>mysql-old-version-container</alias>
                                     <run>
+                                        <containerNamePattern>%a</containerNamePattern>
                                         <env>
                                             <MYSQL_ROOT_PASSWORD>password</MYSQL_ROOT_PASSWORD>
                                             <MYSQL_DATABASE>xe</MYSQL_DATABASE>

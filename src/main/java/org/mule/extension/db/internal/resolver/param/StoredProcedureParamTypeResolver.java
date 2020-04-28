@@ -76,7 +76,7 @@ public class StoredProcedureParamTypeResolver implements ParamTypeResolver {
         return parameters;
       }
 
-      LOGGER.warn("Could not find query parameters %s using configured types.", join(",", missingParameters));
+      LOGGER.warn("Could not find query parameters {} using configured types.", join(", ", missingParameters));
     }
 
     LOGGER.debug("Getting Stored Procedure parameters types using DB metadata");

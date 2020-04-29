@@ -27,7 +27,7 @@
         <commonsIoVersion>2.6</commonsIoVersion>
         <mockito-core.version>3.3.3</mockito-core.version>
         <xmlunit.version>1.6</xmlunit.version>
-        <caffeineVersion>2.8.1</caffeineVersion>
+        <caffeineVersion>2.8.2</caffeineVersion>
         <javax.transaction.version>1.3</javax.transaction.version>
         <xaPoolVersion>1.5.0</xaPoolVersion>
         <cglibVersion>3.3.0</cglibVersion>

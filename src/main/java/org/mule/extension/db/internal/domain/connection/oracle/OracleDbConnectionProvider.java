@@ -21,6 +21,7 @@ import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.connection.DbConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.JdbcConnectionFactory;
+import org.mule.extension.db.internal.domain.type.ResolvedDbType;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
@@ -28,6 +29,8 @@ import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.sql.DataSource;
@@ -46,6 +49,7 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
   private static final String INVALID_CREDENTIALS_ORACLE_CODE = "ORA-01017";
   private static final String UNKNOWN_SID_ORACLE_CODE = "ORA-12505";
   private static final String IO_ERROR = "IO Error: The Network Adapter could not establish the connection";
+  Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache = new HashMap<>();
 
   @ParameterGroup(name = CONNECTION)
   private OracleConnectionParameters oracleConnectionParameters;
@@ -57,7 +61,7 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
 
   @Override
   protected DbConnection createDbConnection(Connection connection) throws Exception {
-    return new OracleDbConnection(connection, super.resolveCustomTypes());
+    return new OracleDbConnection(connection, super.resolveCustomTypes(), resolvedDbTypesCache);
   }
 
   @Override

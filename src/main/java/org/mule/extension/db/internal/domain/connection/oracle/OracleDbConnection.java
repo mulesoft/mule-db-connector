@@ -62,8 +62,17 @@ public class OracleDbConnection extends DefaultDbConnection {
 
   private Method createArrayMethod;
 
+  Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache = new HashMap<>();
+
   public OracleDbConnection(Connection jdbcConnection, List<DbType> customDataTypes) {
     super(jdbcConnection, customDataTypes);
+
+  }
+
+  public OracleDbConnection(Connection jdbcConnection, List<DbType> customDataTypes,
+                            Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache) {
+    super(jdbcConnection, customDataTypes);
+    this.resolvedDbTypesCache = resolvedDbTypesCache;
   }
 
   /**

@@ -28,12 +28,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-
 import org.junit.Test;
-import org.mule.extension.db.internal.domain.type.ResolvedDbType;
+
 
 public class CreateArrayTestCase extends AbstractDbFunctionTestCase
 {

@@ -53,11 +53,11 @@ public class OracleDbConnection extends DefaultDbConnection
     private static final int CURSOR_TYPE_ID = -10;
     private static final String CURSOR_TYPE_NAME = "CURSOR";
 
-    private static final String ATTR_TYPE_NAME_PARAM = "ATTR_TYPE_NAME";
+    public static final String ATTR_TYPE_NAME_PARAM = "ATTR_TYPE_NAME";
 
     private static final String ATTR_NO_PARAM = "ATTR_NO";
 
-    private static final String QUERY_TYPE_ATTRS =
+    public static final String QUERY_TYPE_ATTRS =
         "SELECT ATTR_NO, ATTR_TYPE_NAME FROM ALL_TYPE_ATTRS WHERE TYPE_NAME = ? AND ATTR_TYPE_NAME IN ('CLOB', 'BLOB')";
 
     private static final String QUERY_OWNER_CONDITION = " AND OWNER = ?";
@@ -196,13 +196,13 @@ public class OracleDbConnection extends DefaultDbConnection
         {
             if (logger.isDebugEnabled())
             {
-                logger.info("Returning chached LobFieldsDataTypeInfo");
+                logger.debug("Returning chached LobFieldsDataTypeInfo");
             }
             return resolvedDbTypesCache.get(typeName);
         }
         if (logger.isDebugEnabled())
         {
-            logger.info("Obtaining LobFieldsDataTypeInfo");
+            logger.debug("Obtaining LobFieldsDataTypeInfo");
         }
         synchronized (resolvedDbTypesCache)
         {

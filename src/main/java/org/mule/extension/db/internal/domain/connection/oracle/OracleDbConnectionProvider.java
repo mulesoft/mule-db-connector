@@ -46,57 +46,46 @@ import javax.sql.DataSource;
 @Alias("oracle")
 @ExternalLib(name = "Oracle JDBC Driver", description = "A JDBC driver which supports connecting to an Oracle Database",
     nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, requiredClassName = DRIVER_CLASS_NAME, type = JAR)
-public class OracleDbConnectionProvider extends DbConnectionProvider
-{
+public class OracleDbConnectionProvider extends DbConnectionProvider {
 
-    private static final String INVALID_CREDENTIALS_ORACLE_CODE = "ORA-01017";
-    private static final String UNKNOWN_SID_ORACLE_CODE = "ORA-12505";
-    private static final String IO_ERROR = "IO Error: The Network Adapter could not establish the connection";
-    Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache = new HashMap<>();
+  private static final String INVALID_CREDENTIALS_ORACLE_CODE = "ORA-01017";
+  private static final String UNKNOWN_SID_ORACLE_CODE = "ORA-12505";
+  private static final String IO_ERROR = "IO Error: The Network Adapter could not establish the connection";
+  Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache = new HashMap<>();
 
-    @ParameterGroup(name = CONNECTION)
-    private OracleConnectionParameters oracleConnectionParameters;
+  @ParameterGroup(name = CONNECTION)
+  private OracleConnectionParameters oracleConnectionParameters;
 
-    @Override
-    protected JdbcConnectionFactory createJdbcConnectionFactory()
-    {
-        return new OracleJdbcConnectionFactory();
+  @Override
+  protected JdbcConnectionFactory createJdbcConnectionFactory() {
+    return new OracleJdbcConnectionFactory();
+  }
+
+  @Override
+  protected DbConnection createDbConnection(Connection connection) throws Exception {
+    return new OracleDbConnection(connection, super.resolveCustomTypes(), resolvedDbTypesCache);
+  }
+
+  @Override
+  public Optional<DataSource> getDataSource() {
+    return empty();
+  }
+
+  @Override
+  public Optional<DataSourceConfig> getDataSourceConfig() {
+    return ofNullable(oracleConnectionParameters);
+  }
+
+  @Override
+  public Optional<DbError> getDbVendorErrorType(SQLException e) {
+    String message = e.getMessage();
+    if (message.contains(INVALID_CREDENTIALS_ORACLE_CODE)) {
+      return of(INVALID_CREDENTIALS);
+    } else if (message.contains(UNKNOWN_SID_ORACLE_CODE)) {
+      return of(INVALID_DATABASE);
+    } else if (message.contains(IO_ERROR)) {
+      return of(CANNOT_REACH);
     }
-
-    @Override
-    protected DbConnection createDbConnection(Connection connection) throws Exception
-    {
-        return new OracleDbConnection(connection, super.resolveCustomTypes(), resolvedDbTypesCache);
-    }
-
-    @Override
-    public Optional<DataSource> getDataSource()
-    {
-        return empty();
-    }
-
-    @Override
-    public Optional<DataSourceConfig> getDataSourceConfig()
-    {
-        return ofNullable(oracleConnectionParameters);
-    }
-
-    @Override
-    public Optional<DbError> getDbVendorErrorType(SQLException e)
-    {
-        String message = e.getMessage();
-        if (message.contains(INVALID_CREDENTIALS_ORACLE_CODE))
-        {
-            return of(INVALID_CREDENTIALS);
-        }
-        else if (message.contains(UNKNOWN_SID_ORACLE_CODE))
-        {
-            return of(INVALID_DATABASE);
-        }
-        else if (message.contains(IO_ERROR))
-        {
-            return of(CANNOT_REACH);
-        }
-        return empty();
-    }
+    return empty();
+  }
 }

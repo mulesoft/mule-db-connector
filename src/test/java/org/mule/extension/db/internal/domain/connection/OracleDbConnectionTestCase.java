@@ -29,99 +29,98 @@ import static org.mockito.Mockito.when;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.ATTR_TYPE_NAME_PARAM;
 import static org.mule.extension.db.internal.domain.connection.type.resolver.ArrayTypeResolver.QUERY_ALL_COLL_TYPES;
 
-public class OracleDbConnectionTestCase extends AbstractMuleTestCase
-{
-    private final String TYPE_NAME = "TYPE_NAME";
-    private final String OTHER_TYPE_NAME = "OTHER_TYPE";
+public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
+
+  private final String TYPE_NAME = "TYPE_NAME";
+  private final String OTHER_TYPE_NAME = "OTHER_TYPE";
 
 
-    @Test
-    public void lobResolutionPerformance() throws Exception
-    {
+  @Test
+  public void lobResolutionPerformance() throws Exception {
 
 
-        /*
-        The main goal of this test is to assert that lob resolution is performed using
-        database query only once for every type.
+    /*
+    The main goal of this test is to assert that lob resolution is performed using
+    database query only once for every type.
+    
+    Assertions required:
+            * Assert that the query is executed only once for
+              every Type.
+            * Assert that the right value is present in the cache.
+            * Assert that on the following calls for lob resolution
+              the value comes from the cache.
+            * The mock must be reset for every call.
+    
+     Important Note. Fixing DBCON-179 will change the statements executed
+     on every call.
+     */
 
-        Assertions required:
-                * Assert that the query is executed only once for
-                  every Type.
-                * Assert that the right value is present in the cache.
-                * Assert that on the following calls for lob resolution
-                  the value comes from the cache.
-                * The mock must be reset for every call.
+    Map<String, Map<Integer, ResolvedDbType>> dbTypeCache = new ConcurrentHashMap<>();
+    Object[] structValues = {"clob", "foo"};
+    Object[] structValues1 = {"clob1", "foo1"};
+    Object[] params = {structValues, structValues1};
+    Object[] params2 = {structValues, structValues1};
+    final String USER_TYPE_NAME = "FOO";
+    final String USER_TYPE_DBNAME = "BAR";
+    final String USER_TYPE_NAME_B = "ICECREAM";
+    final String USER_TYPE_DBNAME_B = "SANDWICH";
 
-         Important Note. Fixing DBCON-179 will change the statements executed
-         on every call.
-         */
+    //First call.
+    Connection delegate = mock(Connection.class);
+    PreparedStatement preparedStatement = mock(PreparedStatement.class);
+    ResultSet resultSet = mock(ResultSet.class);
 
-        Map<String, Map<Integer, ResolvedDbType>> dbTypeCache = new ConcurrentHashMap<>();
-        Object[] structValues = {"clob", "foo"};
-        Object[] structValues1 = {"clob1", "foo1"};
-        Object[] params = {structValues, structValues1};
-        Object[] params2 = {structValues, structValues1};
-        final String USER_TYPE_NAME = "FOO";
-        final String USER_TYPE_DBNAME = "BAR";
-        final String USER_TYPE_NAME_B = "ICECREAM";
-        final String USER_TYPE_DBNAME_B = "SANDWICH";
+    when(preparedStatement.executeQuery()).thenReturn(resultSet);
+    when(delegate.prepareStatement(OracleDbConnection.QUERY_TYPE_ATTRS)).thenReturn(preparedStatement);
+    when(delegate.prepareStatement(QUERY_ALL_COLL_TYPES)).thenReturn(preparedStatement);
+    when(resultSet.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
+    when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(USER_TYPE_DBNAME);
 
-        //First call.
-        Connection delegate = mock(Connection.class);
-        PreparedStatement preparedStatement = mock(PreparedStatement.class);
-        ResultSet resultSet = mock(ResultSet.class);
+    OracleDbConnection cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache);
+    cnx.createArrayOf(USER_TYPE_NAME, params);
+    assertThat(dbTypeCache.containsKey(USER_TYPE_NAME), is(true));
+    assertThat(dbTypeCache.get(USER_TYPE_NAME).get(0).getName(), is(USER_TYPE_DBNAME));
+    verify(preparedStatement, times(2)).executeQuery();
 
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(delegate.prepareStatement(OracleDbConnection.QUERY_TYPE_ATTRS)).thenReturn(preparedStatement);
-        when(delegate.prepareStatement(QUERY_ALL_COLL_TYPES)).thenReturn(preparedStatement);
-        when(resultSet.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
-        when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(USER_TYPE_DBNAME);
+    //Second Call
+    delegate = mock(Connection.class);
+    preparedStatement = mock(PreparedStatement.class);
+    resultSet = mock(ResultSet.class);
 
-        OracleDbConnection cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache);
-        cnx.createArrayOf(USER_TYPE_NAME, params);
-        assertThat(dbTypeCache.containsKey(USER_TYPE_NAME), is(true));
-        assertThat(dbTypeCache.get(USER_TYPE_NAME).get(0).getName(), is(USER_TYPE_DBNAME));
-        verify(preparedStatement, times(2)).executeQuery();
+    when(preparedStatement.executeQuery()).thenReturn(resultSet);
+    when(delegate.prepareStatement(OracleDbConnection.QUERY_TYPE_ATTRS)).thenReturn(preparedStatement);
+    when(delegate.prepareStatement(QUERY_ALL_COLL_TYPES)).thenReturn(preparedStatement);
+    when(resultSet.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
+    when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(USER_TYPE_DBNAME);
 
-        //Second Call
-        delegate = mock(Connection.class);
-        preparedStatement = mock(PreparedStatement.class);
-        resultSet = mock(ResultSet.class);
+    cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache);
+    cnx.createArrayOf(USER_TYPE_NAME, params);
 
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(delegate.prepareStatement(OracleDbConnection.QUERY_TYPE_ATTRS)).thenReturn(preparedStatement);
-        when(delegate.prepareStatement(QUERY_ALL_COLL_TYPES)).thenReturn(preparedStatement);
-        when(resultSet.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
-        when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(USER_TYPE_DBNAME);
+    assertThat(dbTypeCache.containsKey(USER_TYPE_NAME), is(true));
+    assertThat(dbTypeCache.get(USER_TYPE_NAME).get(0).getName(), is(USER_TYPE_DBNAME));
+    assertThat(dbTypeCache.keySet().size(), is(1));
+    //Fixing DBCON-179 will result in 0 times.
+    verify(preparedStatement, times(1)).executeQuery();
 
-        cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache);
-        cnx.createArrayOf(USER_TYPE_NAME, params);
+    //Third Call
+    delegate = mock(Connection.class);
+    preparedStatement = mock(PreparedStatement.class);
+    resultSet = mock(ResultSet.class);
+    when(preparedStatement.executeQuery()).thenReturn(resultSet);
+    when(delegate.prepareStatement(OracleDbConnection.QUERY_TYPE_ATTRS)).thenReturn(preparedStatement);
+    when(delegate.prepareStatement(QUERY_ALL_COLL_TYPES)).thenReturn(preparedStatement);
 
-        assertThat(dbTypeCache.containsKey(USER_TYPE_NAME), is(true));
-        assertThat(dbTypeCache.get(USER_TYPE_NAME).get(0).getName(), is(USER_TYPE_DBNAME));
-        assertThat(dbTypeCache.keySet().size(), is(1));
-        //Fixing DBCON-179 will result in 0 times.
-        verify(preparedStatement, times(1)).executeQuery();
+    when(resultSet.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
+    when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(USER_TYPE_DBNAME_B);
 
-        //Third Call
-        delegate = mock(Connection.class);
-        preparedStatement = mock(PreparedStatement.class);
-        resultSet = mock(ResultSet.class);
-        when(preparedStatement.executeQuery()).thenReturn(resultSet);
-        when(delegate.prepareStatement(OracleDbConnection.QUERY_TYPE_ATTRS)).thenReturn(preparedStatement);
-        when(delegate.prepareStatement(QUERY_ALL_COLL_TYPES)).thenReturn(preparedStatement);
+    cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache);
+    cnx.createArrayOf(USER_TYPE_NAME_B, params);
 
-        when(resultSet.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
-        when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(USER_TYPE_DBNAME_B);
-
-        cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache);
-        cnx.createArrayOf(USER_TYPE_NAME_B, params);
-
-        assertThat(dbTypeCache.containsKey(USER_TYPE_NAME_B), is(true));
-        assertThat(dbTypeCache.get(USER_TYPE_NAME_B).get(0).getName(), is(USER_TYPE_DBNAME_B));
-        assertThat(dbTypeCache.keySet().size(), is(2));
-        verify(preparedStatement, times(2)).executeQuery();
+    assertThat(dbTypeCache.containsKey(USER_TYPE_NAME_B), is(true));
+    assertThat(dbTypeCache.get(USER_TYPE_NAME_B).get(0).getName(), is(USER_TYPE_DBNAME_B));
+    assertThat(dbTypeCache.keySet().size(), is(2));
+    verify(preparedStatement, times(2)).executeQuery();
 
 
-    }
+  }
 }

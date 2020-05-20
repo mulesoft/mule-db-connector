@@ -4,6 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
+
 package org.mule.extension.db.internal.domain.connection.oracle;
 
 import static java.util.Optional.empty;
@@ -16,11 +17,13 @@ import static org.mule.extension.db.internal.domain.connection.DbConnectionProvi
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionParameters.DRIVER_CLASS_NAME;
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
+
 import org.mule.extension.db.api.exception.connection.DbError;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.connection.DbConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.JdbcConnectionFactory;
+import org.mule.extension.db.internal.domain.type.ResolvedDbType;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
@@ -28,6 +31,8 @@ import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.sql.DataSource;
@@ -46,6 +51,7 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
   private static final String INVALID_CREDENTIALS_ORACLE_CODE = "ORA-01017";
   private static final String UNKNOWN_SID_ORACLE_CODE = "ORA-12505";
   private static final String IO_ERROR = "IO Error: The Network Adapter could not establish the connection";
+  Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache = new ConcurrentHashMap<>();
 
   @ParameterGroup(name = CONNECTION)
   private OracleConnectionParameters oracleConnectionParameters;
@@ -57,7 +63,7 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
 
   @Override
   protected DbConnection createDbConnection(Connection connection) throws Exception {
-    return new OracleDbConnection(connection, super.resolveCustomTypes());
+    return new OracleDbConnection(connection, super.resolveCustomTypes(), resolvedDbTypesCache);
   }
 
   @Override

@@ -31,7 +31,7 @@ import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -51,7 +51,7 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
   private static final String INVALID_CREDENTIALS_ORACLE_CODE = "ORA-01017";
   private static final String UNKNOWN_SID_ORACLE_CODE = "ORA-12505";
   private static final String IO_ERROR = "IO Error: The Network Adapter could not establish the connection";
-  Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache = new HashMap<>();
+  Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache = new ConcurrentHashMap<>();
 
   @ParameterGroup(name = CONNECTION)
   private OracleConnectionParameters oracleConnectionParameters;

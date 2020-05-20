@@ -24,7 +24,7 @@ import java.util.Optional;
  */
 public class ArrayTypeResolver implements StructAndArrayTypeResolver {
 
-  private static final String QUERY_ALL_COLL_TYPES = "SELECT * FROM SYS.ALL_COLL_TYPES WHERE TYPE_NAME = ?";
+  public static final String QUERY_ALL_COLL_TYPES = "SELECT * FROM SYS.ALL_COLL_TYPES WHERE TYPE_NAME = ?";
   private static final String QUERY_OWNER_CONDITION = " AND OWNER = ?";
   private static final String ELEM_TYPE_NAME = "ELEM_TYPE_NAME";
 

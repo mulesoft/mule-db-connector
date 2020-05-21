@@ -28,6 +28,7 @@ public class StoredProcedureReturningResultSetReleasesConnectionTestCase extends
   public void setupStoredProcedure() throws Exception {
     assumeThat(getDefaultDataSource(), new SupportsReturningStoredProcedureResultsWithoutParameters());
     testDatabase.createStoredProcedureGetSplitRecords(getDefaultDataSource());
+    testDatabase.createStoredProcedureGetRecords(getDefaultDataSource());
   }
 
   @Test
@@ -39,4 +40,10 @@ public class StoredProcedureReturningResultSetReleasesConnectionTestCase extends
     }
   }
 
+  @Test
+  public void connectionsReleasesToPoolWithStreamedResponseAndMultipleResultSets() throws Exception {
+    for (int i = 0; i < TIMES_TO_CALL_STORED_PROCEDURE; i++) {
+      flowRunner("getResultSets").run();
+    }
+  }
 }

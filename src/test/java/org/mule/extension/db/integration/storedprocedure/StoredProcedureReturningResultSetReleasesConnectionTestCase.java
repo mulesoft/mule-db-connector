@@ -27,7 +27,7 @@ public class StoredProcedureReturningResultSetReleasesConnectionTestCase extends
   @Before
   public void setupStoredProcedure() throws Exception {
     assumeThat(getDefaultDataSource(), new SupportsReturningStoredProcedureResultsWithoutParameters());
-    testDatabase.createStoredProcedureGetRecords(getDefaultDataSource());
+    testDatabase.createStoredProcedureGetSplitRecords(getDefaultDataSource());
   }
 
   @Test

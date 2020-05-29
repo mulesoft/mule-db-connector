@@ -41,9 +41,11 @@ public class StatementStreamingResultSetCloser {
     try {
       for (ResultSet resultSet : resultSets) {
         close(resultSet);
-        connection.endStreaming();
       }
     } finally {
+      for (int i = 0; i < resultSets.size(); i++) {
+        connection.endStreaming();
+      }
       resultSets.clear();
       if (!connection.isTransactionActive()) {
         connection.release();

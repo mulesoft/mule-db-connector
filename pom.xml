@@ -24,7 +24,7 @@
         <commonsCollectionsVersion>3.2.2</commonsCollectionsVersion>
         <commonsDbUtilsVersion>1.7</commonsDbUtilsVersion>
         <commonsLangVersion>3.7</commonsLangVersion>
-        <commonsIoVersion>2.6</commonsIoVersion>
+        <commonsIoVersion>2.7</commonsIoVersion>
         <derbyVersion>10.11.1.1</derbyVersion>
         <mySqlVersion>5.1.33</mySqlVersion>
         <caffeineVersion>2.8.0</caffeineVersion>

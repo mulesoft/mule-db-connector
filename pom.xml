@@ -24,7 +24,7 @@
         <commonsCollectionsVersion>3.2.2</commonsCollectionsVersion>
         <commonsDbUtilsVersion>1.7</commonsDbUtilsVersion>
         <commonsLangVersion>3.10</commonsLangVersion>
-        <commonsIoVersion>2.6</commonsIoVersion>
+        <commonsIoVersion>2.7</commonsIoVersion>
         <mockito-core.version>3.3.3</mockito-core.version>
         <xmlunit.version>1.6</xmlunit.version>
         <caffeineVersion>2.8.1</caffeineVersion>

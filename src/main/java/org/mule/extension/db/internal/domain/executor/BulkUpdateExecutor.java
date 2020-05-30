@@ -122,7 +122,7 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
           .error("BULK UPDATE EXCEPTION. DATABASE PROCESSED %d OPERATIONS SUCCESSFULLY AND STOPPED PROCESSING DUE TO EXCEPTION.",
                  successfulOperations + noInfoAvailable);
     } else {
-      LOGGER.info("SUCCESSFULLY EXECUTED BATCH OPERATION. TOTAL EXECUTED STATEMENTS: %d .", batchCount);
+      LOGGER.info("SUCCESSFULLY EXECUTED BATCH OPERATION. TOTAL EXECUTED STATEMENTS: {}.", batchCount);
     }
   }
 }

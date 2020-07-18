@@ -23,7 +23,7 @@
         <c3p0Version>0.9.5.5</c3p0Version>
         <commonsCollectionsVersion>3.2.2</commonsCollectionsVersion>
         <commonsDbUtilsVersion>1.7</commonsDbUtilsVersion>
-        <commonsLangVersion>3.10</commonsLangVersion>
+        <commonsLangVersion>3.11</commonsLangVersion>
         <commonsIoVersion>2.7</commonsIoVersion>
         <mockito-core.version>3.4.0</mockito-core.version>
         <xmlunit.version>1.6</xmlunit.version>

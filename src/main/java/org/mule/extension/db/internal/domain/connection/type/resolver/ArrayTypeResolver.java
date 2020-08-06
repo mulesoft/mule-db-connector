@@ -7,8 +7,10 @@
 
 package org.mule.extension.db.internal.domain.connection.type.resolver;
 
+import static java.util.stream.StreamSupport.stream;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
+
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
 
@@ -20,12 +22,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Spliterator;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * Type resolver for array entities
- * 
+ *
  * @since 1.5.2
  */
 public class ArrayTypeResolver implements StructAndArrayTypeResolver {
@@ -52,7 +52,7 @@ public class ArrayTypeResolver implements StructAndArrayTypeResolver {
         elements[i] = objects;
       } else if (element instanceof Iterable) {
         Spliterator<?> spliterator = ((Iterable<?>) element).spliterator();
-        Object[] objects = StreamSupport.stream(spliterator, false).toArray();
+        Object[] objects = stream(spliterator, false).toArray();
         connection.doResolveLobIn(objects, index, dataTypeName);
         elements[i] = objects;
       } else if (element instanceof Object[]) {

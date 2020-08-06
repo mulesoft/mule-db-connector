@@ -54,7 +54,6 @@ public class UpdateTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
-  @Ignore("MULE-12338")
   @Issue("MULE-12338")
   public void truncateTable() throws Exception {
     flowRunner("truncateTable").run();

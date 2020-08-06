@@ -15,7 +15,13 @@ import org.mule.extension.db.internal.domain.type.ResolvedDbType;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Struct;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.Spliterator;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Type resolver for array entities
@@ -36,8 +42,24 @@ public class ArrayTypeResolver implements StructAndArrayTypeResolver {
 
   @Override
   public void resolveLobs(Object[] elements, Integer index, String dataTypeName) throws SQLException {
-    for (Object element : elements) {
-      connection.doResolveLobIn((Object[]) element, index, dataTypeName);
+    for (int i = 0; i < elements.length; i++) {
+      Object element = elements[i];
+      if (element instanceof Struct) {
+        //if it is already an Struct there is nothing to resolve
+      } else if (element instanceof Collection) {
+        Object[] objects = ((List<?>) element).toArray();
+        connection.doResolveLobIn(objects, index, dataTypeName);
+        elements[i] = objects;
+      } else if (element instanceof Iterable) {
+        Spliterator<?> spliterator = ((Iterable<?>) element).spliterator();
+        Object[] objects = StreamSupport.stream(spliterator, false).toArray();
+        connection.doResolveLobIn(objects, index, dataTypeName);
+        elements[i] = objects;
+      } else if (element instanceof Object[]) {
+        connection.doResolveLobIn((Object[]) element, index, dataTypeName);
+      } else {
+        throw new RuntimeException(String.format("Unable to process arguments of type %s", element.getClass()));
+      }
     }
   }
 

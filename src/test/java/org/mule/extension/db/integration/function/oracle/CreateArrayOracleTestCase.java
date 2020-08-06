@@ -14,9 +14,15 @@ import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.TestDbConfig;
 import org.mule.extension.db.integration.model.OracleTestDatabase;
+import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.core.api.event.CoreEvent;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.Array;
 import java.sql.Clob;
 import java.sql.SQLException;
+import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,17 +60,33 @@ public class CreateArrayOracleTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void createArrayWithClobDataType() throws Exception {
-    Object person = new Object[] {1234, "Apple", 45};
-    Object otherPerson = new Object[] {1235, "Name", 33};
+    createArrayWithClob("createArrayFromObjectArray");
+  }
 
-    Object[] persons = {person, otherPerson};
+  @Test
+  public void createArrayFromList() throws Exception {
+    createArrayWithClob("createArrayFromDWArray");
+  }
 
-    flowRunner("createArray")
-        .withVariable("array", persons).run();
+  @Test
+  public void createArrayFromStruct() throws Exception {
+    createArrayWithClob("createArrayFromStruct");
+  }
 
-    assertThat(persons.length, is(2));
-    assertThat(get(person, 1), instanceOf(Clob.class));
-    assertThat(get(otherPerson, 1), instanceOf(Clob.class));
+  private void createArrayWithClob(String createArrayFromStruct) throws Exception {
+    CoreEvent createArray = flowRunner(createArrayFromStruct).run();
+    TypedValue<Array> personTable = (TypedValue<Array>) createArray.getVariables().get("PERSON");
+    validateOutputSQLArray(personTable);
+  }
+
+  private void validateOutputSQLArray(TypedValue<Array> personTable) throws SQLException {
+    Object[] array = (Object[]) personTable.getValue().getArray();
+    Struct struct = (Struct) array[0];
+    Object[] attributes = struct.getAttributes();
+
+    assertThat(attributes[0], is(instanceOf(String.class)));
+    assertThat(attributes[1], is(instanceOf(Clob.class)));
+    assertThat(attributes[2], is(instanceOf(BigDecimal.class)));
   }
 
   @After

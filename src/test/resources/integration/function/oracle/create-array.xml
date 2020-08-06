@@ -5,7 +5,18 @@
        xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
-    <flow name="createArray">
-        <set-variable value="#[Db::createArray('dbConfig', 'PERSON_TABLE', vars.array)]" variableName="PERSON" />
+    <flow name="createArrayFromObjectArray">
+        <set-variable variableName="array" value="#[[1234, 'Apple', 54] as Array { class : 'java.lang.Object[]'}]"/>
+        <set-variable value="#[Db::createArray('dbConfig', 'PERSON_TABLE', [vars.array])]" variableName="PERSON" />
+    </flow>
+
+    <flow name="createArrayFromDWArray">
+        <set-variable variableName="array" value="#[[1234, 'Apple', 54]]"/>
+        <set-variable value="#[Db::createArray('dbConfig', 'PERSON_TABLE', [vars.array])]" variableName="PERSON" />
+    </flow>
+
+    <flow name="createArrayFromStruct">
+        <set-variable variableName="array" value="#[[1234, 'Apple', 54]]"/>
+        <set-variable value="#[Db::createArray('dbConfig', 'PERSON_TABLE', [Db::createStruct('dbConfig', 'PERSON_TYPE', vars.array)])]" variableName="PERSON" />
     </flow>
 </mule>

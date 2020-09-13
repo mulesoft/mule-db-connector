@@ -33,9 +33,9 @@ public class DbExceptionHandler extends ExceptionHandler {
         .orElseGet(() -> getCauseOfType(e, SQLException.class)
             .map(sqlException -> {
               if (isConnectionException(sqlException) || e instanceof ConnectionException) {
-                ConnectionException connectionException = (ConnectionException) e;
                 return new ConnectionException(sqlException.getMessage(), sqlException,
-                                               connectionException.getErrorType().orElse(null));
+                                               e instanceof ConnectionException
+                                                   ? ((ConnectionException) e).getErrorType().orElse(null) : null);
               }
 
               if (isBadSyntaxException(sqlException)) {

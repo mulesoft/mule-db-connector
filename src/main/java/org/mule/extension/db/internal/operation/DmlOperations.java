@@ -270,8 +270,10 @@ public class DmlOperations extends BaseDbOperations {
     }
 
     // Since resultSetCloser is executed when the flow is completed, we intend to close the connection when the
-    // result has no Streaming.
-    connection.release();
+    // result has no Streaming and there is no transaction active.
+    if (!connection.isTransactionActive()) {
+      connection.release();
+    }
 
     return resolveResultStreams(result, streamingHelper);
   }

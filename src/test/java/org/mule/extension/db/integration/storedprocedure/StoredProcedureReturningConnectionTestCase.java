@@ -37,7 +37,7 @@ public class StoredProcedureReturningConnectionTestCase extends AbstractDbIntegr
   }
 
   @Test
-  public void convertsStringToClob() throws Exception {
+  public void returnsConnectionsWhenNoStreamNorTransaction() throws Exception {
     Message response = flowRunner("storedProcedureReturnsConnectionsWhenNoStreamNorTransaction")
         .withPayload(TEST_MESSAGE).run().getMessage();
     assertThat(response.getPayload().getValue(), equalTo(CYCLED_SUCCESSFULLY));

@@ -100,29 +100,29 @@ public class BulkUpdateExecutor extends AbstractExecutor implements BulkExecutor
       if (updateCounts[i] >= 0) {
         successfulOperations++;
         if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("BULK OPERATION %d SUCCESSFULLY PERFORMED: %d AFFECTED ROWS", i, updateCounts[i]);
+          LOGGER.debug("BULK OPERATION {} SUCCESSFULLY PERFORMED: {} AFFECTED ROWS", i, updateCounts[i]);
         }
       } else if (updateCounts[i] == Statement.SUCCESS_NO_INFO) {
         noInfoAvailable++;
         if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("BULK OPERATION %d PERFORMED SUCCESSFULLY: NO INFO AVAILABLE ON AFFECTED ROW COUNT", i);
+          LOGGER.debug("BULK OPERATION {} PERFORMED SUCCESSFULLY: NO INFO AVAILABLE ON AFFECTED ROW COUNT", i);
         }
       } else if (updateCounts[i] == Statement.EXECUTE_FAILED) {
         failedOperations++;
         if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("BULK OPERATION %d FAILED: %d AFFECTED ROWS.", i, updateCounts[i]);
+          LOGGER.debug("BULK OPERATION {} FAILED: {} AFFECTED ROWS.", i, updateCounts[i]);
         }
       }
     }
     if (failedOperations > 0) {
-      LOGGER.error("BULK UPDATE EXCEPTION: %d SUCCESSFUL OPERATIONS, %d FAILED OPERATIONS.",
+      LOGGER.error("BULK UPDATE EXCEPTION: {} SUCCESSFUL OPERATIONS, {} FAILED OPERATIONS.",
                    successfulOperations + noInfoAvailable, failedOperations);
     } else if (updateCounts.length < batchCount) {
       LOGGER
-          .error("BULK UPDATE EXCEPTION. DATABASE PROCESSED %d OPERATIONS SUCCESSFULLY AND STOPPED PROCESSING DUE TO EXCEPTION.",
+          .error("BULK UPDATE EXCEPTION. DATABASE PROCESSED {} OPERATIONS SUCCESSFULLY AND STOPPED PROCESSING DUE TO EXCEPTION.",
                  successfulOperations + noInfoAvailable);
     } else {
-      LOGGER.info("SUCCESSFULLY EXECUTED BATCH OPERATION. TOTAL EXECUTED STATEMENTS: %d.", batchCount);
+      LOGGER.debug("SUCCESSFULLY EXECUTED BATCH OPERATION. TOTAL EXECUTED STATEMENTS: {}.", batchCount);
     }
   }
 }

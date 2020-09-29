@@ -11,4 +11,11 @@
         </db:mssql-connection>
     </db:config>
 
+    <db:config name="dbConfigWithPooling">
+        <db:mssql-connection host="0.0.0.0" port="${mssql.db.port}" user="sa" password="yourStrong(!)Password">
+            <db:pooling-profile maxPoolSize="10" maxWait="1">
+            </db:pooling-profile>
+        </db:mssql-connection>
+    </db:config>
+
 </mule>

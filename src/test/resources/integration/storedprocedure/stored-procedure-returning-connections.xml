@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+            http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+
+    <flow name="storedProcedureReturnsConnectionsWhenNoStreamNorTransaction">
+        <foreach collection="#[1 to 25]">
+            <db:stored-procedure config-ref="dbConfigWithPooling">
+                <db:sql>{ call updatePlanetDescription('Venus', :description) }</db:sql>
+                <db:parameter-types>
+                    <db:parameter-type key="description" type="CLOB" />
+                </db:parameter-types>
+                <db:input-parameters>
+                    #[{'description' : vars.rootMessage.payload}]
+                </db:input-parameters>
+            </db:stored-procedure>
+        </foreach>
+        <set-payload value="#['CYCLED SUCCESSFULLY']" />
+        <set-payload value="#[output application/java --- payload as String]"/>
+        <error-handler >
+            <on-error-continue enableNotifications="true" logException="true" type="DB:CONNECTIVITY">
+                <set-payload value="#[error.errorType.identifier]"/>
+            </on-error-continue>
+        </error-handler>
+    </flow>
+</mule>

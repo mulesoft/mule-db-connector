@@ -14,4 +14,16 @@
             </db:column-types>
         </db:derby-connection>
     </db:config>
+
+    <db:config name="dbConfigWithPooling">
+        <db:derby-connection database="target/muleEmbeddedDB" create="true">
+            <db:pooling-profile maxPoolSize="10" maxWait="1">
+            </db:pooling-profile>
+            <db:column-types>
+                <!-- Derby uses JAVA_OBJECT for UDT-->
+                <db:column-type typeName="CONTACT_DETAILS" id="2000"/>
+            </db:column-types>
+        </db:derby-connection>
+    </db:config>
+
 </mule>

@@ -4,6 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
+
 package org.mule.extension.db.internal.domain.connection.oracle;
 
 import static java.util.Optional.ofNullable;
@@ -51,19 +52,24 @@ public class OracleDbConnection extends DefaultDbConnection {
   private static final int CURSOR_TYPE_ID = -10;
   private static final String CURSOR_TYPE_NAME = "CURSOR";
 
-  private static final String ATTR_TYPE_NAME_PARAM = "ATTR_TYPE_NAME";
+  public static final String ATTR_TYPE_NAME_PARAM = "ATTR_TYPE_NAME";
 
   private static final String ATTR_NO_PARAM = "ATTR_NO";
 
-  private static final String QUERY_TYPE_ATTRS =
+  public static final String QUERY_TYPE_ATTRS =
       "SELECT ATTR_NO, ATTR_TYPE_NAME FROM ALL_TYPE_ATTRS WHERE TYPE_NAME = ? AND ATTR_TYPE_NAME IN ('CLOB', 'BLOB')";
 
   private static final String QUERY_OWNER_CONDITION = " AND OWNER = ?";
 
   private Method createArrayMethod;
 
-  public OracleDbConnection(Connection jdbcConnection, List<DbType> customDataTypes) {
+  Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache;
+
+
+  public OracleDbConnection(Connection jdbcConnection, List<DbType> customDataTypes,
+                            Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache) {
     super(jdbcConnection, customDataTypes);
+    this.resolvedDbTypesCache = resolvedDbTypesCache;
   }
 
   /**
@@ -161,27 +167,44 @@ public class OracleDbConnection extends DefaultDbConnection {
 
   @Override
   protected Map<Integer, ResolvedDbType> getLobFieldsDataTypeInfo(String typeName) throws SQLException {
-    Map<Integer, ResolvedDbType> dataTypes = new HashMap<>();
 
-    Optional<String> owner = getOwnerFrom(typeName);
-    String type = getTypeSimpleName(typeName);
-
-    String query = QUERY_TYPE_ATTRS + (owner.isPresent() ? QUERY_OWNER_CONDITION : "");
-
-    try (PreparedStatement ps = this.prepareStatement(query)) {
-      ps.setString(1, type);
-      if (owner.isPresent()) {
-        ps.setString(2, owner.get());
+    if (this.resolvedDbTypesCache.containsKey(typeName)) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Returning chached LobFieldsDataTypeInfo");
+      }
+      return resolvedDbTypesCache.get(typeName);
+    }
+    if (logger.isDebugEnabled()) {
+      logger.debug("Obtaining LobFieldsDataTypeInfo");
+    }
+    synchronized (resolvedDbTypesCache) {
+      if (this.resolvedDbTypesCache.containsKey(typeName)) {
+        return resolvedDbTypesCache.get(typeName);
       }
 
-      try (ResultSet resultSet = ps.executeQuery()) {
-        while (resultSet.next()) {
-          ResolvedDbType resolvedDbType = new ResolvedDbType(UNKNOWN_DATA_TYPE, resultSet.getString(ATTR_TYPE_NAME_PARAM));
-          dataTypes.put(resultSet.getInt(ATTR_NO_PARAM), resolvedDbType);
+      Map<Integer, ResolvedDbType> dataTypes = new HashMap<>();
+
+      Optional<String> owner = getOwnerFrom(typeName);
+      String type = getTypeSimpleName(typeName);
+
+      String query = QUERY_TYPE_ATTRS + (owner.isPresent() ? QUERY_OWNER_CONDITION : "");
+
+      try (PreparedStatement ps = this.prepareStatement(query)) {
+        ps.setString(1, type);
+        if (owner.isPresent()) {
+          ps.setString(2, owner.get());
+        }
+
+        try (ResultSet resultSet = ps.executeQuery()) {
+          while (resultSet.next()) {
+            ResolvedDbType resolvedDbType = new ResolvedDbType(UNKNOWN_DATA_TYPE, resultSet.getString(ATTR_TYPE_NAME_PARAM));
+            dataTypes.put(resultSet.getInt(ATTR_NO_PARAM), resolvedDbType);
+          }
         }
       }
+      resolvedDbTypesCache.put(typeName, dataTypes);
+      return dataTypes;
     }
-    return dataTypes;
   }
 
   @Override

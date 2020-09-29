@@ -4,6 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
+
 package org.mule.extension.db.internal;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -16,6 +17,7 @@ import static org.mule.extension.db.api.param.JdbcType.BLOB;
 import static org.mule.extension.db.api.param.JdbcType.CLOB;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
+
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
 
@@ -27,8 +29,9 @@ import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Optional;
-
+import java.util.concurrent.ConcurrentHashMap;
 import org.junit.Test;
+
 
 public class CreateArrayTestCase extends AbstractDbFunctionTestCase {
 
@@ -114,7 +117,7 @@ public class CreateArrayTestCase extends AbstractDbFunctionTestCase {
     when(resultSet.getInt(ATTR_NO_PARAM)).thenReturn(1);
     when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(dataTypeName);
 
-    OracleDbConnection oracleConnection = new OracleDbConnection(delegate, new ArrayList<>());
+    OracleDbConnection oracleConnection = new OracleDbConnection(delegate, new ArrayList<>(), new ConcurrentHashMap<>());
 
     oracleConnection.createArrayOf(udtName, values);
 

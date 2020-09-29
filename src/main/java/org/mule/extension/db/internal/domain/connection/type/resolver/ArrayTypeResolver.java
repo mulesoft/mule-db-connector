@@ -7,24 +7,30 @@
 
 package org.mule.extension.db.internal.domain.connection.type.resolver;
 
+import static java.util.stream.StreamSupport.stream;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
+
 import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.type.ResolvedDbType;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Struct;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.Spliterator;
 
 /**
  * Type resolver for array entities
- * 
+ *
  * @since 1.5.2
  */
 public class ArrayTypeResolver implements StructAndArrayTypeResolver {
 
-  private static final String QUERY_ALL_COLL_TYPES = "SELECT * FROM SYS.ALL_COLL_TYPES WHERE TYPE_NAME = ?";
+  public static final String QUERY_ALL_COLL_TYPES = "SELECT * FROM SYS.ALL_COLL_TYPES WHERE TYPE_NAME = ?";
   private static final String QUERY_OWNER_CONDITION = " AND OWNER = ?";
   private static final String ELEM_TYPE_NAME = "ELEM_TYPE_NAME";
 
@@ -36,8 +42,24 @@ public class ArrayTypeResolver implements StructAndArrayTypeResolver {
 
   @Override
   public void resolveLobs(Object[] elements, Integer index, String dataTypeName) throws SQLException {
-    for (Object element : elements) {
-      connection.doResolveLobIn((Object[]) element, index, dataTypeName);
+    for (int i = 0; i < elements.length; i++) {
+      Object element = elements[i];
+      if (element instanceof Struct) {
+        //if it is already an Struct there is nothing to resolve
+      } else if (element instanceof Collection) {
+        Object[] objects = ((List<?>) element).toArray();
+        connection.doResolveLobIn(objects, index, dataTypeName);
+        elements[i] = objects;
+      } else if (element instanceof Iterable) {
+        Spliterator<?> spliterator = ((Iterable<?>) element).spliterator();
+        Object[] objects = stream(spliterator, false).toArray();
+        connection.doResolveLobIn(objects, index, dataTypeName);
+        elements[i] = objects;
+      } else if (element instanceof Object[]) {
+        connection.doResolveLobIn((Object[]) element, index, dataTypeName);
+      } else {
+        throw new RuntimeException(String.format("Unable to process arguments of type %s", element.getClass()));
+      }
     }
   }
 

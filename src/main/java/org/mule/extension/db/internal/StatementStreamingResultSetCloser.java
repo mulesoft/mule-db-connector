@@ -43,8 +43,10 @@ public class StatementStreamingResultSetCloser {
         close(resultSet);
       }
     } finally {
+      for (int i = 0; i < resultSets.size(); i++) {
+        connection.endStreaming();
+      }
       resultSets.clear();
-      connection.endStreaming();
       if (!connection.isTransactionActive()) {
         connection.release();
       }

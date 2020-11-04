@@ -69,7 +69,7 @@ public class TestRecordUtil {
     assertThat(recordsFound, equalTo(records.length));
   }
 
-  private static Record createRecord(Map<String, Object> fields) {
+  public static Record createRecord(Map<String, Object> fields) {
     Map<String, Object> recordFields = new HashMap<>();
     for (String fieldName : fields.keySet()) {
       Object fieldValue = fields.get(fieldName);

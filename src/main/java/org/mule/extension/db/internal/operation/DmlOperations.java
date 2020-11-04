@@ -43,6 +43,7 @@ import org.mule.extension.db.internal.result.statement.StreamingStatementResultH
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.core.api.util.CaseInsensitiveHashMap;
 import org.mule.runtime.core.api.util.ClassUtils;
 import org.mule.runtime.extension.api.annotation.Streaming;
 import org.mule.runtime.extension.api.annotation.error.Throws;
@@ -156,6 +157,25 @@ public class DmlOperations extends BaseDbOperations {
         return true;
       }
     };
+  }
+
+  @OutputResolver(output = SelectMetadataResolver.class)
+  public Map<String, Object> querySingle(@ParameterGroup(name = QUERY_GROUP) @Placement(
+          tab = ADVANCED_TAB) QueryDefinition query, @Config DbConnector connector, @Connection DbConnection connection, StreamingHelper streamingHelper) throws SQLException {
+    final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, SELECT);
+
+    QueryStatementFactory statementFactory = getStatementFactory(query);
+    InsensitiveMapRowHandler recordHandler = new InsensitiveMapRowHandler(connection, connector.getCharset());
+    ResultSetHandler resultSetHandler =
+            new ListResultSetHandler(recordHandler, connector.getCharset());
+    List<Map<String, Object>> rows = (List<Map<String, Object>>) new SelectExecutor(statementFactory, resultSetHandler).execute(connection, resolvedQuery);
+
+    if (rows.isEmpty()) {
+      LOGGER.info("Single query operation returned no records.");
+      return new CaseInsensitiveHashMap<>();
+    }
+
+    return rows.get(0);
   }
 
   /**

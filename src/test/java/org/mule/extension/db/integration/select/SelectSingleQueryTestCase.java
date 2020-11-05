@@ -35,13 +35,14 @@ public class SelectSingleQueryTestCase extends AbstractDbIntegrationTestCase {
   public void singleSelectReturnsSingleResult() throws Exception {
     Record venusRecord = getVenusRecord();
     Message message = flowRunner("selectSingleRecord").withVariable("name", VENUS.getName()).run().getMessage();
-    assertRecord(venusRecord, createRecord((Map<String,Object>) message.getPayload().getValue()));
+    assertRecord(venusRecord, createRecord((Map<String, Object>) message.getPayload().getValue()));
   }
 
   @Test
   public void singleSelectReturnsSingleResultWithPooling() throws Exception {
     Record[] recordList = new Record[MAX_ITERATIONS];
-    Message message = flowRunner("selectSingleRecordWithConnectionPool").withVariable("iterations", MAX_ITERATIONS).withVariable("name", VENUS.getName()).run().getMessage();
+    Message message = flowRunner("selectSingleRecordWithConnectionPool").withVariable("iterations", MAX_ITERATIONS)
+        .withVariable("name", VENUS.getName()).run().getMessage();
     for (int i = 0; i < MAX_ITERATIONS; i++) {
       recordList[i] = getVenusRecord();
     }
@@ -51,12 +52,12 @@ public class SelectSingleQueryTestCase extends AbstractDbIntegrationTestCase {
   @Test
   public void singleSelectReturnsNoResults() throws Exception {
     Message message = flowRunner("querySingleWithNoRecords").run().getMessage();
-    assertThat(((Map<String,Object>) message.getPayload().getValue()).size(), is(0));
+    assertThat(((Map<String, Object>) message.getPayload().getValue()).size(), is(0));
   }
 
   @Test
   public void singleSelectReturnsSingleResultEvenIfStatementReturnsMore() throws Exception {
     Message message = flowRunner("querySingleWithManyRecordsReturnsOnlyOne").run().getMessage();
-    assertThat(((Map<String,Object>) message.getPayload().getValue()).size(), is(1));
+    assertThat(((Map<String, Object>) message.getPayload().getValue()).size(), is(1));
   }
 }

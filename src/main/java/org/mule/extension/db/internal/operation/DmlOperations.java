@@ -161,14 +161,17 @@ public class DmlOperations extends BaseDbOperations {
 
   @OutputResolver(output = SelectMetadataResolver.class)
   public Map<String, Object> querySingle(@ParameterGroup(name = QUERY_GROUP) @Placement(
-          tab = ADVANCED_TAB) QueryDefinition query, @Config DbConnector connector, @Connection DbConnection connection, StreamingHelper streamingHelper) throws SQLException {
+      tab = ADVANCED_TAB) QueryDefinition query, @Config DbConnector connector, @Connection DbConnection connection,
+                                         StreamingHelper streamingHelper)
+      throws SQLException {
     final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, SELECT);
 
     QueryStatementFactory statementFactory = getStatementFactory(query);
     InsensitiveMapRowHandler recordHandler = new InsensitiveMapRowHandler(connection, connector.getCharset());
     ResultSetHandler resultSetHandler =
-            new ListResultSetHandler(recordHandler, connector.getCharset());
-    List<Map<String, Object>> rows = (List<Map<String, Object>>) new SelectExecutor(statementFactory, resultSetHandler).execute(connection, resolvedQuery);
+        new ListResultSetHandler(recordHandler, connector.getCharset());
+    List<Map<String, Object>> rows =
+        (List<Map<String, Object>>) new SelectExecutor(statementFactory, resultSetHandler).execute(connection, resolvedQuery);
 
     if (rows.isEmpty()) {
       LOGGER.info("Single query operation returned no records.");

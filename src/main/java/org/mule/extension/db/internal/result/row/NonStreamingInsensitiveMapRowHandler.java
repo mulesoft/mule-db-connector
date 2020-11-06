@@ -23,6 +23,12 @@ import static org.mule.runtime.api.metadata.MediaType.XML;
 import static org.mule.runtime.api.metadata.MediaType.BINARY;
 import static org.mule.runtime.api.metadata.MediaType.TEXT;
 
+/**
+ * Maps a row using returning a case insensitive map to its values.
+ * No streams will be returned as values. This means that all of
+ * the mapped values will be effectively read into memory
+ * and returned in the result.
+ */
 public class NonStreamingInsensitiveMapRowHandler extends InsensitiveMapRowHandler {
 
   public NonStreamingInsensitiveMapRowHandler(DbConnection dbConnection) {
@@ -43,7 +49,6 @@ public class NonStreamingInsensitiveMapRowHandler extends InsensitiveMapRowHandl
     ByteArrayInputStream is = new ByteArrayInputStream(IOUtils.toByteArray(value.getBinaryStream()));
     return new TypedValue<>(IOUtils.toByteArray(is),
                             DataType.builder().type(byte[].class).mediaType(BINARY).build());
-
   }
 
   protected TypedValue<Object> handleClobType(Clob value) throws SQLException {

@@ -7,10 +7,9 @@
 
     <flow name="selectSingleRecord">
         <db:query-single config-ref="dbConfig">
-           <db:sql>select ID, NAME, POSITION from PLANET WHERE NAME = :name</db:sql>
+           <db:sql>SELECT ID, NAME, POSITION from PLANET WHERE NAME = :name</db:sql>
            <db:input-parameters>#[{name: vars.name}]</db:input-parameters>
         </db:query-single>
-
     </flow>
 
     <flow name="selectSingleRecordWithConnectionPool">
@@ -41,4 +40,38 @@
         </db:query-single>
     </flow>
 
+    <flow name="querySingleWithRecordWithClobField">
+        <db:stored-procedure config-ref="dbConfigWithPooling">
+            <db:sql>{ call updatePlanetDescription(:name, :description) }</db:sql>
+            <db:parameter-types>
+                <db:parameter-type key="description" type="CLOB" />
+            </db:parameter-types>
+            <db:input-parameters>
+                #[{'name' : vars.name, 'description' : payload}]
+            </db:input-parameters>
+        </db:stored-procedure>
+
+        <db:query-single config-ref="dbConfigWithPooling">
+            <db:sql>#["SELECT DESCRIPTION FROM PLANET WHERE NAME = :name"]</db:sql>
+            <db:input-parameters>
+                #[{'name' : vars.name }]
+            </db:input-parameters>
+        </db:query-single>
+    </flow>
+
+    <flow name="querySingleWithRecordWithBlobField">
+        <db:update config-ref="dbConfigWithPooling">
+            <db:sql>#["UPDATE PLANET SET PICTURE = :picture WHERE NAME = :name"]</db:sql>
+            <db:input-parameters>
+                #[{'picture' : payload, 'name' : vars.name }]
+            </db:input-parameters>
+        </db:update>
+
+        <db:query-single config-ref="dbConfigWithPooling">
+            <db:sql>SELECT PICTURE FROM PLANET WHERE NAME = :name</db:sql>
+            <db:input-parameters>
+                #[{'name' : vars.name }]
+            </db:input-parameters>
+        </db:query-single>
+    </flow>
 </mule>

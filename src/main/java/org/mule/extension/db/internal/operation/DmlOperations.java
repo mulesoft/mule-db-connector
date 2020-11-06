@@ -38,6 +38,7 @@ import org.mule.extension.db.internal.result.resultset.ListResultSetHandler;
 import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
 import org.mule.extension.db.internal.result.resultset.ResultSetIterator;
 import org.mule.extension.db.internal.result.row.InsensitiveMapRowHandler;
+import org.mule.extension.db.internal.result.row.NonStreamingInsensitiveMapRowHandler;
 import org.mule.extension.db.internal.result.statement.StatementResultHandler;
 import org.mule.extension.db.internal.result.statement.StreamingStatementResultHandler;
 import org.mule.runtime.api.exception.MuleException;
@@ -167,7 +168,7 @@ public class DmlOperations extends BaseDbOperations {
     final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, SELECT);
 
     QueryStatementFactory statementFactory = getStatementFactory(query);
-    InsensitiveMapRowHandler recordHandler = new InsensitiveMapRowHandler(connection, connector.getCharset());
+    InsensitiveMapRowHandler recordHandler = new NonStreamingInsensitiveMapRowHandler(connection, connector.getCharset());
     ResultSetHandler resultSetHandler =
         new ListResultSetHandler(recordHandler, connector.getCharset());
     List<Map<String, Object>> rows =

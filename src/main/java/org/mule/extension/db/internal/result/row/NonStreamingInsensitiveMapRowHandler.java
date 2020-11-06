@@ -33,7 +33,6 @@ public class NonStreamingInsensitiveMapRowHandler extends InsensitiveMapRowHandl
     super(dbConnection, charset);
   }
 
-
   @Override
   protected TypedValue<Object> handleSqlXmlType(SQLXML value) throws SQLException {
     return new TypedValue<>(value.getString(), DataType.builder().type(SQLXML.class).mediaType(XML).build());

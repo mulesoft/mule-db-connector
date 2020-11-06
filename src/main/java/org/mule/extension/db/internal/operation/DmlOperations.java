@@ -34,6 +34,7 @@ import org.mule.extension.db.internal.domain.query.QueryType;
 import org.mule.extension.db.internal.domain.statement.QueryStatementFactory;
 import org.mule.extension.db.internal.resolver.query.StoredProcedureQueryResolver;
 import org.mule.extension.db.internal.result.resultset.IteratorResultSetHandler;
+import org.mule.extension.db.internal.result.resultset.SingleResultSetHandler;
 import org.mule.extension.db.internal.result.resultset.ListResultSetHandler;
 import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
 import org.mule.extension.db.internal.result.resultset.ResultSetIterator;
@@ -170,16 +171,12 @@ public class DmlOperations extends BaseDbOperations {
     QueryStatementFactory statementFactory = getStatementFactory(query);
     InsensitiveMapRowHandler recordHandler = new NonStreamingInsensitiveMapRowHandler(connection, connector.getCharset());
     ResultSetHandler resultSetHandler =
-        new ListResultSetHandler(recordHandler, connector.getCharset());
-    List<Map<String, Object>> rows =
-        (List<Map<String, Object>>) new SelectExecutor(statementFactory, resultSetHandler).execute(connection, resolvedQuery);
-
-    if (rows.isEmpty()) {
-      LOGGER.info("Single query operation returned no records.");
-      return new CaseInsensitiveHashMap<>();
+        new SingleResultSetHandler(recordHandler, connector.getCharset());
+    try {
+      return (Map<String, Object>) new SelectExecutor(statementFactory, resultSetHandler).execute(connection, resolvedQuery);
+    } catch (SQLException e) {
+      throw new MuleRuntimeException(e);
     }
-
-    return rows.get(0);
   }
 
   /**

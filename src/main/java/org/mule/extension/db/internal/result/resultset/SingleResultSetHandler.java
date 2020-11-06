@@ -17,39 +17,40 @@ import java.sql.SQLException;
 import java.util.Map;
 
 public class SingleResultSetHandler implements ResultSetCharsetEncodedHandler {
-    private final RowHandler rowHandler;
-    private final Charset charset;
 
-    public SingleResultSetHandler(RowHandler rowHandler) {
-        this.rowHandler = rowHandler;
-        this.charset = Charset.defaultCharset();
+  private final RowHandler rowHandler;
+  private final Charset charset;
+
+  public SingleResultSetHandler(RowHandler rowHandler) {
+    this.rowHandler = rowHandler;
+    this.charset = Charset.defaultCharset();
+  }
+
+  public SingleResultSetHandler(RowHandler rowHandler, Charset charset) {
+    this.rowHandler = rowHandler;
+    this.charset = charset;
+  }
+
+  @Override
+  public Map<String, Object> processResultSet(DbConnection connection, ResultSet resultSet) throws SQLException {
+    try {
+      if (resultSet.next()) {
+        return rowHandler.process(resultSet);
+      }
+    } finally {
+      resultSet.close();
     }
 
-    public SingleResultSetHandler(RowHandler rowHandler, Charset charset) {
-        this.rowHandler = rowHandler;
-        this.charset = charset;
-    }
+    return new CaseInsensitiveHashMap<>();
+  }
 
-    @Override
-    public Map<String, Object> processResultSet(DbConnection connection, ResultSet resultSet) throws SQLException {
-        try {
-            if (resultSet.next()) {
-                return rowHandler.process(resultSet);
-            }
-        } finally {
-            resultSet.close();
-        }
+  @Override
+  public boolean requiresMultipleOpenedResults() {
+    return false;
+  }
 
-        return new CaseInsensitiveHashMap<>();
-    }
-
-    @Override
-    public boolean requiresMultipleOpenedResults() {
-        return false;
-    }
-
-    @Override
-    public Charset getCharset() {
-        return charset;
-    }
+  @Override
+  public Charset getCharset() {
+    return charset;
+  }
 }

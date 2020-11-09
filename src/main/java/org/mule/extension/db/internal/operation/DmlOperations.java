@@ -161,6 +161,19 @@ public class DmlOperations extends BaseDbOperations {
     };
   }
 
+  /**
+   * Selects single result from a database.
+   *
+   * Streaming is not used for this operation.
+   *
+   * @param query a {@link QueryDefinition} as a parameter group
+   * @param connector the acting connector
+   * @param connection the acting connection
+   * @return a map with a single entry containing the operation's output
+   * @throws SQLException if an error is produced
+   *
+   * @since 1.9.0
+   */
   @OutputResolver(output = SelectMetadataResolver.class)
   public Map<String, Object> querySingle(@ParameterGroup(name = QUERY_GROUP) @Placement(
       tab = ADVANCED_TAB) QueryDefinition query, @Config DbConnector connector, @Connection DbConnection connection,

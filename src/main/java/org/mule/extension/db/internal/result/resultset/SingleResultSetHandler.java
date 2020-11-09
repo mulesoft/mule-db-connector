@@ -16,6 +16,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
+/**
+ * Processes the first element in a {@link ResultSet} returning a map with the result.
+ * <p/>
+ * The processed {@link ResultSet} is closed immediately after fetching its data.
+ */
 public class SingleResultSetHandler implements ResultSetCharsetEncodedHandler {
 
   private final RowHandler rowHandler;

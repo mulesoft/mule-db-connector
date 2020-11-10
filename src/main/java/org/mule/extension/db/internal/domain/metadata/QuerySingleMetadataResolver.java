@@ -10,15 +10,8 @@ import org.mule.metadata.api.model.MetadataType;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.metadata.MetadataContext;
 import org.mule.runtime.api.metadata.MetadataResolvingException;
-import org.mule.runtime.api.metadata.resolving.OutputTypeResolver;
 
-public class QuerySingleMetadataResolver extends BaseDbMetadataResolver implements OutputTypeResolver<String> {
-
-  @Override
-  public MetadataType getOutputType(MetadataContext metadataContext, String s)
-      throws MetadataResolvingException, ConnectionException {
-    return metadataContext.getTypeBuilder().objectType().build();
-  }
+public class QuerySingleMetadataResolver extends SelectMetadataResolver {
 
   @Override
   public String getCategoryName() {
@@ -28,5 +21,11 @@ public class QuerySingleMetadataResolver extends BaseDbMetadataResolver implemen
   @Override
   public String getResolverName() {
     return "QuerySingleResolver";
+  }
+
+  @Override
+  public MetadataType getOutputType(MetadataContext context, String query)
+      throws MetadataResolvingException, ConnectionException {
+    return super.getOutputType(context, query);
   }
 }

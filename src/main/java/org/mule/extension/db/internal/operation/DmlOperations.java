@@ -29,6 +29,7 @@ import org.mule.extension.db.internal.domain.executor.SelectExecutor;
 import org.mule.extension.db.internal.domain.executor.StoredProcedureExecutor;
 import org.mule.extension.db.internal.domain.metadata.SelectMetadataResolver;
 import org.mule.extension.db.internal.domain.metadata.StoredProcedureMetadataResolver;
+import org.mule.extension.db.internal.domain.metadata.QuerySingleMetadataResolver;
 import org.mule.extension.db.internal.domain.query.Query;
 import org.mule.extension.db.internal.domain.query.QueryType;
 import org.mule.extension.db.internal.domain.statement.QueryStatementFactory;
@@ -45,7 +46,6 @@ import org.mule.extension.db.internal.result.statement.StreamingStatementResultH
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.metadata.TypedValue;
-import org.mule.runtime.core.api.util.CaseInsensitiveHashMap;
 import org.mule.runtime.core.api.util.ClassUtils;
 import org.mule.runtime.extension.api.annotation.Streaming;
 import org.mule.runtime.extension.api.annotation.error.Throws;
@@ -174,7 +174,7 @@ public class DmlOperations extends BaseDbOperations {
    *
    * @since 1.9.0
    */
-  @OutputResolver(output = SelectMetadataResolver.class)
+  @OutputResolver(output = QuerySingleMetadataResolver.class)
   public Map<String, Object> querySingle(@ParameterGroup(name = QUERY_GROUP) @Placement(
       tab = ADVANCED_TAB) QueryDefinition query, @Config DbConnector connector, @Connection DbConnection connection,
                                          StreamingHelper streamingHelper)

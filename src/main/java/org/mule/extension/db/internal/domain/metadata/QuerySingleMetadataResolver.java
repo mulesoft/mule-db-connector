@@ -11,6 +11,11 @@ import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.metadata.MetadataContext;
 import org.mule.runtime.api.metadata.MetadataResolvingException;
 
+/**
+ * Resolves output metadata for a specific SQL query executed with the Query Single operation.
+ *
+ * @since 1.9.0
+ */
 public class QuerySingleMetadataResolver extends SelectMetadataResolver {
 
   @Override

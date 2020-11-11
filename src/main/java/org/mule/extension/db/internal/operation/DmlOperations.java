@@ -162,9 +162,9 @@ public class DmlOperations extends BaseDbOperations {
   }
 
   /**
-   * Selects single result from a database.
+   * Selects single result from a database. If the indicated SQL query returns more than one record, only the first one is returned.
    *
-   * Streaming is not used for this operation.
+   * Streaming is not used for this operation, which means that you must be careful because all selected fields will be loaded to memory.
    *
    * @param query a {@link QueryDefinition} as a parameter group
    * @param connector the acting connector

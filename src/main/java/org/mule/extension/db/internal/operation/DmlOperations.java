@@ -29,15 +29,18 @@ import org.mule.extension.db.internal.domain.executor.SelectExecutor;
 import org.mule.extension.db.internal.domain.executor.StoredProcedureExecutor;
 import org.mule.extension.db.internal.domain.metadata.SelectMetadataResolver;
 import org.mule.extension.db.internal.domain.metadata.StoredProcedureMetadataResolver;
+import org.mule.extension.db.internal.domain.metadata.QuerySingleMetadataResolver;
 import org.mule.extension.db.internal.domain.query.Query;
 import org.mule.extension.db.internal.domain.query.QueryType;
 import org.mule.extension.db.internal.domain.statement.QueryStatementFactory;
 import org.mule.extension.db.internal.resolver.query.StoredProcedureQueryResolver;
 import org.mule.extension.db.internal.result.resultset.IteratorResultSetHandler;
+import org.mule.extension.db.internal.result.resultset.SingleResultSetHandler;
 import org.mule.extension.db.internal.result.resultset.ListResultSetHandler;
 import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
 import org.mule.extension.db.internal.result.resultset.ResultSetIterator;
 import org.mule.extension.db.internal.result.row.InsensitiveMapRowHandler;
+import org.mule.extension.db.internal.result.row.NonStreamingInsensitiveMapRowHandler;
 import org.mule.extension.db.internal.result.statement.StatementResultHandler;
 import org.mule.extension.db.internal.result.statement.StreamingStatementResultHandler;
 import org.mule.runtime.api.exception.MuleException;
@@ -156,6 +159,37 @@ public class DmlOperations extends BaseDbOperations {
         return true;
       }
     };
+  }
+
+  /**
+   * Selects single result from a database. If the indicated SQL query returns more than one record, only the first one is returned.
+   *
+   * Streaming is not used for this operation, which means that you must be careful because all selected fields will be loaded to memory.
+   *
+   * @param query a {@link QueryDefinition} as a parameter group
+   * @param connector the acting connector
+   * @param connection the acting connection
+   * @return a map with a single entry containing the operation's output
+   * @throws SQLException if an error is produced
+   *
+   * @since 1.9.0
+   */
+  @OutputResolver(output = QuerySingleMetadataResolver.class)
+  public Map<String, Object> querySingle(@ParameterGroup(name = QUERY_GROUP) @Placement(
+      tab = ADVANCED_TAB) QueryDefinition query, @Config DbConnector connector, @Connection DbConnection connection,
+                                         StreamingHelper streamingHelper)
+      throws SQLException {
+    final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, SELECT);
+
+    QueryStatementFactory statementFactory = getStatementFactory(query);
+    InsensitiveMapRowHandler recordHandler = new NonStreamingInsensitiveMapRowHandler(connection, connector.getCharset());
+    ResultSetHandler resultSetHandler =
+        new SingleResultSetHandler(recordHandler, connector.getCharset());
+    try {
+      return (Map<String, Object>) new SelectExecutor(statementFactory, resultSetHandler).execute(connection, resolvedQuery);
+    } catch (SQLException e) {
+      throw new MuleRuntimeException(e);
+    }
   }
 
   /**

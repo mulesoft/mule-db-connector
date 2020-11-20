@@ -67,7 +67,6 @@ import org.slf4j.LoggerFactory;
 @Summary("Triggers a message per each row in a table")
 @Alias("listener")
 public class RowListener extends PollingSource<Map<String, Object>, Void> {
-
   private static final Logger LOGGER = LoggerFactory.getLogger(RowListener.class);
   public static final String WATERMARK_PARAM_NAME = "watermark";
 
@@ -229,7 +228,6 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
   private interface ItemHandler extends BiConsumer<PollItem<Map<String, Object>, Void>, Map<String, Object>> {
 
   }
-
 
   private final class NullItemHandler implements ItemHandler {
 

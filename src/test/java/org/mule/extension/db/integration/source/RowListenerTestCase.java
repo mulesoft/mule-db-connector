@@ -11,15 +11,19 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.mule.extension.db.integration.model.AbstractTestDatabase.ADDITIONAL_PLANET_VALUES;
 import static org.mule.extension.db.integration.model.AbstractTestDatabase.PLANET_TEST_VALUES;
+import static org.mule.extension.db.integration.model.Planet.*;
 import static org.mule.runtime.api.component.location.Location.builder;
 import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
 import static org.mule.tck.probe.PollingProber.check;
+
+import org.junit.Before;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.Planet;
 import org.mule.metadata.api.model.ObjectType;
 import org.mule.runtime.api.component.location.Location;
 import org.mule.runtime.api.lifecycle.Startable;
 import org.mule.runtime.api.meta.model.source.SourceModel;
+import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.metadata.descriptor.ComponentMetadataDescriptor;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
 import org.mule.runtime.core.api.event.CoreEvent;
@@ -54,6 +58,11 @@ public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
     PAYLOADS = new CopyOnWriteArrayList<>();
   }
 
+  @Before
+  public void setupStoredProcedure() throws Exception {
+    testDatabase.createStoredProcedureParameterizedUpdatePlanetDescription(getDefaultDataSource());
+  }
+
   @Override
   protected void doTearDown() throws Exception {
     super.doTearDown();
@@ -84,7 +93,7 @@ public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void idempotentListen() throws Exception {
-    withConnections(connection -> testDatabase.removePlanets(connection, Planet.EARTH, Planet.MARS));
+    withConnections(connection -> testDatabase.removePlanets(connection, Planet.EARTH, MARS));
     Planet[] planetsToCreate = {Planet.VENUS};
     withConnections(connection -> testDatabase.populatePlanetTable(connection, planetsToCreate));
 
@@ -95,6 +104,16 @@ public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
   public void datasense() throws Exception {
     startFlow("listenPlanets");
     assertPlanetObjectType(getListenerOutputMetadata("PLANET"));
+  }
+
+  @Test
+  public void listenPlanetsWithClobData() throws Exception {
+    flowRunner("updatePlanetDescriptionWithClobField").withPayload(TEST_MESSAGE).run();
+
+    startFlow("listenPlanetsWithWaitTime");
+
+    check(TIMEOUT_MILLIS, 500, () -> PAYLOADS.stream()
+            .filter(map -> TEST_MESSAGE.equals(((TypedValue) map.get("DESCRIPTION")).getValue())).findAny().isPresent());
   }
 
   private ObjectType getListenerOutputMetadata(String table) {

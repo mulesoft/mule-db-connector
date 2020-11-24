@@ -221,7 +221,7 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
   @Override
   public void onRejectedItem(Result<Map<String, Object>, Void> result, SourceCallbackContext sourceCallbackContext) {
     if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("Row has been rejected for processing: " + result.getOutput());
+      LOGGER.debug("Row has been rejected for processing: {}", result.getOutput());
     }
   }
 

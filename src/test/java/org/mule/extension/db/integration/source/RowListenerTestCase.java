@@ -11,7 +11,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.mule.extension.db.integration.model.AbstractTestDatabase.ADDITIONAL_PLANET_VALUES;
 import static org.mule.extension.db.integration.model.AbstractTestDatabase.PLANET_TEST_VALUES;
-import static org.mule.extension.db.integration.model.Planet.*;
 import static org.mule.runtime.api.component.location.Location.builder;
 import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
 import static org.mule.tck.probe.PollingProber.check;
@@ -92,7 +91,7 @@ public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void idempotentListen() throws Exception {
-    withConnections(connection -> testDatabase.removePlanets(connection, Planet.EARTH, MARS));
+    withConnections(connection -> testDatabase.removePlanets(connection, Planet.EARTH, Planet.MARS));
     Planet[] planetsToCreate = {Planet.VENUS};
     withConnections(connection -> testDatabase.populatePlanetTable(connection, planetsToCreate));
 

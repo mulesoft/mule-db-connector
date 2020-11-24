@@ -36,6 +36,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.junit.Test;
 
 public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
+
   private static final int TIMEOUT_MILLIS = 5000;
   public static List<Map<String, Object>> PAYLOADS;
 
@@ -111,7 +112,7 @@ public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
     startFlow("listenPlanetsWithWaitTime");
 
     check(TIMEOUT_MILLIS, 500, () -> PAYLOADS.stream()
-            .filter(map -> TEST_MESSAGE.equals(((TypedValue) map.get("DESCRIPTION")).getValue())).findAny().isPresent());
+        .filter(map -> TEST_MESSAGE.equals(((TypedValue) map.get("DESCRIPTION")).getValue())).findAny().isPresent());
   }
 
   private ObjectType getListenerOutputMetadata(String table) {

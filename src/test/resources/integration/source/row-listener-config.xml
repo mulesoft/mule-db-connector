@@ -16,6 +16,16 @@
         <test:processor class="org.mule.extension.db.integration.source.RowListenerTestCase$CapturePayloadProcessor" />
     </flow>
 
+    <flow name="listenPlanetsWithWaitTime" initialState="stopped">
+        <db:listener table="PLANET" config-ref="dbConfig">
+            <scheduling-strategy>
+                <fixed-frequency frequency="1000"/>
+            </scheduling-strategy>
+        </db:listener>
+        <test:processor class="org.mule.extension.db.integration.source.RowListenerTestCase$CapturePayloadProcessor" />
+        <test:processor waitTime="5000" />
+    </flow>
+
     <flow name="listenPlanetsWithWatermark" initialState="stopped">
         <db:listener table="PLANET" watermarkColumn="ID" config-ref="dbConfig">
             <scheduling-strategy>
@@ -23,6 +33,18 @@
             </scheduling-strategy>
         </db:listener>
         <test:processor class="org.mule.extension.db.integration.source.RowListenerTestCase$CapturePayloadProcessor" />
+    </flow>
+
+    <flow name="updatePlanetDescriptionWithClobField">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql>{ call updatePlanetDescription('Venus', :description) }</db:sql>
+            <db:parameter-types>
+                <db:parameter-type key="description" type="CLOB" />
+            </db:parameter-types>
+            <db:input-parameters>
+                #[{'description' : payload}]
+            </db:input-parameters>
+        </db:stored-procedure>
     </flow>
 
     <flow name="idempotentListen" initialState="stopped">

@@ -21,11 +21,10 @@ import org.mule.extension.db.internal.resolver.query.ParameterizedQueryResolver;
 import org.mule.extension.db.internal.resolver.query.QueryResolver;
 import org.mule.extension.db.internal.result.resultset.ListResultSetHandler;
 import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
-import org.mule.extension.db.internal.result.row.InsensitiveMapRowHandler;
+import org.mule.extension.db.internal.result.row.NonStreamingInsensitiveMapRowHandler;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.exception.MuleException;
-import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.metadata.MetadataKeyId;
 import org.mule.runtime.extension.api.annotation.metadata.MetadataScope;
@@ -198,7 +197,7 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
       statementFactory.setQueryTimeout(new Long(settings.getQueryTimeoutUnit().toSeconds(settings.getQueryTimeout())).intValue());
 
       ResultSetHandler resultSetHandler =
-          new ListResultSetHandler(new InsensitiveMapRowHandler(connection, Charset.forName(encoding)));
+          new ListResultSetHandler(new NonStreamingInsensitiveMapRowHandler(connection, Charset.forName(encoding)));
 
       List<Map<String, Object>> rows =
           (List<Map<String, Object>>) new SelectExecutor(statementFactory, resultSetHandler).execute(connection, query);
@@ -222,7 +221,7 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
   @Override
   public void onRejectedItem(Result<Map<String, Object>, Void> result, SourceCallbackContext sourceCallbackContext) {
     if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("Row has been rejected for processing: " + result.getOutput());
+      LOGGER.debug("Row has been rejected for processing: {}", result.getOutput());
     }
   }
 
@@ -230,7 +229,6 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
   private interface ItemHandler extends BiConsumer<PollItem<Map<String, Object>, Void>, Map<String, Object>> {
 
   }
-
 
   private final class NullItemHandler implements ItemHandler {
 

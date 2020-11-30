@@ -38,7 +38,7 @@ import org.apache.commons.io.input.ReaderInputStream;
 public class InsensitiveMapRowHandler implements RowHandler {
 
   private DbConnection dbConnection;
-  private Charset charset;
+  protected Charset charset;
 
   public InsensitiveMapRowHandler(DbConnection dbConnection) {
     this.dbConnection = dbConnection;
@@ -110,32 +110,32 @@ public class InsensitiveMapRowHandler implements RowHandler {
     return value.getAttributes();
   }
 
-  private TypedValue<InputStream> handleSqlXmlType(SQLXML value) throws SQLException {
+  protected TypedValue<Object> handleSqlXmlType(SQLXML value) throws SQLException {
     return new TypedValue<>(value.getBinaryStream(), DataType.builder().type(InputStream.class).mediaType(XML).build());
   }
 
-  private TypedValue<Object> handleBlobType(Blob value) throws SQLException {
+  protected TypedValue<Object> handleBlobType(Blob value) throws SQLException {
     if (dbConnection != null && dbConnection.supportsContentStreaming()) {
       return new TypedValue<>(value.getBinaryStream(), DataType.builder().type(InputStream.class).mediaType(BINARY).build());
     } else {
       return new TypedValue<>(new ByteArrayInputStream(IOUtils.toByteArray(value.getBinaryStream())),
-                              DataType.builder().type(byte[].class).mediaType(BINARY).build());
+              DataType.builder().type(byte[].class).mediaType(BINARY).build());
     }
   }
 
-  private TypedValue<Object> handleClobType(Clob value) throws SQLException {
+  protected TypedValue<Object> handleClobType(Clob value) throws SQLException {
     ReaderInputStream inputStream = new ReaderInputStream(value.getCharacterStream(), charset);
     if (dbConnection != null && dbConnection.supportsContentStreaming()) {
       return new TypedValue<>(inputStream, DataType.builder().type(InputStream.class)
-          .mediaType(TEXT)
-          .charset(charset)
-          .build());
+              .mediaType(TEXT)
+              .charset(charset)
+              .build());
     } else {
       return new TypedValue<>(new ByteArrayInputStream(IOUtils.toByteArray(inputStream)), DataType.builder()
-          .type(byte[].class)
-          .mediaType(TEXT)
-          .charset(charset)
-          .build());
+              .type(byte[].class)
+              .mediaType(TEXT)
+              .charset(charset)
+              .build());
     }
   }
 }

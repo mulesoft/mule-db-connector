@@ -31,33 +31,33 @@ import static org.mule.runtime.api.metadata.MediaType.TEXT;
  */
 public class NonStreamingInsensitiveMapRowHandler extends InsensitiveMapRowHandler {
 
-    public NonStreamingInsensitiveMapRowHandler(DbConnection dbConnection) {
-        super(dbConnection);
-    }
+  public NonStreamingInsensitiveMapRowHandler(DbConnection dbConnection) {
+    super(dbConnection);
+  }
 
-    public NonStreamingInsensitiveMapRowHandler(DbConnection dbConnection, Charset charset) {
-        super(dbConnection, charset);
-    }
+  public NonStreamingInsensitiveMapRowHandler(DbConnection dbConnection, Charset charset) {
+    super(dbConnection, charset);
+  }
 
-    @Override
-    protected TypedValue<Object> handleSqlXmlType(SQLXML value) throws SQLException {
-        return new TypedValue<>(value.getString(), DataType.builder().type(SQLXML.class).mediaType(XML).build());
-    }
+  @Override
+  protected TypedValue<Object> handleSqlXmlType(SQLXML value) throws SQLException {
+    return new TypedValue<>(value.getString(), DataType.builder().type(SQLXML.class).mediaType(XML).build());
+  }
 
-    @Override
-    protected TypedValue<Object> handleBlobType(Blob value) throws SQLException {
-        ByteArrayInputStream is = new ByteArrayInputStream(IOUtils.toByteArray(value.getBinaryStream()));
-        return new TypedValue<>(IOUtils.toByteArray(is),
-                DataType.builder().type(byte[].class).mediaType(BINARY).build());
-    }
+  @Override
+  protected TypedValue<Object> handleBlobType(Blob value) throws SQLException {
+    ByteArrayInputStream is = new ByteArrayInputStream(IOUtils.toByteArray(value.getBinaryStream()));
+    return new TypedValue<>(IOUtils.toByteArray(is),
+                            DataType.builder().type(byte[].class).mediaType(BINARY).build());
+  }
 
-    @Override
-    protected TypedValue<Object> handleClobType(Clob value) throws SQLException {
-        ReaderInputStream inputStream = new ReaderInputStream(value.getCharacterStream(), charset);
-        return new TypedValue<>(IOUtils.toString(inputStream), DataType.builder()
-                .type(String.class)
-                .mediaType(TEXT)
-                .charset(charset)
-                .build());
-    }
+  @Override
+  protected TypedValue<Object> handleClobType(Clob value) throws SQLException {
+    ReaderInputStream inputStream = new ReaderInputStream(value.getCharacterStream(), charset);
+    return new TypedValue<>(IOUtils.toString(inputStream), DataType.builder()
+        .type(String.class)
+        .mediaType(TEXT)
+        .charset(charset)
+        .build());
+  }
 }

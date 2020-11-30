@@ -119,7 +119,7 @@ public class InsensitiveMapRowHandler implements RowHandler {
       return new TypedValue<>(value.getBinaryStream(), DataType.builder().type(InputStream.class).mediaType(BINARY).build());
     } else {
       return new TypedValue<>(new ByteArrayInputStream(IOUtils.toByteArray(value.getBinaryStream())),
-              DataType.builder().type(byte[].class).mediaType(BINARY).build());
+                              DataType.builder().type(byte[].class).mediaType(BINARY).build());
     }
   }
 
@@ -127,15 +127,15 @@ public class InsensitiveMapRowHandler implements RowHandler {
     ReaderInputStream inputStream = new ReaderInputStream(value.getCharacterStream(), charset);
     if (dbConnection != null && dbConnection.supportsContentStreaming()) {
       return new TypedValue<>(inputStream, DataType.builder().type(InputStream.class)
-              .mediaType(TEXT)
-              .charset(charset)
-              .build());
+          .mediaType(TEXT)
+          .charset(charset)
+          .build());
     } else {
       return new TypedValue<>(new ByteArrayInputStream(IOUtils.toByteArray(inputStream)), DataType.builder()
-              .type(byte[].class)
-              .mediaType(TEXT)
-              .charset(charset)
-              .build());
+          .type(byte[].class)
+          .mediaType(TEXT)
+          .charset(charset)
+          .build());
     }
   }
 }

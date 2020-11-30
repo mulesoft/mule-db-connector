@@ -51,6 +51,7 @@ public class NonStreamingInsensitiveMapRowHandler extends InsensitiveMapRowHandl
                             DataType.builder().type(byte[].class).mediaType(BINARY).build());
   }
 
+  @Override
   protected TypedValue<Object> handleClobType(Clob value) throws SQLException {
     ReaderInputStream inputStream = new ReaderInputStream(value.getCharacterStream(), charset);
     return new TypedValue<>(IOUtils.toString(inputStream), DataType.builder()

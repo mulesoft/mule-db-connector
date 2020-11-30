@@ -14,12 +14,15 @@ import static org.mule.extension.db.integration.model.AbstractTestDatabase.PLANE
 import static org.mule.runtime.api.component.location.Location.builder;
 import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
 import static org.mule.tck.probe.PollingProber.check;
+
+import org.junit.Before;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.Planet;
 import org.mule.metadata.api.model.ObjectType;
 import org.mule.runtime.api.component.location.Location;
 import org.mule.runtime.api.lifecycle.Startable;
 import org.mule.runtime.api.meta.model.source.SourceModel;
+import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.metadata.descriptor.ComponentMetadataDescriptor;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
 import org.mule.runtime.core.api.event.CoreEvent;
@@ -36,7 +39,6 @@ public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
   private static final int TIMEOUT_MILLIS = 5000;
   public static List<Map<String, Object>> PAYLOADS;
 
-
   public static final class CapturePayloadProcessor implements Processor {
 
     @Override
@@ -52,6 +54,11 @@ public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
   protected void doSetUp() throws Exception {
     super.doSetUp();
     PAYLOADS = new CopyOnWriteArrayList<>();
+  }
+
+  @Before
+  public void setupStoredProcedure() throws Exception {
+    testDatabase.createStoredProcedureParameterizedUpdatePlanetDescription(getDefaultDataSource());
   }
 
   @Override
@@ -95,6 +102,16 @@ public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
   public void datasense() throws Exception {
     startFlow("listenPlanets");
     assertPlanetObjectType(getListenerOutputMetadata("PLANET"));
+  }
+
+  @Test
+  public void listenPlanetsWithClobData() throws Exception {
+    flowRunner("updatePlanetDescriptionWithClobField").withPayload(TEST_MESSAGE).run();
+
+    startFlow("listenPlanetsWithWaitTime");
+
+    check(TIMEOUT_MILLIS, 500, () -> PAYLOADS.stream()
+        .filter(map -> TEST_MESSAGE.equals(((TypedValue) map.get("DESCRIPTION")).getValue())).findAny().isPresent());
   }
 
   private ObjectType getListenerOutputMetadata(String table) {

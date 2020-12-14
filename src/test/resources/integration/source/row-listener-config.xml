@@ -23,7 +23,7 @@
             </scheduling-strategy>
         </db:listener>
         <test:processor class="org.mule.extension.db.integration.source.RowListenerTestCase$CapturePayloadProcessor" />
-        <test:processor waitTime="5000" />
+        <test:processor waitTime="1000" />
     </flow>
 
     <flow name="listenPlanetsWithWatermark" initialState="stopped">

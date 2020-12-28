@@ -1,2 +1,2 @@
-Map pipelineParams = [ "projectConfigYamlFile" : "build-mssql-old-version.yaml" ]
+Map pipelineParams = [ "projectConfigYamlFile" : "build-mysql-old-version.yaml" ]
 runtimeBuild(pipelineParams)

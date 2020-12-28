@@ -106,12 +106,11 @@ public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
 
   @Test
   public void listenPlanetsWithClobData() throws Exception {
-    flowRunner("updatePlanetDescriptionWithClobField").withPayload(TEST_MESSAGE).run();
-
     startFlow("listenPlanetsWithWaitTime");
-
     check(TIMEOUT_MILLIS, 500, () -> PAYLOADS.stream()
-        .filter(map -> TEST_MESSAGE.equals(((TypedValue) map.get("DESCRIPTION")).getValue())).findAny().isPresent());
+            .anyMatch(map -> TEST_MESSAGE.equals(((TypedValue) map.get("DESCRIPTION")).getValue())));
+
+    flowRunner("updatePlanetDescriptionWithClobField").withPayload(TEST_MESSAGE).run();
   }
 
   private ObjectType getListenerOutputMetadata(String table) {

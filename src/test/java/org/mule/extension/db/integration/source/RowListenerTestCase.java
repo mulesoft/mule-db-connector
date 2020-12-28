@@ -108,7 +108,7 @@ public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
   public void listenPlanetsWithClobData() throws Exception {
     startFlow("listenPlanetsWithWaitTime");
     check(TIMEOUT_MILLIS, 500, () -> PAYLOADS.stream()
-            .anyMatch(map -> TEST_MESSAGE.equals(((TypedValue) map.get("DESCRIPTION")).getValue())));
+        .anyMatch(map -> TEST_MESSAGE.equals(((TypedValue) map.get("DESCRIPTION")).getValue())));
 
     flowRunner("updatePlanetDescriptionWithClobField").withPayload(TEST_MESSAGE).run();
   }

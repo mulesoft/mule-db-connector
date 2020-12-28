@@ -1,6 +1,2 @@
-Map pipelineParams = [ enableMavenDeployStage : false,
-                       enableValidateSnapshotMetadataStage : false,
-                       mavenTestGoal : "verify -Dmaven.javadoc.skip -Doracle",
-                       projectType : "Extensions" ]
-
+Map pipelineParams = [ "projectConfigYamlFile" : "build-oracle.yaml" ]
 runtimeBuild(pipelineParams)

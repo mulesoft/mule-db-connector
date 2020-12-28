@@ -1,0 +1,4 @@
+projectType: extension
+enableMavenDeployStage: false
+enableValidateSnapshotMetadataStage: false
+mavenTestGoal: verify -Dmaven.javadoc.skip -Dmysql-old-version

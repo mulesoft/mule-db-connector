@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
+ * The software in this package is published under the terms of the CPAL v1.0
+ * license, a copy of which has been included with this distribution in the
+ * LICENSE.txt file.
+ */
 package org.mule.extension.db.unit;
 
 import org.junit.Test;
@@ -15,18 +21,18 @@ import static org.mockito.Mockito.when;
 
 public class ResultSetIteratorTestCase {
 
-    @Mock
-    private final ResultSet resultSetMock = mock(ResultSet.class);
+  @Mock
+  private final ResultSet resultSetMock = mock(ResultSet.class);
 
-    @Mock
-    private final RowHandler rowHandlerMock = mock(RowHandler.class);
+  @Mock
+  private final RowHandler rowHandlerMock = mock(RowHandler.class);
 
-    private final ResultSetIterator resultSetIterator = new ResultSetIterator(this.resultSetMock, this.rowHandlerMock);
+  private final ResultSetIterator resultSetIterator = new ResultSetIterator(this.resultSetMock, this.rowHandlerMock);
 
-    @Test(expected = ModuleException.class)
-    public void next_WhenProcessingNextRowThrowsSQLException_ThenModuleExceptionIsCreated() throws SQLException {
-        when(this.rowHandlerMock.process(any(ResultSet.class))).thenThrow(new SQLException("Some SQL Exception"));
+  @Test(expected = ModuleException.class)
+  public void next_WhenProcessingNextRowThrowsSQLException_ThenModuleExceptionIsCreated() throws SQLException {
+    when(this.rowHandlerMock.process(any(ResultSet.class))).thenThrow(new SQLException("Some SQL Exception"));
 
-        this.resultSetIterator.next();
-    }
+    this.resultSetIterator.next();
+  }
 }

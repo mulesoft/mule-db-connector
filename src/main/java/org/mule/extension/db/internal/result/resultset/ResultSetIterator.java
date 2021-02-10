@@ -7,16 +7,17 @@
 
 package org.mule.extension.db.internal.result.resultset;
 
-import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.extension.db.internal.result.row.RowHandler;
+import org.mule.runtime.extension.api.exception.ModuleException;
+import org.slf4j.Logger;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
-import org.slf4j.Logger;
+import static org.mule.extension.db.api.exception.connection.DbError.CONNECTIVITY;
+import static org.slf4j.LoggerFactory.getLogger;
 
 
 /**
@@ -67,7 +68,7 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
       return rowHandler.process(resultSet);
     } catch (SQLException e) {
       LOGGER.warn("Unable to obtain next row", e);
-      throw new NoSuchElementException();
+      throw new ModuleException("Unable to obtain next row", CONNECTIVITY, e);
     }
   }
 

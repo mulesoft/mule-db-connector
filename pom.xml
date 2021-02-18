@@ -67,6 +67,7 @@
             <groupId>javax.transaction</groupId>
             <artifactId>javax.transaction-api</artifactId>
             <version>${javax.transaction.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

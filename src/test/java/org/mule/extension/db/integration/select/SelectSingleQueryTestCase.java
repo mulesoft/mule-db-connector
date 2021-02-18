@@ -7,6 +7,7 @@
 package org.mule.extension.db.integration.select;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.Record;
@@ -72,6 +73,7 @@ public class SelectSingleQueryTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
+  @Ignore
   public void querySingleRecordWithClobField() throws Exception {
     String description = "Venus is the second planet from the Sun. It is named after the Roman goddess of love and beauty.";
 
@@ -83,6 +85,7 @@ public class SelectSingleQueryTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
+  @Ignore
   public void querySingleRecordWithBlobField() throws Exception {
     byte[] picture = new byte[100];
     new Random().nextBytes(picture);

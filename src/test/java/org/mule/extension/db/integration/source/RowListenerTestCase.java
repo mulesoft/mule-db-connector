@@ -16,6 +16,7 @@ import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
 import static org.mule.tck.probe.PollingProber.check;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.Planet;
 import org.mule.metadata.api.model.ObjectType;
@@ -105,6 +106,7 @@ public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
   }
 
   @Test
+  @Ignore
   public void listenPlanetsWithClobData() throws Exception {
     flowRunner("updatePlanetDescriptionWithClobField").withPayload(TEST_MESSAGE).run();
 

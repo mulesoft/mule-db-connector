@@ -11,18 +11,22 @@ import static java.sql.Types.ARRAY;
 import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 import static org.mule.extension.db.internal.domain.type.ArrayResolvedDbType.createUnsupportedTypeErrorMessage;
+
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
 import java.sql.Array;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,5 +93,14 @@ public class ArrayResolvedDbTypeTestCase extends AbstractMuleTestCase {
     expectedException.expectMessage(containsString(createUnsupportedTypeErrorMessage(value)));
 
     dataType.setParameterValue(statement, PARAM_INDEX, value, dbConnection);
+  }
+
+  @Test
+  public void getParameterValue_WhenGetArrayIsNull_ThenNoException() throws SQLException {
+    CallableStatement callableStatementMock = mock(CallableStatement.class);
+
+    Object parameterValue = dataType.getParameterValue(callableStatementMock, 1);
+
+    assertNull(parameterValue);
   }
 }

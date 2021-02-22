@@ -8,18 +8,18 @@ package org.mule.extension.db.internal.domain.connection.mysql;
 
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import static org.mule.extension.db.api.exception.connection.DbError.CANNOT_REACH;
-import static org.mule.extension.db.api.exception.connection.DbError.INVALID_CREDENTIALS;
-import static org.mule.extension.db.api.exception.connection.DbError.INVALID_DATABASE;
-import static org.mule.extension.db.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
+import static org.mule.db.commons.api.exception.connection.DbError.CANNOT_REACH;
+import static org.mule.db.commons.api.exception.connection.DbError.INVALID_CREDENTIALS;
+import static org.mule.db.commons.api.exception.connection.DbError.INVALID_DATABASE;
+import static org.mule.db.commons.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
 import static org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionProvider.MYSQL_GAV;
 import static org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory.MYSQL_DRIVER_CLASS;
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
 
-import org.mule.extension.db.api.exception.connection.DbError;
-import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
-import org.mule.extension.db.internal.domain.connection.DbConnectionProvider;
+import org.mule.db.commons.api.exception.connection.DbError;
+import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
+import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;

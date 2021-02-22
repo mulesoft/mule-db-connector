@@ -8,7 +8,7 @@ package org.mule.extension.db.internal.domain.logger;
 
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
-import org.mule.extension.db.api.logger.MuleMySqlLogger;
+import org.mule.db.commons.api.logger.MuleMySqlLogger;
 
 /**
  * Factory class that creates instances of {@link MuleMySqlLogger} wrapped by CGLIB's {@link Enhancer} implementing the

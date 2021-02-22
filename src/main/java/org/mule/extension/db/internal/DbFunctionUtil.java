@@ -10,7 +10,7 @@ import static java.lang.String.format;
 import static org.mule.runtime.core.api.event.EventContextFactory.create;
 import static org.mule.runtime.dsl.api.component.config.DefaultComponentLocation.fromSingleComponent;
 
-import org.mule.extension.db.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.message.Message;

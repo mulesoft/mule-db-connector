@@ -7,7 +7,7 @@
 
 package org.mule.extension.db.internal.domain.logger;
 
-import org.mule.extension.db.internal.domain.param.InputQueryParam;
+import org.mule.db.commons.internal.domain.param.InputQueryParam;
 
 /**
  * Null implementation of {@link SingleQueryLogger}

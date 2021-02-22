@@ -15,16 +15,16 @@ import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoreP
 import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoredProcedureName;
 import static org.mule.extension.db.internal.util.StoredProcedureUtils.getStoredProcedureParentOwner;
 
-import org.mule.extension.db.api.param.ParameterType;
-import org.mule.extension.db.internal.domain.connection.DbConnection;
-import org.mule.extension.db.internal.domain.param.QueryParam;
-import org.mule.extension.db.internal.domain.query.QueryTemplate;
-import org.mule.extension.db.internal.domain.type.ArrayResolvedDbType;
-import org.mule.extension.db.internal.domain.type.DbType;
-import org.mule.extension.db.internal.domain.type.DbTypeManager;
-import org.mule.extension.db.internal.domain.type.ResolvedDbType;
-import org.mule.extension.db.internal.domain.type.UnknownDbType;
-import org.mule.extension.db.internal.domain.type.UnknownDbTypeException;
+import org.mule.db.commons.api.param.ParameterType;
+import org.mule.db.commons.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.param.QueryParam;
+import org.mule.db.commons.internal.domain.query.QueryTemplate;
+import org.mule.db.commons.internal.domain.type.ArrayResolvedDbType;
+import org.mule.db.commons.internal.domain.type.DbType;
+import org.mule.db.commons.internal.domain.type.DbTypeManager;
+import org.mule.db.commons.internal.domain.type.ResolvedDbType;
+import org.mule.db.commons.internal.domain.type.UnknownDbType;
+import org.mule.db.commons.internal.domain.type.UnknownDbTypeException;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;

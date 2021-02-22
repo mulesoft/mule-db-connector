@@ -9,11 +9,11 @@ package org.mule.extension.db.internal.parser;
 
 import static org.mule.runtime.core.api.util.StringUtils.isEmpty;
 
-import org.mule.extension.db.internal.domain.param.DefaultInputQueryParam;
-import org.mule.extension.db.internal.domain.param.QueryParam;
-import org.mule.extension.db.internal.domain.query.QueryTemplate;
-import org.mule.extension.db.internal.domain.query.QueryType;
-import org.mule.extension.db.internal.domain.type.UnknownDbType;
+import org.mule.db.commons.internal.domain.param.DefaultInputQueryParam;
+import org.mule.db.commons.internal.domain.param.QueryParam;
+import org.mule.db.commons.internal.domain.query.QueryTemplate;
+import org.mule.db.commons.internal.domain.query.QueryType;
+import org.mule.db.commons.internal.domain.type.UnknownDbType;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -7,10 +7,10 @@
 
 package org.mule.extension.db.internal.resolver.query;
 
-import org.mule.extension.db.api.param.StatementDefinition;
+import org.mule.db.commons.api.param.StatementDefinition;
 import org.mule.extension.db.internal.DbConnector;
-import org.mule.extension.db.internal.domain.connection.DbConnection;
-import org.mule.extension.db.internal.domain.query.Query;
+import org.mule.db.commons.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.query.Query;
 import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
 /**

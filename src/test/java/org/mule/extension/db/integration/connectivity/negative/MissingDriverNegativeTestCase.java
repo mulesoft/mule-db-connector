@@ -8,7 +8,7 @@ package org.mule.extension.db.integration.connectivity.negative;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assume.assumeThat;
-import static org.mule.extension.db.api.exception.connection.DbError.CANNOT_LOAD_DRIVER;
+import static org.mule.db.commons.api.exception.connection.DbError.CANNOT_LOAD_DRIVER;
 import static org.mule.tck.junit4.matcher.ErrorTypeMatcher.errorType;
 
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnectionProvider;

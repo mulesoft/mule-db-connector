@@ -7,14 +7,14 @@
 
 package org.mule.extension.db.internal.resolver.param;
 
-import org.mule.extension.db.api.param.ParameterType;
-import org.mule.extension.db.internal.domain.connection.DbConnection;
-import org.mule.extension.db.internal.domain.param.QueryParam;
-import org.mule.extension.db.internal.domain.query.QueryTemplate;
-import org.mule.extension.db.internal.domain.type.DbType;
-import org.mule.extension.db.internal.domain.type.DbTypeManager;
-import org.mule.extension.db.internal.domain.type.DynamicDbType;
-import org.mule.extension.db.internal.domain.type.UnknownDbType;
+import org.mule.db.commons.api.param.ParameterType;
+import org.mule.db.commons.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.param.QueryParam;
+import org.mule.db.commons.internal.domain.query.QueryTemplate;
+import org.mule.db.commons.internal.domain.type.DbType;
+import org.mule.db.commons.internal.domain.type.DbTypeManager;
+import org.mule.db.commons.internal.domain.type.DynamicDbType;
+import org.mule.db.commons.internal.domain.type.UnknownDbType;
 
 import java.sql.SQLException;
 import java.util.HashMap;

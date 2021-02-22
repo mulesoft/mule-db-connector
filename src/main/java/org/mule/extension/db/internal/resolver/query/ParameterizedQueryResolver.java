@@ -8,9 +8,9 @@ package org.mule.extension.db.internal.resolver.query;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
-import org.mule.extension.db.api.param.ParameterizedStatementDefinition;
-import org.mule.extension.db.internal.domain.query.QueryParamValue;
-import org.mule.extension.db.internal.domain.query.QueryTemplate;
+import org.mule.db.commons.api.param.ParameterizedStatementDefinition;
+import org.mule.db.commons.internal.domain.query.QueryParamValue;
+import org.mule.db.commons.internal.domain.query.QueryTemplate;
 import org.mule.runtime.api.util.Reference;
 import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 

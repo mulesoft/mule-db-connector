@@ -12,7 +12,7 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import org.mule.extension.db.api.exception.connection.QueryExecutionException;
+import org.mule.db.commons.api.exception.connection.QueryExecutionException;
 import org.mule.extension.db.internal.exception.DbExceptionHandler;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.extension.api.exception.ModuleException;

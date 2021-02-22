@@ -7,10 +7,10 @@
 
 package org.mule.extension.db.internal.resolver.param;
 
-import static org.mule.extension.db.internal.domain.query.QueryType.STORE_PROCEDURE_CALL;
+import static org.mule.db.commons.internal.domain.query.QueryType.STORE_PROCEDURE_CALL;
 
-import org.mule.extension.db.internal.domain.query.QueryTemplate;
-import org.mule.extension.db.internal.domain.type.DbTypeManager;
+import org.mule.db.commons.internal.domain.query.QueryTemplate;
+import org.mule.db.commons.internal.domain.type.DbTypeManager;
 
 /**
  * Creates {@link ParamTypeResolver} for generic databases

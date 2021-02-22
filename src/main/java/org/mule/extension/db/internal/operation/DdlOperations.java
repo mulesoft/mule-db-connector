@@ -6,13 +6,13 @@
  */
 package org.mule.extension.db.internal.operation;
 
-import static org.mule.extension.db.api.param.DbNameConstants.SQL_QUERY_TEXT;
-import static org.mule.extension.db.internal.domain.query.QueryType.DDL;
-import org.mule.extension.db.api.param.QueryDefinition;
-import org.mule.extension.db.api.param.QuerySettings;
+import static org.mule.db.commons.api.param.DbNameConstants.SQL_QUERY_TEXT;
+import static org.mule.db.commons.internal.domain.query.QueryType.DDL;
+import org.mule.db.commons.api.param.QueryDefinition;
+import org.mule.db.commons.api.param.QuerySettings;
 import org.mule.extension.db.internal.DbConnector;
-import org.mule.extension.db.internal.domain.connection.DbConnection;
-import org.mule.extension.db.internal.domain.query.Query;
+import org.mule.db.commons.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.query.Query;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;

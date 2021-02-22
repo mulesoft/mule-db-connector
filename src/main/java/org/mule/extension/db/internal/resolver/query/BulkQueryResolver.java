@@ -7,17 +7,17 @@
 
 package org.mule.extension.db.internal.resolver.query;
 
-import org.mule.extension.db.api.param.BulkQueryDefinition;
-import org.mule.extension.db.api.param.ParameterType;
+import org.mule.db.commons.api.param.BulkQueryDefinition;
+import org.mule.db.commons.api.param.ParameterType;
 import org.mule.extension.db.internal.DbConnector;
-import org.mule.extension.db.internal.domain.connection.DbConnection;
-import org.mule.extension.db.internal.domain.param.DefaultInputQueryParam;
-import org.mule.extension.db.internal.domain.param.InputQueryParam;
-import org.mule.extension.db.internal.domain.param.QueryParam;
-import org.mule.extension.db.internal.domain.query.BulkQuery;
-import org.mule.extension.db.internal.domain.query.Query;
-import org.mule.extension.db.internal.domain.query.QueryParamValue;
-import org.mule.extension.db.internal.domain.query.QueryTemplate;
+import org.mule.db.commons.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.param.DefaultInputQueryParam;
+import org.mule.db.commons.internal.domain.param.InputQueryParam;
+import org.mule.db.commons.internal.domain.param.QueryParam;
+import org.mule.db.commons.internal.domain.query.BulkQuery;
+import org.mule.db.commons.internal.domain.query.Query;
+import org.mule.db.commons.internal.domain.query.QueryParamValue;
+import org.mule.db.commons.internal.domain.query.QueryTemplate;
 import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 
 import java.util.LinkedList;

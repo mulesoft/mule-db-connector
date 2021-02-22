@@ -7,10 +7,9 @@
 
 package org.mule.extension.db.internal.domain.connection.oracle;
 
-import org.mule.extension.db.api.exception.connection.ConnectionCreationException;
-import org.mule.extension.db.internal.domain.connection.JdbcConnectionFactory;
-import org.mule.extension.db.internal.domain.type.DbType;
-import org.mule.runtime.api.connection.ConnectionException;
+import org.mule.db.commons.api.exception.connection.ConnectionCreationException;
+import org.mule.db.commons.internal.domain.connection.JdbcConnectionFactory;
+import org.mule.db.commons.internal.domain.type.DbType;
 
 import java.sql.Connection;
 import java.sql.SQLException;

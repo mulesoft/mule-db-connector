@@ -17,6 +17,8 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+
+import org.mule.db.commons.internal.domain.type.ResolvedDbType;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 
 import java.math.BigDecimal;

@@ -6,7 +6,7 @@
  */
 package org.mule.extension.db.internal.resolver.query;
 
-import org.mule.extension.db.internal.parser.QueryTemplateParser;
+import org.mule.db.commons.internal.parser.QueryTemplateParser;
 
 public class DefaultBulkQueryFactory extends BulkQueryFactory {
 

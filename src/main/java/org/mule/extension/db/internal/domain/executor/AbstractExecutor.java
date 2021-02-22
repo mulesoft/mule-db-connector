@@ -9,17 +9,17 @@ package org.mule.extension.db.internal.domain.executor;
 
 import static java.lang.String.format;
 
-import org.mule.extension.db.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.logger.DefaultQueryLoggerFactory;
 import org.mule.extension.db.internal.domain.logger.QueryLoggerFactory;
 import org.mule.extension.db.internal.domain.logger.SingleQueryLogger;
-import org.mule.extension.db.internal.domain.param.InputQueryParam;
-import org.mule.extension.db.internal.domain.param.OutputQueryParam;
-import org.mule.extension.db.internal.domain.param.QueryParam;
-import org.mule.extension.db.internal.domain.query.QueryParamValue;
-import org.mule.extension.db.internal.domain.query.QueryTemplate;
+import org.mule.db.commons.internal.domain.param.InputQueryParam;
+import org.mule.db.commons.internal.domain.param.OutputQueryParam;
+import org.mule.db.commons.internal.domain.param.QueryParam;
+import org.mule.db.commons.internal.domain.query.QueryParamValue;
+import org.mule.db.commons.internal.domain.query.QueryTemplate;
 import org.mule.extension.db.internal.domain.statement.StatementFactory;
-import org.mule.extension.db.internal.domain.type.DbType;
+import org.mule.db.commons.internal.domain.type.DbType;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;

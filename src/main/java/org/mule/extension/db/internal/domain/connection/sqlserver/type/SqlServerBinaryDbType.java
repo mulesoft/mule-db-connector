@@ -6,9 +6,9 @@
  */
 package org.mule.extension.db.internal.domain.connection.sqlserver.type;
 
-import org.mule.extension.db.internal.domain.connection.DbConnection;
-import org.mule.extension.db.internal.domain.type.AbstractStructuredDbType;
-import org.mule.extension.db.internal.domain.type.DbType;
+import org.mule.db.commons.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.type.AbstractStructuredDbType;
+import org.mule.db.commons.internal.domain.type.DbType;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;

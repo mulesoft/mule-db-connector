@@ -7,7 +7,7 @@
 
 package org.mule.extension.db.internal.util;
 
-import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
+import org.mule.db.commons.internal.result.resultset.ResultSetHandler;
 
 import java.nio.charset.Charset;
 

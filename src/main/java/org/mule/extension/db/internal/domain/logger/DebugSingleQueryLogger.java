@@ -7,8 +7,8 @@
 
 package org.mule.extension.db.internal.domain.logger;
 
-import org.mule.extension.db.internal.domain.param.InputQueryParam;
-import org.mule.extension.db.internal.domain.query.QueryTemplate;
+import org.mule.db.commons.internal.domain.param.InputQueryParam;
+import org.mule.db.commons.internal.domain.query.QueryTemplate;
 
 import org.slf4j.Logger;
 

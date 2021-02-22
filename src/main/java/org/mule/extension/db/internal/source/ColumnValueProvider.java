@@ -8,7 +8,7 @@ package org.mule.extension.db.internal.source;
 
 import static java.lang.String.format;
 
-import org.mule.extension.db.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.runtime.api.value.Value;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.Parameter;

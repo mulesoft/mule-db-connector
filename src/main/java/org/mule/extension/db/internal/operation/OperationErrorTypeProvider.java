@@ -6,9 +6,9 @@
  */
 package org.mule.extension.db.internal.operation;
 
-import static org.mule.extension.db.api.exception.connection.DbError.BAD_SQL_SYNTAX;
-import static org.mule.extension.db.api.exception.connection.DbError.CONNECTIVITY;
-import static org.mule.extension.db.api.exception.connection.DbError.QUERY_EXECUTION;
+import static org.mule.db.commons.api.exception.connection.DbError.BAD_SQL_SYNTAX;
+import static org.mule.db.commons.api.exception.connection.DbError.CONNECTIVITY;
+import static org.mule.db.commons.api.exception.connection.DbError.QUERY_EXECUTION;
 import org.mule.runtime.extension.api.annotation.error.ErrorTypeProvider;
 import org.mule.runtime.extension.api.error.ErrorTypeDefinition;
 

@@ -12,11 +12,11 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
 
-import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
-import org.mule.extension.db.internal.domain.connection.type.resolver.ArrayTypeResolver;
-import org.mule.extension.db.internal.domain.connection.type.resolver.StructAndArrayTypeResolver;
-import org.mule.extension.db.internal.domain.type.DbType;
-import org.mule.extension.db.internal.domain.type.ResolvedDbType;
+import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
+import org.mule.db.commons.internal.domain.connection.type.resolver.ArrayTypeResolver;
+import org.mule.db.commons.internal.domain.connection.type.resolver.StructAndArrayTypeResolver;
+import org.mule.db.commons.internal.domain.type.DbType;
+import org.mule.db.commons.internal.domain.type.ResolvedDbType;
 import org.mule.extension.db.internal.domain.type.oracle.OracleXmlType;
 
 import java.lang.reflect.Method;

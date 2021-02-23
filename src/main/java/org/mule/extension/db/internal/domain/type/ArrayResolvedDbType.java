@@ -57,7 +57,7 @@ public class ArrayResolvedDbType extends AbstractStructuredDbType {
 
   @Override
   public Object getParameterValue(CallableStatement statement, int index) throws SQLException {
-    Object array = statement.getArray(index).getArray();
+    Object array = statement.getArray(index) != null ? statement.getArray(index).getArray() : null;
     if (array instanceof Collection) {
       return ((Collection<?>) array).stream().map(this::processArray).collect(toList());
     } else if (array instanceof Object[]) {

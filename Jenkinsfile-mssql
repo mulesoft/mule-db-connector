@@ -1,6 +1,2 @@
-Map pipelineParams = [ enableMavenDeployStage : false,
-                       enableValidateSnapshotMetadataStage : false,
-                       mavenTestGoal : "verify -Dmaven.javadoc.skip -Dmssql",
-                       projectType : "Extensions" ]
-
+Map pipelineParams = [ "projectConfigYamlFile" : "build-mssql.yaml" ]
 runtimeBuild(pipelineParams)

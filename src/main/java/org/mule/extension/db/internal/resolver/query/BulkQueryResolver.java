@@ -7,9 +7,9 @@
 
 package org.mule.extension.db.internal.resolver.query;
 
+import org.mule.db.commons.BaseDbConnector;
 import org.mule.db.commons.api.param.BulkQueryDefinition;
 import org.mule.db.commons.api.param.ParameterType;
-import org.mule.extension.db.internal.DbConnector;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.param.DefaultInputQueryParam;
 import org.mule.db.commons.internal.domain.param.InputQueryParam;
@@ -19,7 +19,7 @@ import org.mule.db.commons.internal.domain.query.Query;
 import org.mule.db.commons.internal.domain.query.QueryParamValue;
 import org.mule.db.commons.internal.domain.query.QueryTemplate;
 import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
-
+import org.mule.db.commons.internal.resolver.query.AbstractQueryResolver;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +30,7 @@ import java.util.Optional;
 public class BulkQueryResolver extends AbstractQueryResolver<BulkQueryDefinition> {
 
   @Override
-  public Query resolve(BulkQueryDefinition definition, DbConnector connector, DbConnection connection,
+  public Query resolve(BulkQueryDefinition definition, BaseDbConnector connector, DbConnection connection,
                        StreamingHelper streamingHelper) {
     Query query = super.resolve(definition, connector, connection, streamingHelper);
     List<QueryParam> queryParams = new LinkedList<>();

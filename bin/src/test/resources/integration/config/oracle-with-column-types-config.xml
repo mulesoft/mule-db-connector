@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+            http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+
+    <db:config name="dbConfig" >
+        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" user="system" password="Oradoc_db1" instance="ORCLCDB" >
+            <db:column-types >
+                <db:column-type id="2002" typeName="SYSTEM.FRUIT_RECORD_TYPE" className="org.mule.extension.db.integration.select.Fruit" />
+                <db:column-type id="2003" typeName="SYSTEM.FRUIT_ORDER_CONTENTS_TABLE" />
+                <db:column-type id="2002" typeName="CREATE_LIST_INPUT_OBJ" />
+                <db:column-type id="2003" typeName="CREATE_LIST_INPUT" />
+                <db:column-type id="2003" typeName="CREATE_LIST_OUTPUT" />
+                <db:column-type id="2002" typeName="CREATE_LIST_OUTPUT_OBJ" />
+                <db:column-type id="2002" typeName="RES_OBJ" />
+                <db:column-type id="2003" typeName="OUTPUT_RESPONSE" />
+                <db:column-type id="2002" typeName="OBJECT_TYPE" />
+                <db:column-type id="2003" typeName="OBJECTS_TABLE" />
+                <db:column-type id="2002" typeName="OBJECT_WITH_INNER_OBJECT_TYPE" />
+                <db:column-type id="2003" typeName="OBJECT_WITH_INNER_OBJECT_TABLE" />
+            </db:column-types>
+        </db:oracle-connection>
+    </db:config>
+</mule>

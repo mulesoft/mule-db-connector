@@ -19,6 +19,7 @@ import static org.mule.db.commons.internal.domain.query.QueryType.STORE_PROCEDUR
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.param.QueryParam;
 import org.mule.db.commons.internal.domain.query.QueryTemplate;
+import org.mule.db.commons.internal.domain.statement.QueryStatementFactory;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 

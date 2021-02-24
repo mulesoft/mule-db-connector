@@ -10,6 +10,7 @@ package org.mule.extension.db.internal.resolver.query;
 import org.mule.db.commons.internal.domain.query.BulkQuery;
 import org.mule.db.commons.internal.domain.query.QueryTemplate;
 import org.mule.db.commons.internal.parser.QueryTemplateParser;
+import org.mule.db.commons.internal.resolver.query.QueryResolutionException;
 
 /**
  * Base class for {@link BulkQueryResolver} implementations

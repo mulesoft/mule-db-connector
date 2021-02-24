@@ -9,13 +9,14 @@ package org.mule.extension.db.internal.domain.executor;
 
 import org.mule.db.commons.api.exception.connection.QueryExecutionException;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
-import org.mule.extension.db.internal.domain.logger.BulkQueryLogger;
-import org.mule.extension.db.internal.domain.logger.PreparedBulkQueryLogger;
+import org.mule.db.commons.internal.domain.executor.AbstractExecutor;
+import org.mule.db.commons.internal.domain.logger.BulkQueryLogger;
+import org.mule.db.commons.internal.domain.logger.PreparedBulkQueryLogger;
 import org.mule.db.commons.internal.domain.query.BulkQuery;
 import org.mule.db.commons.internal.domain.query.Query;
 import org.mule.db.commons.internal.domain.query.QueryParamValue;
 import org.mule.db.commons.internal.domain.query.QueryTemplate;
-import org.mule.extension.db.internal.domain.statement.StatementFactory;
+import org.mule.db.commons.internal.domain.statement.StatementFactory;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

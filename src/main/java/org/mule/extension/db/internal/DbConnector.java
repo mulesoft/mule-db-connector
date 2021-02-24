@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.internal;
 
+import org.mule.db.commons.BaseDbConnector;
 import org.mule.db.commons.api.exception.connection.ConnectionCreationException;
 import org.mule.db.commons.api.exception.connection.DbError;
 import org.mule.db.commons.api.logger.LoggerApiPackage;
@@ -14,6 +15,7 @@ import org.mule.db.commons.api.param.JdbcType;
 import org.mule.db.commons.api.param.QueryDefinition;
 import org.mule.db.commons.api.param.StoredProcedureCall;
 import org.mule.db.commons.internal.domain.connection.datasource.DataSourceReferenceConnectionProvider;
+import org.mule.db.commons.internal.operation.DmlOperations;
 import org.mule.extension.db.internal.domain.connection.derby.DerbyConnectionProvider;
 import org.mule.db.commons.internal.domain.connection.generic.GenericConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionProvider;
@@ -26,7 +28,6 @@ import org.mule.db.commons.internal.domain.type.StaticDbTypeManager;
 import org.mule.extension.db.internal.exception.DbExceptionHandler;
 import org.mule.extension.db.internal.operation.BulkOperations;
 import org.mule.extension.db.internal.operation.DdlOperations;
-import org.mule.extension.db.internal.operation.DmlOperations;
 import org.mule.extension.db.internal.source.RowListener;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
@@ -62,34 +63,7 @@ import java.util.List;
 @ErrorTypes(DbError.class)
 @ExpressionFunctions(DbFunctions.class)
 @OnException(DbExceptionHandler.class)
-public class DbConnector implements Initialisable {
+public class DbConnector extends BaseDbConnector implements Initialisable {
 
-  @DefaultEncoding
-  private String encoding;
 
-  private Charset charset;
-
-  private DbTypeManager typeManager;
-
-  @Override
-  public void initialise() throws InitialisationException {
-    typeManager = createBaseTypeManager();
-    charset = Charset.forName(encoding);
-  }
-
-  public DbTypeManager getTypeManager() {
-    return typeManager;
-  }
-
-  public Charset getCharset() {
-    return charset;
-  }
-
-  private DbTypeManager createBaseTypeManager() {
-    List<DbTypeManager> typeManagers = new ArrayList<>();
-    typeManagers.add(new MetadataDbTypeManager());
-    typeManagers.add(new StaticDbTypeManager(JdbcType.getAllTypes()));
-
-    return new CompositeDbTypeManager(typeManagers);
-  }
 }

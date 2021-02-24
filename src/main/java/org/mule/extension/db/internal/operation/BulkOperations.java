@@ -20,6 +20,8 @@ import static org.mule.runtime.api.metadata.TypedValue.unwrap;
 import org.mule.db.commons.api.param.BulkQueryDefinition;
 import org.mule.db.commons.api.param.BulkScript;
 import org.mule.db.commons.api.param.QuerySettings;
+import org.mule.db.commons.internal.operation.BaseDbOperations;
+import org.mule.db.commons.internal.operation.OperationErrorTypeProvider;
 import org.mule.extension.db.internal.DbConnector;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.domain.executor.BulkUpdateExecutor;

@@ -10,6 +10,8 @@ import static org.mule.db.commons.api.param.DbNameConstants.SQL_QUERY_TEXT;
 import static org.mule.db.commons.internal.domain.query.QueryType.DDL;
 import org.mule.db.commons.api.param.QueryDefinition;
 import org.mule.db.commons.api.param.QuerySettings;
+import org.mule.db.commons.internal.operation.BaseDbOperations;
+import org.mule.db.commons.internal.operation.OperationErrorTypeProvider;
 import org.mule.extension.db.internal.DbConnector;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.query.Query;

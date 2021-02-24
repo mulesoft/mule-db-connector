@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+            http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+
+    <flow name="magicPackageVersionOneAddMagicalNumber7">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql>{ call system.magicPackageVersionOne.addMagicalNumber(:num) }</db:sql>
+            <db:in-out-parameters>
+                <db:in-out-parameter key="num" value="10"/>
+            </db:in-out-parameters>
+        </db:stored-procedure>
+    </flow>
+
+    <flow name="magicPackageVersionTwoAddMagicalNumber9">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql>{ call system.magicPackageVersionTwo.addMagicalNumber(:num, :name) }</db:sql>
+            <db:input-parameters>
+                #[{'name' : 'hearts'}]
+            </db:input-parameters>
+            <db:in-out-parameters>
+                <db:in-out-parameter key="num" value="10"/>
+            </db:in-out-parameters>
+        </db:stored-procedure>
+    </flow>
+
+    <flow name="addMagicalNumberAndACardNumber11WithStoredProcedurePackage">
+        <db:stored-procedure config-ref="dbConfig">
+            <db:sql>{ call magicPackageVersionTwo.addMagicalNumberAndACard(:num, :name) }</db:sql>
+            <db:input-parameters>
+                #[{'name' : 'hearts'}]
+            </db:input-parameters>
+            <db:in-out-parameters>
+                <db:in-out-parameter key="num" value="10"/>
+            </db:in-out-parameters>
+        </db:stored-procedure>
+    </flow>
+
+</mule>

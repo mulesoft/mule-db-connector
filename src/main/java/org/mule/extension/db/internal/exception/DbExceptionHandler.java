@@ -20,6 +20,7 @@ import java.sql.SQLSyntaxErrorException;
  *
  * @since 1.0
  */
+// TODO NMZ Ver que hacer con esto
 public class DbExceptionHandler extends ExceptionHandler {
 
   @Override

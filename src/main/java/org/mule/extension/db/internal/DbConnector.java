@@ -6,7 +6,7 @@
  */
 package org.mule.extension.db.internal;
 
-import org.mule.db.commons.BaseDbConnector;
+import org.mule.db.commons.AbstractDbConnector;
 import org.mule.db.commons.api.exception.connection.ConnectionCreationException;
 import org.mule.db.commons.api.exception.connection.DbError;
 import org.mule.db.commons.api.logger.LoggerApiPackage;
@@ -16,13 +16,14 @@ import org.mule.db.commons.api.param.StoredProcedureCall;
 import org.mule.db.commons.internal.domain.connection.datasource.DataSourceReferenceConnectionProvider;
 import org.mule.db.commons.internal.operation.DdlOperations;
 import org.mule.db.commons.internal.operation.DmlOperations;
+import org.mule.db.commons.internal.source.RowListener;
 import org.mule.extension.db.internal.domain.connection.derby.DerbyConnectionProvider;
 import org.mule.db.commons.internal.domain.connection.generic.GenericConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.sqlserver.SqlServerConnectionProvider;
 import org.mule.extension.db.internal.exception.DbExceptionHandler;
-import org.mule.extension.db.internal.source.RowListener;
+import org.mule.extension.db.internal.operation.DbBulkOperations;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.extension.api.annotation.Export;
 import org.mule.runtime.extension.api.annotation.ExpressionFunctions;
@@ -40,8 +41,8 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
  * @since 1.0
  */
 @Extension(name = "Database")
-// TODO NMZ: Aca hay un problema al mover la operacion a la lib y el validador de formato.
-@Operations({DmlOperations.class, DdlOperations.class/*, BulkOperations.class*/})
+// TODO NMZ: Aca hay un problema al mover la operacion a la lib y el validador al momento de package (DbBulkOperations).
+@Operations({DmlOperations.class, DdlOperations.class, DbBulkOperations.class})
 @Sources(RowListener.class)
 @ConnectionProviders({DataSourceReferenceConnectionProvider.class, GenericConnectionProvider.class, DerbyConnectionProvider.class,
     MySqlConnectionProvider.class, OracleDbConnectionProvider.class, SqlServerConnectionProvider.class})
@@ -52,7 +53,7 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
 @ErrorTypes(DbError.class)
 @ExpressionFunctions(DbFunctions.class)
 @OnException(DbExceptionHandler.class)
-public class DbConnector extends BaseDbConnector implements Initialisable {
+public class DbConnector extends AbstractDbConnector implements Initialisable {
 
 
 }

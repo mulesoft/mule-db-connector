@@ -28,7 +28,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * Contains a set of operations for performing bulk DML operations from a single statement.
  *
@@ -36,7 +35,6 @@ import java.util.Map;
  */
 @Throws(OperationErrorTypeProvider.class)
 public class DbBulkOperations extends BulkOperations {
-
 
   /**
    * Allows executing one insert statement various times using different parameter bindings. This happens using one single
@@ -82,7 +80,6 @@ public class DbBulkOperations extends BulkOperations {
                           @Connection DbConnection connection,
                           StreamingHelper streamingHelper)
       throws SQLException {
-
     return super.bulkUpdate(bulkInputParameters, query, connector, connection, streamingHelper);
   }
 
@@ -99,7 +96,6 @@ public class DbBulkOperations extends BulkOperations {
    *         according to the order in which commands were added to the batch.
    * @throws SQLException if an error is produced
    */
-
   public int[] bulkDelete(@DisplayName("Input Parameters") @Content @Placement(
       order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
                           @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
@@ -107,7 +103,6 @@ public class DbBulkOperations extends BulkOperations {
                           @Connection DbConnection connection,
                           StreamingHelper streamingHelper)
       throws SQLException {
-
     return super.bulkDelete(bulkInputParameters, query, connector, connection, streamingHelper);
   }
 

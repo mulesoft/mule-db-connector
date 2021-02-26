@@ -41,7 +41,6 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
  * @since 1.0
  */
 @Extension(name = "Database")
-// TODO NMZ: Aca hay un problema al mover la operacion a la lib y el validador al momento de package (DbBulkOperations).
 @Operations({DbBulkOperations.class, DbDdlOperations.class, DbDmlOperations.class})
 @Sources(RowListener.class)
 @ConnectionProviders({DataSourceReferenceConnectionProvider.class, GenericConnectionProvider.class, DerbyConnectionProvider.class,
@@ -53,7 +52,7 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
 @ErrorTypes(DbError.class)
 @ExpressionFunctions(DbFunctions.class)
 @OnException(DbExceptionHandler.class)
-public class DbConnector extends AbstractDbConnector implements Initialisable {
+public class DbConnector extends AbstractDbConnector {
 
 
 }

@@ -75,7 +75,6 @@
             <artifactId>caffeine</artifactId>
             <version>${caffeineVersion}</version>
         </dependency>
-
         <dependency>
             <groupId>com.experlog</groupId>
             <artifactId>xapool</artifactId>

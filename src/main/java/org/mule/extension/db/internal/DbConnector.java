@@ -24,7 +24,6 @@ import org.mule.extension.db.internal.exception.DbExceptionHandler;
 import org.mule.extension.db.internal.operation.DbBulkOperations;
 import org.mule.extension.db.internal.operation.DbDdlOperations;
 import org.mule.extension.db.internal.operation.DbDmlOperations;
-import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.extension.api.annotation.Export;
 import org.mule.runtime.extension.api.annotation.ExpressionFunctions;
 import org.mule.runtime.extension.api.annotation.Extension;
@@ -53,6 +52,5 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
 @ExpressionFunctions(DbFunctions.class)
 @OnException(DbExceptionHandler.class)
 public class DbConnector extends AbstractDbConnector {
-
 
 }

@@ -7,10 +7,8 @@
 package org.mule.extension.db.internal.operation;
 
 import org.mule.db.commons.AbstractDbConnector;
-
 import org.mule.db.commons.api.param.QuerySettings;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
-
 import org.mule.db.commons.internal.operation.DdlOperations;
 import org.mule.db.commons.internal.operation.OperationErrorTypeProvider;
 import org.mule.runtime.extension.api.annotation.error.Throws;
@@ -24,13 +22,16 @@ import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 import java.sql.SQLException;
 
 import static org.mule.db.commons.api.param.DbNameConstants.SQL_QUERY_TEXT;
+import static org.mule.db.commons.internal.operation.BaseDbOperations.QUERY_SETTINGS;
 
 /**
  * Operations to manipulate data definitions in a relational Database
  * @since 1.0
  */
 @Throws(OperationErrorTypeProvider.class)
-public class DbDdlOperations extends DdlOperations {
+public final class DbDdlOperations {
+
+  private static final DdlOperations ddlOperations = new DdlOperations();
 
   /**
    * Enables execution of DDL queries against a database.
@@ -48,7 +49,7 @@ public class DbDdlOperations extends DdlOperations {
                         @Connection DbConnection connection,
                         StreamingHelper streamingHelper)
       throws SQLException {
-    return super.executeDdl(sql, settings, connector, connection, streamingHelper);
+    return ddlOperations.executeDdl(sql, settings, connector, connection, streamingHelper);
   }
 
 }

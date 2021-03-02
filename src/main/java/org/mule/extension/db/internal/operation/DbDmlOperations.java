@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.mule.db.commons.internal.operation.AutoGenerateKeysAttributes.AUTO_GENERATE_KEYS;
+import static org.mule.db.commons.internal.operation.BaseDbOperations.QUERY_GROUP;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 
 /**
@@ -43,7 +44,9 @@ import static org.mule.runtime.extension.api.annotation.param.display.Placement.
  * @since 1.0
  */
 @Throws(OperationErrorTypeProvider.class)
-public class DbDmlOperations extends DmlOperations {
+public class DbDmlOperations {
+
+  private static final DmlOperations dmlOperations = new DmlOperations();
 
   /**
    * Selects data from a database.
@@ -65,7 +68,7 @@ public class DbDmlOperations extends DmlOperations {
                                                                   FlowListener flowListener)
       throws SQLException {
 
-    return super.select(query, connector, streamingHelper, flowListener);
+    return dmlOperations.select(query, connector, streamingHelper, flowListener);
   }
 
   /**
@@ -86,7 +89,7 @@ public class DbDmlOperations extends DmlOperations {
       tab = ADVANCED_TAB) QueryDefinition query, @Config AbstractDbConnector connector, @Connection DbConnection connection,
                                          StreamingHelper streamingHelper)
       throws SQLException {
-    return super.querySingle(query, connector, connection, streamingHelper);
+    return dmlOperations.querySingle(query, connector, connection, streamingHelper);
   }
 
   /**
@@ -105,7 +108,7 @@ public class DbDmlOperations extends DmlOperations {
                                 @Connection DbConnection connection,
                                 StreamingHelper streamingHelper)
       throws SQLException {
-    return super.insert(query, autoGenerateKeysAttributes, connector, connection, streamingHelper);
+    return dmlOperations.insert(query, autoGenerateKeysAttributes, connector, connection, streamingHelper);
   }
 
   /**
@@ -124,7 +127,7 @@ public class DbDmlOperations extends DmlOperations {
                                 @Connection DbConnection connection,
                                 StreamingHelper streamingHelper)
       throws SQLException {
-    return super.update(query, autoGenerateKeysAttributes, connector, connection, streamingHelper);
+    return dmlOperations.update(query, autoGenerateKeysAttributes, connector, connection, streamingHelper);
   }
 
   /**
@@ -141,7 +144,7 @@ public class DbDmlOperations extends DmlOperations {
                     @Connection DbConnection connection,
                     StreamingHelper streamingHelper)
       throws SQLException {
-    return super.delete(query, connector, connection, streamingHelper);
+    return dmlOperations.delete(query, connector, connection, streamingHelper);
   }
 
   /**
@@ -168,7 +171,7 @@ public class DbDmlOperations extends DmlOperations {
                                              StreamingHelper streamingHelper,
                                              FlowListener flowListener)
       throws SQLException {
-    return super.storedProcedure(call, autoGenerateKeysAttributes, connector, connection, streamingHelper, flowListener);
+    return dmlOperations.storedProcedure(call, autoGenerateKeysAttributes, connector, connection, streamingHelper, flowListener);
   }
 
 }

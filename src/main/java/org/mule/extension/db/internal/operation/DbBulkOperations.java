@@ -28,13 +28,18 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import static org.mule.db.commons.internal.operation.BaseDbOperations.QUERY_GROUP;
+import static org.mule.db.commons.internal.operation.BaseDbOperations.QUERY_SETTINGS;
+
 /**
  * Contains a set of operations for performing bulk DML operations from a single statement.
  *
  * @since 1.0
  */
 @Throws(OperationErrorTypeProvider.class)
-public class DbBulkOperations extends BulkOperations {
+public class DbBulkOperations {
+
+  private static final BulkOperations bulkOperations = new BulkOperations();
 
   /**
    * Allows executing one insert statement various times using different parameter bindings. This happens using one single
@@ -56,7 +61,7 @@ public class DbBulkOperations extends BulkOperations {
                           @Connection DbConnection connection,
                           StreamingHelper streamingHelper)
       throws SQLException {
-    return super.bulkInsert(bulkInputParameters, query, connector, connection, streamingHelper);
+    return bulkOperations.bulkInsert(bulkInputParameters, query, connector, connection, streamingHelper);
   }
 
 
@@ -80,7 +85,7 @@ public class DbBulkOperations extends BulkOperations {
                           @Connection DbConnection connection,
                           StreamingHelper streamingHelper)
       throws SQLException {
-    return super.bulkUpdate(bulkInputParameters, query, connector, connection, streamingHelper);
+    return bulkOperations.bulkUpdate(bulkInputParameters, query, connector, connection, streamingHelper);
   }
 
   /**
@@ -103,7 +108,7 @@ public class DbBulkOperations extends BulkOperations {
                           @Connection DbConnection connection,
                           StreamingHelper streamingHelper)
       throws SQLException {
-    return super.bulkDelete(bulkInputParameters, query, connector, connection, streamingHelper);
+    return bulkOperations.bulkDelete(bulkInputParameters, query, connector, connection, streamingHelper);
   }
 
   /**
@@ -121,7 +126,7 @@ public class DbBulkOperations extends BulkOperations {
                              @ParameterGroup(name = QUERY_SETTINGS) QuerySettings settings,
                              @Connection DbConnection connection)
       throws SQLException {
-    return super.executeScript(script, settings, connection);
+    return bulkOperations.executeScript(script, settings, connection);
   }
 
 }

@@ -17,6 +17,7 @@ import org.mule.db.commons.internal.domain.metadata.StoredProcedureMetadataResol
 import org.mule.db.commons.internal.operation.AutoGenerateKeysAttributes;
 import org.mule.db.commons.internal.operation.DmlOperations;
 import org.mule.db.commons.internal.operation.OperationErrorTypeProvider;
+import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.extension.api.annotation.Streaming;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
@@ -44,9 +45,15 @@ import static org.mule.runtime.extension.api.annotation.param.display.Placement.
  * @since 1.0
  */
 @Throws(OperationErrorTypeProvider.class)
-public class DbDmlOperations {
+public class DbDmlOperations implements Initialisable {
 
-  private static final DmlOperations dmlOperations = new DmlOperations();
+  private DmlOperations dmlOperations;
+
+  @Override
+  public void initialise() {
+    dmlOperations = new DmlOperations.Builder().build();
+  }
+
 
   /**
    * Selects data from a database.
@@ -173,5 +180,7 @@ public class DbDmlOperations {
       throws SQLException {
     return dmlOperations.storedProcedure(call, autoGenerateKeysAttributes, connector, connection, streamingHelper, flowListener);
   }
+
+
 
 }

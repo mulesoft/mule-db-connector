@@ -11,6 +11,8 @@ import org.mule.db.commons.api.param.QuerySettings;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.operation.DdlOperations;
 import org.mule.db.commons.internal.operation.OperationErrorTypeProvider;
+import org.mule.runtime.api.lifecycle.Initialisable;
+import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.param.Config;
 import org.mule.runtime.extension.api.annotation.param.Connection;
@@ -29,9 +31,9 @@ import static org.mule.db.commons.internal.operation.BaseDbOperations.QUERY_SETT
  * @since 1.0
  */
 @Throws(OperationErrorTypeProvider.class)
-public final class DbDdlOperations {
+public final class DbDdlOperations implements Initialisable {
 
-  private static final DdlOperations ddlOperations = new DdlOperations();
+  private DdlOperations ddlOperations;
 
   /**
    * Enables execution of DDL queries against a database.
@@ -52,4 +54,8 @@ public final class DbDdlOperations {
     return ddlOperations.executeDdl(sql, settings, connector, connection, streamingHelper);
   }
 
+  @Override
+  public void initialise() throws InitialisationException {
+    ddlOperations = new DdlOperations.Builder().build();
+  }
 }

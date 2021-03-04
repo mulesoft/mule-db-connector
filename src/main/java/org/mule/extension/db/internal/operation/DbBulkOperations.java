@@ -14,6 +14,8 @@ import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.metadata.DbInputMetadataResolver;
 import org.mule.db.commons.internal.operation.BulkOperations;
 import org.mule.db.commons.internal.operation.OperationErrorTypeProvider;
+import org.mule.runtime.api.lifecycle.Initialisable;
+import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.TypeResolver;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -37,9 +39,9 @@ import static org.mule.db.commons.internal.operation.BaseDbOperations.QUERY_SETT
  * @since 1.0
  */
 @Throws(OperationErrorTypeProvider.class)
-public class DbBulkOperations {
+public class DbBulkOperations implements Initialisable {
 
-  private static final BulkOperations bulkOperations = new BulkOperations();
+  private BulkOperations bulkOperations;
 
   /**
    * Allows executing one insert statement various times using different parameter bindings. This happens using one single
@@ -129,4 +131,8 @@ public class DbBulkOperations {
     return bulkOperations.executeScript(script, settings, connection);
   }
 
+  @Override
+  public void initialise() {
+    this.bulkOperations = new BulkOperations.Builder().build();
+  }
 }

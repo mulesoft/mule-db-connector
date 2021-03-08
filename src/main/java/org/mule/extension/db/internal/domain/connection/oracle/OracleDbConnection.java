@@ -134,6 +134,7 @@ public class OracleDbConnection extends DefaultDbConnection {
     }
   }
 
+  // TODO NMZ Revisar. esto no me gusta
   private Method getCreateArrayMethod() {
     if (createArrayMethod == null) {
       try {

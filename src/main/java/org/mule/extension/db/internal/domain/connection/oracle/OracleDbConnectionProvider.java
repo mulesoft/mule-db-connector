@@ -58,7 +58,7 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
 
   @Override
   protected JdbcConnectionFactory createJdbcConnectionFactory() {
-    return new OracleJdbcConnectionFactory();
+    return new OracleJdbcConnectionFactory.Builder().build();
   }
 
   @Override

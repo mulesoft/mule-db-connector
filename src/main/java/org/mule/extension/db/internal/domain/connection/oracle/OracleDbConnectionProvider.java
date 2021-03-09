@@ -24,6 +24,7 @@ import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
 import org.mule.db.commons.internal.domain.connection.JdbcConnectionFactory;
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
+import org.mule.extension.db.internal.util.OracleCredentialsMaskUtils;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
@@ -58,7 +59,8 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
 
   @Override
   protected JdbcConnectionFactory createJdbcConnectionFactory() {
-    return new OracleJdbcConnectionFactory.Builder().build();
+    return new OracleJdbcConnectionFactory.Builder()
+        .withMaskCredentialsFunction(OracleCredentialsMaskUtils::maskUrlUserAndPasswordForOracle).build();
   }
 
   @Override

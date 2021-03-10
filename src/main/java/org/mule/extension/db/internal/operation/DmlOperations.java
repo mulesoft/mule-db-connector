@@ -135,7 +135,13 @@ public class DmlOperations extends BaseDbOperations {
       private ResultSetIterator getIterator(DbConnection connection, DbConnector connector) {
         if (initialised.compareAndSet(false, true)) {
           resultSetCloser = new StatementStreamingResultSetCloser(connection);
-          flowListener.onError(new ResultSetCloserExceptionConsumer(resultSetCloser, query.getSql()));
+          flowListener.onError(new ResultSetCloserExceptionConsumer(resultSetCloser, query.getSql(), connection));
+          flowListener.onComplete(() -> {
+            if (connection.hasActiveLobStreams()) {
+              connection.setActiveLobStreams(false);
+              connection.release();
+            }
+          });
           final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, SELECT, STORE_PROCEDURE_CALL);
 
           QueryStatementFactory statementFactory = getStatementFactory(query);
@@ -380,16 +386,19 @@ public class DmlOperations extends BaseDbOperations {
 
     private final ResultSetCloserRunnable resultSetCloserRunnable;
     private final String sql;
+    private final DbConnection connection;
 
-    private ResultSetCloserExceptionConsumer(StatementStreamingResultSetCloser resultSetCloser, String sql) {
+    private ResultSetCloserExceptionConsumer(StatementStreamingResultSetCloser resultSetCloser, String sql,
+                                             DbConnection connection) {
       this.resultSetCloserRunnable = new ResultSetCloserRunnable(resultSetCloser);
       this.sql = sql;
+      this.connection = connection;
     }
-
 
     @Override
     public void accept(Exception e) {
       try {
+        connection.setActiveLobStreams(false);
         resultSetCloserRunnable.run();
       } catch (Exception t) {
         if (LOGGER.isWarnEnabled()) {

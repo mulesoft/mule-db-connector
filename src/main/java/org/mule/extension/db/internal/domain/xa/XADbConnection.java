@@ -125,6 +125,16 @@ public class XADbConnection implements DbConnection, XATransactionalConnection {
   }
 
   @Override
+  public void setActiveLobStreams(boolean value) {
+    this.connection.setActiveLobStreams(value);
+  }
+
+  @Override
+  public boolean hasActiveLobStreams() {
+    return this.connection.hasActiveLobStreams();
+  }
+
+  @Override
   public boolean isTransactionActive() {
     Transaction transaction = TransactionCoordination.getInstance().getTransaction();
     if (transaction == null) {

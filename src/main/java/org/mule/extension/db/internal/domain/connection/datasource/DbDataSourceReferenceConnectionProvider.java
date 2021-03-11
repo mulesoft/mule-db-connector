@@ -47,62 +47,63 @@ import javax.sql.DataSource;
 @DisplayName("Data Source Reference Connection")
 @Alias("data-source")
 @ExternalLib(name = "JDBC Driver", description = "A JDBC driver which supports connecting to the Database",
-        nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, type = JAR, optional = true)
+    nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, type = JAR, optional = true)
 public class DbDataSourceReferenceConnectionProvider implements ConnectionProvider<DbConnection>, Initialisable, Disposable {
 
-    @RefName
-    private String configName;
+  @RefName
+  private String configName;
 
-    @Inject
-    private Registry registry;
+  @Inject
+  private Registry registry;
 
-    /**
-     * Provides a way to configure database connection pooling.
-     */
-    @Parameter
-    @Optional
-    @Expression(NOT_SUPPORTED)
-    @Placement(tab = ADVANCED_TAB)
-    private DbPoolingProfile poolingProfile;
+  /**
+   * Provides a way to configure database connection pooling.
+   */
+  @Parameter
+  @Optional
+  @Expression(NOT_SUPPORTED)
+  @Placement(tab = ADVANCED_TAB)
+  private DbPoolingProfile poolingProfile;
 
-    /**
-     * Specifies non-standard column types
-     */
-    @Parameter
-    @Optional
-    @Expression(NOT_SUPPORTED)
-    @Placement(tab = ADVANCED_TAB)
-    private final List<ColumnType> columnTypes = emptyList();
+  /**
+   * Specifies non-standard column types
+   */
+  @Parameter
+  @Optional
+  @Expression(NOT_SUPPORTED)
+  @Placement(tab = ADVANCED_TAB)
+  private final List<ColumnType> columnTypes = emptyList();
 
-    @ParameterGroup(name = CONNECTION)
-    private DataSourceConnectionSettings connectionSettings;
+  @ParameterGroup(name = CONNECTION)
+  private DataSourceConnectionSettings connectionSettings;
 
-    private DataSourceReferenceConnectionProvider dataSourceReferenceConnectionProvider;
+  private DataSourceReferenceConnectionProvider dataSourceReferenceConnectionProvider;
 
-    @Override
-    public void initialise() throws InitialisationException {
-        dataSourceReferenceConnectionProvider = new DataSourceReferenceConnectionProvider(configName, registry,
-                poolingProfile, columnTypes, connectionSettings);
-    }
+  @Override
+  public void initialise() throws InitialisationException {
+    dataSourceReferenceConnectionProvider = new DataSourceReferenceConnectionProvider(configName, registry,
+                                                                                      poolingProfile, columnTypes,
+                                                                                      connectionSettings);
+  }
 
-    @Override
-    public void dispose() {
-        dataSourceReferenceConnectionProvider.dispose();
-    }
+  @Override
+  public void dispose() {
+    dataSourceReferenceConnectionProvider.dispose();
+  }
 
-    @Override
-    public DbConnection connect() throws ConnectionException {
-        return dataSourceReferenceConnectionProvider.connect();
-    }
+  @Override
+  public DbConnection connect() throws ConnectionException {
+    return dataSourceReferenceConnectionProvider.connect();
+  }
 
-    @Override
-    public void disconnect(DbConnection dbConnection) {
-        dataSourceReferenceConnectionProvider.disconnect(dbConnection);
-    }
+  @Override
+  public void disconnect(DbConnection dbConnection) {
+    dataSourceReferenceConnectionProvider.disconnect(dbConnection);
+  }
 
-    @Override
-    public ConnectionValidationResult validate(DbConnection dbConnection) {
-        return dataSourceReferenceConnectionProvider.validate(dbConnection);
-    }
+  @Override
+  public ConnectionValidationResult validate(DbConnection dbConnection) {
+    return dataSourceReferenceConnectionProvider.validate(dbConnection);
+  }
 
 }

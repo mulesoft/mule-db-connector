@@ -129,6 +129,8 @@ public class SqlServerConnectionProvider implements ConnectionProvider<DbConnect
       }
 
     };
+
+    dbConnectionProvider.initialise();
   }
 
   @Override

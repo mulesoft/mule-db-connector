@@ -122,6 +122,8 @@ public class DerbyConnectionProvider implements ConnectionProvider<DbConnection>
       }
 
     };
+
+    dbConnectionProvider.initialise();
   }
 
   @Override

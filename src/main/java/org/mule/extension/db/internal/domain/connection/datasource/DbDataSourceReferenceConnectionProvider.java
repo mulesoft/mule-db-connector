@@ -85,6 +85,8 @@ public class DbDataSourceReferenceConnectionProvider implements ConnectionProvid
     dataSourceReferenceConnectionProvider = new DataSourceReferenceConnectionProvider(configName, registry,
                                                                                       poolingProfile, columnTypes,
                                                                                       connectionSettings);
+
+    dataSourceReferenceConnectionProvider.initialise();
   }
 
   @Override

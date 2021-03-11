@@ -140,6 +140,8 @@ public class OracleDbConnectionProvider implements ConnectionProvider<DbConnecti
       }
 
     };
+
+    dbConnectionProvider.initialise();
   }
 
   @Override

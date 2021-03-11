@@ -81,6 +81,8 @@ public class DbGenericConnectionProvider implements ConnectionProvider<DbConnect
   public void initialise() throws InitialisationException {
     genericConnectionProvider = new GenericConnectionProvider(configName, registry,
                                                               poolingProfile, columnTypes, genericConnectionParameters);
+
+    genericConnectionProvider.initialise();
   }
 
   @Override

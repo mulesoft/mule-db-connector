@@ -122,6 +122,8 @@ public class MySqlConnectionProvider implements ConnectionProvider<DbConnection>
       }
 
     };
+
+    dbConnectionProvider.initialise();
   }
 
   @Override

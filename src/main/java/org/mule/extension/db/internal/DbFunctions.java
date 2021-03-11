@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.internal;
 
+import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.extension.ExtensionManager;
@@ -19,7 +20,7 @@ import javax.inject.Inject;
  *
  * @since 1.5.1
  */
-public class DbFunctions implements Initialisable {
+public class DbFunctions implements Initialisable, Disposable {
 
   @Inject
   ExtensionManager extensionManager;
@@ -54,5 +55,10 @@ public class DbFunctions implements Initialisable {
   @Override
   public void initialise() throws InitialisationException {
     util = new DbFunctionUtil(extensionManager);
+  }
+
+  @Override
+  public void dispose() {
+    this.util.dispose();
   }
 }

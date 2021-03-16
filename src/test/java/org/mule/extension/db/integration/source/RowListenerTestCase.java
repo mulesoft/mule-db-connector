@@ -113,7 +113,7 @@ public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
     startFlow("listenPlanetsWithWaitTime");
 
     check(TIMEOUT_MILLIS, 500, () -> PAYLOADS.stream()
-        .filter(map -> TEST_MESSAGE.equals(((TypedValue) map.get("DESCRIPTION")).getValue())).findAny().isPresent());
+        .anyMatch(map -> TEST_MESSAGE.equals(map.get("DESCRIPTION"))));
   }
 
   private ObjectType getListenerOutputMetadata(String table) {

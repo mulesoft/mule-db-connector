@@ -11,7 +11,7 @@
         http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<munit:config name="SelectTestCase.xml" />
+	<munit:config name="SelectTestCase.xml"  />
 
 	<munit:before-test name="createATableWithLOBs">
 		<try>
@@ -33,14 +33,18 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		</foreach>
 	</munit:before-test>
 
-	<munit:test name="whenStreamsAreConsumedAfterPagingProviderIsClosed_ThenNoExceptionIsThrown" ignore="#[${oracle} == null]">
+	<!-- This test uses a batch job to process the results of the select operation. The select operation returns results
+	from a table that has LOB columns. On Oracle, these columns are returned as input streams. This test assures
+	that if there are open streams not yet consumed, the connection will stay open until the flow ends. In this way,
+	there won't be any "Connection Closed" exception when trying to read the input streams. -->
+	<munit:test name="whenStreamsAreConsumedAfterPagingProviderIsClosed_ThenNoExceptionIsThrown" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
 		<munit:execution>
 			<db:select config-ref="oracleDbConfigWithoutPoolingProfile">
 				<ee:repeatable-file-store-iterable inMemoryObjects="10" />
 				<db:sql>SELECT * FROM LOBTEST</db:sql>
 			</db:select>
 		</munit:execution>
-		<!-- The batch-job will throw an exception if the stream cannot be read and the test will fail -->
+
 		<munit:validation>
 			<batch:job blockSize="1000" jobName="testJob" maxFailedRecords="0">
 				<batch:process-records>

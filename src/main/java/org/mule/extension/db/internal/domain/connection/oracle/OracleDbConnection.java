@@ -134,7 +134,7 @@ public class OracleDbConnection extends DefaultDbConnection {
     }
   }
 
-  // TODO NMZ Revisar. esto no me gusta
+  // TODO Look further the way this class and OracleJdbcConnectionWrapper solves Oracle's createARRAY resolution
   private Method getCreateArrayMethod() {
     if (createArrayMethod == null) {
       try {

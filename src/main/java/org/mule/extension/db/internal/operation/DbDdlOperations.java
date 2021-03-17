@@ -31,7 +31,7 @@ import static org.mule.db.commons.internal.operation.BaseDbOperations.QUERY_SETT
  * @since 1.0
  */
 @Throws(OperationErrorTypeProvider.class)
-public final class DbDdlOperations implements Initialisable {
+public class DbDdlOperations implements Initialisable {
 
   private DdlOperations ddlOperations;
 

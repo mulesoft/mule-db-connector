@@ -35,6 +35,11 @@ public final class DbDdlOperations implements Initialisable {
 
   private DdlOperations ddlOperations;
 
+  @Override
+  public void initialise() throws InitialisationException {
+    ddlOperations = new DdlOperations.Builder().build();
+  }
+
   /**
    * Enables execution of DDL queries against a database.
    *
@@ -54,8 +59,4 @@ public final class DbDdlOperations implements Initialisable {
     return ddlOperations.executeDdl(sql, settings, connector, connection, streamingHelper);
   }
 
-  @Override
-  public void initialise() throws InitialisationException {
-    ddlOperations = new DdlOperations.Builder().build();
-  }
 }

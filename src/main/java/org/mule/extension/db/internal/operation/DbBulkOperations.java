@@ -43,6 +43,11 @@ public class DbBulkOperations implements Initialisable {
 
   private BulkOperations bulkOperations;
 
+  @Override
+  public void initialise() throws InitialisationException {
+    this.bulkOperations = new BulkOperations.Builder().build();
+  }
+
   /**
    * Allows executing one insert statement various times using different parameter bindings. This happens using one single
    * Database statement, which has performance advantages compared to executing one single update operation various times.
@@ -131,8 +136,4 @@ public class DbBulkOperations implements Initialisable {
     return bulkOperations.executeScript(script, settings, connection);
   }
 
-  @Override
-  public void initialise() {
-    this.bulkOperations = new BulkOperations.Builder().build();
-  }
 }

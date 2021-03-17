@@ -18,6 +18,7 @@ import org.mule.db.commons.internal.operation.AutoGenerateKeysAttributes;
 import org.mule.db.commons.internal.operation.DmlOperations;
 import org.mule.db.commons.internal.operation.OperationErrorTypeProvider;
 import org.mule.runtime.api.lifecycle.Initialisable;
+import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.Streaming;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.OutputResolver;
@@ -50,10 +51,9 @@ public class DbDmlOperations implements Initialisable {
   private DmlOperations dmlOperations;
 
   @Override
-  public void initialise() {
+  public void initialise() throws InitialisationException {
     dmlOperations = new DmlOperations.Builder().build();
   }
-
 
   /**
    * Selects data from a database.
@@ -74,7 +74,6 @@ public class DbDmlOperations implements Initialisable {
                                                                   StreamingHelper streamingHelper,
                                                                   FlowListener flowListener)
       throws SQLException {
-
     return dmlOperations.select(query, connector, streamingHelper, flowListener);
   }
 
@@ -180,7 +179,5 @@ public class DbDmlOperations implements Initialisable {
       throws SQLException {
     return dmlOperations.storedProcedure(call, autoGenerateKeysAttributes, connector, connection, streamingHelper, flowListener);
   }
-
-
 
 }

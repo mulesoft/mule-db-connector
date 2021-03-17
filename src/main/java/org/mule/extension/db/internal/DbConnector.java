@@ -13,6 +13,7 @@ import org.mule.db.commons.api.logger.LoggerApiPackage;
 import org.mule.db.commons.api.param.BulkQueryDefinition;
 import org.mule.db.commons.api.param.QueryDefinition;
 import org.mule.db.commons.api.param.StoredProcedureCall;
+import org.mule.db.commons.internal.DbFunctions;
 import org.mule.db.commons.internal.source.RowListener;
 import org.mule.extension.db.internal.domain.connection.datasource.DbDataSourceReferenceConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.derby.DerbyConnectionProvider;

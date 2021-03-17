@@ -17,10 +17,11 @@ public class OracleCredentialsMaskUtils extends CredentialsMaskUtils {
   public static final Pattern ORACLE_PASSWORD = compile("jdbc:oracle:.*:.*/(.*)@");
 
   public static String maskUrlUserAndPasswordForOracle(String input) {
-    String zarlanga = CredentialsMaskUtils.maskUrlUserAndPassword(input);
-    zarlanga = CredentialsMaskUtils.maskUrlPattern(zarlanga, ORACLE_PASSWORD, PASSWORD_MASK, PASSWORD_URL_PREFIX);
-    zarlanga = CredentialsMaskUtils.maskUrlPattern(zarlanga, ORACLE_USER, USER_MASK, PASSWORD_URL_PREFIX);
-    return zarlanga;
+    String oracleInputMasked = CredentialsMaskUtils.maskUrlUserAndPassword(input);
+    oracleInputMasked =
+        CredentialsMaskUtils.maskUrlPattern(oracleInputMasked, ORACLE_PASSWORD, PASSWORD_MASK, PASSWORD_URL_PREFIX);
+    oracleInputMasked = CredentialsMaskUtils.maskUrlPattern(oracleInputMasked, ORACLE_USER, USER_MASK, PASSWORD_URL_PREFIX);
+    return oracleInputMasked;
   }
 
 }

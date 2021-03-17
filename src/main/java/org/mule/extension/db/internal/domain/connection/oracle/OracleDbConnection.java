@@ -17,7 +17,7 @@ import org.mule.db.commons.internal.domain.connection.type.resolver.ArrayTypeRes
 import org.mule.db.commons.internal.domain.connection.type.resolver.StructAndArrayTypeResolver;
 import org.mule.db.commons.internal.domain.type.DbType;
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
-import org.mule.extension.db.internal.domain.type.oracle.OracleXmlType;
+import org.mule.extension.db.internal.domain.connection.oracle.types.OracleXmlType;
 
 import java.lang.reflect.Method;
 import java.sql.Array;

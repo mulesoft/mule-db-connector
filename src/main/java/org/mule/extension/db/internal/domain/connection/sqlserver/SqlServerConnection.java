@@ -8,8 +8,8 @@ package org.mule.extension.db.internal.domain.connection.sqlserver;
 
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
-import org.mule.extension.db.internal.domain.connection.sqlserver.type.SqlServerBinaryDbType;
-import org.mule.extension.db.internal.domain.connection.sqlserver.type.SqlServerVarBinaryDbType;
+import org.mule.extension.db.internal.domain.connection.sqlserver.types.SqlServerBinaryDbType;
+import org.mule.extension.db.internal.domain.connection.sqlserver.types.SqlServerVarBinaryDbType;
 import org.mule.db.commons.internal.domain.type.DbType;
 
 import java.sql.Connection;

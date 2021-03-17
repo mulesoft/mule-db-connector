@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.extension.db.internal.domain.type.oracle;
+package org.mule.extension.db.internal.domain.connection.oracle.types;
 
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.type.AbstractStructuredDbType;

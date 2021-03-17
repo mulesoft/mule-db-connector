@@ -14,6 +14,7 @@ import org.mule.db.commons.api.param.BulkQueryDefinition;
 import org.mule.db.commons.api.param.QueryDefinition;
 import org.mule.db.commons.api.param.StoredProcedureCall;
 import org.mule.db.commons.internal.DbFunctions;
+import org.mule.db.commons.internal.exception.DbExceptionHandler;
 import org.mule.db.commons.internal.source.RowListener;
 import org.mule.extension.db.internal.domain.connection.datasource.DbDataSourceReferenceConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.derby.DerbyConnectionProvider;
@@ -21,7 +22,6 @@ import org.mule.extension.db.internal.domain.connection.generic.DbGenericConnect
 import org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.sqlserver.SqlServerConnectionProvider;
-import org.mule.extension.db.internal.exception.DbExceptionHandler;
 import org.mule.extension.db.internal.operation.DbBulkOperations;
 import org.mule.extension.db.internal.operation.DbDdlOperations;
 import org.mule.extension.db.internal.operation.DbDmlOperations;

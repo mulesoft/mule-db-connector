@@ -40,6 +40,7 @@ import java.sql.Struct;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
@@ -50,6 +51,7 @@ public class DefaultDbConnection implements DbConnection {
   private final Connection jdbcConnection;
   private final List<DbType> customDataTypes;
   private AtomicInteger streamsCount = new AtomicInteger(0);
+  private AtomicBoolean hasLobStreams = new AtomicBoolean(false);
   private boolean isTransactionActive = false;
 
   private static final int DATA_TYPE_INDEX = 5;
@@ -147,7 +149,7 @@ public class DefaultDbConnection implements DbConnection {
    */
   @Override
   public void release() {
-    if (isStreaming()) {
+    if (isStreaming() || hasActiveLobStreams()) {
       return;
     }
     try {
@@ -177,6 +179,7 @@ public class DefaultDbConnection implements DbConnection {
   }
 
   /**
+   *
    * {@inheritDoc}
    */
   @Override
@@ -190,6 +193,16 @@ public class DefaultDbConnection implements DbConnection {
   @Override
   public boolean supportsContentStreaming() {
     return true;
+  }
+
+  @Override
+  public void setActiveLobStreams(boolean value) {
+    this.hasLobStreams.set(value);
+  }
+
+  @Override
+  public boolean hasActiveLobStreams() {
+    return this.hasLobStreams.get();
   }
 
   public PreparedStatement prepareStatement(String sql) throws SQLException {

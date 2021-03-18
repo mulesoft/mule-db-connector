@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	  xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	  xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	  xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<munit:config name="SelectTestCase.xml"  />
+
+	<munit:before-test name="createATableWithLOBs">
+		<try>
+			<db:execute-script config-ref="oracleDbConfigWithoutPoolingProfile">
+				<db:sql><![CDATA[DROP TABLE  LOBTEST]]></db:sql>
+			</db:execute-script>
+			<error-handler>
+				<on-error-continue enableNotifications="true" logException="false">
+				</on-error-continue>
+			</error-handler>
+		</try>
+		<db:execute-ddl config-ref="oracleDbConfigWithoutPoolingProfile">
+			<db:sql><![CDATA[CREATE TABLE LOBTEST(COL1 number, COL2 BLOB, COL3 CLOB, COL4 NCLOB)]]></db:sql>
+		</db:execute-ddl>
+		<foreach collection="#[1 to 3]">
+			<db:execute-script config-ref="oracleDbConfigWithoutPoolingProfile">
+				<db:sql ><![CDATA[INSERT INTO LOBTEST VALUES (1, hextoraw('453d7a34'), 'CLOB value is here', TO_NCLOB('NCLOB value is here'))]]></db:sql>
+			</db:execute-script>
+		</foreach>
+	</munit:before-test>
+
+	<!-- This test uses a batch job to process the results of the select operation. The select operation returns results
+	from a table that has LOB columns. On Oracle, these columns are returned as input streams. This test assures
+	that if there are open streams not yet consumed, the connection will stay open until the flow ends. In this way,
+	there won't be any "Connection Closed" exception when trying to read the input streams. -->
+	<munit:test name="whenStreamsAreConsumedAfterPagingProviderIsClosed_ThenNoExceptionIsThrown" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+		<munit:execution>
+			<db:select config-ref="oracleDbConfigWithoutPoolingProfile">
+				<ee:repeatable-file-store-iterable inMemoryObjects="10" />
+				<db:sql>SELECT * FROM LOBTEST</db:sql>
+			</db:select>
+		</munit:execution>
+
+		<munit:validation>
+			<batch:job blockSize="1000" jobName="testJob" maxFailedRecords="0">
+				<batch:process-records>
+					<batch:step name="stepName">
+						<batch:aggregator size="100">
+							<ee:transform>
+								<ee:message >
+									<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+								</ee:message>
+							</ee:transform>
+							<logger level="INFO" message="Aggregator data: #[payload]"/>
+						</batch:aggregator>
+					</batch:step>
+				</batch:process-records>
+			</batch:job>
+		</munit:validation>
+	</munit:test>
+
+	<munit:after-test name="dropTable">
+		<try>
+			<db:execute-script config-ref="oracleDbConfigWithoutPoolingProfile">
+				<db:sql><![CDATA[DROP TABLE LOBTEST]]></db:sql>
+			</db:execute-script>
+			<error-handler>
+				<on-error-continue enableNotifications="true" logException="false">
+				</on-error-continue>
+			</error-handler>
+		</try>
+	</munit:after-test>
+</mule>

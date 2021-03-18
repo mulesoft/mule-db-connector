@@ -89,6 +89,18 @@ public interface DbConnection extends TransactionalConnection {
   boolean supportsContentStreaming();
 
   /**
+   * Specifies that in the returned results there are streams that still need to be consumed.
+   * @param value A value indicating if there are open LOB streams in the returned results.
+   */
+  void setActiveLobStreams(boolean value);
+
+  /**
+   * Finds out if there are open LOB streams in the results.
+   * @return A boolean indicating if there are open LOB streams that still need to be read.
+   */
+  boolean hasActiveLobStreams();
+
+  /**
    * Creates an {@link Array} of the given {@code typeName} with the given {@code values}
    *
    * @param typeName The Array type name

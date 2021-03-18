@@ -56,6 +56,7 @@ public class InsensitiveMapRowHandler implements RowHandler {
     ResultSetMetaData metaData = resultSet.getMetaData();
     int cols = metaData.getColumnCount();
 
+
     for (int i = 1; i <= cols; i++) {
       String column = metaData.getColumnLabel(i);
       Object value = resultSet.getObject(i);
@@ -111,11 +112,13 @@ public class InsensitiveMapRowHandler implements RowHandler {
   }
 
   protected TypedValue<Object> handleSqlXmlType(SQLXML value) throws SQLException {
+    dbConnection.setActiveLobStreams(true);
     return new TypedValue<>(value.getBinaryStream(), DataType.builder().type(InputStream.class).mediaType(XML).build());
   }
 
   protected TypedValue<Object> handleBlobType(Blob value) throws SQLException {
     if (dbConnection != null && dbConnection.supportsContentStreaming()) {
+      dbConnection.setActiveLobStreams(true);
       return new TypedValue<>(value.getBinaryStream(), DataType.builder().type(InputStream.class).mediaType(BINARY).build());
     } else {
       return new TypedValue<>(new ByteArrayInputStream(IOUtils.toByteArray(value.getBinaryStream())),
@@ -126,6 +129,7 @@ public class InsensitiveMapRowHandler implements RowHandler {
   protected TypedValue<Object> handleClobType(Clob value) throws SQLException {
     ReaderInputStream inputStream = new ReaderInputStream(value.getCharacterStream(), charset);
     if (dbConnection != null && dbConnection.supportsContentStreaming()) {
+      dbConnection.setActiveLobStreams(true);
       return new TypedValue<>(inputStream, DataType.builder().type(InputStream.class)
           .mediaType(TEXT)
           .charset(charset)

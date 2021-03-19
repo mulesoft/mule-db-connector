@@ -43,7 +43,7 @@
 
         <munit.extensions.maven.plugin.version>1.0.0</munit.extensions.maven.plugin.version>
         <munit.version>2.2.4</munit.version>
-        <mtf-tools.version>1.0.0</mtf-tools.version>
+        <mtf-tools.version>1.1.0</mtf-tools.version>
         <skipTests>false</skipTests>
     </properties>
 

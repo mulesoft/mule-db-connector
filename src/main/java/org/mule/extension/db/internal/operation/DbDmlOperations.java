@@ -109,7 +109,8 @@ public class DbDmlOperations implements Initialisable {
    * @throws SQLException if an error is produced
    */
   public StatementResult insert(@ParameterGroup(name = QUERY_GROUP) @Placement(tab = ADVANCED_TAB) QueryDefinition query,
-                                @ParameterGroup(name = AUTO_GENERATE_KEYS) DbAutoGenerateKeysAttributes autoGenerateKeysAttributes,
+                                @ParameterGroup(
+                                    name = AUTO_GENERATE_KEYS) DbAutoGenerateKeysAttributes autoGenerateKeysAttributes,
                                 @Config AbstractDbConnector connector,
                                 @Connection DbConnection connection,
                                 StreamingHelper streamingHelper)
@@ -128,7 +129,8 @@ public class DbDmlOperations implements Initialisable {
    * @throws SQLException if an error is produced
    */
   public StatementResult update(@ParameterGroup(name = QUERY_GROUP) QueryDefinition query,
-                                @ParameterGroup(name = AUTO_GENERATE_KEYS) DbAutoGenerateKeysAttributes autoGenerateKeysAttributes,
+                                @ParameterGroup(
+                                    name = AUTO_GENERATE_KEYS) DbAutoGenerateKeysAttributes autoGenerateKeysAttributes,
                                 @Config AbstractDbConnector connector,
                                 @Connection DbConnection connection,
                                 StreamingHelper streamingHelper)

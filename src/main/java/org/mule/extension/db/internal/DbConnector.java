@@ -15,7 +15,6 @@ import org.mule.db.commons.api.param.QueryDefinition;
 import org.mule.db.commons.api.param.StoredProcedureCall;
 import org.mule.db.commons.internal.DbFunctions;
 import org.mule.db.commons.internal.exception.DbExceptionHandler;
-import org.mule.db.commons.internal.source.RowListener;
 import org.mule.extension.db.internal.domain.connection.datasource.DbDataSourceReferenceConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.derby.DerbyConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.generic.DbGenericConnectionProvider;
@@ -25,6 +24,7 @@ import org.mule.extension.db.internal.domain.connection.sqlserver.SqlServerConne
 import org.mule.extension.db.internal.operation.DbBulkOperations;
 import org.mule.extension.db.internal.operation.DbDdlOperations;
 import org.mule.extension.db.internal.operation.DbDmlOperations;
+import org.mule.extension.db.internal.source.RowListener;
 import org.mule.runtime.extension.api.annotation.Export;
 import org.mule.runtime.extension.api.annotation.ExpressionFunctions;
 import org.mule.runtime.extension.api.annotation.Extension;

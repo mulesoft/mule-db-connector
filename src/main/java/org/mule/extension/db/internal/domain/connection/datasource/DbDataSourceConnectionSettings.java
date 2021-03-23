@@ -19,7 +19,7 @@ import javax.sql.XADataSource;
  *
  * @since 1.0
  */
-public final class DataSourceConnectionSettings
+public final class DbDataSourceConnectionSettings
     implements org.mule.db.commons.internal.domain.connection.datasource.DataSourceConnectionSettings {
 
   /**

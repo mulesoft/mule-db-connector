@@ -76,7 +76,7 @@ public class DbDataSourceReferenceConnectionProvider implements ConnectionProvid
   private final List<ColumnType> columnTypes = emptyList();
 
   @ParameterGroup(name = CONNECTION)
-  private DataSourceConnectionSettings connectionSettings;
+  private DbDataSourceConnectionSettings connectionSettings;
 
   private DataSourceReferenceConnectionProvider dataSourceReferenceConnectionProvider;
 

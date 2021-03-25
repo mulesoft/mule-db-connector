@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.extension.db.internal.operation.types;
+package org.mule.extension.db.api.params;
 
 import org.mule.db.commons.api.param.BulkScript;
 import org.mule.runtime.extension.api.annotation.param.ExclusiveOptionals;

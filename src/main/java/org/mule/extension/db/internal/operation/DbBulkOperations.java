@@ -14,7 +14,7 @@ import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.metadata.DbInputMetadataResolver;
 import org.mule.db.commons.internal.operation.BulkOperations;
 import org.mule.db.commons.internal.operation.OperationErrorTypeProvider;
-import org.mule.extension.db.internal.operation.types.DbBulkScript;
+import org.mule.extension.db.api.params.DbBulkScript;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.error.Throws;

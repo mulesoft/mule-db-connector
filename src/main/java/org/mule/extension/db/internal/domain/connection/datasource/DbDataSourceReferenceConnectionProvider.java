@@ -21,7 +21,7 @@ import javax.sql.DataSource;
 import org.mule.db.commons.api.config.DbPoolingProfile;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.datasource.DataSourceReferenceConnectionProvider;
-import org.mule.extension.db.api.types.DbColumnType;
+import org.mule.extension.db.api.params.DbColumnType;
 import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;

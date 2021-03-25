@@ -20,7 +20,7 @@ import java.util.List;
 import org.mule.db.commons.api.config.DbPoolingProfile;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.generic.GenericConnectionProvider;
-import org.mule.extension.db.api.types.DbColumnType;
+import org.mule.extension.db.api.params.DbColumnType;
 import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;

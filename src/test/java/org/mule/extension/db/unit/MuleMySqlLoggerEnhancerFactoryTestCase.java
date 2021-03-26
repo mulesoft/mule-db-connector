@@ -7,7 +7,7 @@
 package org.mule.extension.db.unit;
 
 import org.junit.Test;
-import org.mule.db.commons.api.logger.MuleMySqlLogger;
+import org.mule.extension.db.api.logger.MuleMySqlLogger;
 import org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionParameters;
 import org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory;
 

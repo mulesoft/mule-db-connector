@@ -90,7 +90,7 @@ public class MetadataDbTypeManager implements DbTypeManager {
         DbType resolvedDbType;
         if (Objects.equals(Types.BLOB, dataType.intValue())) {
           resolvedDbType = new BlobDbType(dataType.intValue(), typeName);
-        } else if (Objects.equals(Types.CLOB, dataType.intValue())) {
+        } else if (Objects.equals(Types.CLOB, dataType.intValue()) || Objects.equals(Types.NCLOB, dataType.intValue())) {
           resolvedDbType = new ClobResolvedDataType(dataType.intValue(), typeName);
         } else if (Objects.equals(Types.STRUCT, dataType.intValue())) {
           resolvedDbType = new StructDbType(dataType.intValue(), typeName);

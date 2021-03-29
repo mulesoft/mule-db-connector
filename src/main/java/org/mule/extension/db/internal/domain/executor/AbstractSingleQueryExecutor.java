@@ -67,6 +67,7 @@ public abstract class AbstractSingleQueryExecutor extends AbstractExecutor imple
     try {
       return delegate.run();
     } catch (SQLException e) {
+      LOGGER.error("An SQLException exception has occurred.", e);
       try {
         statement.close();
       } catch (SQLException e2) {

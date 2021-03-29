@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <munit:config name="InsertNClobTestCase.xml" minMuleVersion="4.1.6" />
+
+    <munit:before-test name="createNCLOBTestTable">
+        <try>
+            <db:execute-script config-ref="oracleDbConfig">
+                <db:sql><![CDATA[DROP TABLE NCLOBTest]]></db:sql>
+            </db:execute-script>
+            <error-handler>
+                <on-error-continue enableNotifications="true" logException="false">
+                </on-error-continue>
+            </error-handler>
+        </try>
+        <db:execute-ddl config-ref="oracleDbConfig">
+            <db:sql><![CDATA[CREATE TABLE NCLOBTest(COL1 NCLOB)]]></db:sql>
+        </db:execute-ddl>
+    </munit:before-test>
+
+    <munit:test name="whenInsertingANClobValue_thenNoExceptionIsThrown" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+        <munit:execution>
+            <db:insert config-ref="oracleDbConfig">
+                <db:sql>
+                    INSERT INTO NCLOBTest(COL1) VALUES (:description)
+                </db:sql>
+                <db:input-parameters>
+                    #[
+                    {'description' : "Some test NClob text"}
+                    ]
+                </db:input-parameters>
+            </db:insert>
+        </munit:execution>
+
+        <munit:validation>
+            <ee:transform>
+                <ee:message >
+                    <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+            <munit-tools:assert-equals
+                    actual="#[payload.affectedRows]"
+                    expected="#[1]"
+                    message="The number of affected rows should be 1."/>
+            <logger level="INFO" message='My payload is: #[payload]' />
+        </munit:validation>
+    </munit:test>
+
+    <munit:after-test name="dropNCLOBTestTable">
+        <try>
+            <db:execute-script config-ref="oracleDbConfig">
+                <db:sql><![CDATA[DROP TABLE NCLOBTest]]></db:sql>
+            </db:execute-script>
+            <error-handler>
+                <on-error-continue enableNotifications="true" logException="false">
+                </on-error-continue>
+            </error-handler>
+        </try>
+    </munit:after-test>
+</mule>

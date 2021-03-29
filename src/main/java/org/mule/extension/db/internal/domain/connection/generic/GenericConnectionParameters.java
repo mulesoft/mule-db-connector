@@ -7,7 +7,6 @@
 package org.mule.extension.db.internal.domain.connection.generic;
 
 import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
-import org.mule.db.commons.internal.domain.connection.DbConnectionParameters;
 import org.mule.db.commons.internal.domain.connection.generic.GenericConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -18,7 +17,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Password;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
 /**
- *  {@link DbConnectionParameters} for the {@link GenericConnectionProvider}
+ *  {@link DataSourceConfig}'s parameters for the {@link GenericConnectionProvider}
  *
  * @since 1.0
  */

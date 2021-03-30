@@ -93,7 +93,7 @@ public enum JdbcType {
 
   LONGNVARCHAR(new ResolvedDbType(Types.LONGNVARCHAR, "LONGNVARCHAR")),
 
-  NCLOB(new ResolvedDbType(Types.NCLOB, "NCLOB")),
+  NCLOB(new ClobResolvedDataType(Types.NCLOB, "NCLOB")),
 
   SQLXML(new ResolvedDbType(Types.SQLXML, "SQLXML")),
 

@@ -18,7 +18,7 @@ import javax.inject.Inject;
 import java.util.List;
 import javax.sql.DataSource;
 
-import org.mule.extension.db.api.config.DbPoolingProfile;
+import org.mule.db.commons.api.config.DbPoolingProfile;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.datasource.DataSourceReferenceConnectionProvider;
 import org.mule.extension.db.api.params.DbColumnType;

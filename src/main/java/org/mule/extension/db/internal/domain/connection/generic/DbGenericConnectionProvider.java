@@ -17,7 +17,7 @@ import static org.mule.runtime.extension.api.annotation.param.display.Placement.
 import javax.inject.Inject;
 import java.util.List;
 
-import org.mule.extension.db.api.config.DbPoolingProfile;
+import org.mule.db.commons.api.config.DbPoolingProfile;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.generic.GenericConnectionProvider;
 import org.mule.extension.db.api.params.DbColumnType;

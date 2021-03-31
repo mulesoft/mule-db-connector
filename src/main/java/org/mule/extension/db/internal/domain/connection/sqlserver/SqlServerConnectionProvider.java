@@ -28,7 +28,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.mule.extension.db.api.config.DbPoolingProfile;
+import org.mule.db.commons.api.config.DbPoolingProfile;
 import org.mule.db.commons.api.exception.connection.DbError;
 import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
 import org.mule.db.commons.internal.domain.connection.DbConnection;

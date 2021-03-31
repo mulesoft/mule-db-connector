@@ -14,7 +14,6 @@ import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.metadata.DbInputMetadataResolver;
 import org.mule.db.commons.internal.operation.BulkOperations;
 import org.mule.db.commons.internal.operation.OperationErrorTypeProvider;
-import org.mule.extension.db.api.params.DbBulkScript;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.error.Throws;
@@ -130,7 +129,7 @@ public class DbBulkOperations implements Initialisable {
    *         according to the order in which commands were added to the batch.
    * @throws SQLException if an error is produced
    */
-  public int[] executeScript(@ParameterGroup(name = QUERY_GROUP) DbBulkScript script,
+  public int[] executeScript(@ParameterGroup(name = QUERY_GROUP) BulkScript script,
                              @ParameterGroup(name = QUERY_SETTINGS) QuerySettings settings,
                              @Connection DbConnection connection)
       throws SQLException {

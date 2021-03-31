@@ -20,7 +20,7 @@ import java.util.List;
 import org.mule.db.commons.api.config.DbPoolingProfile;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.generic.GenericConnectionProvider;
-import org.mule.extension.db.api.params.DbColumnType;
+import org.mule.db.commons.api.param.ColumnType;
 import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -70,7 +70,7 @@ public class DbGenericConnectionProvider implements ConnectionProvider<DbConnect
   @Optional
   @Expression(NOT_SUPPORTED)
   @Placement(tab = ADVANCED_TAB)
-  private final List<DbColumnType> columnTypes = emptyList();
+  private final List<ColumnType> columnTypes = emptyList();
 
   @ParameterGroup(name = CONNECTION)
   private GenericConnectionParameters genericConnectionParameters;

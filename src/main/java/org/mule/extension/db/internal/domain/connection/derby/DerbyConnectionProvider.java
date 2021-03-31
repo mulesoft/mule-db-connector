@@ -30,7 +30,7 @@ import org.mule.db.commons.api.exception.connection.DbError;
 import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
-import org.mule.extension.db.api.params.DbColumnType;
+import org.mule.db.commons.api.param.ColumnType;
 import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
@@ -85,7 +85,7 @@ public class DerbyConnectionProvider implements ConnectionProvider<DbConnection>
   @Optional
   @Expression(NOT_SUPPORTED)
   @Placement(tab = ADVANCED_TAB)
-  private final List<DbColumnType> columnTypes = emptyList();
+  private final List<ColumnType> columnTypes = emptyList();
 
   @ParameterGroup(name = CONNECTION)
   private DerbyConnectionParameters derbyParameters;

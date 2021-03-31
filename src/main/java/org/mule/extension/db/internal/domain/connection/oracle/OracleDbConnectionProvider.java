@@ -37,7 +37,7 @@ import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
 import org.mule.db.commons.internal.domain.connection.JdbcConnectionFactory;
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
-import org.mule.extension.db.api.params.DbColumnType;
+import org.mule.db.commons.api.param.ColumnType;
 import org.mule.extension.db.internal.util.OracleCredentialsMaskUtils;
 import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.api.connection.ConnectionException;
@@ -93,7 +93,7 @@ public class OracleDbConnectionProvider implements ConnectionProvider<DbConnecti
   @Optional
   @Expression(NOT_SUPPORTED)
   @Placement(tab = ADVANCED_TAB)
-  private final List<DbColumnType> columnTypes = emptyList();
+  private final List<ColumnType> columnTypes = emptyList();
 
   @ParameterGroup(name = CONNECTION)
   private OracleConnectionParameters oracleConnectionParameters;

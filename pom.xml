@@ -23,27 +23,27 @@
         <c3p0Version>0.9.5.5</c3p0Version>
         <commonsCollectionsVersion>3.2.2</commonsCollectionsVersion>
         <commonsDbUtilsVersion>1.7</commonsDbUtilsVersion>
-        <commonsLangVersion>3.11</commonsLangVersion>
+        <commonsLangVersion>3.12.0</commonsLangVersion>
         <commonsIoVersion>2.8.0</commonsIoVersion>
-        <mockito-core.version>3.6.0</mockito-core.version>
+        <mockito-core.version>3.8.0</mockito-core.version>
         <xmlunit.version>1.6</xmlunit.version>
-        <caffeineVersion>2.8.6</caffeineVersion>
+        <caffeineVersion>2.9.0</caffeineVersion>
         <javax.transaction.version>1.3</javax.transaction.version>
         <xaPoolVersion>1.5.0</xaPoolVersion>
         <cglibVersion>3.3.0</cglibVersion>
-        <derbyVersion>10.11.1.1</derbyVersion>
-        <mySqlVersion>8.0.22</mySqlVersion>
+        <derbyVersion>10.14.2.0</derbyVersion>
+        <mySqlVersion>8.0.23</mySqlVersion>
         <mssqlVersion>7.0.0.jre8</mssqlVersion>
-        <oracle.driver.version>19.8.0.0</oracle.driver.version>
+        <oracle.driver.version>21.1.0.0</oracle.driver.version>
         
-        <docker.maven.plugin.version>0.34.1</docker.maven.plugin.version>
+        <docker.maven.plugin.version>0.35.0</docker.maven.plugin.version>
         <maven-replacer-plugin.version>1.5.3</maven-replacer-plugin.version>
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
 
-        <munit.extensions.maven.plugin.version>1.0.0</munit.extensions.maven.plugin.version>
-        <munit.version>2.2.4</munit.version>
-        <mtf-tools.version>1.0.0</mtf-tools.version>
+        <munit.extensions.maven.plugin.version>1.1.1</munit.extensions.maven.plugin.version>
+        <munit.version>2.3.4</munit.version>
+        <mtf-tools.version>1.1.0</mtf-tools.version>
         <skipTests>false</skipTests>
     </properties>
 

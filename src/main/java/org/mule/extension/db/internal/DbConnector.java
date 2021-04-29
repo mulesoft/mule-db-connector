@@ -7,6 +7,7 @@
 package org.mule.extension.db.internal;
 
 import org.mule.db.commons.AbstractDbConnector;
+import org.mule.db.commons.internal.DbFunctions;
 import org.mule.extension.db.api.exception.connection.ConnectionCreationException;
 import org.mule.extension.db.api.exception.connection.DbError;
 import org.mule.extension.db.api.logger.LoggerApiPackage;

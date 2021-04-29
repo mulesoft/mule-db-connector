@@ -31,6 +31,8 @@
         <javax.transaction.version>1.3</javax.transaction.version>
         <xaPoolVersion>1.5.0</xaPoolVersion>
         <cglibVersion>3.3.0</cglibVersion>
+        <muledbclientVersion>1.0.1</muledbclientVersion>
+
         <derbyVersion>10.14.2.0</derbyVersion>
         <mySqlVersion>8.0.24</mySqlVersion>
         <mssqlVersion>7.0.0.jre8</mssqlVersion>
@@ -119,6 +121,12 @@
             <groupId>cglib</groupId>
             <artifactId>cglib-nodep</artifactId>
             <version>${cglibVersion}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mule.connectors</groupId>
+            <artifactId>mule-db-client</artifactId>
+            <version>${muledbclientVersion}</version>
         </dependency>
 
         <!-- DB Drivers -->

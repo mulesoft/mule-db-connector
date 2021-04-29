@@ -6,11 +6,11 @@
  */
 package org.mule.extension.db.internal;
 
+import org.mule.db.commons.AbstractDbConnector;
 import org.mule.extension.db.api.exception.connection.ConnectionCreationException;
 import org.mule.extension.db.api.exception.connection.DbError;
 import org.mule.extension.db.api.logger.LoggerApiPackage;
 import org.mule.extension.db.api.param.BulkQueryDefinition;
-import org.mule.extension.db.api.param.JdbcType;
 import org.mule.extension.db.api.param.QueryDefinition;
 import org.mule.extension.db.api.param.StoredProcedureCall;
 import org.mule.extension.db.internal.domain.connection.datasource.DataSourceReferenceConnectionProvider;
@@ -19,17 +19,11 @@ import org.mule.extension.db.internal.domain.connection.generic.GenericConnectio
 import org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.sqlserver.SqlServerConnectionProvider;
-import org.mule.extension.db.internal.domain.type.CompositeDbTypeManager;
-import org.mule.extension.db.internal.domain.type.DbTypeManager;
-import org.mule.extension.db.internal.domain.type.MetadataDbTypeManager;
-import org.mule.extension.db.internal.domain.type.StaticDbTypeManager;
 import org.mule.extension.db.internal.exception.DbExceptionHandler;
 import org.mule.extension.db.internal.operation.BulkOperations;
 import org.mule.extension.db.internal.operation.DdlOperations;
 import org.mule.extension.db.internal.operation.DmlOperations;
 import org.mule.extension.db.internal.source.RowListener;
-import org.mule.runtime.api.lifecycle.Initialisable;
-import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.Export;
 import org.mule.runtime.extension.api.annotation.ExpressionFunctions;
 import org.mule.runtime.extension.api.annotation.Extension;
@@ -39,11 +33,6 @@ import org.mule.runtime.extension.api.annotation.Sources;
 import org.mule.runtime.extension.api.annotation.connectivity.ConnectionProviders;
 import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
 import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
-import org.mule.runtime.extension.api.annotation.param.DefaultEncoding;
-
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The Anypoint Database Connector allows you to connect to relational databases through the JDBC API.
@@ -62,34 +51,6 @@ import java.util.List;
 @ErrorTypes(DbError.class)
 @ExpressionFunctions(DbFunctions.class)
 @OnException(DbExceptionHandler.class)
-public class DbConnector implements Initialisable {
+public class DbConnector extends AbstractDbConnector {
 
-  @DefaultEncoding
-  private String encoding;
-
-  private Charset charset;
-
-  private DbTypeManager typeManager;
-
-  @Override
-  public void initialise() throws InitialisationException {
-    typeManager = createBaseTypeManager();
-    charset = Charset.forName(encoding);
-  }
-
-  public DbTypeManager getTypeManager() {
-    return typeManager;
-  }
-
-  public Charset getCharset() {
-    return charset;
-  }
-
-  private DbTypeManager createBaseTypeManager() {
-    List<DbTypeManager> typeManagers = new ArrayList<>();
-    typeManagers.add(new MetadataDbTypeManager());
-    typeManagers.add(new StaticDbTypeManager(JdbcType.getAllTypes()));
-
-    return new CompositeDbTypeManager(typeManagers);
-  }
 }

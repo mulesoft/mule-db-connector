@@ -46,7 +46,7 @@ public class OracleJdbcConnectionWrapper extends AbstractJdbcConnectionWrapper {
   }
 
   private Array createArray(Connection delegate, String typeName, Object[] objects)
-          throws IllegalAccessException, SQLException, InvocationTargetException {
+      throws IllegalAccessException, SQLException, InvocationTargetException {
     init(delegate);
     return arrayFactory.createArray(typeName, objects);
   }
@@ -88,7 +88,7 @@ public class OracleJdbcConnectionWrapper extends AbstractJdbcConnectionWrapper {
    * @return a {@link ArrayFactory}
    */
   private ArrayFactory createArrayFactoryFromProxy(NewProxyConnection connection)
-          throws NoSuchMethodException, IllegalAccessException, SQLException, InvocationTargetException {
+      throws NoSuchMethodException, IllegalAccessException, SQLException, InvocationTargetException {
     Method method = getCreateArrayOfMethod(getProxiedConnectionClass(connection));
     return (type, objects) -> (Array) connection.rawConnectionOperation(method, RAW_CONNECTION, new Object[] {type, objects});
   }
@@ -100,7 +100,7 @@ public class OracleJdbcConnectionWrapper extends AbstractJdbcConnectionWrapper {
    * @return The {@link Class} of the proxied connection
    */
   private Class<?> getProxiedConnectionClass(NewProxyConnection connection)
-          throws IllegalAccessException, InvocationTargetException, SQLException, NoSuchMethodException {
+      throws IllegalAccessException, InvocationTargetException, SQLException, NoSuchMethodException {
     return (Class) connection.rawConnectionOperation(Object.class.getMethod("getClass"), RAW_CONNECTION, new Object[] {});
   }
 

@@ -34,7 +34,7 @@ public class MuleMySqlLoggerEnhancerFactory {
     enhancer.setClassLoader(classLoader);
     enhancer.setInterfaces(new Class[] {getAvailableMySqlLogInterface()});
     enhancer
-            .setCallback((MethodInterceptor) (obj, method, args, methodProxy) -> methodProxy.invoke(delegatedLogger, args));
+        .setCallback((MethodInterceptor) (obj, method, args, methodProxy) -> methodProxy.invoke(delegatedLogger, args));
 
     return (MuleMySqlLogger) enhancer.create(new Class[] {String.class}, new Object[] {"MySql"});
   }
@@ -47,7 +47,7 @@ public class MuleMySqlLoggerEnhancerFactory {
         return classLoader.loadClass("com.mysql.jdbc.log.Log");
       } catch (ClassNotFoundException ex) {
         throw new IllegalArgumentException("Neither class, com.mysql.cj.log.Log or com.mysql.jdbc.log.Log, were found. " +
-                "An unsupported driver was provided.", ex);
+            "An unsupported driver was provided.", ex);
       }
     }
   }

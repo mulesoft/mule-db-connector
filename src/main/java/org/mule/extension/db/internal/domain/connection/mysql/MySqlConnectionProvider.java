@@ -56,8 +56,8 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 @DisplayName("MySQL Connection")
 @Alias("my-sql")
 @ExternalLib(name = "MySQL JDBC Driver", description = "A JDBC driver which supports connecting to the MySQL Database",
-        nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, requiredClassName = MYSQL_DRIVER_CLASS, type = JAR,
-        coordinates = MYSQL_GAV)
+    nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, requiredClassName = MYSQL_DRIVER_CLASS, type = JAR,
+    coordinates = MYSQL_GAV)
 public class MySqlConnectionProvider implements ConnectionProvider<DbConnection>, Initialisable, Disposable {
 
   private static final String ACCESS_DENIED = "Access denied";

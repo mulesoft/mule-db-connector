@@ -71,8 +71,8 @@ final class MySqlDbUtils {
         }
 
         params.append(entry.getKey())
-                .append('=')
-                .append(entry.getValue());
+            .append('=')
+            .append(entry.getValue());
       }
     }
 

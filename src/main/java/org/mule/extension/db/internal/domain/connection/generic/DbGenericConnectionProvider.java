@@ -45,7 +45,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 @DisplayName("Generic Connection")
 @Alias("generic")
 @ExternalLib(name = "JDBC Driver", description = "A JDBC driver which supports connecting to the Database",
-        nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, type = JAR)
+    nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, type = JAR)
 public class DbGenericConnectionProvider implements ConnectionProvider<DbConnection>, Initialisable, Disposable {
 
   @RefName
@@ -80,7 +80,7 @@ public class DbGenericConnectionProvider implements ConnectionProvider<DbConnect
   @Override
   public void initialise() throws InitialisationException {
     genericConnectionProvider = new GenericConnectionProvider(configName, registry,
-            poolingProfile, columnTypes, genericConnectionParameters);
+                                                              poolingProfile, columnTypes, genericConnectionParameters);
 
     genericConnectionProvider.initialise();
   }

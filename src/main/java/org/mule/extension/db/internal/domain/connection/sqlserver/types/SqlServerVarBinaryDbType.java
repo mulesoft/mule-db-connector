@@ -34,7 +34,7 @@ public class SqlServerVarBinaryDbType extends AbstractStructuredDbType {
 
   @Override
   public void setParameterValue(PreparedStatement statement, int index, Object value, DbConnection connection)
-          throws SQLException {
+      throws SQLException {
     if (value instanceof String) {
       value = ((String) value).getBytes();
     }

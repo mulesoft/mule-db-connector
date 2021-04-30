@@ -13,15 +13,15 @@ import static java.util.regex.Pattern.compile;
 
 public class OracleCredentialsMaskUtils extends CredentialsMaskUtils {
 
-    public static final Pattern ORACLE_USER = compile("jdbc:oracle:.*:(.*)/.*@");
-    public static final Pattern ORACLE_PASSWORD = compile("jdbc:oracle:.*:.*/(.*)@");
+  public static final Pattern ORACLE_USER = compile("jdbc:oracle:.*:(.*)/.*@");
+  public static final Pattern ORACLE_PASSWORD = compile("jdbc:oracle:.*:.*/(.*)@");
 
-    public static String maskUrlUserAndPasswordForOracle(String input) {
-        String oracleInputMasked = CredentialsMaskUtils.maskUrlUserAndPassword(input);
-        oracleInputMasked =
-                CredentialsMaskUtils.maskUrlPattern(oracleInputMasked, ORACLE_PASSWORD, PASSWORD_MASK, PASSWORD_URL_PREFIX);
-        oracleInputMasked = CredentialsMaskUtils.maskUrlPattern(oracleInputMasked, ORACLE_USER, USER_MASK, PASSWORD_URL_PREFIX);
-        return oracleInputMasked;
-    }
+  public static String maskUrlUserAndPasswordForOracle(String input) {
+    String oracleInputMasked = CredentialsMaskUtils.maskUrlUserAndPassword(input);
+    oracleInputMasked =
+        CredentialsMaskUtils.maskUrlPattern(oracleInputMasked, ORACLE_PASSWORD, PASSWORD_MASK, PASSWORD_URL_PREFIX);
+    oracleInputMasked = CredentialsMaskUtils.maskUrlPattern(oracleInputMasked, ORACLE_USER, USER_MASK, PASSWORD_URL_PREFIX);
+    return oracleInputMasked;
+  }
 
 }

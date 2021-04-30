@@ -120,7 +120,7 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
         } else {
           if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(format(
-                    "A null ID value was obtained for row %s. Idempotency will not be enforced for this row", row));
+                                "A null ID value was obtained for row %s. Idempotency will not be enforced for this row", row));
           }
         }
       };
@@ -134,8 +134,8 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
         if (watermark == null) {
           if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(format(
-                    "A null watermark value was obtained for row %s. Watermark value won't be updated for this row",
-                    row));
+                                "A null watermark value was obtained for row %s. Watermark value won't be updated for this row",
+                                row));
           }
 
           return;
@@ -143,7 +143,7 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
 
         if (!(watermark instanceof Serializable)) {
           LOGGER.error(format("Watermark values need to be serializable, but a value of type %s was found instead for row %s",
-                  watermark.getClass().getName(), row));
+                              watermark.getClass().getName(), row));
         }
 
         item.setWatermark((Serializable) watermark);
@@ -191,18 +191,18 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
       statementFactory.setQueryTimeout(new Long(settings.getQueryTimeoutUnit().toSeconds(settings.getQueryTimeout())).intValue());
 
       ResultSetHandler resultSetHandler =
-              new ListResultSetHandler(new NonStreamingInsensitiveMapRowHandler(connection, Charset.forName(encoding)));
+          new ListResultSetHandler(new NonStreamingInsensitiveMapRowHandler(connection, Charset.forName(encoding)));
 
       List<Map<String, Object>> rows =
-              (List<Map<String, Object>>) new SelectExecutor(statementFactory, resultSetHandler).execute(connection, query);
+          (List<Map<String, Object>>) new SelectExecutor(statementFactory, resultSetHandler).execute(connection, query);
 
       rows.forEach(row -> pollContext.accept(item -> {
         idHandler.accept(item, row);
         watermarkHandler.accept(item, row);
 
         item.setResult(Result.<Map<String, Object>, Void>builder()
-                .output(row)
-                .build());
+            .output(row)
+            .build());
       }));
 
     } catch (Exception e) {

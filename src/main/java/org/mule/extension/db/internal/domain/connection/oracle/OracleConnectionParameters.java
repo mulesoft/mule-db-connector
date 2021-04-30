@@ -103,7 +103,7 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
     buf.append(port);
     if (instance != null && serviceName != null) {
       String errorMessage = "Instance (SID) : [" + instance + "] and Service Name : [" + serviceName
-              + "] were provided at the same time, please configure only one";
+          + "] were provided at the same time, please configure only one";
       throw new ModuleException(errorMessage, CONNECTIVITY, new ConnectionException(errorMessage));
     }
     if (instance != null) {

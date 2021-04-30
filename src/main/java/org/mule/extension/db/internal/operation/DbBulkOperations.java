@@ -62,12 +62,12 @@ public class DbBulkOperations implements Initialisable {
    * @throws SQLException if an error is produced
    */
   public int[] bulkInsert(@DisplayName("Input Parameters") @Content @Placement(
-          order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
+      order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
                           @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
                           @Config AbstractDbConnector connector,
                           @Connection DbConnection connection,
                           StreamingHelper streamingHelper)
-          throws SQLException {
+      throws SQLException {
     return bulkOperations.bulkInsert(bulkInputParameters, query, connector, connection, streamingHelper);
   }
 
@@ -86,12 +86,12 @@ public class DbBulkOperations implements Initialisable {
    * @throws SQLException if an error is produced
    */
   public int[] bulkUpdate(@DisplayName("Input Parameters") @Content @Placement(
-          order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
+      order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
                           @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
                           @Config AbstractDbConnector connector,
                           @Connection DbConnection connection,
                           StreamingHelper streamingHelper)
-          throws SQLException {
+      throws SQLException {
     return bulkOperations.bulkUpdate(bulkInputParameters, query, connector, connection, streamingHelper);
   }
 
@@ -109,12 +109,12 @@ public class DbBulkOperations implements Initialisable {
    * @throws SQLException if an error is produced
    */
   public int[] bulkDelete(@DisplayName("Input Parameters") @Content @Placement(
-          order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
+      order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
                           @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
                           @Config AbstractDbConnector connector,
                           @Connection DbConnection connection,
                           StreamingHelper streamingHelper)
-          throws SQLException {
+      throws SQLException {
     return bulkOperations.bulkDelete(bulkInputParameters, query, connector, connection, streamingHelper);
   }
 
@@ -132,7 +132,7 @@ public class DbBulkOperations implements Initialisable {
   public int[] executeScript(@ParameterGroup(name = QUERY_GROUP) BulkScript script,
                              @ParameterGroup(name = QUERY_SETTINGS) QuerySettings settings,
                              @Connection DbConnection connection)
-          throws SQLException {
+      throws SQLException {
     return bulkOperations.executeScript(script, settings, connection);
   }
 

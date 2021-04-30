@@ -68,12 +68,12 @@ public class DbDmlOperations implements Initialisable {
    */
   @OutputResolver(output = SelectMetadataResolver.class)
   public PagingProvider<DbConnection, Map<String, Object>> select(
-          @ParameterGroup(name = QUERY_GROUP) @Placement(
-                  tab = ADVANCED_TAB) QueryDefinition query,
-          @Config AbstractDbConnector connector,
-          StreamingHelper streamingHelper,
-          FlowListener flowListener)
-          throws SQLException {
+                                                                  @ParameterGroup(name = QUERY_GROUP) @Placement(
+                                                                      tab = ADVANCED_TAB) QueryDefinition query,
+                                                                  @Config AbstractDbConnector connector,
+                                                                  StreamingHelper streamingHelper,
+                                                                  FlowListener flowListener)
+      throws SQLException {
     return dmlOperations.select(query, connector, streamingHelper, flowListener);
   }
 
@@ -92,9 +92,9 @@ public class DbDmlOperations implements Initialisable {
    */
   @OutputResolver(output = QuerySingleMetadataResolver.class)
   public Map<String, Object> querySingle(@ParameterGroup(name = QUERY_GROUP) @Placement(
-          tab = ADVANCED_TAB) QueryDefinition query, @Config AbstractDbConnector connector, @Connection DbConnection connection,
+      tab = ADVANCED_TAB) QueryDefinition query, @Config AbstractDbConnector connector, @Connection DbConnection connection,
                                          StreamingHelper streamingHelper)
-          throws SQLException {
+      throws SQLException {
     return dmlOperations.querySingle(query, connector, connection, streamingHelper);
   }
 
@@ -110,11 +110,11 @@ public class DbDmlOperations implements Initialisable {
    */
   public StatementResult insert(@ParameterGroup(name = QUERY_GROUP) @Placement(tab = ADVANCED_TAB) QueryDefinition query,
                                 @ParameterGroup(
-                                        name = AUTO_GENERATE_KEYS) DbAutoGenerateKeysAttributes autoGenerateKeysAttributes,
+                                    name = AUTO_GENERATE_KEYS) DbAutoGenerateKeysAttributes autoGenerateKeysAttributes,
                                 @Config AbstractDbConnector connector,
                                 @Connection DbConnection connection,
                                 StreamingHelper streamingHelper)
-          throws SQLException {
+      throws SQLException {
     return dmlOperations.insert(query, autoGenerateKeysAttributes, connector, connection, streamingHelper);
   }
 
@@ -130,11 +130,11 @@ public class DbDmlOperations implements Initialisable {
    */
   public StatementResult update(@ParameterGroup(name = QUERY_GROUP) QueryDefinition query,
                                 @ParameterGroup(
-                                        name = AUTO_GENERATE_KEYS) DbAutoGenerateKeysAttributes autoGenerateKeysAttributes,
+                                    name = AUTO_GENERATE_KEYS) DbAutoGenerateKeysAttributes autoGenerateKeysAttributes,
                                 @Config AbstractDbConnector connector,
                                 @Connection DbConnection connection,
                                 StreamingHelper streamingHelper)
-          throws SQLException {
+      throws SQLException {
     return dmlOperations.update(query, autoGenerateKeysAttributes, connector, connection, streamingHelper);
   }
 
@@ -151,7 +151,7 @@ public class DbDmlOperations implements Initialisable {
                     @Config AbstractDbConnector connector,
                     @Connection DbConnection connection,
                     StreamingHelper streamingHelper)
-          throws SQLException {
+      throws SQLException {
     return dmlOperations.delete(query, connector, connection, streamingHelper);
   }
 
@@ -173,12 +173,12 @@ public class DbDmlOperations implements Initialisable {
   @OutputResolver(output = StoredProcedureMetadataResolver.class)
   public Map<String, Object> storedProcedure(@ParameterGroup(name = QUERY_GROUP) StoredProcedureCall call,
                                              @ParameterGroup(
-                                                     name = AUTO_GENERATE_KEYS) DbAutoGenerateKeysAttributes autoGenerateKeysAttributes,
+                                                 name = AUTO_GENERATE_KEYS) DbAutoGenerateKeysAttributes autoGenerateKeysAttributes,
                                              @Config AbstractDbConnector connector,
                                              @Connection DbConnection connection,
                                              StreamingHelper streamingHelper,
                                              FlowListener flowListener)
-          throws SQLException {
+      throws SQLException {
     return dmlOperations.storedProcedure(call, autoGenerateKeysAttributes, connector, connection, streamingHelper, flowListener);
   }
 

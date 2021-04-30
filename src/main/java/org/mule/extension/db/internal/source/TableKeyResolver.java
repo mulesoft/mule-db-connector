@@ -34,16 +34,16 @@ public class TableKeyResolver implements TypeKeysResolver {
     Optional<DbConnection> connection = context.getConnection();
 
     DbConnection dbConnection = connection
-            .orElseThrow(() -> new MetadataResolvingException("No connection available to retrieve existing tables",
-                    CONNECTION_FAILURE));
+        .orElseThrow(() -> new MetadataResolvingException("No connection available to retrieve existing tables",
+                                                          CONNECTION_FAILURE));
 
     Set<MetadataKey> metadataKeys;
     try {
       metadataKeys = dbConnection.getTables()
-              .stream()
-              .map(tableName -> newKey(tableName)
-                      .build())
-              .collect(toSet());
+          .stream()
+          .map(tableName -> newKey(tableName)
+              .build())
+          .collect(toSet());
     } catch (SQLException e) {
       throw new MetadataResolvingException("Unexpected error when retrieving existing tables", UNKNOWN, e);
     }

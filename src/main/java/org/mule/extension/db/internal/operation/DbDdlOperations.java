@@ -55,7 +55,7 @@ public class DbDdlOperations implements Initialisable {
                         @Config AbstractDbConnector connector,
                         @Connection DbConnection connection,
                         StreamingHelper streamingHelper)
-          throws SQLException {
+      throws SQLException {
     return ddlOperations.executeDdl(sql, settings, connector, connection, streamingHelper);
   }
 

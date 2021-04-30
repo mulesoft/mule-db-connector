@@ -56,7 +56,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 @DisplayName("Derby Connection")
 @Alias("derby")
 @ExternalLib(name = "Derby JDBC Driver", description = "A JDBC driver which supports connecting to a Derby Database",
-        nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, requiredClassName = DERBY_DRIVER_CLASS, type = JAR, coordinates = DERBY_GAV)
+    nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, requiredClassName = DERBY_DRIVER_CLASS, type = JAR, coordinates = DERBY_GAV)
 public class DerbyConnectionProvider implements ConnectionProvider<DbConnection>, Initialisable, Disposable {
 
   private static final String FAILED_TO_START_DATABASE = "Failed to start database";

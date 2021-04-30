@@ -44,12 +44,12 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
 @Operations({DbBulkOperations.class, DbDdlOperations.class, DbDmlOperations.class})
 @Sources(RowListener.class)
 @ConnectionProviders({DbDataSourceReferenceConnectionProvider.class, DbGenericConnectionProvider.class,
-        DerbyConnectionProvider.class, MySqlConnectionProvider.class, OracleDbConnectionProvider.class,
-        SqlServerConnectionProvider.class})
+    DerbyConnectionProvider.class, MySqlConnectionProvider.class, OracleDbConnectionProvider.class,
+    SqlServerConnectionProvider.class})
 @Xml(prefix = "db")
 @Export(
-        classes = {QueryDefinition.class, StoredProcedureCall.class, BulkQueryDefinition.class, ConnectionCreationException.class,
-                LoggerApiPackage.class})
+    classes = {QueryDefinition.class, StoredProcedureCall.class, BulkQueryDefinition.class, ConnectionCreationException.class,
+        LoggerApiPackage.class})
 @ErrorTypes(DbError.class)
 @ExpressionFunctions(DbFunctions.class)
 @OnException(DbExceptionHandler.class)

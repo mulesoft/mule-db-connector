@@ -64,7 +64,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 @DisplayName("Oracle Connection")
 @Alias("oracle")
 @ExternalLib(name = "Oracle JDBC Driver", description = "A JDBC driver which supports connecting to an Oracle Database",
-        nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, requiredClassName = DRIVER_CLASS_NAME, type = JAR)
+    nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, requiredClassName = DRIVER_CLASS_NAME, type = JAR)
 public class OracleDbConnectionProvider implements ConnectionProvider<DbConnection>, Initialisable, Disposable {
 
   private static final String INVALID_CREDENTIALS_ORACLE_CODE = "ORA-01017";
@@ -108,7 +108,7 @@ public class OracleDbConnectionProvider implements ConnectionProvider<DbConnecti
       @Override
       protected JdbcConnectionFactory createJdbcConnectionFactory() {
         return new OracleJdbcConnectionFactory.Builder()
-                .withMaskCredentialsFunction(OracleCredentialsMaskUtils::maskUrlUserAndPasswordForOracle).build();
+            .withMaskCredentialsFunction(OracleCredentialsMaskUtils::maskUrlUserAndPasswordForOracle).build();
       }
 
       @Override

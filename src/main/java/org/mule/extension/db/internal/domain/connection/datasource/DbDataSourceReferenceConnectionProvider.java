@@ -48,7 +48,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 @DisplayName("Data Source Reference Connection")
 @Alias("data-source")
 @ExternalLib(name = "JDBC Driver", description = "A JDBC driver which supports connecting to the Database",
-        nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, type = JAR, optional = true)
+    nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, type = JAR, optional = true)
 public class DbDataSourceReferenceConnectionProvider implements ConnectionProvider<DbConnection>, Initialisable, Disposable {
 
   @RefName
@@ -83,8 +83,8 @@ public class DbDataSourceReferenceConnectionProvider implements ConnectionProvid
   @Override
   public void initialise() throws InitialisationException {
     dataSourceReferenceConnectionProvider = new DataSourceReferenceConnectionProvider(configName, registry,
-            poolingProfile, columnTypes,
-            connectionSettings);
+                                                                                      poolingProfile, columnTypes,
+                                                                                      connectionSettings);
 
     dataSourceReferenceConnectionProvider.initialise();
   }

@@ -25,7 +25,7 @@ public class OracleJdbcConnectionFactory extends JdbcConnectionFactory {
 
   @Override
   public Connection createConnection(DataSource dataSource, List<DbType> customDataTypes)
-          throws SQLException, ConnectionCreationException {
+      throws SQLException, ConnectionCreationException {
     Connection connection = super.createConnection(dataSource, customDataTypes);
     return new OracleJdbcConnectionWrapper(connection);
   }

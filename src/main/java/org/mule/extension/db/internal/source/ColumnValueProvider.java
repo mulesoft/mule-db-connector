@@ -40,16 +40,16 @@ public class ColumnValueProvider implements ValueProvider {
 
     try {
       ResultSet tables = dbConnection
-              .getJdbcConnection()
-              .getMetaData()
-              .getColumns(null, null, table, null);
+          .getJdbcConnection()
+          .getMetaData()
+          .getColumns(null, null, table, null);
 
       while (tables.next()) {
         values.add(ValueBuilder.newValue(tables.getString("COLUMN_NAME")).build());
       }
     } catch (SQLException e) {
       throw new ValueResolvingException(format("Unexpected error occurred trying to obtain Column Names for table [%s]", table),
-              "UNKNOWN", e);
+                                        "UNKNOWN", e);
     }
 
     return values;

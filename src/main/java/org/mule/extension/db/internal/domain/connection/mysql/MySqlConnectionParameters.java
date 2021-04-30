@@ -121,7 +121,7 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
       try {
         MuleMySqlLogger muleMySqlLogger = new MuleMySqlLogger("MySql");
         MuleMySqlLogger enhancedLogger =
-                new MuleMySqlLoggerEnhancerFactory(Thread.currentThread().getContextClassLoader(), muleMySqlLogger).create();
+            new MuleMySqlLoggerEnhancerFactory(Thread.currentThread().getContextClassLoader(), muleMySqlLogger).create();
 
         connectionProperties.putIfAbsent(LOGGER_PROPERTY, enhancedLogger.getClass().getName());
       } catch (Throwable e) {

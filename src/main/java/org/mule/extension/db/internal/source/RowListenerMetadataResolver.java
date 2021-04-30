@@ -21,7 +21,7 @@ public class RowListenerMetadataResolver extends SelectMetadataResolver {
 
   @Override
   public MetadataType getOutputType(MetadataContext context, String table)
-          throws MetadataResolvingException, ConnectionException {
+      throws MetadataResolvingException, ConnectionException {
     return super.getOutputType(context, "SELECT * FROM " + table);
   }
 

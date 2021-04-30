@@ -57,7 +57,7 @@ public class OracleDbConnection extends DefaultDbConnection {
   private static final String ATTR_NO_PARAM = "ATTR_NO";
 
   public static final String QUERY_TYPE_ATTRS =
-          "SELECT ATTR_NO, ATTR_TYPE_NAME FROM ALL_TYPE_ATTRS WHERE TYPE_NAME = ? AND ATTR_TYPE_NAME IN ('CLOB', 'BLOB')";
+      "SELECT ATTR_NO, ATTR_TYPE_NAME FROM ALL_TYPE_ATTRS WHERE TYPE_NAME = ? AND ATTR_TYPE_NAME IN ('CLOB', 'BLOB')";
 
   private static final String QUERY_OWNER_CONDITION = " AND OWNER = ?";
 
@@ -87,10 +87,10 @@ public class OracleDbConnection extends DefaultDbConnection {
   @Override
   public Optional<String> getProcedureColumnType(String procedureName, String columnName, String owner) throws SQLException {
     try (PreparedStatement statement = getJdbcConnection().prepareStatement("SELECT TYPE_NAME FROM SYS.ALL_ARGUMENTS \n" +
-            "WHERE OWNER= ? \n" +
-            "AND OBJECT_NAME= ?\n" +
-            "AND ARGUMENT_NAME = ?\n" +
-            "ORDER BY SEQUENCE")) {
+        "WHERE OWNER= ? \n" +
+        "AND OBJECT_NAME= ?\n" +
+        "AND ARGUMENT_NAME = ?\n" +
+        "ORDER BY SEQUENCE")) {
 
       statement.setString(1, owner);
       statement.setString(2, procedureName);
@@ -211,7 +211,7 @@ public class OracleDbConnection extends DefaultDbConnection {
   @Override
   public ResultSet getProcedureColumns(String storedProcedureName, String storedProcedureOwner, String storedProcedureParentOwner,
                                        String catalogName)
-          throws SQLException {
+      throws SQLException {
     /*
      * Since Oracle does not have multiples catalog but it has packages, the recommended way to get a procedure description
      * of a procedure within a package is to use the argument named catalog of DatabaseMetaData#getProcedureColumns to
@@ -234,14 +234,14 @@ public class OracleDbConnection extends DefaultDbConnection {
       connectionSchema = getJdbcConnection().getSchema();
     } catch (Throwable t) {
       LOGGER
-              .warn("You are using a not supported jdbc driver version. Consider to upgrade to a new version to guarantee a better performance.");
+          .warn("You are using a not supported jdbc driver version. Consider to upgrade to a new version to guarantee a better performance.");
       connectionSchema = null;
     }
 
     ResultSet procedureColumns;
     if (!isBlank(storedProcedureParentOwner) && !isBlank(storedProcedureOwner)) {
       procedureColumns =
-              dbMetaData.getProcedureColumns(storedProcedureParentOwner, storedProcedureOwner, storedProcedureName, "%");
+          dbMetaData.getProcedureColumns(storedProcedureParentOwner, storedProcedureOwner, storedProcedureName, "%");
     } else if (!isBlank(storedProcedureOwner)) {
       procedureColumns = dbMetaData.getProcedureColumns(storedProcedureOwner, connectionSchema, storedProcedureName, "%");
       if (!procedureColumns.isBeforeFirst()) {
@@ -253,8 +253,8 @@ public class OracleDbConnection extends DefaultDbConnection {
 
     if (!procedureColumns.isBeforeFirst()) {
       LOGGER
-              .debug("Failed to get procedure types with schema {}, package {} and procedure {}. Removing all catalog and schema filters.",
-                      storedProcedureOwner, storedProcedureParentOwner, storedProcedureName);
+          .debug("Failed to get procedure types with schema {}, package {} and procedure {}. Removing all catalog and schema filters.",
+                 storedProcedureOwner, storedProcedureParentOwner, storedProcedureName);
       procedureColumns = dbMetaData.getProcedureColumns(null, null, storedProcedureName, "%");
     }
 

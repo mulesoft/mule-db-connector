@@ -59,9 +59,9 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 @DisplayName("Microsoft SQL Server Connection")
 @Alias("mssql")
 @ExternalLib(name = "Microsoft SQL Server Driver",
-        description = "A JDBC driver which supports connecting to an Microsoft SQL Server Database",
-        requiredClassName = DRIVER_CLASS_NAME, type = JAR, coordinates = MSSQL_GAV,
-        nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN)
+    description = "A JDBC driver which supports connecting to an Microsoft SQL Server Database",
+    requiredClassName = DRIVER_CLASS_NAME, type = JAR, coordinates = MSSQL_GAV,
+    nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN)
 public class SqlServerConnectionProvider implements ConnectionProvider<DbConnection>, Initialisable, Disposable {
 
   static final String DRIVER_CLASS_NAME = "com.microsoft.sqlserver.jdbc.SQLServerDriver";

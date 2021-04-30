@@ -7,23 +7,23 @@
 package org.mule.extension.db.internal;
 
 import org.mule.db.commons.AbstractDbConnector;
+import org.mule.db.commons.api.exception.connection.ConnectionCreationException;
+import org.mule.db.commons.api.exception.connection.DbError;
+import org.mule.db.commons.api.param.BulkQueryDefinition;
+import org.mule.db.commons.api.param.QueryDefinition;
+import org.mule.db.commons.api.param.StoredProcedureCall;
 import org.mule.db.commons.internal.DbFunctions;
-import org.mule.extension.db.api.exception.connection.ConnectionCreationException;
-import org.mule.extension.db.api.exception.connection.DbError;
+import org.mule.db.commons.internal.exception.DbExceptionHandler;
 import org.mule.extension.db.api.logger.LoggerApiPackage;
-import org.mule.extension.db.api.param.BulkQueryDefinition;
-import org.mule.extension.db.api.param.QueryDefinition;
-import org.mule.extension.db.api.param.StoredProcedureCall;
 import org.mule.extension.db.internal.domain.connection.datasource.DbDataSourceReferenceConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.derby.DerbyConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.generic.DbGenericConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.sqlserver.SqlServerConnectionProvider;
-import org.mule.extension.db.internal.exception.DbExceptionHandler;
-import org.mule.extension.db.internal.operation.BulkOperations;
-import org.mule.extension.db.internal.operation.DdlOperations;
-import org.mule.extension.db.internal.operation.DmlOperations;
+import org.mule.extension.db.internal.operation.DbBulkOperations;
+import org.mule.extension.db.internal.operation.DbDdlOperations;
+import org.mule.extension.db.internal.operation.DbDmlOperations;
 import org.mule.extension.db.internal.source.RowListener;
 import org.mule.runtime.extension.api.annotation.Export;
 import org.mule.runtime.extension.api.annotation.ExpressionFunctions;
@@ -41,14 +41,15 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
  * @since 1.0
  */
 @Extension(name = "Database")
-@Operations({DmlOperations.class, DdlOperations.class, BulkOperations.class})
+@Operations({DbBulkOperations.class, DbDdlOperations.class, DbDmlOperations.class})
 @Sources(RowListener.class)
-@ConnectionProviders({DbDataSourceReferenceConnectionProvider.class, DbGenericConnectionProvider.class, DerbyConnectionProvider.class,
-    MySqlConnectionProvider.class, OracleDbConnectionProvider.class, SqlServerConnectionProvider.class})
+@ConnectionProviders({DbDataSourceReferenceConnectionProvider.class, DbGenericConnectionProvider.class,
+        DerbyConnectionProvider.class, MySqlConnectionProvider.class, OracleDbConnectionProvider.class,
+        SqlServerConnectionProvider.class})
 @Xml(prefix = "db")
 @Export(
-    classes = {QueryDefinition.class, StoredProcedureCall.class, BulkQueryDefinition.class, ConnectionCreationException.class,
-        LoggerApiPackage.class})
+        classes = {QueryDefinition.class, StoredProcedureCall.class, BulkQueryDefinition.class, ConnectionCreationException.class,
+                LoggerApiPackage.class})
 @ErrorTypes(DbError.class)
 @ExpressionFunctions(DbFunctions.class)
 @OnException(DbExceptionHandler.class)

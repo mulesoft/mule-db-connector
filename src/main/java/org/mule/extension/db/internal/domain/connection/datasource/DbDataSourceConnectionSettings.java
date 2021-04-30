@@ -7,6 +7,7 @@
 package org.mule.extension.db.internal.domain.connection.datasource;
 
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
+
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 
@@ -18,7 +19,8 @@ import javax.sql.XADataSource;
  *
  * @since 1.0
  */
-public final class DataSourceConnectionSettings {
+public final class DbDataSourceConnectionSettings
+        implements org.mule.db.commons.internal.domain.connection.datasource.DataSourceConnectionSettings {
 
   /**
    * Reference to a JDBC {@link DataSource} object. This object is typically created using Spring.
@@ -31,4 +33,5 @@ public final class DataSourceConnectionSettings {
   public DataSource getDataSourceRef() {
     return dataSourceRef;
   }
+
 }

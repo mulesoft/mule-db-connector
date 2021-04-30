@@ -6,35 +6,16 @@
  */
 package org.mule.extension.db.internal.operation;
 
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.mule.extension.db.internal.domain.query.QueryType.DELETE;
-import static org.mule.extension.db.internal.domain.query.QueryType.INSERT;
-import static org.mule.extension.db.internal.domain.query.QueryType.MERGE;
-import static org.mule.extension.db.internal.domain.query.QueryType.STORE_PROCEDURE_CALL;
-import static org.mule.extension.db.internal.domain.query.QueryType.TRUNCATE;
-import static org.mule.extension.db.internal.domain.query.QueryType.UPDATE;
-import static org.mule.runtime.api.metadata.TypedValue.unwrap;
-
-import org.mule.extension.db.api.param.BulkQueryDefinition;
-import org.mule.extension.db.api.param.BulkScript;
-import org.mule.extension.db.api.param.QuerySettings;
-import org.mule.extension.db.internal.DbConnector;
-import org.mule.extension.db.internal.domain.connection.DbConnection;
-import org.mule.extension.db.internal.domain.executor.BulkUpdateExecutor;
-import org.mule.extension.db.internal.domain.metadata.DbInputMetadataResolver;
-import org.mule.extension.db.internal.domain.query.BulkQuery;
-import org.mule.extension.db.internal.domain.query.Query;
-import org.mule.extension.db.internal.domain.query.QueryParamValue;
-import org.mule.extension.db.internal.domain.query.QueryType;
-import org.mule.extension.db.internal.parser.QueryTemplateParser;
-import org.mule.extension.db.internal.parser.SimpleQueryTemplateParser;
-import org.mule.extension.db.internal.resolver.query.BulkQueryFactory;
-import org.mule.extension.db.internal.resolver.query.BulkQueryResolver;
-import org.mule.extension.db.internal.resolver.query.DefaultBulkQueryFactory;
-import org.mule.extension.db.internal.resolver.query.FileBulkQueryFactory;
-import org.mule.extension.db.internal.util.DefaultFileReader;
+import org.mule.db.commons.AbstractDbConnector;
+import org.mule.db.commons.api.param.BulkQueryDefinition;
+import org.mule.db.commons.api.param.BulkScript;
+import org.mule.db.commons.api.param.QuerySettings;
+import org.mule.db.commons.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.metadata.DbInputMetadataResolver;
+import org.mule.db.commons.internal.operation.BulkOperations;
+import org.mule.db.commons.internal.operation.OperationErrorTypeProvider;
+import org.mule.runtime.api.lifecycle.Initialisable;
+import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.error.Throws;
 import org.mule.runtime.extension.api.annotation.metadata.TypeResolver;
 import org.mule.runtime.extension.api.annotation.param.Config;
@@ -48,7 +29,9 @@ import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
+
+import static org.mule.db.commons.internal.operation.BaseDbOperations.QUERY_GROUP;
+import static org.mule.db.commons.internal.operation.BaseDbOperations.QUERY_SETTINGS;
 
 /**
  * Contains a set of operations for performing bulk DML operations from a single statement.
@@ -56,9 +39,14 @@ import java.util.ArrayList;
  * @since 1.0
  */
 @Throws(OperationErrorTypeProvider.class)
-public class BulkOperations extends BaseDbOperations {
+public class DbBulkOperations implements Initialisable {
 
-  private BulkQueryResolver bulkQueryResolver = new BulkQueryResolver();
+  private BulkOperations bulkOperations;
+
+  @Override
+  public void initialise() throws InitialisationException {
+    this.bulkOperations = new BulkOperations.Builder().build();
+  }
 
   /**
    * Allows executing one insert statement various times using different parameter bindings. This happens using one single
@@ -74,15 +62,15 @@ public class BulkOperations extends BaseDbOperations {
    * @throws SQLException if an error is produced
    */
   public int[] bulkInsert(@DisplayName("Input Parameters") @Content @Placement(
-      order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
+          order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
                           @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
-                          @Config DbConnector connector,
+                          @Config AbstractDbConnector connector,
                           @Connection DbConnection connection,
                           StreamingHelper streamingHelper)
-      throws SQLException {
-
-    return singleQueryBulk(query, bulkInputParameters, connector, connection, streamingHelper, INSERT);
+          throws SQLException {
+    return bulkOperations.bulkInsert(bulkInputParameters, query, connector, connection, streamingHelper);
   }
+
 
   /**
    * Allows executing one update statement various times using different parameter bindings. This happens using one single
@@ -98,15 +86,13 @@ public class BulkOperations extends BaseDbOperations {
    * @throws SQLException if an error is produced
    */
   public int[] bulkUpdate(@DisplayName("Input Parameters") @Content @Placement(
-      order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
+          order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
                           @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
-                          @Config DbConnector connector,
+                          @Config AbstractDbConnector connector,
                           @Connection DbConnection connection,
                           StreamingHelper streamingHelper)
-      throws SQLException {
-
-    return singleQueryBulk(query, bulkInputParameters, connector, connection, streamingHelper, UPDATE, TRUNCATE, MERGE,
-                           STORE_PROCEDURE_CALL);
+          throws SQLException {
+    return bulkOperations.bulkUpdate(bulkInputParameters, query, connector, connection, streamingHelper);
   }
 
   /**
@@ -122,16 +108,14 @@ public class BulkOperations extends BaseDbOperations {
    *         according to the order in which commands were added to the batch.
    * @throws SQLException if an error is produced
    */
-
   public int[] bulkDelete(@DisplayName("Input Parameters") @Content @Placement(
-      order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
+          order = 1) @TypeResolver(DbInputMetadataResolver.class) List<Map<String, Object>> bulkInputParameters,
                           @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
-                          @Config DbConnector connector,
+                          @Config AbstractDbConnector connector,
                           @Connection DbConnection connection,
                           StreamingHelper streamingHelper)
-      throws SQLException {
-
-    return singleQueryBulk(query, bulkInputParameters, connector, connection, streamingHelper, DELETE);
+          throws SQLException {
+    return bulkOperations.bulkDelete(bulkInputParameters, query, connector, connection, streamingHelper);
   }
 
   /**
@@ -148,61 +132,8 @@ public class BulkOperations extends BaseDbOperations {
   public int[] executeScript(@ParameterGroup(name = QUERY_GROUP) BulkScript script,
                              @ParameterGroup(name = QUERY_SETTINGS) QuerySettings settings,
                              @Connection DbConnection connection)
-      throws SQLException {
-
-    QueryTemplateParser queryParser = new SimpleQueryTemplateParser();
-    BulkQueryFactory bulkQueryFactory;
-
-    if (!isEmpty(script.getFile())) {
-      bulkQueryFactory = new FileBulkQueryFactory(script.getFile(), queryParser, new DefaultFileReader());
-    } else {
-      bulkQueryFactory = new DefaultBulkQueryFactory(queryParser, script.getSql());
-    }
-
-    BulkQuery bulkQuery = bulkQueryFactory.resolve();
-
-    BulkUpdateExecutor bulkUpdateExecutor =
-        new BulkUpdateExecutor(getStatementFactory(settings));
-
-    return (int[]) bulkUpdateExecutor.execute(connection, bulkQuery);
+          throws SQLException {
+    return bulkOperations.executeScript(script, settings, connection);
   }
 
-
-  private int[] singleQueryBulk(BulkQueryDefinition query,
-                                List<Map<String, Object>> values,
-                                DbConnector connector,
-                                DbConnection connection,
-                                StreamingHelper streamingHelper,
-                                QueryType... queryType)
-      throws SQLException {
-
-    final Query resolvedQuery = resolveQuery(query, connector, connection, streamingHelper, queryType);
-
-    List<List<QueryParamValue>> paramSets = resolveParamSets(values);
-
-    BulkUpdateExecutor bulkUpdateExecutor =
-        new BulkUpdateExecutor(getStatementFactory(query));
-    return (int[]) bulkUpdateExecutor.execute(connection, resolvedQuery, paramSets);
-  }
-
-  private Query resolveQuery(BulkQueryDefinition query,
-                             DbConnector connector,
-                             DbConnection connection,
-                             StreamingHelper streamingHelper,
-                             QueryType... validTypes) {
-    final Query resolvedQuery = bulkQueryResolver.resolve(query, connector, connection, streamingHelper);
-    validateQueryType(resolvedQuery.getQueryTemplate(), asList(validTypes));
-    validateNoParameterTypeIsUnused(resolvedQuery, query.getParameterTypes());
-    return resolvedQuery;
-  }
-
-  private List<List<QueryParamValue>> resolveParamSets(List<Map<String, Object>> values) {
-    List<List<QueryParamValue>> parameterSet = new ArrayList<>();
-    for (Object value : values) {
-      Map<String, Object> map = unwrap(value);
-      parameterSet
-          .add(map.entrySet().stream().map(entry -> new QueryParamValue(entry.getKey(), entry.getValue())).collect(toList()));
-    }
-    return parameterSet;
-  }
 }

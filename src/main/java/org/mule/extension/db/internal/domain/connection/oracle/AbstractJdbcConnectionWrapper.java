@@ -37,7 +37,7 @@ public abstract class AbstractJdbcConnectionWrapper implements Connection {
 
   /**
    * Wraps a connection
-   * 
+   *
    * @param delegate connection to wrap. Non null
    */
   public AbstractJdbcConnectionWrapper(Connection delegate) {
@@ -203,13 +203,13 @@ public abstract class AbstractJdbcConnectionWrapper implements Connection {
 
   @Override
   public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability)
-      throws SQLException {
+          throws SQLException {
     return delegate.prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
   }
 
   @Override
   public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability)
-      throws SQLException {
+          throws SQLException {
     return delegate.prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
   }
 

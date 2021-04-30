@@ -7,10 +7,9 @@
 
 package org.mule.extension.db.internal.domain.connection.oracle;
 
-import org.mule.extension.db.api.exception.connection.ConnectionCreationException;
-import org.mule.extension.db.internal.domain.connection.JdbcConnectionFactory;
-import org.mule.extension.db.internal.domain.type.DbType;
-import org.mule.runtime.api.connection.ConnectionException;
+import org.mule.db.commons.api.exception.connection.ConnectionCreationException;
+import org.mule.db.commons.internal.domain.connection.JdbcConnectionFactory;
+import org.mule.db.commons.internal.domain.type.DbType;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -20,10 +19,23 @@ import javax.sql.DataSource;
 
 public class OracleJdbcConnectionFactory extends JdbcConnectionFactory {
 
+  protected OracleJdbcConnectionFactory(Builder builder) {
+    super(builder);
+  }
+
   @Override
   public Connection createConnection(DataSource dataSource, List<DbType> customDataTypes)
-      throws SQLException, ConnectionCreationException {
+          throws SQLException, ConnectionCreationException {
     Connection connection = super.createConnection(dataSource, customDataTypes);
     return new OracleJdbcConnectionWrapper(connection);
   }
+
+  public static final class Builder extends JdbcConnectionFactory.Builder {
+
+    public OracleJdbcConnectionFactory build() {
+      return new OracleJdbcConnectionFactory(this);
+    }
+
+  }
+
 }

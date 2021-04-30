@@ -15,10 +15,11 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mule.extension.db.internal.domain.query.QueryType.STORE_PROCEDURE_CALL;
-import org.mule.extension.db.internal.domain.connection.DbConnection;
-import org.mule.extension.db.internal.domain.param.QueryParam;
-import org.mule.extension.db.internal.domain.query.QueryTemplate;
+import static org.mule.db.commons.internal.domain.query.QueryType.STORE_PROCEDURE_CALL;
+import org.mule.db.commons.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.param.QueryParam;
+import org.mule.db.commons.internal.domain.query.QueryTemplate;
+import org.mule.db.commons.internal.domain.statement.QueryStatementFactory;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 

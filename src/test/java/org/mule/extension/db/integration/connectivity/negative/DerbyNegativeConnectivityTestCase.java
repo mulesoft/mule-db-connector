@@ -7,7 +7,7 @@
 package org.mule.extension.db.integration.connectivity.negative;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.mule.extension.db.api.exception.connection.DbError.CANNOT_REACH;
+import static org.mule.db.commons.api.exception.connection.DbError.CANNOT_REACH;
 import static org.mule.tck.junit4.matcher.ErrorTypeMatcher.errorType;
 import org.junit.Test;
 

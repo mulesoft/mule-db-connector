@@ -7,7 +7,7 @@
 package org.mule.extension.db.integration;
 
 import org.mule.db.commons.internal.StatementStreamingResultSetCloser;
-import org.mule.extension.db.internal.domain.connection.DbConnectionProvider;
+import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 /**

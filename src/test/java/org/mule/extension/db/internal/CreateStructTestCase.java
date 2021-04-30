@@ -12,12 +12,12 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mule.extension.db.api.param.JdbcType.BLOB;
-import static org.mule.extension.db.api.param.JdbcType.CLOB;
+import static org.mule.db.commons.api.param.JdbcType.BLOB;
+import static org.mule.db.commons.api.param.JdbcType.CLOB;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
 
-import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
+import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
 
 import java.sql.Blob;
@@ -26,12 +26,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.junit.Test;
-import org.mule.extension.db.internal.domain.type.ResolvedDbType;
 
 public class CreateStructTestCase extends AbstractDbFunctionTestCase {
 

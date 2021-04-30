@@ -8,8 +8,8 @@ package org.mule.extension.db.unit;
 
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mule.extension.db.internal.result.resultset.ResultSetIterator;
-import org.mule.extension.db.internal.result.row.RowHandler;
+import org.mule.db.commons.internal.result.resultset.ResultSetIterator;
+import org.mule.db.commons.internal.result.row.RowHandler;
 import org.mule.runtime.extension.api.exception.ModuleException;
 
 import java.sql.ResultSet;

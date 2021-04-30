@@ -8,7 +8,7 @@ package org.mule.extension.db.internal.domain.connection.mysql;
 
 import org.mule.extension.db.api.logger.MuleMySqlLogger;
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
-import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
+import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
 import org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -121,7 +121,7 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
       try {
         MuleMySqlLogger muleMySqlLogger = new MuleMySqlLogger("MySql");
         MuleMySqlLogger enhancedLogger =
-            new MuleMySqlLoggerEnhancerFactory(Thread.currentThread().getContextClassLoader(), muleMySqlLogger).create();
+                new MuleMySqlLoggerEnhancerFactory(Thread.currentThread().getContextClassLoader(), muleMySqlLogger).create();
 
         connectionProperties.putIfAbsent(LOGGER_PROPERTY, enhancedLogger.getClass().getName());
       } catch (Throwable e) {

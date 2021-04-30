@@ -11,7 +11,7 @@ import static java.nio.charset.Charset.defaultCharset;
 
 import org.mule.extension.db.internal.domain.connection.DbConnection;
 import org.mule.extension.db.internal.result.row.RowHandler;
-import org.mule.extension.db.internal.StatementStreamingResultSetCloser;
+import org.mule.db.commons.internal.StatementStreamingResultSetCloser;
 import org.mule.extension.db.internal.util.ResultSetCharsetEncodedHandler;
 
 import java.nio.charset.Charset;

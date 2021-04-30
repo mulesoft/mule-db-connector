@@ -14,9 +14,9 @@ import org.mule.extension.db.api.logger.LoggerApiPackage;
 import org.mule.extension.db.api.param.BulkQueryDefinition;
 import org.mule.extension.db.api.param.QueryDefinition;
 import org.mule.extension.db.api.param.StoredProcedureCall;
-import org.mule.extension.db.internal.domain.connection.datasource.DataSourceReferenceConnectionProvider;
+import org.mule.extension.db.internal.domain.connection.datasource.DbDataSourceReferenceConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.derby.DerbyConnectionProvider;
-import org.mule.extension.db.internal.domain.connection.generic.GenericConnectionProvider;
+import org.mule.extension.db.internal.domain.connection.generic.DbGenericConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.sqlserver.SqlServerConnectionProvider;
@@ -43,7 +43,7 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
 @Extension(name = "Database")
 @Operations({DmlOperations.class, DdlOperations.class, BulkOperations.class})
 @Sources(RowListener.class)
-@ConnectionProviders({DataSourceReferenceConnectionProvider.class, GenericConnectionProvider.class, DerbyConnectionProvider.class,
+@ConnectionProviders({DbDataSourceReferenceConnectionProvider.class, DbGenericConnectionProvider.class, DerbyConnectionProvider.class,
     MySqlConnectionProvider.class, OracleDbConnectionProvider.class, SqlServerConnectionProvider.class})
 @Xml(prefix = "db")
 @Export(

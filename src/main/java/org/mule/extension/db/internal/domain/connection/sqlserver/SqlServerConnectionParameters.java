@@ -10,7 +10,7 @@ import static org.mule.extension.db.internal.domain.connection.sqlserver.SqlServ
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
-import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
+import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;

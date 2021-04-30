@@ -4,11 +4,11 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.extension.db.internal.domain.connection.sqlserver.type;
+package org.mule.extension.db.internal.domain.connection.sqlserver.types;
 
-import org.mule.extension.db.internal.domain.connection.DbConnection;
-import org.mule.extension.db.internal.domain.type.AbstractStructuredDbType;
-import org.mule.extension.db.internal.domain.type.DbType;
+import org.mule.db.commons.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.type.AbstractStructuredDbType;
+import org.mule.db.commons.internal.domain.type.DbType;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -34,7 +34,7 @@ public class SqlServerBinaryDbType extends AbstractStructuredDbType {
 
   @Override
   public void setParameterValue(PreparedStatement statement, int index, Object value, DbConnection connection)
-      throws SQLException {
+          throws SQLException {
     if (value instanceof String) {
       value = ((String) value).getBytes();
     }

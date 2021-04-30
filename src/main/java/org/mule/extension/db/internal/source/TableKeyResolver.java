@@ -6,12 +6,7 @@
  */
 package org.mule.extension.db.internal.source;
 
-import static java.util.stream.Collectors.toSet;
-import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
-import static org.mule.runtime.api.metadata.resolving.FailureCode.CONNECTION_FAILURE;
-import static org.mule.runtime.api.metadata.resolving.FailureCode.UNKNOWN;
-
-import org.mule.extension.db.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.metadata.MetadataContext;
 import org.mule.runtime.api.metadata.MetadataKey;
@@ -21,6 +16,11 @@ import org.mule.runtime.api.metadata.resolving.TypeKeysResolver;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.Set;
+
+import static java.util.stream.Collectors.toSet;
+import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
+import static org.mule.runtime.api.metadata.resolving.FailureCode.CONNECTION_FAILURE;
+import static org.mule.runtime.api.metadata.resolving.FailureCode.UNKNOWN;
 
 /**
  * {@link TypeKeysResolver} for {@link RowListener} polling source which retrieves the available tables to poll.
@@ -34,16 +34,16 @@ public class TableKeyResolver implements TypeKeysResolver {
     Optional<DbConnection> connection = context.getConnection();
 
     DbConnection dbConnection = connection
-        .orElseThrow(() -> new MetadataResolvingException("No connection available to retrieve existing tables",
-                                                          CONNECTION_FAILURE));
+            .orElseThrow(() -> new MetadataResolvingException("No connection available to retrieve existing tables",
+                    CONNECTION_FAILURE));
 
     Set<MetadataKey> metadataKeys;
     try {
       metadataKeys = dbConnection.getTables()
-          .stream()
-          .map(tableName -> newKey(tableName)
-              .build())
-          .collect(toSet());
+              .stream()
+              .map(tableName -> newKey(tableName)
+                      .build())
+              .collect(toSet());
     } catch (SQLException e) {
       throw new MetadataResolvingException("Unexpected error when retrieving existing tables", UNKNOWN, e);
     }

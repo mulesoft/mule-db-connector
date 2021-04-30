@@ -6,9 +6,7 @@
  */
 package org.mule.extension.db.internal.source;
 
-import static java.lang.String.format;
-
-import org.mule.extension.db.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.runtime.api.value.Value;
 import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -20,6 +18,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
+
+import static java.lang.String.format;
 
 /**
  * {@link ValueProvider} implementation to suggest the available columns for a given Table
@@ -40,16 +40,16 @@ public class ColumnValueProvider implements ValueProvider {
 
     try {
       ResultSet tables = dbConnection
-          .getJdbcConnection()
-          .getMetaData()
-          .getColumns(null, null, table, null);
+              .getJdbcConnection()
+              .getMetaData()
+              .getColumns(null, null, table, null);
 
       while (tables.next()) {
         values.add(ValueBuilder.newValue(tables.getString("COLUMN_NAME")).build());
       }
     } catch (SQLException e) {
       throw new ValueResolvingException(format("Unexpected error occurred trying to obtain Column Names for table [%s]", table),
-                                        "UNKNOWN", e);
+              "UNKNOWN", e);
     }
 
     return values;

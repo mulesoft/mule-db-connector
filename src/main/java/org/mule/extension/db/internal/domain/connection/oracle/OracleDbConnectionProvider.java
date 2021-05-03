@@ -164,4 +164,8 @@ public class OracleDbConnectionProvider implements ConnectionProvider<DbConnecti
     return dbConnectionProvider.validate(dbConnection);
   }
 
+  public DataSource getConfiguredDataSource() {
+    return dbConnectionProvider.getConfiguredDataSource();
+  }
+
 }

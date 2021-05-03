@@ -146,4 +146,8 @@ public class DerbyConnectionProvider implements ConnectionProvider<DbConnection>
     return dbConnectionProvider.validate(dbConnection);
   }
 
+  public DataSource getConfiguredDataSource() {
+    return dbConnectionProvider.getConfiguredDataSource();
+  }
+
 }

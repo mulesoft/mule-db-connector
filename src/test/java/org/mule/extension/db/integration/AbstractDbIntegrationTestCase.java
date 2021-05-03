@@ -24,12 +24,12 @@ import static org.mule.metadata.api.model.MetadataFormat.JAVA;
 import static org.mule.runtime.api.component.location.Location.builder;
 import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
 import static org.mule.runtime.core.api.connection.util.ConnectionProviderUtils.unwrapProviderWrapper;
+
 import org.mule.db.commons.api.StatementResult;
 import org.mule.extension.db.integration.model.AbstractTestDatabase;
 import org.mule.extension.db.integration.model.Field;
 import org.mule.extension.db.integration.model.Record;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
-import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
 import org.mule.functional.api.flow.FlowRunner;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.metadata.api.ClassTypeLoader;
@@ -51,6 +51,7 @@ import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFacto
 import org.mule.runtime.extension.api.runtime.config.ConfigurationProvider;
 import org.mule.test.runner.RunnerDelegateTo;
 
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -138,7 +139,8 @@ public abstract class AbstractDbIntegrationTestCase extends MuleArtifactFunction
               .get(getEvent(variables))
               .getConnectionProvider().get();
 
-      return ((DbConnectionProvider) unwrapProviderWrapper(connectionProviderWrapper)).getConfiguredDataSource();
+      Method method = unwrapProviderWrapper(connectionProviderWrapper).getClass().getMethod("getConfiguredDataSource");
+      return (DataSource) method.invoke(unwrapProviderWrapper(connectionProviderWrapper));
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

@@ -153,4 +153,8 @@ public class SqlServerConnectionProvider implements ConnectionProvider<DbConnect
     return dbConnectionProvider.validate(dbConnection);
   }
 
+  public DataSource getConfiguredDataSource() {
+    return dbConnectionProvider.getConfiguredDataSource();
+  }
+
 }

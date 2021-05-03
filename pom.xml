@@ -154,6 +154,12 @@
             <version>${oracle.driver.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>mchange-commons-java</artifactId>
+            <version>0.2.19</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 

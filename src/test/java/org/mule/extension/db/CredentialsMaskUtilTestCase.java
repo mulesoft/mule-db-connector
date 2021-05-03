@@ -10,6 +10,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mule.db.commons.internal.util.CredentialsMaskUtils.maskUrlUserAndPassword;
+import static org.mule.extension.db.internal.util.OracleCredentialsMaskUtils.maskUrlUserAndPasswordForOracle;
 
 import org.junit.Test;
 
@@ -30,7 +31,7 @@ public class CredentialsMaskUtilTestCase {
   public void maskOracleUserAndPasswordUrl() {
     String originalUrl = "jdbc:oracle:thin:secretUser/secretP@ssword@somehost.com:1521/sid";
     String expectedUrl = "jdbc:oracle:thin:<<user>>/<<credentials>>@somehost.com:1521/sid";
-    String scapedUrl = maskUrlUserAndPassword(originalUrl);
+    String scapedUrl = maskUrlUserAndPasswordForOracle(originalUrl);
 
     assertThat(scapedUrl, is(expectedUrl));
   }

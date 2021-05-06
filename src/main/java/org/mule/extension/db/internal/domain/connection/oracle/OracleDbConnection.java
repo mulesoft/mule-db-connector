@@ -15,6 +15,7 @@ import static org.mule.extension.db.internal.domain.connection.oracle.OracleConn
 import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
 import org.mule.db.commons.internal.domain.connection.type.resolver.ArrayTypeResolver;
 import org.mule.db.commons.internal.domain.connection.type.resolver.StructAndArrayTypeResolver;
+import org.mule.db.commons.internal.domain.type.ArrayResolvedDbType;
 import org.mule.db.commons.internal.domain.type.DbType;
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
 import org.mule.extension.db.internal.domain.connection.oracle.types.OracleXmlType;
@@ -27,6 +28,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,6 +62,10 @@ public class OracleDbConnection extends DefaultDbConnection {
       "SELECT ATTR_NO, ATTR_TYPE_NAME FROM ALL_TYPE_ATTRS WHERE TYPE_NAME = ? AND ATTR_TYPE_NAME IN ('CLOB', 'BLOB')";
 
   private static final String QUERY_OWNER_CONDITION = " AND OWNER = ?";
+
+  private static final int PROCEDURE_SCHEM_COLUMN_INDEX = 2;
+  private static final int PROCEDURE_NAME = 3;
+  private static final int PARAM_NAME_COLUMN_INDEX = 4;
 
   private Method createArrayMethod;
 
@@ -259,6 +265,20 @@ public class OracleDbConnection extends DefaultDbConnection {
     }
 
     return procedureColumns;
+  }
+
+  @Override
+  public Optional<DbType> getDbTypeByVendor(String typeName, ResultSet procedureColumns) throws SQLException {
+    if (TABLE_TYPE_NAME.equals(typeName)) {
+      String procedureName = procedureColumns.getString(PROCEDURE_NAME);
+      String argumentName = procedureColumns.getString(PARAM_NAME_COLUMN_INDEX);
+      String owner = procedureColumns.getString(PROCEDURE_SCHEM_COLUMN_INDEX);
+
+      Optional<String> columnType = getProcedureColumnType(procedureName, argumentName, owner);
+      return columnType.map(type -> new ArrayResolvedDbType(Types.ARRAY, type));
+    }
+
+    return Optional.empty();
   }
 
 }

@@ -7,6 +7,7 @@
 
 package org.mule.extension.db.internal.domain.connection.oracle;
 
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
@@ -104,7 +105,7 @@ public class OracleDbConnection extends DefaultDbConnection {
 
       ResultSet resultSet = statement.executeQuery();
 
-      Optional<String> columnType = Optional.empty();
+      Optional<String> columnType = empty();
 
       if (resultSet.next()) {
         columnType = ofNullable(resultSet.getString(1));
@@ -278,7 +279,7 @@ public class OracleDbConnection extends DefaultDbConnection {
       return columnType.map(type -> new ArrayResolvedDbType(Types.ARRAY, type));
     }
 
-    return Optional.empty();
+    return empty();
   }
 
 }

@@ -264,7 +264,9 @@
                             <images>
                                 <image>
                                     <name>store/oracle/database-enterprise:12.2.0.1-slim</name>
+                                    <alias>oracle-container</alias>
                                     <run>
+                                        <containerNamePattern>%a</containerNamePattern>
                                         <ports>
                                             <port>oracle.db.port:1521</port>
                                         </ports>
@@ -521,7 +523,9 @@
                             <images>
                                 <image>
                                     <name>microsoft/mssql-server-linux</name>
+                                    <alias>mssql-container</alias>
                                     <run>
+                                        <containerNamePattern>%a</containerNamePattern>
                                         <env>
                                             <SA_PASSWORD>yourStrong(!)Password</SA_PASSWORD>
                                             <ACCEPT_EULA>Y</ACCEPT_EULA>

@@ -18,6 +18,7 @@ import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
  *
  * @since 1.0
  */
+@Deprecated
 public class ParameterType {
 
   public ParameterType() {}

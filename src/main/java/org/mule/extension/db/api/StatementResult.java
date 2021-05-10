@@ -16,6 +16,7 @@ import java.util.Map;
 /**
  * Information about the execution of a DML statement
  */
+@Deprecated
 public class StatementResult {
 
   /**

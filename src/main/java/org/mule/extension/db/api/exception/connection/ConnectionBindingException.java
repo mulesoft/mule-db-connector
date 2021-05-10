@@ -10,6 +10,7 @@ package org.mule.extension.db.api.exception.connection;
 /**
  * Thrown to indicates an error binding a connection to a transaction
  */
+@Deprecated
 public class ConnectionBindingException extends RuntimeException {
 
   public ConnectionBindingException(String s, Throwable throwable) {

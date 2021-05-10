@@ -11,6 +11,7 @@ package org.mule.extension.db.api.param;
  *
  * @since 1.0
  */
+@Deprecated
 public class OutputParameter extends ParameterType {
 
 }

@@ -21,6 +21,7 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
  *
  * @since 1.0
  */
+@Deprecated
 @ExclusiveOptionals
 public class TypeClassifier {
 

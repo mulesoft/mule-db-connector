@@ -17,6 +17,7 @@ import java.util.Optional;
  *
  * @since 1.0
  */
+@Deprecated
 public enum DbError implements ErrorTypeDefinition<DbError> {
   /**
    * Generic error for a connectivity issue with the Database

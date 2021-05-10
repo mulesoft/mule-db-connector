@@ -10,6 +10,7 @@ package org.mule.extension.db.api.exception.connection;
 /**
  * Thrown to indicate an error while committing a connection
  */
+@Deprecated
 public class ConnectionCommitException extends RuntimeException {
 
   public ConnectionCommitException(Throwable throwable) {

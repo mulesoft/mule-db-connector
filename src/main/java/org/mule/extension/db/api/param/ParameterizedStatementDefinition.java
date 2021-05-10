@@ -29,6 +29,7 @@ import java.util.Map;
  * @param <T> the generic type of the implementing type
  * @since 1.0
  */
+@Deprecated
 public abstract class ParameterizedStatementDefinition<T extends ParameterizedStatementDefinition>
     extends StatementDefinition<T> {
 

@@ -28,6 +28,7 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0
  */
 @Alias("pooling-profile")
+@Deprecated
 public class DbPoolingProfile implements DatabasePoolingProfile {
 
   /**

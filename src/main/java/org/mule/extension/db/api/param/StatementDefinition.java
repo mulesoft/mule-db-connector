@@ -26,6 +26,7 @@ import java.util.List;
  * @param <T> the generic type of the implementing type
  * @since 1.0
  */
+@Deprecated
 public abstract class StatementDefinition<T extends StatementDefinition> extends QuerySettings {
 
   /**

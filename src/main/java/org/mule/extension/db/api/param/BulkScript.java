@@ -21,6 +21,7 @@ import static org.mule.extension.db.api.param.DbNameConstants.SQL_QUERY_TEXT;
  * @since 1.0
  */
 @ExclusiveOptionals(isOneRequired = true)
+@Deprecated
 public class BulkScript {
 
   /**

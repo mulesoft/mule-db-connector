@@ -17,6 +17,7 @@ import static java.sql.Connection.TRANSACTION_SERIALIZABLE;
  *
  * @since 1.0
  */
+@Deprecated
 public enum TransactionIsolation {
   NONE(TRANSACTION_NONE), READ_COMMITTED(TRANSACTION_READ_COMMITTED), READ_UNCOMMITTED(
       TRANSACTION_READ_UNCOMMITTED), REPEATABLE_READ(

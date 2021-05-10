@@ -13,6 +13,7 @@ import org.mule.runtime.extension.api.exception.ModuleException;
 /**
  * Thrown to indicate an error creating a connection
  */
+@Deprecated
 public class ConnectionCreationException extends ConnectionException {
 
   public ConnectionCreationException(String message) {

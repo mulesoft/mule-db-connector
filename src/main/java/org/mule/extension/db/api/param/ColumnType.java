@@ -16,6 +16,7 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
  *
  * @since 1.0
  */
+@Deprecated
 public class ColumnType {
 
   /**

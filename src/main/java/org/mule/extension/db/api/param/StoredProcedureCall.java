@@ -25,6 +25,7 @@ import java.util.Map;
  *
  * @since 1.0
  */
+@Deprecated
 public class StoredProcedureCall extends ParameterizedStatementDefinition<StoredProcedureCall> {
 
   /**

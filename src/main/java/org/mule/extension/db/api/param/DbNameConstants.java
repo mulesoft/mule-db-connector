@@ -11,6 +11,7 @@ package org.mule.extension.db.api.param;
  *
  * @since 1.0
  */
+@Deprecated
 public final class DbNameConstants {
 
   public static final String SQL_QUERY_TEXT = "SQL Query Text";

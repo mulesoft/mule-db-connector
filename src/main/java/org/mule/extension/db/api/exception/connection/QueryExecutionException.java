@@ -14,6 +14,7 @@ import org.mule.runtime.extension.api.exception.ModuleException;
  *
  * @since 1.0
  */
+@Deprecated
 public class QueryExecutionException extends ModuleException {
 
   public QueryExecutionException(String message, Throwable cause) {

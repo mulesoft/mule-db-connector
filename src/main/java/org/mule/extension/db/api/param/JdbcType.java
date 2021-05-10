@@ -23,6 +23,7 @@ import java.util.List;
  *
  * @since 1.0
  */
+@Deprecated
 public enum JdbcType {
 
   BIT(new ResolvedDbType(Types.BIT, "BIT")),

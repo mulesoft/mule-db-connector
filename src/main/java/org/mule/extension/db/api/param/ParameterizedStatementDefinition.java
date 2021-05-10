@@ -9,7 +9,7 @@ package org.mule.extension.db.api.param;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import org.mule.extension.db.internal.domain.metadata.DbInputMetadataResolver;
+import org.mule.db.commons.internal.domain.metadata.DbInputMetadataResolver;
 import org.mule.runtime.api.util.Reference;
 import org.mule.runtime.extension.api.annotation.metadata.TypeResolver;
 import org.mule.runtime.extension.api.annotation.param.Content;

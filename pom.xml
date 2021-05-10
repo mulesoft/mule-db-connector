@@ -161,7 +161,6 @@
             <version>${commonsCollectionsVersion}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>

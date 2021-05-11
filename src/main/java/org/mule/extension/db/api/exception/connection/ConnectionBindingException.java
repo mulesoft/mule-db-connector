@@ -9,6 +9,8 @@ package org.mule.extension.db.api.exception.connection;
 
 /**
  * Thrown to indicates an error binding a connection to a transaction
+ *
+ * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
 @Deprecated
 public class ConnectionBindingException extends RuntimeException {

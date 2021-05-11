@@ -16,6 +16,7 @@ import static java.sql.Connection.TRANSACTION_SERIALIZABLE;
  * The transaction isolation levels that can be set on the JDBC driver when connecting to the database.
  *
  * @since 1.0
+ * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
 @Deprecated
 public enum TransactionIsolation {

@@ -15,6 +15,7 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
  * A user defined JDBC type
  *
  * @since 1.0
+ * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
 @Deprecated
 public class ColumnType {

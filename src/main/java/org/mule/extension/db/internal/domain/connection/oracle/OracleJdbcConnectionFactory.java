@@ -32,6 +32,7 @@ public class OracleJdbcConnectionFactory extends JdbcConnectionFactory {
 
   public static final class Builder extends JdbcConnectionFactory.Builder {
 
+    @Override
     public OracleJdbcConnectionFactory build() {
       return new OracleJdbcConnectionFactory(this);
     }

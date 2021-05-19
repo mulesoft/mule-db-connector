@@ -114,7 +114,7 @@ public class DerbyConnectionProvider implements ConnectionProvider<DbConnection>
 
       @Override
       public java.util.Optional<DbError> getDbVendorErrorType(SQLException e) {
-        if (Arrays.stream(new String[]{FAILED_TO_START_DATABASE, NOT_FOUND}).anyMatch(e.getMessage()::contains)) {
+        if (Arrays.stream(new String[] {FAILED_TO_START_DATABASE, NOT_FOUND}).anyMatch(e.getMessage()::contains)) {
           return java.util.Optional.of(CANNOT_REACH);
         }
 

@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.mule.db.commons.api.config.DbPoolingProfile;
@@ -113,11 +114,10 @@ public class DerbyConnectionProvider implements ConnectionProvider<DbConnection>
 
       @Override
       public java.util.Optional<DbError> getDbVendorErrorType(SQLException e) {
-        if (e.getMessage().contains(FAILED_TO_START_DATABASE)) {
-          return java.util.Optional.of(CANNOT_REACH);
-        } else if (e.getMessage().contains(NOT_FOUND)) {
+        if (Arrays.stream(new String[]{FAILED_TO_START_DATABASE, NOT_FOUND}).anyMatch(e.getMessage()::contains)) {
           return java.util.Optional.of(CANNOT_REACH);
         }
+
         return empty();
       }
 

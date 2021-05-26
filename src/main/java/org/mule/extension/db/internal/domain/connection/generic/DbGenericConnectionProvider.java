@@ -109,5 +109,5 @@ public class DbGenericConnectionProvider implements ConnectionProvider<DbConnect
   public DataSource getConfiguredDataSource() {
     return genericConnectionProvider.getConfiguredDataSource();
   }
-    
+
 }

@@ -105,4 +105,8 @@ public class DbGenericConnectionProvider implements ConnectionProvider<DbConnect
     return genericConnectionProvider.validate(dbConnection);
   }
 
+  public DataSource getConfiguredDataSource() {
+    return genericConnectionProvider.getConfiguredDataSource();
+  }
+    
 }

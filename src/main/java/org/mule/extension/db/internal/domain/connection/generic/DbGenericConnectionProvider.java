@@ -15,6 +15,7 @@ import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CON
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 
 import javax.inject.Inject;
+import javax.sql.DataSource;
 import java.util.List;
 
 import org.mule.db.commons.api.config.DbPoolingProfile;

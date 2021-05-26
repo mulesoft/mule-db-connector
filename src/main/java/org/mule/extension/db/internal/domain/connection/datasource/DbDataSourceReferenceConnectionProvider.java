@@ -108,5 +108,9 @@ public class DbDataSourceReferenceConnectionProvider implements ConnectionProvid
   public ConnectionValidationResult validate(DbConnection dbConnection) {
     return dataSourceReferenceConnectionProvider.validate(dbConnection);
   }
+    
+  public DataSource getConfiguredDataSource() {
+    return dataSourceReferenceConnectionProvider.getConfiguredDataSource();
+  }
 
 }

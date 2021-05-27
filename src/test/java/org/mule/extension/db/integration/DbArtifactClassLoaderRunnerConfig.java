@@ -6,8 +6,8 @@
  */
 package org.mule.extension.db.integration;
 
-import org.mule.extension.db.internal.StatementStreamingResultSetCloser;
-import org.mule.extension.db.internal.domain.connection.DbConnectionProvider;
+import org.mule.db.commons.internal.StatementStreamingResultSetCloser;
+import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 /**
@@ -19,6 +19,8 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 @ArtifactClassLoaderRunnerConfig(
     exportPluginClasses = {DbConnectionProvider.class, StatementStreamingResultSetCloser.class},
     applicationSharedRuntimeLibs = {"org.apache.derby:derby", "mysql:mysql-connector-java", "com.microsoft.sqlserver:mssql-jdbc",
-        "com.oracle.database.jdbc:ojdbc8"})
+        "com.oracle.database.jdbc:ojdbc8", "org.mule.connectors:mule-db-client", "com.experlog:xapool", "com.mchange:c3p0",
+        "com.mchange:mchange-commons-java", "com.github.ben-manes.caffeine:caffeine", "org.apache.commons:commons-lang3",
+        "commons-collections:commons-collections", "commons-io:commons-io"})
 public interface DbArtifactClassLoaderRunnerConfig {
 }

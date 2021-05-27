@@ -9,11 +9,11 @@ package org.mule.extension.db.api.param;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
-import org.mule.extension.db.internal.domain.type.BlobDbType;
-import org.mule.extension.db.internal.domain.type.ClobResolvedDataType;
-import org.mule.extension.db.internal.domain.type.DbType;
-import org.mule.extension.db.internal.domain.type.ResolvedDbType;
-import org.mule.extension.db.internal.domain.type.UnknownDbType;
+import org.mule.db.commons.internal.domain.type.BlobDbType;
+import org.mule.db.commons.internal.domain.type.ClobResolvedDataType;
+import org.mule.db.commons.internal.domain.type.DbType;
+import org.mule.db.commons.internal.domain.type.ResolvedDbType;
+import org.mule.db.commons.internal.domain.type.UnknownDbType;
 
 import java.sql.Types;
 import java.util.List;
@@ -22,7 +22,9 @@ import java.util.List;
  * Defines {@link DbType} for JDBC types defined in {@link Types}
  *
  * @since 1.0
+ * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
+@Deprecated
 public enum JdbcType {
 
   BIT(new ResolvedDbType(Types.BIT, "BIT")),

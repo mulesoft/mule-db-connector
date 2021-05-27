@@ -9,7 +9,7 @@ package org.mule.extension.db.internal.domain.connection;
 
 import org.junit.Test;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
-import org.mule.extension.db.internal.domain.type.ResolvedDbType;
+import org.mule.db.commons.internal.domain.type.ResolvedDbType;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 
 import java.sql.Connection;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.ATTR_TYPE_NAME_PARAM;
-import static org.mule.extension.db.internal.domain.connection.type.resolver.ArrayTypeResolver.QUERY_ALL_COLL_TYPES;
+import static org.mule.db.commons.internal.domain.connection.type.resolver.ArrayTypeResolver.QUERY_ALL_COLL_TYPES;
 
 public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
 

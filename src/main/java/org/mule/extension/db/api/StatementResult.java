@@ -15,7 +15,10 @@ import java.util.Map;
 
 /**
  * Information about the execution of a DML statement
+ *
+ * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
+@Deprecated
 public class StatementResult {
 
   /**

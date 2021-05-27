@@ -7,8 +7,8 @@
 package org.mule.extension.db.api.param;
 
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
-import org.mule.extension.db.internal.domain.type.DbType;
-import org.mule.extension.db.internal.domain.type.DynamicDbType;
+import org.mule.db.commons.internal.domain.type.DbType;
+import org.mule.db.commons.internal.domain.type.DynamicDbType;
 import org.mule.runtime.extension.api.annotation.param.ExclusiveOptionals;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -20,7 +20,9 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
  * You can either configure a standard type or a custom one.
  *
  * @since 1.0
+ * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
+@Deprecated
 @ExclusiveOptionals
 public class TypeClassifier {
 

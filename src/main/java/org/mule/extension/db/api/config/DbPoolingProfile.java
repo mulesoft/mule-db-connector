@@ -26,8 +26,10 @@ import java.util.concurrent.TimeUnit;
  * Pooling configuration for JDBC Data Sources capable of pooling connections
  *
  * @since 1.0
+ * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
 @Alias("pooling-profile")
+@Deprecated
 public class DbPoolingProfile implements DatabasePoolingProfile {
 
   /**

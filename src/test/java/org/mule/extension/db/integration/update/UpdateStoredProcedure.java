@@ -11,7 +11,7 @@ import static org.mule.extension.db.integration.TestRecordUtil.assertRecords;
 import static org.mule.extension.db.AllureConstants.DbFeature.DB_EXTENSION;
 import static org.junit.Assume.assumeThat;
 
-import org.mule.extension.db.api.StatementResult;
+import org.mule.db.commons.api.StatementResult;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.matcher.SupportsReturningStoredProcedureResultsWithoutParameters;
 import org.mule.extension.db.integration.model.DerbyTestDatabase;

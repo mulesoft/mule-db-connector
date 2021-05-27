@@ -7,17 +7,19 @@
 
 package org.mule.extension.db.internal.domain.connection.oracle;
 
+import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
 
-import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
-import org.mule.extension.db.internal.domain.connection.type.resolver.ArrayTypeResolver;
-import org.mule.extension.db.internal.domain.connection.type.resolver.StructAndArrayTypeResolver;
-import org.mule.extension.db.internal.domain.type.DbType;
-import org.mule.extension.db.internal.domain.type.ResolvedDbType;
-import org.mule.extension.db.internal.domain.type.oracle.OracleXmlType;
+import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
+import org.mule.db.commons.internal.domain.connection.type.resolver.ArrayTypeResolver;
+import org.mule.db.commons.internal.domain.connection.type.resolver.StructAndArrayTypeResolver;
+import org.mule.db.commons.internal.domain.type.ArrayResolvedDbType;
+import org.mule.db.commons.internal.domain.type.DbType;
+import org.mule.db.commons.internal.domain.type.ResolvedDbType;
+import org.mule.extension.db.internal.domain.connection.oracle.types.OracleXmlType;
 
 import java.lang.reflect.Method;
 import java.sql.Array;
@@ -27,6 +29,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -60,6 +63,10 @@ public class OracleDbConnection extends DefaultDbConnection {
       "SELECT ATTR_NO, ATTR_TYPE_NAME FROM ALL_TYPE_ATTRS WHERE TYPE_NAME = ? AND ATTR_TYPE_NAME IN ('CLOB', 'BLOB')";
 
   private static final String QUERY_OWNER_CONDITION = " AND OWNER = ?";
+
+  private static final int PROCEDURE_SCHEM_COLUMN_INDEX = 2;
+  private static final int PROCEDURE_NAME = 3;
+  private static final int PARAM_NAME_COLUMN_INDEX = 4;
 
   private Method createArrayMethod;
 
@@ -98,7 +105,7 @@ public class OracleDbConnection extends DefaultDbConnection {
 
       ResultSet resultSet = statement.executeQuery();
 
-      Optional<String> columnType = Optional.empty();
+      Optional<String> columnType = empty();
 
       if (resultSet.next()) {
         columnType = ofNullable(resultSet.getString(1));
@@ -134,6 +141,7 @@ public class OracleDbConnection extends DefaultDbConnection {
     }
   }
 
+  // TODO Look further the way this class and OracleJdbcConnectionWrapper solves Oracle's createARRAY resolution
   private Method getCreateArrayMethod() {
     if (createArrayMethod == null) {
       try {
@@ -258,6 +266,20 @@ public class OracleDbConnection extends DefaultDbConnection {
     }
 
     return procedureColumns;
+  }
+
+  @Override
+  public Optional<DbType> getDbTypeByVendor(String typeName, ResultSet procedureColumns) throws SQLException {
+    if (TABLE_TYPE_NAME.equals(typeName)) {
+      String procedureName = procedureColumns.getString(PROCEDURE_NAME);
+      String argumentName = procedureColumns.getString(PARAM_NAME_COLUMN_INDEX);
+      String owner = procedureColumns.getString(PROCEDURE_SCHEM_COLUMN_INDEX);
+
+      Optional<String> columnType = getProcedureColumnType(procedureName, argumentName, owner);
+      return columnType.map(type -> new ArrayResolvedDbType(Types.ARRAY, type));
+    }
+
+    return empty();
   }
 
 }

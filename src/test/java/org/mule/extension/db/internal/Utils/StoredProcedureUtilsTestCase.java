@@ -8,7 +8,7 @@ package org.mule.extension.db.internal.Utils;
 
 import static org.junit.Assert.assertEquals;
 
-import org.mule.extension.db.internal.util.StoredProcedureUtils;
+import org.mule.db.commons.internal.util.StoredProcedureUtils;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 
 import java.util.Optional;

@@ -15,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mule.extension.db.integration.TestDbConfig.getDerbyResource;
 import static org.mule.extension.db.integration.TestDbConfig.getOracleResource;
 import static org.mule.extension.db.integration.model.RegionManager.SOUTHWEST_MANAGER;
-import static org.mule.extension.db.internal.resolver.param.StoredProcedureParamTypeResolver.FORCE_SP_PARAM_TYPES;
+import static org.mule.db.commons.internal.resolver.param.StoredProcedureParamTypeResolver.FORCE_SP_PARAM_TYPES;
 
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.OracleTestDatabase;

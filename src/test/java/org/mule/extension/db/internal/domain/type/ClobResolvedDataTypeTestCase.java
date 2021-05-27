@@ -14,9 +14,10 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mule.extension.db.internal.domain.type.ClobResolvedDataType.createUnsupportedTypeErrorMessage;
+import static org.mule.db.commons.internal.domain.type.ClobResolvedDataType.createUnsupportedTypeErrorMessage;
 
-import org.mule.extension.db.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.type.ClobResolvedDataType;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 

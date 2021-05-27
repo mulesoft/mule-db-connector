@@ -6,9 +6,9 @@
  */
 package org.mule.extension.db.internal.domain.connection.generic;
 
+import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
+import org.mule.db.commons.internal.domain.connection.generic.GenericConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
-import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
-import org.mule.extension.db.internal.domain.connection.DbConnectionParameters;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.ClassValue;
@@ -17,11 +17,11 @@ import org.mule.runtime.extension.api.annotation.param.display.Password;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
 /**
- *  {@link DbConnectionParameters} for the {@link GenericConnectionProvider}
+ *  {@link DataSourceConfig}'s parameters for the {@link GenericConnectionProvider}
  *
  * @since 1.0
  */
-public final class GenericConnectionParameters extends BaseDbConnectionParameters implements DataSourceConfig {
+public class GenericConnectionParameters extends BaseDbConnectionParameters implements DataSourceConfig {
 
   /**
    * JDBC URL to use to connect to the database.
@@ -75,4 +75,5 @@ public final class GenericConnectionParameters extends BaseDbConnectionParameter
   public String getUser() {
     return user;
   }
+
 }

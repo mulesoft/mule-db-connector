@@ -10,7 +10,9 @@ package org.mule.extension.db.api.param;
  * Utility to reuse names across the DB connector
  *
  * @since 1.0
+ * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
+@Deprecated
 public final class DbNameConstants {
 
   public static final String SQL_QUERY_TEXT = "SQL Query Text";

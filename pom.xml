@@ -146,7 +146,7 @@
         <dependency>
             <groupId>com.mchange</groupId>
             <artifactId>mchange-commons-java</artifactId>
-            <version>0.2.19</version>
+            <version>0.2.20</version>
             <scope>test</scope>
         </dependency>
         <dependency>

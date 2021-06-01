@@ -8,7 +8,7 @@
 package org.mule.extension.db.api.param;
 
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
-import org.mule.extension.db.internal.domain.type.DbType;
+import org.mule.db.commons.internal.domain.type.DbType;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
@@ -17,7 +17,9 @@ import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
  * Allows specifying the type of a given parameter
  *
  * @since 1.0
+ * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
+@Deprecated
 public class ParameterType {
 
   public ParameterType() {}

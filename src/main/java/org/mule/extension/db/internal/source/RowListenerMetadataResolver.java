@@ -6,7 +6,7 @@
  */
 package org.mule.extension.db.internal.source;
 
-import org.mule.extension.db.internal.domain.metadata.SelectMetadataResolver;
+import org.mule.db.commons.internal.domain.metadata.SelectMetadataResolver;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.metadata.MetadataContext;

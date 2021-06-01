@@ -10,7 +10,9 @@ package org.mule.extension.db.api.param;
  * The definition of a bulk operations defined around one single SQL command
  *
  * @since 1.0
+ * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
+@Deprecated
 public class BulkQueryDefinition extends StatementDefinition<BulkQueryDefinition> {
 
 }

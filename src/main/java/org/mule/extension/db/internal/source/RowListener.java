@@ -6,35 +6,32 @@
  */
 package org.mule.extension.db.internal.source;
 
-import static java.lang.String.format;
-import static org.mule.extension.db.internal.operation.BaseDbOperations.DEFAULT_FETCH_SIZE;
-import static org.mule.runtime.api.meta.model.parameter.ParameterGroupModel.ADVANCED;
-import org.mule.extension.db.api.param.ParameterizedStatementDefinition;
-import org.mule.extension.db.api.param.QueryDefinition;
-import org.mule.extension.db.api.param.QuerySettings;
-import org.mule.extension.db.internal.DbConnector;
-import org.mule.extension.db.internal.domain.connection.DbConnection;
-import org.mule.extension.db.internal.domain.executor.SelectExecutor;
-import org.mule.extension.db.internal.domain.query.Query;
-import org.mule.extension.db.internal.domain.statement.QueryStatementFactory;
-import org.mule.extension.db.internal.resolver.query.ParameterizedQueryResolver;
-import org.mule.extension.db.internal.resolver.query.QueryResolver;
-import org.mule.extension.db.internal.result.resultset.ListResultSetHandler;
-import org.mule.extension.db.internal.result.resultset.ResultSetHandler;
-import org.mule.extension.db.internal.result.row.NonStreamingInsensitiveMapRowHandler;
+import org.mule.db.commons.AbstractDbConnector;
+import org.mule.db.commons.api.param.ParameterizedStatementDefinition;
+import org.mule.db.commons.api.param.QueryDefinition;
+import org.mule.db.commons.api.param.QuerySettings;
+import org.mule.db.commons.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.executor.SelectExecutor;
+import org.mule.db.commons.internal.domain.query.Query;
+import org.mule.db.commons.internal.domain.statement.QueryStatementFactory;
+import org.mule.db.commons.internal.resolver.query.ParameterizedQueryResolver;
+import org.mule.db.commons.internal.resolver.query.QueryResolver;
+import org.mule.db.commons.internal.result.resultset.ListResultSetHandler;
+import org.mule.db.commons.internal.result.resultset.ResultSetHandler;
+import org.mule.db.commons.internal.result.row.NonStreamingInsensitiveMapRowHandler;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.metadata.MetadataKeyId;
 import org.mule.runtime.extension.api.annotation.metadata.MetadataScope;
-import org.mule.runtime.extension.api.annotation.param.Config;
-import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.DefaultEncoding;
-import org.mule.runtime.extension.api.annotation.param.NullSafe;
-import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
+import org.mule.runtime.extension.api.annotation.param.Optional;
+import org.mule.runtime.extension.api.annotation.param.NullSafe;
+import org.mule.runtime.extension.api.annotation.param.Config;
+import org.mule.runtime.extension.api.annotation.param.Connection;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Summary;
 import org.mule.runtime.extension.api.annotation.values.OfValues;
@@ -43,6 +40,8 @@ import org.mule.runtime.extension.api.runtime.source.PollContext;
 import org.mule.runtime.extension.api.runtime.source.PollContext.PollItem;
 import org.mule.runtime.extension.api.runtime.source.PollingSource;
 import org.mule.runtime.extension.api.runtime.source.SourceCallbackContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
@@ -50,8 +49,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.lang.String.format;
+import static org.mule.db.commons.internal.operation.BaseDbOperations.DEFAULT_FETCH_SIZE;
+import static org.mule.runtime.api.meta.model.parameter.ParameterGroupModel.ADVANCED;
 
 /**
  * Selects from a table at a regular interval and generates one message per each obtained row.
@@ -106,7 +106,7 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
   private QuerySettings settings;
 
   @Config
-  private DbConnector config;
+  private AbstractDbConnector config;
 
   @Connection
   private ConnectionProvider<DbConnection> connectionProvider;

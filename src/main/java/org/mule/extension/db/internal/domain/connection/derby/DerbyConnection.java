@@ -6,8 +6,8 @@
  */
 package org.mule.extension.db.internal.domain.connection.derby;
 
-import org.mule.extension.db.internal.domain.connection.DefaultDbConnection;
-import org.mule.extension.db.internal.domain.type.DbType;
+import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
+import org.mule.db.commons.internal.domain.type.DbType;
 
 import java.sql.Connection;
 import java.util.List;

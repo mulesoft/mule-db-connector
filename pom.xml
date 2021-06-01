@@ -27,10 +27,11 @@
         <commonsIoVersion>2.8.0</commonsIoVersion>
         <mockito-core.version>3.8.0</mockito-core.version>
         <xmlunit.version>1.6</xmlunit.version>
-        <caffeineVersion>2.9.0</caffeineVersion>
         <javax.transaction.version>1.3</javax.transaction.version>
         <xaPoolVersion>1.5.0</xaPoolVersion>
         <cglibVersion>3.3.0</cglibVersion>
+        <muledbclientVersion>1.0.4</muledbclientVersion>
+
         <derbyVersion>10.14.2.0</derbyVersion>
         <mySqlVersion>8.0.23</mySqlVersion>
         <mssqlVersion>7.0.0.jre8</mssqlVersion>
@@ -64,21 +65,10 @@
             <version>${commonsIoVersion}</version>
         </dependency>
         <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>${commonsCollectionsVersion}</version>
-        </dependency>
-        <dependency>
             <groupId>javax.transaction</groupId>
             <artifactId>javax.transaction-api</artifactId>
             <version>${javax.transaction.version}</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-            <version>${caffeineVersion}</version>
         </dependency>
 
         <dependency>
@@ -121,6 +111,12 @@
             <version>${cglibVersion}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.mule.connectors</groupId>
+            <artifactId>mule-db-client</artifactId>
+            <version>${muledbclientVersion}</version>
+        </dependency>
+
         <!-- DB Drivers -->
         <dependency>
             <groupId>org.apache.derby</groupId>
@@ -147,6 +143,24 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>mchange-commons-java</artifactId>
+            <version>0.2.19</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>2.9.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>${commonsCollectionsVersion}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -249,7 +263,9 @@
                             <images>
                                 <image>
                                     <name>store/oracle/database-enterprise:12.2.0.1-slim</name>
+                                    <alias>oracle-container</alias>
                                     <run>
+                                        <containerNamePattern>%a</containerNamePattern>
                                         <ports>
                                             <port>oracle.db.port:1521</port>
                                         </ports>
@@ -506,7 +522,9 @@
                             <images>
                                 <image>
                                     <name>microsoft/mssql-server-linux</name>
+                                    <alias>mssql-container</alias>
                                     <run>
+                                        <containerNamePattern>%a</containerNamePattern>
                                         <env>
                                             <SA_PASSWORD>yourStrong(!)Password</SA_PASSWORD>
                                             <ACCEPT_EULA>Y</ACCEPT_EULA>

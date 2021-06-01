@@ -11,7 +11,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
-import org.mule.extension.db.api.StatementResult;
+import org.mule.db.commons.api.StatementResult;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.runtime.api.message.Message;
 

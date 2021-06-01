@@ -37,7 +37,7 @@ public abstract class AbstractJdbcConnectionWrapper implements Connection {
 
   /**
    * Wraps a connection
-   * 
+   *
    * @param delegate connection to wrap. Non null
    */
   public AbstractJdbcConnectionWrapper(Connection delegate) {

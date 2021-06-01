@@ -16,9 +16,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.hamcrest.MockitoHamcrest.argThat;
-import static org.mule.extension.db.internal.domain.type.ArrayResolvedDbType.createUnsupportedTypeErrorMessage;
+import static org.mule.db.commons.internal.domain.type.ArrayResolvedDbType.createUnsupportedTypeErrorMessage;
 
-import org.mule.extension.db.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.type.ArrayResolvedDbType;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 

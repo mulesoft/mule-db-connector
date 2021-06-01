@@ -15,7 +15,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assume.assumeThat;
 import static org.mule.extension.db.integration.DbTestUtil.DbType.ORACLE;
 
-import org.mule.extension.db.api.StatementResult;
+import org.mule.db.commons.api.StatementResult;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.DbTestUtil.DbType;
 import org.mule.metadata.api.model.ArrayType;

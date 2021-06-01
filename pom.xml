@@ -30,7 +30,7 @@
         <javax.transaction.version>1.3</javax.transaction.version>
         <xaPoolVersion>1.5.0</xaPoolVersion>
         <cglibVersion>3.3.0</cglibVersion>
-        <muledbclientVersion>1.0.4</muledbclientVersion>
+        <muledbclientVersion>1.0.5</muledbclientVersion>
 
         <derbyVersion>10.14.2.0</derbyVersion>
         <mySqlVersion>8.0.25</mySqlVersion>

@@ -24,20 +24,20 @@
         <commonsCollectionsVersion>3.2.2</commonsCollectionsVersion>
         <commonsDbUtilsVersion>1.7</commonsDbUtilsVersion>
         <commonsLangVersion>3.12.0</commonsLangVersion>
-        <commonsIoVersion>2.8.0</commonsIoVersion>
-        <mockito-core.version>3.8.0</mockito-core.version>
+        <commonsIoVersion>2.9.0</commonsIoVersion>
+        <mockito-core.version>3.10.0</mockito-core.version>
         <xmlunit.version>1.6</xmlunit.version>
         <javax.transaction.version>1.3</javax.transaction.version>
         <xaPoolVersion>1.5.0</xaPoolVersion>
         <cglibVersion>3.3.0</cglibVersion>
-        <muledbclientVersion>1.0.4</muledbclientVersion>
+        <muledbclientVersion>1.0.5</muledbclientVersion>
 
         <derbyVersion>10.14.2.0</derbyVersion>
-        <mySqlVersion>8.0.23</mySqlVersion>
+        <mySqlVersion>8.0.25</mySqlVersion>
         <mssqlVersion>7.0.0.jre8</mssqlVersion>
         <oracle.driver.version>21.1.0.0</oracle.driver.version>
         
-        <docker.maven.plugin.version>0.35.0</docker.maven.plugin.version>
+        <docker.maven.plugin.version>0.36.0</docker.maven.plugin.version>
         <maven-replacer-plugin.version>1.5.3</maven-replacer-plugin.version>
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
@@ -146,13 +146,13 @@
         <dependency>
             <groupId>com.mchange</groupId>
             <artifactId>mchange-commons-java</artifactId>
-            <version>0.2.19</version>
+            <version>0.2.20</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
-            <version>2.9.0</version>
+            <version>2.9.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>

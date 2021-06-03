@@ -19,7 +19,10 @@ import org.mule.db.commons.internal.domain.connection.type.resolver.StructAndArr
 import org.mule.db.commons.internal.domain.type.ArrayResolvedDbType;
 import org.mule.db.commons.internal.domain.type.DbType;
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
-import org.mule.extension.db.internal.domain.connection.oracle.types.OracleXmlType;
+import org.mule.extension.db.internal.domain.connection.oracle.types.OracleOlderXMLType;
+import org.mule.extension.db.internal.domain.connection.oracle.types.OracleOpaqueXMLType;
+import org.mule.extension.db.internal.domain.connection.oracle.types.OracleSQLXMLType;
+import org.mule.extension.db.internal.domain.connection.oracle.types.OracleXMLType;
 
 import java.lang.reflect.Method;
 import java.sql.Array;
@@ -86,7 +89,10 @@ public class OracleDbConnection extends DefaultDbConnection {
   public List<DbType> getVendorDataTypes() {
     List<DbType> dbTypes = new ArrayList<>();
     dbTypes.add(new ResolvedDbType(CURSOR_TYPE_ID, CURSOR_TYPE_NAME));
-    dbTypes.add(new OracleXmlType());
+    dbTypes.add(new OracleOpaqueXMLType());
+    dbTypes.add(new OracleSQLXMLType());
+    dbTypes.add(new OracleXMLType());
+    dbTypes.add(new OracleOlderXMLType());
 
     return dbTypes;
   }

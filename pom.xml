@@ -39,7 +39,6 @@
         <commonsCollectionsVersion>3.2.2</commonsCollectionsVersion>
         <mchangeCommonsJavaVersion>0.2.20</mchangeCommonsJavaVersion>
         <caffeineVersion>2.9.1</caffeineVersion>
-        <xdb6Version>18.3.0.0</xdb6Version>
         
         <docker.maven.plugin.version>0.36.0</docker.maven.plugin.version>
         <maven-replacer-plugin.version>1.5.3</maven-replacer-plugin.version>
@@ -167,13 +166,7 @@
         </dependency>
         <dependency>
             <groupId>com.oracle.database.xml</groupId>
-            <artifactId>xdb6</artifactId>
-            <version>${xdb6Version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle.database.xml</groupId>
-            <artifactId>xmlparserv2</artifactId>
+            <artifactId>xdb</artifactId>
             <version>${oracle.driver.version}</version>
             <scope>test</scope>
         </dependency>

@@ -161,6 +161,18 @@
             <version>${commonsCollectionsVersion}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.oracle.jdbc</groupId>
+            <artifactId>xdb6</artifactId>
+            <version>12.2.0.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.jdbc</groupId>
+            <artifactId>xmlparserv2-12.2.0.1</artifactId>
+            <version>12.2.0.1</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

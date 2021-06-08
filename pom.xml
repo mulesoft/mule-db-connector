@@ -170,6 +170,12 @@
             <version>${oracle.driver.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.oracle.database.xml</groupId>
+            <artifactId>xmlparserv2</artifactId>
+            <version>${oracle.driver.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

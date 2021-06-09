@@ -175,6 +175,7 @@
             <artifactId>xmlparserv2</artifactId>
             <version>${oracle.driver.version}</version>
             <scope>test</scope>
+            <type>test-jar</type>
         </dependency>
     </dependencies>
 
@@ -258,6 +259,17 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.4</version>
                 <executions>
@@ -270,7 +282,7 @@
                             <relocations>
                                 <relocation>
                                     <pattern>org.w3c.dom.validation</pattern>
-                                    <shadedPattern>com.oracle.xml.org.w3c.dom.validation</shadedPattern>
+                                    <shadedPattern>org.shaded.w3c.dom.validation</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

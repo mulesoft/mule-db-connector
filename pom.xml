@@ -267,14 +267,12 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <filters>
-                                <filter>
-                                    <artifact>com.oracle.database.xml:xmlparserv2:test</artifact>
-                                    <excludes>
-                                        <exclude>org/w3c/dom/validation/**</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
+                            <relocations>
+                                <relocation>
+                                    <pattern>org.w3c.dom.validation</pattern>
+                                    <shadedPattern>com.oracle.xml.org.w3c.dom.validation</shadedPattern>
+                                </relocation>
+                            </relocations>
                         </configuration>
                     </execution>
                 </executions>

@@ -269,9 +269,9 @@
                         <configuration>
                             <filters>
                                 <filter>
-                                    <artifact>com.oracle.database.xml:xmlparserv2</artifact>
+                                    <artifact>com.oracle.database.xml:xmlparserv2:test</artifact>
                                     <excludes>
-                                        <exclude>org.w3c.dom.validation:**</exclude>
+                                        <exclude>org/w3c/dom/validation/**</exclude>
                                     </excludes>
                                 </filter>
                             </filters>

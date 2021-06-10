@@ -7,14 +7,16 @@
 package org.mule.extension.db.internal.domain.connection.mysql;
 
 import static java.util.Collections.emptyList;
-import static java.util.Optional.*;
 
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static org.mule.db.commons.api.exception.connection.DbError.CANNOT_REACH;
 import static org.mule.db.commons.api.exception.connection.DbError.INVALID_CREDENTIALS;
 import static org.mule.db.commons.api.exception.connection.DbError.INVALID_DATABASE;
 import static org.mule.db.commons.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
 import static org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionProvider.MYSQL_GAV;
 import static org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory.MYSQL_DRIVER_CLASS;
+import static org.mule.extension.db.internal.util.MigrationUtils.mapDataSourceConfig;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
@@ -25,12 +27,13 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 
-import org.mule.db.commons.api.config.DbPoolingProfile;
-import org.mule.db.commons.api.exception.connection.DbError;
 import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
+import org.mule.extension.db.api.config.DbPoolingProfile;
+import org.mule.db.commons.api.exception.connection.DbError;
+
 import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
-import org.mule.db.commons.api.param.ColumnType;
+import org.mule.extension.db.api.param.ColumnType;
 import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
@@ -96,32 +99,34 @@ public class MySqlConnectionProvider implements ConnectionProvider<DbConnection>
 
   @Override
   public void initialise() throws InitialisationException {
-    dbConnectionProvider = new DbConnectionProvider(configName, registry, poolingProfile, columnTypes) {
+    dbConnectionProvider =
+        new DbConnectionProvider(configName, registry, poolingProfile, columnTypes) {
 
-      @Override
-      public java.util.Optional<DataSource> getDataSource() {
-        return empty();
-      }
+          @Override
+          public java.util.Optional<DataSource> getDataSource() {
+            return empty();
+          }
 
-      @Override
-      public java.util.Optional<DataSourceConfig> getDataSourceConfig() {
-        return java.util.Optional.ofNullable(mySqlParameters);
-      }
+          @Override
+          public java.util.Optional<DataSourceConfig> getDataSourceConfig() {
+            return java.util.Optional.ofNullable(mapDataSourceConfig(mySqlParameters));
+          }
 
-      @Override
-      public java.util.Optional<DbError> getDbVendorErrorType(SQLException e) {
-        String message = e.getMessage();
-        if (message.contains(ACCESS_DENIED)) {
-          return of(INVALID_CREDENTIALS);
-        } else if (message.contains(UNKNOWN_DATABASE)) {
-          return of(INVALID_DATABASE);
-        } else if (message.contains(COMMUNICATIONS_LINK_FAILURE)) {
-          return of(CANNOT_REACH);
-        }
-        return empty();
-      }
 
-    };
+          @Override
+          public java.util.Optional<DbError> getDbVendorErrorType(SQLException e) {
+            String message = e.getMessage();
+            if (message.contains(ACCESS_DENIED)) {
+              return of(INVALID_CREDENTIALS);
+            } else if (message.contains(UNKNOWN_DATABASE)) {
+              return of(INVALID_DATABASE);
+            } else if (message.contains(COMMUNICATIONS_LINK_FAILURE)) {
+              return of(CANNOT_REACH);
+            }
+            return empty();
+          }
+
+        };
 
     dbConnectionProvider.initialise();
   }

@@ -17,6 +17,7 @@ import static org.mule.db.commons.api.exception.connection.DbError.INVALID_CREDE
 import static org.mule.db.commons.api.exception.connection.DbError.INVALID_DATABASE;
 import static org.mule.db.commons.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionParameters.DRIVER_CLASS_NAME;
+import static org.mule.extension.db.internal.util.MigrationUtils.mapDataSourceConfig;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
@@ -30,14 +31,14 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
-import org.mule.db.commons.api.config.DbPoolingProfile;
+import org.mule.extension.db.api.config.DbPoolingProfile;
 import org.mule.db.commons.api.exception.connection.DbError;
 import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
 import org.mule.db.commons.internal.domain.connection.JdbcConnectionFactory;
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
-import org.mule.db.commons.api.param.ColumnType;
+import org.mule.extension.db.api.param.ColumnType;
 import org.mule.extension.db.internal.util.OracleCredentialsMaskUtils;
 import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.api.connection.ConnectionException;
@@ -103,43 +104,44 @@ public class OracleDbConnectionProvider implements ConnectionProvider<DbConnecti
 
   @Override
   public void initialise() throws InitialisationException {
-    dbConnectionProvider = new DbConnectionProvider(configName, registry, poolingProfile, columnTypes) {
+    dbConnectionProvider =
+        new DbConnectionProvider(configName, registry, poolingProfile, columnTypes) {
 
-      @Override
-      protected JdbcConnectionFactory createJdbcConnectionFactory() {
-        return new OracleJdbcConnectionFactory.Builder()
-            .withMaskCredentialsFunction(OracleCredentialsMaskUtils::maskUrlUserAndPasswordForOracle).build();
-      }
+          @Override
+          protected JdbcConnectionFactory createJdbcConnectionFactory() {
+            return new OracleJdbcConnectionFactory.Builder()
+                .withMaskCredentialsFunction(OracleCredentialsMaskUtils::maskUrlUserAndPasswordForOracle).build();
+          }
 
-      @Override
-      protected DbConnection createDbConnection(Connection connection) throws Exception {
-        return new OracleDbConnection(connection, super.resolveCustomTypes(), resolvedDbTypesCache);
-      }
+          @Override
+          protected DbConnection createDbConnection(Connection connection) throws Exception {
+            return new OracleDbConnection(connection, super.resolveCustomTypes(), resolvedDbTypesCache);
+          }
 
-      @Override
-      public java.util.Optional<DataSource> getDataSource() {
-        return empty();
-      }
+          @Override
+          public java.util.Optional<DataSource> getDataSource() {
+            return empty();
+          }
 
-      @Override
-      public java.util.Optional<DataSourceConfig> getDataSourceConfig() {
-        return ofNullable(oracleConnectionParameters);
-      }
+          @Override
+          public java.util.Optional<DataSourceConfig> getDataSourceConfig() {
+            return ofNullable(mapDataSourceConfig(oracleConnectionParameters));
+          }
 
-      @Override
-      public java.util.Optional<DbError> getDbVendorErrorType(SQLException e) {
-        String message = e.getMessage();
-        if (message.contains(INVALID_CREDENTIALS_ORACLE_CODE)) {
-          return of(INVALID_CREDENTIALS);
-        } else if (message.contains(UNKNOWN_SID_ORACLE_CODE)) {
-          return of(INVALID_DATABASE);
-        } else if (message.contains(IO_ERROR)) {
-          return of(CANNOT_REACH);
-        }
-        return empty();
-      }
+          @Override
+          public java.util.Optional<DbError> getDbVendorErrorType(SQLException e) {
+            String message = e.getMessage();
+            if (message.contains(INVALID_CREDENTIALS_ORACLE_CODE)) {
+              return of(INVALID_CREDENTIALS);
+            } else if (message.contains(UNKNOWN_SID_ORACLE_CODE)) {
+              return of(INVALID_DATABASE);
+            } else if (message.contains(IO_ERROR)) {
+              return of(CANNOT_REACH);
+            }
+            return empty();
+          }
 
-    };
+        };
 
     dbConnectionProvider.initialise();
   }

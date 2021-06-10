@@ -15,10 +15,7 @@ import java.util.Map;
 
 /**
  * Information about the execution of a DML statement
- *
- * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
-@Deprecated
 public class StatementResult {
 
   /**
@@ -31,6 +28,15 @@ public class StatementResult {
    * identify the column and the values are {@link BigInteger}s which represent the ids.
    */
   private final Map<String, BigInteger> generatedKeys;
+
+
+  /**
+   * Creates a new Instance from DB Client Statement Result.
+   * @param result
+   */
+  public StatementResult(org.mule.db.commons.api.StatementResult result) {
+    this(result.getAffectedRows(), result.getGeneratedKeys());
+  }
 
   /**
    * Creates a new instance

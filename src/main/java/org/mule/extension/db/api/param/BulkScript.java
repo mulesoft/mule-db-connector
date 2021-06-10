@@ -19,10 +19,8 @@ import static org.mule.extension.db.api.param.DbNameConstants.SQL_QUERY_TEXT;
  * Parameters to configure an operation which executes a SQL script
  *
  * @since 1.0
- * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
 @ExclusiveOptionals(isOneRequired = true)
-@Deprecated
 public class BulkScript {
 
   /**
@@ -42,7 +40,6 @@ public class BulkScript {
   @Optional
   @DisplayName("Script Path")
   private String file;
-
 
   public String getSql() {
     return sql;

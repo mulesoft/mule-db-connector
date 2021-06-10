@@ -24,9 +24,7 @@ import java.util.Map;
  * The definition of the invocation to a stored procedure
  *
  * @since 1.0
- * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
-@Deprecated
 public class StoredProcedureCall extends ParameterizedStatementDefinition<StoredProcedureCall> {
 
   /**
@@ -79,5 +77,4 @@ public class StoredProcedureCall extends ParameterizedStatementDefinition<Stored
   public Map<String, Object> getInOutParameters() {
     return unmodifiableMap(inOutParameters);
   }
-
 }

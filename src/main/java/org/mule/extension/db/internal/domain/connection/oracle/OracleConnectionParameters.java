@@ -9,7 +9,8 @@ package org.mule.extension.db.internal.domain.connection.oracle;
 import static org.mule.runtime.extension.api.error.MuleErrors.CONNECTIVITY;
 
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
-import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
+
+import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;

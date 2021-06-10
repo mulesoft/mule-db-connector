@@ -16,9 +16,7 @@ import java.util.Optional;
  * Errors definitions for {@link DbConnector}
  *
  * @since 1.0
- * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
-@Deprecated
 public enum DbError implements ErrorTypeDefinition<DbError> {
   /**
    * Generic error for a connectivity issue with the Database

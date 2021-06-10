@@ -4,13 +4,9 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.extension.db.api.param;
+package org.mule.extension.db.internal.util;
 
-/**
- * An output parameter to be used in the context of a stored procedure call
- *
- * @since 1.0
- */
-public class OutputParameter extends ParameterType {
+public interface ObjectMapper {
 
+  <S, T> T map(S sourceObj, Class<T> targetType);
 }

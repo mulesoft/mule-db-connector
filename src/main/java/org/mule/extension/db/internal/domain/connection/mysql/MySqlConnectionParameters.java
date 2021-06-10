@@ -8,7 +8,8 @@ package org.mule.extension.db.internal.domain.connection.mysql;
 
 import org.mule.extension.db.api.logger.MuleMySqlLogger;
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
-import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
+
+import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;

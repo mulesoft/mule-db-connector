@@ -11,6 +11,7 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
 
+import static org.mule.extension.db.internal.util.MigrationUtils.mapDataSourceConfig;
 import static org.mule.db.commons.api.exception.connection.DbError.CANNOT_REACH;
 import static org.mule.db.commons.api.exception.connection.DbError.INVALID_CREDENTIALS;
 import static org.mule.db.commons.api.exception.connection.DbError.INVALID_DATABASE;
@@ -28,12 +29,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.mule.db.commons.api.config.DbPoolingProfile;
+import org.mule.extension.db.api.config.DbPoolingProfile;
 import org.mule.db.commons.api.exception.connection.DbError;
 import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
-import org.mule.db.commons.api.param.ColumnType;
+import org.mule.extension.db.api.param.ColumnType;
 import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
@@ -98,37 +99,39 @@ public class SqlServerConnectionProvider implements ConnectionProvider<DbConnect
 
   @Override
   public void initialise() throws InitialisationException {
-    dbConnectionProvider = new DbConnectionProvider(configName, registry, poolingProfile, columnTypes) {
+    dbConnectionProvider =
+        new DbConnectionProvider(configName, registry, poolingProfile, columnTypes) {
 
-      @Override
-      protected DbConnection createDbConnection(Connection connection) throws Exception {
-        return new SqlServerConnection(connection, super.resolveCustomTypes());
-      }
+          @Override
+          protected DbConnection createDbConnection(Connection connection) throws Exception {
+            return new SqlServerConnection(connection, super.resolveCustomTypes());
+          }
 
-      @Override
-      public java.util.Optional<DataSource> getDataSource() {
-        return empty();
-      }
+          @Override
+          public java.util.Optional<DataSource> getDataSource() {
+            return empty();
+          }
 
-      @Override
-      public java.util.Optional<DataSourceConfig> getDataSourceConfig() {
-        return ofNullable(connectionParameters);
-      }
+          @Override
+          public java.util.Optional<DataSourceConfig> getDataSourceConfig() {
+            return ofNullable(mapDataSourceConfig(connectionParameters));
+          }
 
-      @Override
-      protected java.util.Optional<DbError> getDbVendorErrorType(SQLException e) {
-        String message = e.getMessage();
-        if (message.contains("Login failed for user")) {
-          return of(INVALID_CREDENTIALS);
-        } else if (message.contains("Cannot open database")) {
-          return of(INVALID_DATABASE);
-        } else if (message.contains("invalidHost")) {
-          return of(CANNOT_REACH);
-        }
-        return empty();
-      }
+          @Override
+          protected java.util.Optional<DbError> getDbVendorErrorType(SQLException e) {
+            String message = e.getMessage();
+            if (message.contains("Login failed for user")) {
+              return of(INVALID_CREDENTIALS);
+            } else if (message.contains("Cannot open database")) {
+              return of(INVALID_DATABASE);
+            } else if (message.contains("invalidHost")) {
+              return of(CANNOT_REACH);
+            }
+            return empty();
+          }
 
-    };
+        };
+
 
     dbConnectionProvider.initialise();
   }

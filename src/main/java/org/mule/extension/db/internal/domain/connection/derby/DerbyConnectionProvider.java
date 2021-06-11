@@ -10,6 +10,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 
+import static org.mule.extension.db.internal.util.MigrationUtils.mapDataSourceConfig;
 import static org.mule.db.commons.api.exception.connection.DbError.CANNOT_REACH;
 import static org.mule.db.commons.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
 import static org.mule.extension.db.internal.domain.connection.derby.DerbyConnectionParameters.DERBY_DRIVER_CLASS;
@@ -26,12 +27,12 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.mule.db.commons.api.config.DbPoolingProfile;
+import org.mule.extension.db.api.config.DbPoolingProfile;
 import org.mule.db.commons.api.exception.connection.DbError;
 import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
-import org.mule.db.commons.api.param.ColumnType;
+import org.mule.extension.db.api.param.ColumnType;
 import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
@@ -95,33 +96,34 @@ public class DerbyConnectionProvider implements ConnectionProvider<DbConnection>
 
   @Override
   public void initialise() throws InitialisationException {
-    dbConnectionProvider = new DbConnectionProvider(configName, registry, poolingProfile, columnTypes) {
+    dbConnectionProvider =
+        new DbConnectionProvider(configName, registry, poolingProfile, columnTypes) {
 
-      @Override
-      public java.util.Optional<DataSource> getDataSource() {
-        return empty();
-      }
+          @Override
+          public java.util.Optional<DataSource> getDataSource() {
+            return empty();
+          }
 
-      @Override
-      public java.util.Optional<DataSourceConfig> getDataSourceConfig() {
-        return ofNullable(derbyParameters);
-      }
+          @Override
+          public java.util.Optional<DataSourceConfig> getDataSourceConfig() {
+            return ofNullable(mapDataSourceConfig(derbyParameters));
+          }
 
-      @Override
-      protected DbConnection createDbConnection(Connection connection) throws Exception {
-        return new DerbyConnection(connection, dbConnectionProvider.resolveCustomTypes());
-      }
+          @Override
+          protected DbConnection createDbConnection(Connection connection) throws Exception {
+            return new DerbyConnection(connection, dbConnectionProvider.resolveCustomTypes());
+          }
 
-      @Override
-      public java.util.Optional<DbError> getDbVendorErrorType(SQLException e) {
-        if (Arrays.stream(new String[] {FAILED_TO_START_DATABASE, NOT_FOUND}).anyMatch(e.getMessage()::contains)) {
-          return java.util.Optional.of(CANNOT_REACH);
-        }
+          @Override
+          public java.util.Optional<DbError> getDbVendorErrorType(SQLException e) {
+            if (Arrays.stream(new String[] {FAILED_TO_START_DATABASE, NOT_FOUND}).anyMatch(e.getMessage()::contains)) {
+              return java.util.Optional.of(CANNOT_REACH);
+            }
 
-        return empty();
-      }
+            return empty();
+          }
 
-    };
+        };
 
     dbConnectionProvider.initialise();
   }

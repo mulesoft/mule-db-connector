@@ -13,9 +13,7 @@ import org.mule.runtime.extension.api.exception.ModuleException;
  * Signals that the SQL text in a query was invalid
  *
  * @since 1.0
- * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
-@Deprecated
 public class BadSqlSyntaxException extends ModuleException {
 
   public BadSqlSyntaxException(String message) {

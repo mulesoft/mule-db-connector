@@ -8,6 +8,7 @@ package org.mule.extension.db.internal.domain.connection.generic;
 
 import static java.util.Collections.emptyList;
 
+import static org.mule.extension.db.internal.util.MigrationUtils.mapDataSourceConfig;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.db.commons.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
@@ -18,10 +19,10 @@ import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.util.List;
 
-import org.mule.db.commons.api.config.DbPoolingProfile;
+import org.mule.extension.db.api.config.DbPoolingProfile;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.generic.GenericConnectionProvider;
-import org.mule.db.commons.api.param.ColumnType;
+import org.mule.extension.db.api.param.ColumnType;
 import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -80,8 +81,11 @@ public class DbGenericConnectionProvider implements ConnectionProvider<DbConnect
 
   @Override
   public void initialise() throws InitialisationException {
+
     genericConnectionProvider = new GenericConnectionProvider(configName, registry,
-                                                              poolingProfile, columnTypes, genericConnectionParameters);
+                                                              poolingProfile,
+                                                              columnTypes,
+                                                              mapDataSourceConfig(genericConnectionParameters));
 
     genericConnectionProvider.initialise();
   }

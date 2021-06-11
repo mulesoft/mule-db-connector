@@ -30,7 +30,8 @@
         <javax.transaction.version>1.3</javax.transaction.version>
         <xaPoolVersion>1.5.0</xaPoolVersion>
         <cglibVersion>3.3.0</cglibVersion>
-        <muledbclientVersion>1.0.5</muledbclientVersion>
+        <muledbclientVersion>1.2.0-SNAPSHOT</muledbclientVersion>
+        <modelMapperVersion>2.3.9</modelMapperVersion>
 
         <derbyVersion>10.14.2.0</derbyVersion>
         <mySqlVersion>8.0.25</mySqlVersion>
@@ -63,6 +64,11 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commonsIoVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>${modelMapperVersion}</version>
         </dependency>
         <dependency>
             <groupId>javax.transaction</groupId>

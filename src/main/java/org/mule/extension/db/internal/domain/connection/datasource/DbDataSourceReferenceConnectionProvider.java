@@ -17,11 +17,10 @@ import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CON
 import javax.inject.Inject;
 import java.util.List;
 import javax.sql.DataSource;
-
-import org.mule.db.commons.api.config.DbPoolingProfile;
+import org.mule.extension.db.api.config.DbPoolingProfile;
+import org.mule.extension.db.api.param.ColumnType;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.datasource.DataSourceReferenceConnectionProvider;
-import org.mule.db.commons.api.param.ColumnType;
 import org.mule.runtime.api.artifact.Registry;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;

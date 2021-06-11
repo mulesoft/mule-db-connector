@@ -10,9 +10,7 @@ package org.mule.extension.db.api.exception.connection;
 /**
  * Thrown to indicate an error closing connection
  *
- * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
-@Deprecated
 public class ConnectionClosingException extends RuntimeException {
 
   public ConnectionClosingException(Throwable throwable) {

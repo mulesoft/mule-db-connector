@@ -20,9 +20,7 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
  * You can either configure a standard type or a custom one.
  *
  * @since 1.0
- * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
- */
-@Deprecated
+  */
 @ExclusiveOptionals
 public class TypeClassifier {
 
@@ -55,5 +53,19 @@ public class TypeClassifier {
     }
 
     return null;
+  }
+
+  /**
+   * @return the CustomType name
+   */
+  public String getCustomType() {
+    return this.customType;
+  }
+
+  /**
+   * @return the Jdbc Type
+   */
+  public JdbcType getJdbcType() {
+    return this.type;
   }
 }

@@ -24,7 +24,7 @@
         <commonsCollectionsVersion>3.2.2</commonsCollectionsVersion>
         <commonsDbUtilsVersion>1.7</commonsDbUtilsVersion>
         <commonsLangVersion>3.12.0</commonsLangVersion>
-        <commonsIoVersion>2.9.0</commonsIoVersion>
+        <commonsIoVersion>2.10.0</commonsIoVersion>
         <mockito-core.version>3.11.0</mockito-core.version>
         <xmlunit.version>1.6</xmlunit.version>
         <javax.transaction.version>1.3</javax.transaction.version>

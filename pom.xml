@@ -164,19 +164,6 @@
             <version>${commonsCollectionsVersion}</version>
             <scope>test</scope>
         </dependency>
-        <!-- Oracle's XMLType dependencies -->
-        <dependency>
-            <groupId>com.oracle.database.xml</groupId>
-            <artifactId>xdb</artifactId>
-            <version>${oracle.driver.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle.database.xml</groupId>
-            <artifactId>xmlparserv2</artifactId>
-            <version>${oracle.driver.version}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -262,6 +249,17 @@
                         <artifactId>mtf-tools</artifactId>
                         <version>${mtf-tools.version}</version>
                         <classifier>mule-plugin</classifier>
+                    </dependency>
+                    <!-- Oracle's XMLType dependencies -->
+                    <dependency>
+                        <groupId>com.oracle.database.xml</groupId>
+                        <artifactId>xdb</artifactId>
+                        <version>${oracle.driver.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.oracle.database.xml</groupId>
+                        <artifactId>xmlparserv2</artifactId>
+                        <version>${oracle.driver.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

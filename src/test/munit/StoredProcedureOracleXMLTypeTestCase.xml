@@ -66,7 +66,7 @@
 		</munit:validation>
 	</munit:test>
 
-	<munit:after-test name="dropTable">
+	<munit:after-test name="dropTableTableWithXMLType">
 		<try>
 			<db:execute-script config-ref="oracleDbConfigWithoutPoolingProfile">
 				<db:sql><![CDATA[DROP TABLE ALIEN]]></db:sql>

@@ -17,6 +17,7 @@ import static org.mule.db.commons.api.exception.connection.DbError.INVALID_CREDE
 import static org.mule.db.commons.api.exception.connection.DbError.INVALID_DATABASE;
 import static org.mule.db.commons.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionParameters.DRIVER_CLASS_NAME;
+import static org.mule.extension.db.internal.util.MigrationUtils.mapDbPoolingProfile;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
@@ -105,7 +106,7 @@ public class OracleDbConnectionProvider implements ConnectionProvider<DbConnecti
   @Override
   public void initialise() throws InitialisationException {
     dbConnectionProvider =
-        new DbConnectionProvider(configName, registry, poolingProfile, columnTypes) {
+        new DbConnectionProvider(configName, registry, mapDbPoolingProfile(poolingProfile), columnTypes) {
 
           @Override
           protected JdbcConnectionFactory createJdbcConnectionFactory() {

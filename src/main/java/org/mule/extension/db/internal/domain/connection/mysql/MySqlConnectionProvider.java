@@ -16,6 +16,7 @@ import static org.mule.db.commons.internal.domain.connection.DbConnectionProvide
 import static org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionProvider.MYSQL_GAV;
 import static org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory.MYSQL_DRIVER_CLASS;
 import static org.mule.extension.db.internal.util.MigrationUtils.mapDataSourceConfig;
+import static org.mule.extension.db.internal.util.MigrationUtils.mapDbPoolingProfile;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
@@ -99,7 +100,7 @@ public class MySqlConnectionProvider implements ConnectionProvider<DbConnection>
   public void initialise() throws InitialisationException {
 
     dbConnectionProvider =
-        new DbConnectionProvider(configName, registry, poolingProfile, columnTypes) {
+        new DbConnectionProvider(configName, registry, mapDbPoolingProfile(poolingProfile), columnTypes) {
 
           @Override
           public java.util.Optional<DataSource> getDataSource() {

@@ -9,6 +9,7 @@ package org.mule.extension.db.internal.domain.connection.generic;
 import static java.util.Collections.emptyList;
 
 import static org.mule.extension.db.internal.util.MigrationUtils.mapDataSourceConfig;
+import static org.mule.extension.db.internal.util.MigrationUtils.mapDbPoolingProfile;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.db.commons.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
@@ -83,7 +84,7 @@ public class DbGenericConnectionProvider implements ConnectionProvider<DbConnect
   public void initialise() throws InitialisationException {
 
     genericConnectionProvider = new GenericConnectionProvider(configName, registry,
-                                                              poolingProfile,
+                                                              mapDbPoolingProfile(poolingProfile),
                                                               columnTypes,
                                                               mapDataSourceConfig(genericConnectionParameters));
 

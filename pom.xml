@@ -46,7 +46,6 @@
         <munit.version>2.3.4</munit.version>
         <mtf-tools.version>1.1.0</mtf-tools.version>
         <skipTests>false</skipTests>
-        <modelMapperVersion>2.3.9</modelMapperVersion>
     </properties>
 
     <dependencies>
@@ -64,11 +63,6 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commonsIoVersion}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.modelmapper</groupId>
-            <artifactId>modelmapper</artifactId>
-            <version>${modelMapperVersion}</version>
         </dependency>
         <dependency>
             <groupId>javax.transaction</groupId>

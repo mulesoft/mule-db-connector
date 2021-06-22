@@ -8,6 +8,7 @@ package org.mule.extension.db.internal.domain.connection.datasource;
 
 import static java.util.Collections.emptyList;
 
+import static org.mule.extension.db.internal.util.MigrationUtils.mapDbPoolingProfile;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
@@ -83,7 +84,7 @@ public class DbDataSourceReferenceConnectionProvider implements ConnectionProvid
   @Override
   public void initialise() throws InitialisationException {
     dataSourceReferenceConnectionProvider = new DataSourceReferenceConnectionProvider(configName, registry,
-                                                                                      poolingProfile,
+                                                                                      mapDbPoolingProfile(poolingProfile),
                                                                                       columnTypes,
                                                                                       connectionSettings);
 

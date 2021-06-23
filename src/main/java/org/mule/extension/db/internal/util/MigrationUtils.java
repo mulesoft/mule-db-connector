@@ -17,7 +17,6 @@ import org.mule.db.commons.api.param.QueryDefinition;
 import org.mule.db.commons.api.param.QuerySettings;
 import org.mule.db.commons.api.param.StoredProcedureCall;
 import org.mule.db.commons.api.param.TransactionIsolation;
-import org.mule.db.commons.api.config.DbPoolingProfile;
 import org.mule.db.commons.api.param.TypeClassifier;
 import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
 
@@ -239,19 +238,6 @@ public class MigrationUtils {
     };
   }
 
-  public static DbPoolingProfile mapDbPoolingProfile(org.mule.extension.db.api.config.DbPoolingProfile poolingProfile) {
-    if (isNull(poolingProfile)) {
-      return null;
-    }
-    return new DbPoolingProfile(poolingProfile.getMinPoolSize(), poolingProfile.getMaxPoolSize(),
-                                poolingProfile.getAcquireIncrement(),
-                                poolingProfile.getPreparedStatementCacheSize(), poolingProfile.getMaxWait(),
-                                poolingProfile.getMaxWaitUnit(),
-                                poolingProfile.getMaxIdleTime(),
-                                poolingProfile.getMaxStatements(),
-                                poolingProfile.getTestConnectionOnCheckout(),
-                                poolingProfile.getAdditionalProperties());
-  }
 
   public static ParameterizedStatementDefinition mapParameterizedStatementDefinition(org.mule.extension.db.api.param.ParameterizedStatementDefinition def) {
     if (isNull(def)) {

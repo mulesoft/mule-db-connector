@@ -14,6 +14,7 @@ import org.mule.runtime.extension.api.exception.ModuleException;
  *
  * @since 1.0
  */
+@Deprecated
 public class BadSqlSyntaxException extends ModuleException {
 
   public BadSqlSyntaxException(String message) {

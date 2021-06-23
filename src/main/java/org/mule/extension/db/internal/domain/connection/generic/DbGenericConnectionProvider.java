@@ -20,6 +20,8 @@ import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.util.List;
 
+import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
+import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
 import org.mule.extension.db.api.config.DbPoolingProfile;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.generic.GenericConnectionProvider;
@@ -33,11 +35,7 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.RefName;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
-import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
-import org.mule.runtime.api.connection.ConnectionValidationResult;
-import org.mule.runtime.api.lifecycle.Disposable;
-import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
@@ -49,7 +47,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 @Alias("generic")
 @ExternalLib(name = "JDBC Driver", description = "A JDBC driver which supports connecting to the Database",
     nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, type = JAR)
-public class DbGenericConnectionProvider implements ConnectionProvider<DbConnection>, Initialisable, Disposable {
+public class DbGenericConnectionProvider extends DbConnectionProvider {
 
   @RefName
   private String configName;
@@ -78,41 +76,24 @@ public class DbGenericConnectionProvider implements ConnectionProvider<DbConnect
   @ParameterGroup(name = CONNECTION)
   private GenericConnectionParameters genericConnectionParameters;
 
-  private GenericConnectionProvider genericConnectionProvider;
 
   @Override
   public void initialise() throws InitialisationException {
-
-    genericConnectionProvider = new GenericConnectionProvider(configName, registry,
-                                                              mapDbPoolingProfile(poolingProfile),
-                                                              columnTypes,
-                                                              mapDataSourceConfig(genericConnectionParameters));
-
-    genericConnectionProvider.initialise();
+    super.columnTypes = columnTypes;
+    super.configName = configName;
+    super.registry = registry;
+    super.poolingProfile = mapDbPoolingProfile(poolingProfile);
+    super.initialise();
   }
 
   @Override
-  public void dispose() {
-    genericConnectionProvider.dispose();
+  public java.util.Optional<DataSource> getDataSource() {
+    return java.util.Optional.empty();
   }
 
   @Override
-  public DbConnection connect() throws ConnectionException {
-    return genericConnectionProvider.connect();
-  }
-
-  @Override
-  public void disconnect(DbConnection dbConnection) {
-    genericConnectionProvider.disconnect(dbConnection);
-  }
-
-  @Override
-  public ConnectionValidationResult validate(DbConnection dbConnection) {
-    return genericConnectionProvider.validate(dbConnection);
-  }
-
-  public DataSource getConfiguredDataSource() {
-    return genericConnectionProvider.getConfiguredDataSource();
+  public java.util.Optional<DataSourceConfig> getDataSourceConfig() {
+    return java.util.Optional.ofNullable(mapDataSourceConfig(genericConnectionParameters));
   }
 
 }

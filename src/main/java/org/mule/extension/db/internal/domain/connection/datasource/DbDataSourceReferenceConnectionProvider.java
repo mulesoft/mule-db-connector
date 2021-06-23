@@ -8,6 +8,8 @@ package org.mule.extension.db.internal.domain.connection.datasource;
 
 import static java.util.Collections.emptyList;
 
+import static java.util.Optional.ofNullable;
+import static java.util.Optional.empty;
 import static org.mule.extension.db.internal.util.MigrationUtils.mapDbPoolingProfile;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
@@ -16,18 +18,15 @@ import static org.mule.db.commons.internal.domain.connection.DbConnectionProvide
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
 
 import javax.inject.Inject;
-import java.util.List;
 import javax.sql.DataSource;
+import java.util.List;
+
+import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
+import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
 import org.mule.extension.db.api.config.DbPoolingProfile;
 import org.mule.extension.db.api.param.ColumnType;
-import org.mule.db.commons.internal.domain.connection.DbConnection;
-import org.mule.db.commons.internal.domain.connection.datasource.DataSourceReferenceConnectionProvider;
 import org.mule.runtime.api.artifact.Registry;
-import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
-import org.mule.runtime.api.connection.ConnectionValidationResult;
-import org.mule.runtime.api.lifecycle.Disposable;
-import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
@@ -49,7 +48,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 @Alias("data-source")
 @ExternalLib(name = "JDBC Driver", description = "A JDBC driver which supports connecting to the Database",
     nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, type = JAR, optional = true)
-public class DbDataSourceReferenceConnectionProvider implements ConnectionProvider<DbConnection>, Initialisable, Disposable {
+public class DbDataSourceReferenceConnectionProvider extends DbConnectionProvider {
 
   @RefName
   private String configName;
@@ -78,40 +77,23 @@ public class DbDataSourceReferenceConnectionProvider implements ConnectionProvid
   @ParameterGroup(name = CONNECTION)
   private DbDataSourceConnectionSettings connectionSettings;
 
-  private DataSourceReferenceConnectionProvider dataSourceReferenceConnectionProvider;
 
   @Override
   public void initialise() throws InitialisationException {
-    dataSourceReferenceConnectionProvider = new DataSourceReferenceConnectionProvider(configName, registry,
-                                                                                      mapDbPoolingProfile(poolingProfile),
-                                                                                      columnTypes,
-                                                                                      connectionSettings);
-
-    dataSourceReferenceConnectionProvider.initialise();
+    super.columnTypes = columnTypes;
+    super.configName = configName;
+    super.registry = registry;
+    super.poolingProfile = mapDbPoolingProfile(poolingProfile);
+    super.initialise();
   }
 
   @Override
-  public void dispose() {
-    dataSourceReferenceConnectionProvider.dispose();
+  public java.util.Optional<DataSource> getDataSource() {
+    return ofNullable(connectionSettings.getDataSourceRef());
   }
 
   @Override
-  public DbConnection connect() throws ConnectionException {
-    return dataSourceReferenceConnectionProvider.connect();
+  public java.util.Optional<DataSourceConfig> getDataSourceConfig() {
+    return empty();
   }
-
-  @Override
-  public void disconnect(DbConnection dbConnection) {
-    dataSourceReferenceConnectionProvider.disconnect(dbConnection);
-  }
-
-  @Override
-  public ConnectionValidationResult validate(DbConnection dbConnection) {
-    return dataSourceReferenceConnectionProvider.validate(dbConnection);
-  }
-
-  public DataSource getConfiguredDataSource() {
-    return dataSourceReferenceConnectionProvider.getConfiguredDataSource();
-  }
-
 }

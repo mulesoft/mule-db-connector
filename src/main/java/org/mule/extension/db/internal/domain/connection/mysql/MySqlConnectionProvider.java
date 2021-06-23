@@ -30,15 +30,9 @@ import javax.sql.DataSource;
 import org.mule.extension.db.api.config.DbPoolingProfile;
 import org.mule.db.commons.api.exception.connection.DbError;
 import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
-import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
 import org.mule.extension.db.api.param.ColumnType;
 import org.mule.runtime.api.artifact.Registry;
-import org.mule.runtime.api.connection.ConnectionException;
-import org.mule.runtime.api.connection.ConnectionProvider;
-import org.mule.runtime.api.connection.ConnectionValidationResult;
-import org.mule.runtime.api.lifecycle.Disposable;
-import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -60,7 +54,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 @ExternalLib(name = "MySQL JDBC Driver", description = "A JDBC driver which supports connecting to the MySQL Database",
     nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, requiredClassName = MYSQL_DRIVER_CLASS, type = JAR,
     coordinates = MYSQL_GAV)
-public class MySqlConnectionProvider implements ConnectionProvider<DbConnection>, Initialisable, Disposable {
+public class MySqlConnectionProvider extends DbConnectionProvider {
 
   private static final String ACCESS_DENIED = "Access denied";
   private static final String UNKNOWN_DATABASE = "Unknown database";
@@ -94,65 +88,37 @@ public class MySqlConnectionProvider implements ConnectionProvider<DbConnection>
   @ParameterGroup(name = CONNECTION)
   private MySqlConnectionParameters mySqlParameters;
 
-  private DbConnectionProvider dbConnectionProvider;
 
   @Override
   public void initialise() throws InitialisationException {
-
-    dbConnectionProvider =
-        new DbConnectionProvider(configName, registry, mapDbPoolingProfile(poolingProfile), columnTypes) {
-
-          @Override
-          public java.util.Optional<DataSource> getDataSource() {
-            return empty();
-          }
-
-          @Override
-          public java.util.Optional<DataSourceConfig> getDataSourceConfig() {
-            return java.util.Optional.ofNullable(mapDataSourceConfig(mySqlParameters));
-          }
-
-
-          @Override
-          public java.util.Optional<DbError> getDbVendorErrorType(SQLException e) {
-            String message = e.getMessage();
-            if (message.contains(ACCESS_DENIED)) {
-              return of(INVALID_CREDENTIALS);
-            } else if (message.contains(UNKNOWN_DATABASE)) {
-              return of(INVALID_DATABASE);
-            } else if (message.contains(COMMUNICATIONS_LINK_FAILURE)) {
-              return of(CANNOT_REACH);
-            }
-            return empty();
-          }
-
-        };
-
-    dbConnectionProvider.initialise();
+    super.columnTypes = columnTypes;
+    super.configName = configName;
+    super.registry = registry;
+    super.poolingProfile = mapDbPoolingProfile(poolingProfile);
+    super.initialise();
   }
 
   @Override
-  public void dispose() {
-    dbConnectionProvider.dispose();
+  public java.util.Optional<DataSource> getDataSource() {
+    return empty();
   }
 
   @Override
-  public DbConnection connect() throws ConnectionException {
-    return dbConnectionProvider.connect();
+  public java.util.Optional<DataSourceConfig> getDataSourceConfig() {
+    return java.util.Optional.ofNullable(mapDataSourceConfig(mySqlParameters));
   }
 
   @Override
-  public void disconnect(DbConnection dbConnection) {
-    dbConnectionProvider.disconnect(dbConnection);
-  }
-
-  @Override
-  public ConnectionValidationResult validate(DbConnection dbConnection) {
-    return dbConnectionProvider.validate(dbConnection);
-  }
-
-  public DataSource getConfiguredDataSource() {
-    return dbConnectionProvider.getConfiguredDataSource();
+  public java.util.Optional<DbError> getDbVendorErrorType(SQLException e) {
+    String message = e.getMessage();
+    if (message.contains(ACCESS_DENIED)) {
+      return of(INVALID_CREDENTIALS);
+    } else if (message.contains(UNKNOWN_DATABASE)) {
+      return of(INVALID_DATABASE);
+    } else if (message.contains(COMMUNICATIONS_LINK_FAILURE)) {
+      return of(CANNOT_REACH);
+    }
+    return empty();
   }
 
 }

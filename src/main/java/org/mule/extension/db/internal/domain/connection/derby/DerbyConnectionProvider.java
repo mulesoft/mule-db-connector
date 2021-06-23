@@ -35,11 +35,6 @@ import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
 import org.mule.extension.db.api.param.ColumnType;
 import org.mule.runtime.api.artifact.Registry;
-import org.mule.runtime.api.connection.ConnectionException;
-import org.mule.runtime.api.connection.ConnectionProvider;
-import org.mule.runtime.api.connection.ConnectionValidationResult;
-import org.mule.runtime.api.lifecycle.Disposable;
-import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -60,7 +55,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 @Alias("derby")
 @ExternalLib(name = "Derby JDBC Driver", description = "A JDBC driver which supports connecting to a Derby Database",
     nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, requiredClassName = DERBY_DRIVER_CLASS, type = JAR, coordinates = DERBY_GAV)
-public class DerbyConnectionProvider implements ConnectionProvider<DbConnection>, Initialisable, Disposable {
+public class DerbyConnectionProvider extends DbConnectionProvider {
 
   private static final String FAILED_TO_START_DATABASE = "Failed to start database";
   private static final String NOT_FOUND = "not found";
@@ -93,64 +88,37 @@ public class DerbyConnectionProvider implements ConnectionProvider<DbConnection>
   @ParameterGroup(name = CONNECTION)
   private DerbyConnectionParameters derbyParameters;
 
-  private DbConnectionProvider dbConnectionProvider;
-
   @Override
   public void initialise() throws InitialisationException {
-    dbConnectionProvider =
-        new DbConnectionProvider(configName, registry, mapDbPoolingProfile(poolingProfile), columnTypes) {
-
-          @Override
-          public java.util.Optional<DataSource> getDataSource() {
-            return empty();
-          }
-
-          @Override
-          public java.util.Optional<DataSourceConfig> getDataSourceConfig() {
-            return ofNullable(mapDataSourceConfig(derbyParameters));
-          }
-
-          @Override
-          protected DbConnection createDbConnection(Connection connection) throws Exception {
-            return new DerbyConnection(connection, dbConnectionProvider.resolveCustomTypes());
-          }
-
-          @Override
-          public java.util.Optional<DbError> getDbVendorErrorType(SQLException e) {
-            if (Arrays.stream(new String[] {FAILED_TO_START_DATABASE, NOT_FOUND}).anyMatch(e.getMessage()::contains)) {
-              return java.util.Optional.of(CANNOT_REACH);
-            }
-
-            return empty();
-          }
-
-        };
-
-    dbConnectionProvider.initialise();
+    super.columnTypes = columnTypes;
+    super.configName = configName;
+    super.registry = registry;
+    super.poolingProfile = mapDbPoolingProfile(poolingProfile);
+    super.initialise();
   }
 
   @Override
-  public void dispose() {
-    dbConnectionProvider.dispose();
+  public java.util.Optional<DataSource> getDataSource() {
+    return empty();
   }
 
   @Override
-  public DbConnection connect() throws ConnectionException {
-    return dbConnectionProvider.connect();
+  public java.util.Optional<DataSourceConfig> getDataSourceConfig() {
+    return ofNullable(mapDataSourceConfig(derbyParameters));
   }
 
   @Override
-  public void disconnect(DbConnection dbConnection) {
-    dbConnectionProvider.disconnect(dbConnection);
+  protected DbConnection createDbConnection(Connection connection) throws Exception {
+    return new DerbyConnection(connection, resolveCustomTypes());
   }
 
   @Override
-  public ConnectionValidationResult validate(DbConnection dbConnection) {
-    return dbConnectionProvider.validate(dbConnection);
-  }
+  public java.util.Optional<DbError> getDbVendorErrorType(SQLException e) {
+    if (Arrays.stream(new String[] {FAILED_TO_START_DATABASE, NOT_FOUND}).anyMatch(e.getMessage()::contains)) {
+      return java.util.Optional.of(CANNOT_REACH);
+    }
 
-  public DataSource getConfiguredDataSource() {
-    return dbConnectionProvider.getConfiguredDataSource();
+    return empty();
   }
 
 }

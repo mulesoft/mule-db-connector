@@ -37,11 +37,6 @@ import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
 import org.mule.extension.db.api.param.ColumnType;
 import org.mule.runtime.api.artifact.Registry;
-import org.mule.runtime.api.connection.ConnectionException;
-import org.mule.runtime.api.connection.ConnectionProvider;
-import org.mule.runtime.api.connection.ConnectionValidationResult;
-import org.mule.runtime.api.lifecycle.Disposable;
-import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -64,7 +59,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
     description = "A JDBC driver which supports connecting to an Microsoft SQL Server Database",
     requiredClassName = DRIVER_CLASS_NAME, type = JAR, coordinates = MSSQL_GAV,
     nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN)
-public class SqlServerConnectionProvider implements ConnectionProvider<DbConnection>, Initialisable, Disposable {
+public class SqlServerConnectionProvider extends DbConnectionProvider {
 
   static final String DRIVER_CLASS_NAME = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
   static final String MSSQL_GAV = "com.microsoft.sqlserver:mssql-jdbc:6.2.2.jre8";
@@ -96,69 +91,41 @@ public class SqlServerConnectionProvider implements ConnectionProvider<DbConnect
   @ParameterGroup(name = CONNECTION)
   private SqlServerConnectionParameters connectionParameters;
 
-  private DbConnectionProvider dbConnectionProvider;
-
   @Override
   public void initialise() throws InitialisationException {
-    dbConnectionProvider =
-        new DbConnectionProvider(configName, registry, mapDbPoolingProfile(poolingProfile), columnTypes) {
-
-          @Override
-          protected DbConnection createDbConnection(Connection connection) throws Exception {
-            return new SqlServerConnection(connection, super.resolveCustomTypes());
-          }
-
-          @Override
-          public java.util.Optional<DataSource> getDataSource() {
-            return empty();
-          }
-
-          @Override
-          public java.util.Optional<DataSourceConfig> getDataSourceConfig() {
-            return ofNullable(mapDataSourceConfig(connectionParameters));
-          }
-
-          @Override
-          protected java.util.Optional<DbError> getDbVendorErrorType(SQLException e) {
-            String message = e.getMessage();
-            if (message.contains("Login failed for user")) {
-              return of(INVALID_CREDENTIALS);
-            } else if (message.contains("Cannot open database")) {
-              return of(INVALID_DATABASE);
-            } else if (message.contains("invalidHost")) {
-              return of(CANNOT_REACH);
-            }
-            return empty();
-          }
-
-        };
-
-
-    dbConnectionProvider.initialise();
+    super.columnTypes = columnTypes;
+    super.configName = configName;
+    super.registry = registry;
+    super.poolingProfile = mapDbPoolingProfile(poolingProfile);
+    super.initialise();
   }
 
   @Override
-  public void dispose() {
-    dbConnectionProvider.dispose();
+  protected DbConnection createDbConnection(Connection connection) throws Exception {
+    return new SqlServerConnection(connection, super.resolveCustomTypes());
   }
 
   @Override
-  public DbConnection connect() throws ConnectionException {
-    return dbConnectionProvider.connect();
+  public java.util.Optional<DataSource> getDataSource() {
+    return empty();
   }
 
   @Override
-  public void disconnect(DbConnection dbConnection) {
-    dbConnectionProvider.disconnect(dbConnection);
+  public java.util.Optional<DataSourceConfig> getDataSourceConfig() {
+    return ofNullable(mapDataSourceConfig(connectionParameters));
   }
 
   @Override
-  public ConnectionValidationResult validate(DbConnection dbConnection) {
-    return dbConnectionProvider.validate(dbConnection);
-  }
-
-  public DataSource getConfiguredDataSource() {
-    return dbConnectionProvider.getConfiguredDataSource();
+  protected java.util.Optional<DbError> getDbVendorErrorType(SQLException e) {
+    String message = e.getMessage();
+    if (message.contains("Login failed for user")) {
+      return of(INVALID_CREDENTIALS);
+    } else if (message.contains("Cannot open database")) {
+      return of(INVALID_DATABASE);
+    } else if (message.contains("invalidHost")) {
+      return of(CANNOT_REACH);
+    }
+    return empty();
   }
 
 }

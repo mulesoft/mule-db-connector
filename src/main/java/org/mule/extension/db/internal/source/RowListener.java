@@ -8,8 +8,6 @@ package org.mule.extension.db.internal.source;
 
 import org.mule.db.commons.AbstractDbConnector;
 import org.mule.db.commons.api.param.ParameterizedStatementDefinition;
-import org.mule.db.commons.api.param.QueryDefinition;
-import org.mule.db.commons.api.param.QuerySettings;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.executor.SelectExecutor;
 import org.mule.db.commons.internal.domain.query.Query;
@@ -19,6 +17,8 @@ import org.mule.db.commons.internal.resolver.query.QueryResolver;
 import org.mule.db.commons.internal.result.resultset.ListResultSetHandler;
 import org.mule.db.commons.internal.result.resultset.ResultSetHandler;
 import org.mule.db.commons.internal.result.row.NonStreamingInsensitiveMapRowHandler;
+import org.mule.extension.db.api.param.QueryDefinition;
+import org.mule.extension.db.api.param.QuerySettings;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.api.exception.MuleException;
@@ -52,6 +52,7 @@ import java.util.function.BiConsumer;
 import static java.lang.String.format;
 import static org.mule.db.commons.internal.operation.BaseDbOperations.DEFAULT_FETCH_SIZE;
 import static org.mule.runtime.api.meta.model.parameter.ParameterGroupModel.ADVANCED;
+import static org.mule.extension.db.internal.util.MigrationUtils.mapParameterizedStatementDefinition;
 
 /**
  * Selects from a table at a regular interval and generates one message per each obtained row.
@@ -190,7 +191,7 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
       });
 
       queryDefinition.setSql(sql.toString());
-      Query query = queryResolver.resolve(queryDefinition, config, connection, null);
+      Query query = queryResolver.resolve(mapParameterizedStatementDefinition(queryDefinition), config, connection, null);
 
       QueryStatementFactory statementFactory = new QueryStatementFactory();
       statementFactory.setFetchSize(settings.getFetchSize() != null ? settings.getFetchSize() : DEFAULT_FETCH_SIZE);

@@ -25,9 +25,7 @@ import java.util.List;
  *
  * @param <T> the generic type of the implementing type
  * @since 1.0
- * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
-@Deprecated
 public abstract class StatementDefinition<T extends StatementDefinition> extends QuerySettings {
 
   /**

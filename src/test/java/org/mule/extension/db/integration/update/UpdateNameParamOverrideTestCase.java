@@ -9,7 +9,7 @@ package org.mule.extension.db.integration.update;
 import static org.mule.extension.db.AllureConstants.DbFeature.DB_EXTENSION;
 import static org.mule.extension.db.integration.DbTestUtil.selectData;
 import static org.mule.extension.db.integration.TestRecordUtil.assertRecords;
-import org.mule.db.commons.api.StatementResult;
+import org.mule.extension.db.api.StatementResult;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.Field;
 import org.mule.extension.db.integration.model.Record;

@@ -16,9 +16,8 @@ import java.util.Map;
 /**
  * Information about the execution of a DML statement
  *
- * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
-@Deprecated
+
 public class StatementResult {
 
   /**
@@ -42,6 +41,16 @@ public class StatementResult {
     this.affectedRows = affectedRows;
     this.generatedKeys = generatedKeys != null ? unmodifiableMap(new HashMap<>(generatedKeys)) : emptyMap();
   }
+
+
+  /**
+   * Creates a new Instance from DB Client Statement Result.
+   * @param result
+   */
+  public StatementResult(org.mule.db.commons.api.StatementResult result) {
+    this(result.getAffectedRows(), result.getGeneratedKeys());
+  }
+
 
   /**
    * @return the amount of affected rows

@@ -7,9 +7,14 @@
 package org.mule.extension.db.internal;
 
 import org.mule.db.commons.AbstractDbConnector;
+import org.mule.db.commons.api.exception.connection.ConnectionCreationException;
 import org.mule.db.commons.api.exception.connection.DbError;
 import org.mule.db.commons.internal.DbFunctions;
 import org.mule.db.commons.internal.exception.DbExceptionHandler;
+import org.mule.extension.db.api.logger.LoggerApiPackage;
+import org.mule.extension.db.api.param.BulkQueryDefinition;
+import org.mule.extension.db.api.param.QueryDefinition;
+import org.mule.extension.db.api.param.StoredProcedureCall;
 import org.mule.extension.db.internal.domain.connection.datasource.DbDataSourceReferenceConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.derby.DerbyConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.generic.DbGenericConnectionProvider;
@@ -20,6 +25,7 @@ import org.mule.extension.db.internal.operation.DbBulkOperations;
 import org.mule.extension.db.internal.operation.DbDdlOperations;
 import org.mule.extension.db.internal.operation.DbDmlOperations;
 import org.mule.extension.db.internal.source.RowListener;
+import org.mule.runtime.extension.api.annotation.Export;
 import org.mule.runtime.extension.api.annotation.ExpressionFunctions;
 import org.mule.runtime.extension.api.annotation.Extension;
 import org.mule.runtime.extension.api.annotation.OnException;
@@ -44,6 +50,9 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
 @ErrorTypes(DbError.class)
 @ExpressionFunctions(DbFunctions.class)
 @OnException(DbExceptionHandler.class)
+@Export(
+    classes = {QueryDefinition.class, StoredProcedureCall.class, BulkQueryDefinition.class, ConnectionCreationException.class,
+        LoggerApiPackage.class})
 public class DbConnector extends AbstractDbConnector {
 
 }

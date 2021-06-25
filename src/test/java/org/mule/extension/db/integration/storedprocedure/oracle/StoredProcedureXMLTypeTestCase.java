@@ -27,42 +27,42 @@ import static org.mule.extension.db.integration.TestDbConfig.getOracleResource;
 
 public class StoredProcedureXMLTypeTestCase extends AbstractDbIntegrationTestCase {
 
-    @Parameterized.Parameters(name = "{2}")
-    public static List<Object[]> parameters() {
-        List<Object[]> params = new LinkedList<>();
+  @Parameterized.Parameters(name = "{2}")
+  public static List<Object[]> parameters() {
+    List<Object[]> params = new LinkedList<>();
 
-        if (!getOracleResource().isEmpty()) {
-            final OracleTestDatabase oracleTestDatabase = new OracleTestDatabase();
-            params.add(new Object[] {"integration/config/oracle-db-config.xml", oracleTestDatabase,
-                    oracleTestDatabase.getDbType(), emptyList()});
-        }
-
-        return params;
+    if (!getOracleResource().isEmpty()) {
+      final OracleTestDatabase oracleTestDatabase = new OracleTestDatabase();
+      params.add(new Object[] {"integration/config/oracle-db-config.xml", oracleTestDatabase,
+          oracleTestDatabase.getDbType(), emptyList()});
     }
 
-    @Before
-    public void init() throws SQLException {
-        this.testDatabase.createStoredProcedureGetAlienDescription(getDefaultDataSource());
-        this.testDatabase.createStoredProcedureUpdateAlienDescription(getDefaultDataSource());
-    }
+    return params;
+  }
 
-    @Override
-    protected String[] getFlowConfigurationResources() {
-        return new String[] {"integration/storedprocedure/stored-procedure-oracle-xmltype-config.xml"};
-    }
+  @Before
+  public void init() throws SQLException {
+    this.testDatabase.createStoredProcedureGetAlienDescription(getDefaultDataSource());
+    this.testDatabase.createStoredProcedureUpdateAlienDescription(getDefaultDataSource());
+  }
 
-    @Test
-    public void testXMLTypeInputAndOutputParam() throws Exception {
-        Alien firstAlien = AbstractTestDatabase.ALIEN_TEST_VALUES[1];
-        Alien alienToUpdate = new Alien("SomePlanet", firstAlien.getName(), firstAlien.getGender(), firstAlien.isFriendly());
-        Map<String, String> payload = new HashMap<>();
-        payload.put("name", alienToUpdate.getName());
-        payload.put("description", alienToUpdate.getXml());
+  @Override
+  protected String[] getFlowConfigurationResources() {
+    return new String[] {"integration/storedprocedure/stored-procedure-oracle-xmltype-config.xml"};
+  }
 
-        runProcedure("xmlTypeInputParam", payload);
+  @Test
+  public void testXMLTypeInputAndOutputParam() throws Exception {
+    Alien firstAlien = AbstractTestDatabase.ALIEN_TEST_VALUES[1];
+    Alien alienToUpdate = new Alien("SomePlanet", firstAlien.getName(), firstAlien.getGender(), firstAlien.isFriendly());
+    Map<String, String> payload = new HashMap<>();
+    payload.put("name", alienToUpdate.getName());
+    payload.put("description", alienToUpdate.getXml());
 
-        Map<String, Object> result = runProcedure("xmlTypeOutputParam", payload);
-        assertEquals(result.get("description"), alienToUpdate.getXml());
-    }
+    runProcedure("xmlTypeInputParam", payload);
+
+    Map<String, Object> result = runProcedure("xmlTypeOutputParam", payload);
+    assertEquals(result.get("description"), alienToUpdate.getXml());
+  }
 
 }

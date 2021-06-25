@@ -33,6 +33,7 @@
         <muleDbClientVersion>1.2.0-SNAPSHOT</muleDbClientVersion>
         <muleExtensionsShadeVersion>1.0.1</muleExtensionsShadeVersion>
 
+        <caffeineVersion>2.9.1</caffeineVersion>
         <derbyVersion>10.14.2.0</derbyVersion>
         <mySqlVersion>8.0.25</mySqlVersion>
         <mssqlVersion>7.0.0.jre8</mssqlVersion>
@@ -66,6 +67,11 @@
             <version>${commonsIoVersion}</version>
         </dependency>
         <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>${commonsCollectionsVersion}</version>
+        </dependency>
+        <dependency>
             <groupId>javax.transaction</groupId>
             <artifactId>javax.transaction-api</artifactId>
             <version>${javax.transaction.version}</version>
@@ -76,6 +82,12 @@
             <groupId>com.experlog</groupId>
             <artifactId>xapool</artifactId>
             <version>${xaPoolVersion}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>${caffeineVersion}</version>
         </dependency>
 
         <dependency>
@@ -148,18 +160,6 @@
             <groupId>com.mchange</groupId>
             <artifactId>mchange-commons-java</artifactId>
             <version>0.2.20</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-            <version>2.9.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>${commonsCollectionsVersion}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

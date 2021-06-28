@@ -22,6 +22,6 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
         "com.oracle.database.jdbc:ojdbc8", "org.mule.connectors:mule-db-client", "com.experlog:xapool", "com.mchange:c3p0",
         "com.mchange:mchange-commons-java", "com.github.ben-manes.caffeine:caffeine", "org.apache.commons:commons-lang3",
         "commons-collections:commons-collections", "commons-io:commons-io"},
-        applicationRuntimeLibs = {"com.oracle.database.xml:xdb:tests", "com.oracle.database.xml:xmlparserv2:tests"})
+    applicationRuntimeLibs = {"com.oracle.database.xml:xdb", "com.oracle.database.xml:xmlparserv2"})
 public interface DbArtifactClassLoaderRunnerConfig {
 }

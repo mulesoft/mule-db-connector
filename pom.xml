@@ -24,8 +24,8 @@
         <commonsCollectionsVersion>3.2.2</commonsCollectionsVersion>
         <commonsDbUtilsVersion>1.7</commonsDbUtilsVersion>
         <commonsLangVersion>3.12.0</commonsLangVersion>
-        <commonsIoVersion>2.9.0</commonsIoVersion>
-        <mockito-core.version>3.10.0</mockito-core.version>
+        <commonsIoVersion>2.10.0</commonsIoVersion>
+        <mockito-core.version>3.11.2</mockito-core.version>
         <xmlunit.version>1.6</xmlunit.version>
         <javax.transaction.version>1.3</javax.transaction.version>
         <xaPoolVersion>1.5.0</xaPoolVersion>
@@ -37,13 +37,13 @@
         <mssqlVersion>7.0.0.jre8</mssqlVersion>
         <oracle.driver.version>21.1.0.0</oracle.driver.version>
         
-        <docker.maven.plugin.version>0.36.0</docker.maven.plugin.version>
+        <docker.maven.plugin.version>0.36.1</docker.maven.plugin.version>
         <maven-replacer-plugin.version>1.5.3</maven-replacer-plugin.version>
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
 
         <munit.extensions.maven.plugin.version>1.1.1</munit.extensions.maven.plugin.version>
-        <munit.version>2.3.4</munit.version>
+        <munit.version>2.3.5</munit.version>
         <mtf-tools.version>1.1.0</mtf-tools.version>
         <skipTests>false</skipTests>
     </properties>
@@ -292,12 +292,12 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>slf4j-api</artifactId>
-                                <version>1.7.30</version>
+                                <version>1.7.31</version>
                             </dependency>
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>jcl-over-slf4j</artifactId>
-                                <version>1.7.30</version>
+                                <version>1.7.31</version>
                             </dependency>
                         </dependencies>
                         <executions>
@@ -377,12 +377,12 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>slf4j-api</artifactId>
-                                <version>1.7.30</version>
+                                <version>1.7.31</version>
                             </dependency>
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>jcl-over-slf4j</artifactId>
-                                <version>1.7.30</version>
+                                <version>1.7.31</version>
                             </dependency>
                         </dependencies>
                         <executions>
@@ -462,12 +462,12 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>slf4j-api</artifactId>
-                                <version>1.7.30</version>
+                                <version>1.7.31</version>
                             </dependency>
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>jcl-over-slf4j</artifactId>
-                                <version>1.7.30</version>
+                                <version>1.7.31</version>
                             </dependency>
                         </dependencies>
                         <executions>
@@ -521,7 +521,7 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>microsoft/mssql-server-linux</name>
+                                    <name>mcr.microsoft.com/mssql/server:2019-latest</name>
                                     <alias>mssql-container</alias>
                                     <run>
                                         <containerNamePattern>%a</containerNamePattern>
@@ -555,12 +555,12 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>slf4j-api</artifactId>
-                                <version>1.7.30</version>
+                                <version>1.7.31</version>
                             </dependency>
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>jcl-over-slf4j</artifactId>
-                                <version>1.7.30</version>
+                                <version>1.7.31</version>
                             </dependency>
                         </dependencies>
                         <executions>

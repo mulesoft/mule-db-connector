@@ -550,7 +550,7 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>microsoft/mssql-server-linux</name>
+                                    <name>mcr.microsoft.com/mssql/server:2019-latest</name>
                                     <alias>mssql-container</alias>
                                     <run>
                                         <containerNamePattern>%a</containerNamePattern>

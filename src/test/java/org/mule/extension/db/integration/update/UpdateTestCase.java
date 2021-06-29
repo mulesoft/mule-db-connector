@@ -15,7 +15,7 @@ import static org.mule.extension.db.integration.DbTestUtil.DbType.MYSQL;
 import static org.mule.extension.db.integration.DbTestUtil.selectData;
 import static org.mule.extension.db.integration.TestRecordUtil.assertMessageContains;
 import static org.mule.extension.db.integration.TestRecordUtil.assertRecords;
-import org.mule.db.commons.api.StatementResult;
+import org.mule.extension.db.api.StatementResult;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.Field;
 import org.mule.extension.db.integration.model.Record;
@@ -31,7 +31,6 @@ import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Issue;
 import io.qameta.allure.Story;
-import org.junit.Ignore;
 import org.junit.Test;
 
 

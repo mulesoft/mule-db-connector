@@ -7,7 +7,9 @@
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
             http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
-    <http:listener-config name="listenerConfig" host="localhost" port="${port}"/>
+    <http:listener-config name="listenerConfig">
+        <http:listener-connection host="localhost" port="${port}" />
+    </http:listener-config>
 
     <db:config name="Database_Config" doc:name="Database Config">
         <db:generic-connection url="jdbc:oracle:thin:@localhost:1521:ORCLCDB" driverClassName="oracle.jdbc.driver.OracleDriver" user="SYSTEM" password="Oradoc_db1"/>

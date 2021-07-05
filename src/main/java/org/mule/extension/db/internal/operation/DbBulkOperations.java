@@ -7,9 +7,6 @@
 package org.mule.extension.db.internal.operation;
 
 import org.mule.db.commons.AbstractDbConnector;
-import org.mule.db.commons.api.param.BulkQueryDefinition;
-import org.mule.db.commons.api.param.BulkScript;
-import org.mule.db.commons.api.param.QuerySettings;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.metadata.DbInputMetadataResolver;
 import org.mule.db.commons.internal.operation.BulkOperations;
@@ -25,6 +22,9 @@ import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
+import org.mule.extension.db.api.param.BulkQueryDefinition;
+import org.mule.extension.db.api.param.BulkScript;
+import org.mule.extension.db.api.param.QuerySettings;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -32,6 +32,10 @@ import java.util.Map;
 
 import static org.mule.db.commons.internal.operation.BaseDbOperations.QUERY_GROUP;
 import static org.mule.db.commons.internal.operation.BaseDbOperations.QUERY_SETTINGS;
+import static org.mule.extension.db.internal.util.MigrationUtils.mapBulkQueryDefinition;
+import static org.mule.extension.db.internal.util.MigrationUtils.mapBulkScript;
+import static org.mule.extension.db.internal.util.MigrationUtils.mapQuerySettings;
+
 
 /**
  * Contains a set of operations for performing bulk DML operations from a single statement.
@@ -68,7 +72,7 @@ public class DbBulkOperations implements Initialisable {
                           @Connection DbConnection connection,
                           StreamingHelper streamingHelper)
       throws SQLException {
-    return bulkOperations.bulkInsert(bulkInputParameters, query, connector, connection, streamingHelper);
+    return bulkOperations.bulkInsert(bulkInputParameters, mapBulkQueryDefinition(query), connector, connection, streamingHelper);
   }
 
 
@@ -92,7 +96,7 @@ public class DbBulkOperations implements Initialisable {
                           @Connection DbConnection connection,
                           StreamingHelper streamingHelper)
       throws SQLException {
-    return bulkOperations.bulkUpdate(bulkInputParameters, query, connector, connection, streamingHelper);
+    return bulkOperations.bulkUpdate(bulkInputParameters, mapBulkQueryDefinition(query), connector, connection, streamingHelper);
   }
 
   /**
@@ -115,7 +119,7 @@ public class DbBulkOperations implements Initialisable {
                           @Connection DbConnection connection,
                           StreamingHelper streamingHelper)
       throws SQLException {
-    return bulkOperations.bulkDelete(bulkInputParameters, query, connector, connection, streamingHelper);
+    return bulkOperations.bulkDelete(bulkInputParameters, mapBulkQueryDefinition(query), connector, connection, streamingHelper);
   }
 
   /**
@@ -133,7 +137,7 @@ public class DbBulkOperations implements Initialisable {
                              @ParameterGroup(name = QUERY_SETTINGS) QuerySettings settings,
                              @Connection DbConnection connection)
       throws SQLException {
-    return bulkOperations.executeScript(script, settings, connection);
+    return bulkOperations.executeScript(mapBulkScript(script), mapQuerySettings(settings), connection);
   }
 
 }

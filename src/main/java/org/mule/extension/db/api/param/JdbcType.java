@@ -22,9 +22,7 @@ import java.util.List;
  * Defines {@link DbType} for JDBC types defined in {@link Types}
  *
  * @since 1.0
- * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
-@Deprecated
 public enum JdbcType {
 
   BIT(new ResolvedDbType(Types.BIT, "BIT")),

@@ -9,12 +9,12 @@ package org.mule.extension.db.internal;
 import org.mule.db.commons.AbstractDbConnector;
 import org.mule.db.commons.api.exception.connection.ConnectionCreationException;
 import org.mule.db.commons.api.exception.connection.DbError;
-import org.mule.db.commons.api.param.BulkQueryDefinition;
-import org.mule.db.commons.api.param.QueryDefinition;
-import org.mule.db.commons.api.param.StoredProcedureCall;
 import org.mule.db.commons.internal.DbFunctions;
 import org.mule.db.commons.internal.exception.DbExceptionHandler;
 import org.mule.extension.db.api.logger.LoggerApiPackage;
+import org.mule.extension.db.api.param.BulkQueryDefinition;
+import org.mule.extension.db.api.param.QueryDefinition;
+import org.mule.extension.db.api.param.StoredProcedureCall;
 import org.mule.extension.db.internal.domain.connection.datasource.DbDataSourceReferenceConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.derby.DerbyConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.generic.DbGenericConnectionProvider;
@@ -47,12 +47,12 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
     DerbyConnectionProvider.class, MySqlConnectionProvider.class, OracleDbConnectionProvider.class,
     SqlServerConnectionProvider.class})
 @Xml(prefix = "db")
-@Export(
-    classes = {QueryDefinition.class, StoredProcedureCall.class, BulkQueryDefinition.class, ConnectionCreationException.class,
-        LoggerApiPackage.class})
 @ErrorTypes(DbError.class)
 @ExpressionFunctions(DbFunctions.class)
 @OnException(DbExceptionHandler.class)
+@Export(
+    classes = {QueryDefinition.class, StoredProcedureCall.class, BulkQueryDefinition.class, ConnectionCreationException.class,
+        LoggerApiPackage.class})
 public class DbConnector extends AbstractDbConnector {
 
 }

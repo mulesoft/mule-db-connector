@@ -6,9 +6,9 @@
  */
 package org.mule.extension.db.internal.domain.connection;
 
-import static org.mule.db.commons.api.param.TransactionIsolation.NOT_CONFIGURED;
+import static org.mule.extension.db.api.param.TransactionIsolation.NOT_CONFIGURED;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
-import org.mule.db.commons.api.param.TransactionIsolation;
+import org.mule.extension.db.api.param.TransactionIsolation;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;

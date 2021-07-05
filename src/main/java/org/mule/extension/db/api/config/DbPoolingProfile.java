@@ -26,10 +26,8 @@ import java.util.concurrent.TimeUnit;
  * Pooling configuration for JDBC Data Sources capable of pooling connections
  *
  * @since 1.0
- * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
 @Alias("pooling-profile")
-@Deprecated
 public class DbPoolingProfile implements DatabasePoolingProfile {
 
   /**
@@ -97,9 +95,31 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
   @Expression(NOT_SUPPORTED)
   private int maxIdleTime;
 
+  /**
+   * Defines the total number PreparedStatements a DataSource will cache. The pool will destroy the least-recently-used
+   * PreparedStatement when it hits this limit. When set to 0 statement caching is turned off.
+   */
+  @Parameter
+  @Optional(defaultValue = "0")
+  @Placement(order = 8)
+  @Expression(NOT_SUPPORTED)
+  private int maxStatements;
+
+  /**
+   * If set to true, an operation will be performed at every connection checkout to verify that the connection is valid. A better
+   * choice is to verify connections periodically using c3p0.idleConnectionTestPeriod. In order to improve performance, we
+   * recommend that you set this property to 'false'.
+   */
+  @Parameter
+  @Optional(defaultValue = "true")
+  @Placement(order = 9)
+  @Expression(NOT_SUPPORTED)
+  private boolean testConnectionOnCheckout;
+
+
   @Parameter
   @Optional
-  @Placement(tab = ADVANCED_TAB, order = 8)
+  @Placement(tab = ADVANCED_TAB, order = 10)
   @Expression(NOT_SUPPORTED)
   @Summary("Additional properties used to configure pooling profile.")
   private Map<String, Object> additionalProperties = emptyMap();
@@ -142,6 +162,16 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
   public int getMaxIdleTime() {
     return maxIdleTime;
   }
+
+
+  public int getMaxStatements() {
+    return maxStatements;
+  }
+
+  public boolean getTestConnectionOnCheckout() {
+    return testConnectionOnCheckout;
+  }
+
 
   public Map<String, Object> getAdditionalProperties() {
     return additionalProperties;

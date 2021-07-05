@@ -8,12 +8,12 @@ package org.mule.extension.db.internal.domain.connection.derby;
 
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
-import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
+
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 import org.mule.runtime.extension.api.annotation.values.OfValues;
-
+import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -6,51 +6,11 @@
  */
 package org.mule.extension.db.api.param;
 
-import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
-import org.mule.runtime.extension.api.annotation.Expression;
-import org.mule.runtime.extension.api.annotation.param.Parameter;
-import org.mule.runtime.extension.api.annotation.param.Optional;
-
 /**
  * A user defined JDBC type
  *
  * @since 1.0
- * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
-@Deprecated
-public class ColumnType {
+public class ColumnType extends org.mule.db.commons.api.param.ColumnType {
 
-  /**
-   * Type identifier used by the JDBC driver.
-   */
-  @Parameter
-  @Expression(NOT_SUPPORTED)
-  private int id;
-
-  /**
-   * Name of the data type used by the JDBC driver.
-   */
-  @Expression(NOT_SUPPORTED)
-  @Parameter
-  private String typeName;
-
-  /**
-   * Indicates which Java class must be used to map the DB type.
-   */
-  @Parameter
-  @Optional
-  @Expression(NOT_SUPPORTED)
-  private String className;
-
-  public int getId() {
-    return id;
-  }
-
-  public String getTypeName() {
-    return typeName;
-  }
-
-  public String getClassName() {
-    return className;
-  }
 }

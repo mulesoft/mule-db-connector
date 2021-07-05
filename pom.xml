@@ -33,7 +33,7 @@
         <muleDbClientVersion>1.2.0-SNAPSHOT</muleDbClientVersion>
         <muleExtensionsShadeVersion>1.0.1</muleExtensionsShadeVersion>
 
-        <caffeineVersion>2.9.1</caffeineVersion>
+        <caffeineVersion>2.9.2</caffeineVersion>
         <derbyVersion>10.14.2.0</derbyVersion>
         <mySqlVersion>8.0.25</mySqlVersion>
         <mssqlVersion>7.0.0.jre8</mssqlVersion>

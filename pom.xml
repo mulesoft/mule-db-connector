@@ -195,7 +195,6 @@
                 <version>${munit.extensions.maven.plugin.version}</version>
                 <configuration>
                     <munitFailIfNoTests>false</munitFailIfNoTests>
-                    <runtimeProduct>MULE_EE</runtimeProduct>
                     <systemPropertyVariables>
                         <oracle.db.port>${oracle.db.port}</oracle.db.port>
                     </systemPropertyVariables>

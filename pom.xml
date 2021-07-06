@@ -203,7 +203,7 @@
                         <discoverRuntimes>
                             <product>EE</product>
                             <includeSnapshots>true</includeSnapshots>
-                            <minMuleVersion>4.1.6</minMuleVersion>
+                            <minMuleVersion>4.1.1</minMuleVersion>
                         </discoverRuntimes>
                     </runtimeConfiguration>
                     <sharedLibraries>

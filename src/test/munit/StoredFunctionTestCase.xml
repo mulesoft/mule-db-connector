@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:db="http://www.mulesoft.org/schema/mule/db"
-      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
       xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"

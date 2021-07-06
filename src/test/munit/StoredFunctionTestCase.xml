@@ -25,10 +25,10 @@
         </db:execute-ddl>
     </munit:before-test>
 
-    <munit:test name="whenStoredFunctionIsExecuted_ThenReturnValueExists" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+    <munit:test name="whenStoredFunctionIsExecuted_ThenReturnValueAndInOutExists" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
         <munit:execution>
             <db:stored-procedure config-ref="oracleDbConfigWithoutPoolingProfile">
-                <db:sql ><![CDATA[{:returnValue = call our_procedure(:num)}]]></db:sql>
+                <db:sql ><![CDATA[{:returnValue = call coolFunction(:num)}]]></db:sql>
                 <db:in-out-parameters>
                     <db:in-out-parameter key="num" value="1" />
                 </db:in-out-parameters>
@@ -37,16 +37,7 @@
                 </db:output-parameters>
             </db:stored-procedure>
 
-            <ee:transform>
-                <ee:message >
-                    <ee:set-payload><![CDATA[%dw 2.0
-                                             output application/json
-                                             ---
-                                             payload
-                                    ]]>
-                    </ee:set-payload>
-                </ee:message>
-            </ee:transform>
+            <set-payload value="#[output application/json --- payload]"/>
         </munit:execution>
 
         <munit:validation >

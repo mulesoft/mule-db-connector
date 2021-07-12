@@ -162,26 +162,7 @@
             <version>0.2.20</version>
             <scope>test</scope>
         </dependency>
-        <!-- Oracle's XMLType dependencies -->
-        <dependency>
-            <groupId>com.oracle.database.xml</groupId>
-            <artifactId>xdb</artifactId>
-            <version>${oracle.driver.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle.database.xml</groupId>
-            <artifactId>xmlparserv2</artifactId>
-            <version>${oracle.driver.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.connectors</groupId>
-            <artifactId>mule-http-connector</artifactId>
-            <version>1.5.25</version>
-            <classifier>mule-plugin</classifier>
-            <scope>test</scope>
-        </dependency>
+
     </dependencies>
 
     <build>

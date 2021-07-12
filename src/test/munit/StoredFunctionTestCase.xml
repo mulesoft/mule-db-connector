@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+
+    <munit:config name="StoredFunctionTestCase.xml"/>
+
+    <munit:before-test name="createsStoredFunction">
+        <db:execute-ddl config-ref="oracleDbConfigWithoutPoolingProfile">
+            <db:sql><![CDATA[CREATE OR REPLACE FUNCTION coolFunction (inout_num IN OUT NUMBER) RETURN NUMBER AS
+                            BEGIN
+                                inout_num:= inout_num + 1000;
+                                return inout_num;
+                            END coolFunction;
+                    ]]>
+            </db:sql>
+        </db:execute-ddl>
+    </munit:before-test>
+
+    <munit:test name="whenStoredFunctionIsExecuted_ThenReturnValueAndInOutExists" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+        <munit:execution>
+            <db:stored-procedure config-ref="oracleDbConfigWithoutPoolingProfile">
+                <db:sql ><![CDATA[{:returnValue = call coolFunction(:num)}]]></db:sql>
+                <db:in-out-parameters>
+                    <db:in-out-parameter key="num" value="1" />
+                </db:in-out-parameters>
+                <db:output-parameters>
+                    <db:output-parameter key="returnValue" type="NUMERIC" />
+                </db:output-parameters>
+            </db:stored-procedure>
+
+            <set-payload value="#[output application/json --- payload]"/>
+        </munit:execution>
+
+        <munit:validation >
+            <munit-tools:assert-equals actual="#[payload.num]" expected="#[1001]"/>
+            <munit-tools:assert-equals actual="#[payload.returnValue]" expected="#[1001]"/>
+        </munit:validation>
+    </munit:test>
+
+</mule>

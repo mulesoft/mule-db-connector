@@ -52,6 +52,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.mule.connectors</groupId>
+            <artifactId>mule-db-client</artifactId>
+            <version>${muleDbClientVersion}</version>
+        </dependency>
+        <dependency>
             <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
             <version>${c3p0Version}</version>
@@ -77,19 +82,23 @@
             <version>${javax.transaction.version}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.experlog</groupId>
             <artifactId>xapool</artifactId>
             <version>${xaPoolVersion}</version>
         </dependency>
-
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
             <version>${caffeineVersion}</version>
         </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>${cglibVersion}</version>
+        </dependency>
 
+        <!-- Test Dependencies -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -103,31 +112,23 @@
             <classifier>mule-plugin</classifier>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>commons-dbutils</groupId>
             <artifactId>commons-dbutils</artifactId>
             <version>${commonsDbUtilsVersion}</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>mchange-commons-java</artifactId>
+            <version>0.2.20</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
             <version>${xmlunit.version}</version>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>${cglibVersion}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mule.connectors</groupId>
-            <artifactId>mule-db-client</artifactId>
-            <version>${muleDbClientVersion}</version>
         </dependency>
 
         <!-- DB Drivers -->
@@ -155,14 +156,6 @@
             <version>${oracle.driver.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.mchange</groupId>
-            <artifactId>mchange-commons-java</artifactId>
-            <version>0.2.20</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
     <build>

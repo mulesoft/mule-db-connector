@@ -67,16 +67,6 @@
                 </on-error-continue>
             </error-handler>
         </try>
-
-        <try>
-            <db:execute-script config-ref="Database_Config">
-                <db:sql><![CDATA[DROP TABLE ALIEN]]></db:sql>
-            </db:execute-script>
-            <error-handler>
-                <on-error-continue enableNotifications="true" logException="false">
-                </on-error-continue>
-            </error-handler>
-        </try>
     </flow>
 
 </mule>

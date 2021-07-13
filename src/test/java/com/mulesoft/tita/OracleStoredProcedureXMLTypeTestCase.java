@@ -41,9 +41,7 @@ public class OracleStoredProcedureXMLTypeTestCase {
   public static ApplicationBuilder app(ApplicationSelector runtimeBuilder) {
     return runtimeBuilder
         .custom("stored-procedure-oracle-xmltype-app", "tita/stored-procedure-oracle-xmltype-app.xml")
-        .withDependency(dbConnectorDependency())
-        .withDependency(xdbOracleDependency())
-        .withDependency(xmlparserv2OracleDependency())
+        .withTemplatePomFile("tita/stored-procedure-oracle-xmltype-app-pom.xml")
         .withProperty("db.port", System.getProperty("oracle.db.port"))
         .withApi(api, port);
   }
@@ -59,34 +57,6 @@ public class OracleStoredProcedureXMLTypeTestCase {
     HttpResponse responseApi = runtime.api(api).request("/test").get();
     assertThat(responseApi.statusCode(), is(SC_OK));
     assertThat(responseApi.asString(), containsString("SUCCESS"));
-  }
-
-  private static Dependency dbConnectorDependency() {
-    Dependency osConnector = new Dependency();
-    osConnector.setGroupId("org.mule.connectors");
-    osConnector.setArtifactId("mule-db-connector");
-    osConnector.setVersion("2.0.0-SNAPSHOT");
-    osConnector.setClassifier("mule-plugin");
-
-    return osConnector;
-  }
-
-  private static Dependency xdbOracleDependency() {
-    Dependency osConnector = new Dependency();
-    osConnector.setGroupId("com.oracle.database.xml");
-    osConnector.setArtifactId("xdb");
-    osConnector.setVersion("21.1.0.0");
-
-    return osConnector;
-  }
-
-  private static Dependency xmlparserv2OracleDependency() {
-    Dependency osConnector = new Dependency();
-    osConnector.setGroupId("com.oracle.database.xml");
-    osConnector.setArtifactId("xmlparserv2");
-    osConnector.setVersion("21.1.0.0");
-
-    return osConnector;
   }
 
 }

@@ -137,6 +137,12 @@
             <artifactId>tita-junit-runner</artifactId>
             <version>${titaVersion}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mule</groupId>
+                    <artifactId>mule-maven-client-impl</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- DB Drivers -->

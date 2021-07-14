@@ -24,7 +24,7 @@
     <flow name="oraclesXmlTypeTest">
         <http:listener path="/test" config-ref="listenerConfig"/>
 
-        <set-variable value="#[payload]" variableName="originalPayload" mimeType="application/xml"/>
+        <set-variable value="#[payload]" variableName="originalPayload" mimeType="text/plain"/>
 
         <try>
             <db:execute-script config-ref="Database_Config">

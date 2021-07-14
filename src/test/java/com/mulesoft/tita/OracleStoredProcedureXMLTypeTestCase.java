@@ -23,7 +23,6 @@ import com.mulesoft.anypoint.tita.runner.ambar.annotation.Application;
 import com.mulesoft.anypoint.tita.runner.ambar.annotation.runtime.Standalone;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.apache.maven.model.Dependency;
 import org.mule.extension.db.integration.model.AbstractTestDatabase;
 import org.mule.extension.db.integration.model.Alien;
 
@@ -32,7 +31,7 @@ public class OracleStoredProcedureXMLTypeTestCase {
 
   private static final Identifier api = identifier("api1");
   private static final Identifier port = identifier("port");
-  private static final String CONTENT_TYPE_HEADER_VALUE = "application/xml";
+  private static final String XML_PROLOG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
   @Standalone
   Runtime runtime;
@@ -50,9 +49,7 @@ public class OracleStoredProcedureXMLTypeTestCase {
   public void oracleXMTypeTestCase() throws Exception {
     Alien firstAlien = AbstractTestDatabase.ALIEN_TEST_VALUES[1];
 
-    runtime.api(api).request("/test").withPayload(firstAlien.getXml())
-        .withHeader(CONTENT_TYPE, CONTENT_TYPE_HEADER_VALUE)
-        .post();
+    runtime.api(api).request("/test").withPayload(XML_PROLOG + firstAlien.getXml()).post();
 
     HttpResponse responseApi = runtime.api(api).request("/test").get();
     assertThat(responseApi.statusCode(), is(SC_OK));

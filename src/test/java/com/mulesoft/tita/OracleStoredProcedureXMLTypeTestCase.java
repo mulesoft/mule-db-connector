@@ -10,7 +10,6 @@ import static com.mulesoft.anypoint.tita.environment.api.artifact.Identifier.ide
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringContains.containsString;
-import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 import static org.apache.http.HttpStatus.SC_OK;
 
 import com.mulesoft.anypoint.tests.http.HttpResponse;
@@ -47,13 +46,15 @@ public class OracleStoredProcedureXMLTypeTestCase {
 
   @Test
   public void oracleXMTypeTestCase() throws Exception {
-    Alien firstAlien = AbstractTestDatabase.ALIEN_TEST_VALUES[1];
+    if (Boolean.parseBoolean(System.getProperty("oracle"))) {
+      Alien firstAlien = AbstractTestDatabase.ALIEN_TEST_VALUES[1];
 
-    runtime.api(api).request("/test").withPayload(XML_PROLOG + firstAlien.getXml()).post();
+      runtime.api(api).request("/test").withPayload(XML_PROLOG + firstAlien.getXml()).post();
 
-    HttpResponse responseApi = runtime.api(api).request("/test").get();
-    assertThat(responseApi.statusCode(), is(SC_OK));
-    assertThat(responseApi.asString(), containsString("SUCCESS"));
+      HttpResponse responseApi = runtime.api(api).request("/test").get();
+      assertThat(responseApi.statusCode(), is(SC_OK));
+      assertThat(responseApi.asString(), containsString("SUCCESS"));
+    }
   }
 
 }

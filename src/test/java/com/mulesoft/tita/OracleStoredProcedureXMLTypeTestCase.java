@@ -19,6 +19,7 @@ import com.mulesoft.anypoint.tita.environment.api.artifact.Identifier;
 import com.mulesoft.anypoint.tita.environment.api.runtime.Runtime;
 import com.mulesoft.anypoint.tita.runner.ambar.Ambar;
 import com.mulesoft.anypoint.tita.runner.ambar.annotation.Application;
+import com.mulesoft.anypoint.tita.runner.ambar.annotation.runtime.Property;
 import com.mulesoft.anypoint.tita.runner.ambar.annotation.runtime.Standalone;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,7 +33,7 @@ public class OracleStoredProcedureXMLTypeTestCase {
   private static final Identifier port = identifier("port");
   private static final String XML_PROLOG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
-  @Standalone
+  @Standalone(properties = {@Property(key = "tita.api.request.timeout", value = "20000")})
   Runtime runtime;
 
   @Application

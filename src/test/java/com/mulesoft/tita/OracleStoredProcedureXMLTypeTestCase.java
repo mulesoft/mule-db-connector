@@ -31,9 +31,8 @@ public class OracleStoredProcedureXMLTypeTestCase {
 
   private static final Identifier api = identifier("api1");
   private static final Identifier port = identifier("port");
-  private static final String XML_PROLOG = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
-  @Standalone(properties = {@Property(key = "tita.api.request.timeout", value = "20000")})
+  @Standalone
   Runtime runtime;
 
   @Application
@@ -48,9 +47,7 @@ public class OracleStoredProcedureXMLTypeTestCase {
   @Test
   public void oracleXMTypeTestCase() throws Exception {
     if (Boolean.parseBoolean(System.getProperty("oracle"))) {
-      Alien firstAlien = AbstractTestDatabase.ALIEN_TEST_VALUES[1];
-
-      runtime.api(api).request("/test").withPayload(XML_PROLOG + firstAlien.getXml()).post();
+      runtime.api(api).request("/test").post();
 
       HttpResponse responseApi = runtime.api(api).request("/test").get();
       assertThat(responseApi.statusCode(), is(SC_OK));

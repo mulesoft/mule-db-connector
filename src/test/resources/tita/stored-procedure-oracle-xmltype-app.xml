@@ -24,8 +24,6 @@
     <flow name="oraclesXmlTypeTest">
         <http:listener path="/test" config-ref="listenerConfig"/>
 
-        <set-variable value="#[payload]" variableName="originalPayload" mimeType="text/plain"/>
-
         <try>
             <db:execute-script config-ref="Database_Config">
                 <db:sql><![CDATA[DROP TABLE ALIEN]]></db:sql>
@@ -53,12 +51,14 @@
             </db:sql>
         </db:execute-ddl>
 
+        <set-payload mimeType="text/plain" value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;note&gt;&lt;to&gt;Tove&lt;/to&gt;&lt;from&gt;Jani&lt;/from&gt;&lt;heading&gt;JULOJULOJULO&lt;/heading&gt;&lt;body&gt;Don't forget me this weekend!&lt;/body&gt;&lt;/note&gt;"/>
+
         <try>
             <db:stored-procedure config-ref="Database_Config">
                 <db:sql><![CDATA[{ CALL insertAlienDescription(:name, :data) }]]></db:sql>
                 <db:input-parameters><![CDATA[#[{
                                           "name" : "Julian",
-                                          "data": vars.originalPayload
+                                          "data": payload
                                         }]]]>
                 </db:input-parameters>
             </db:stored-procedure>

@@ -67,7 +67,8 @@
 
             <error-handler>
                 <on-error-continue enableNotifications="true" logException="true">
-                    <set-payload value="ERROR"/>
+                    <logger level="INFO" message='#["ERROR-----&gt;" ++ "Error Description: " ++ error.description ++ "; Error errorType: " ++ error.errorType.identifier]'/>
+                    <set-payload value='ERROR----->" ++ "Error Description: " ++ error.description ++ "; Error errorType: " ++ error.errorType.identifier'/>
                 </on-error-continue>
             </error-handler>
         </try>

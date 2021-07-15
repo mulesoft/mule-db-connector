@@ -17,18 +17,16 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * Defines a structured data type for the {@link #ORACLE_XMLTYPE_CLASS} class
+ * Defines a structured data type handler for the {@link #ORACLE_XMLTYPE_CLASS} class, multiple name/id pairs will
+ * extend this class to cover all possible scenarios
  */
-public class OracleXmlType extends AbstractStructuredDbType {
+public class OracleXmlTypeHandler extends AbstractStructuredDbType {
 
-  private static final int OPAQUE_TYPE_ID = 2007;
   private static final String XML_TYPE_INTERNAL_NAME = "SYS.XMLTYPE";
-  private static final String XML_TYPE_NAME = "XMLTYPE";
-
   public static final String ORACLE_XMLTYPE_CLASS = "oracle.xdb.XMLType";
 
-  public OracleXmlType() {
-    super(OPAQUE_TYPE_ID, XML_TYPE_NAME);
+  public OracleXmlTypeHandler(int id, String name) {
+    super(id, name);
   }
 
   @Override
@@ -41,11 +39,11 @@ public class OracleXmlType extends AbstractStructuredDbType {
       throws SQLException {
     try {
       if (value instanceof String) {
-        statement.setObject(index, createXmlType(statement.getConnection(), (String) value), OPAQUE_TYPE_ID);
+        statement.setObject(index, createXmlType(statement.getConnection(), (String) value), this.getId());
         return;
       }
       if (value instanceof InputStream) {
-        statement.setObject(index, createXmlType(statement.getConnection(), (InputStream) value), OPAQUE_TYPE_ID);
+        statement.setObject(index, createXmlType(statement.getConnection(), (InputStream) value), this.getId());
         return;
       }
     } catch (Exception e) {
@@ -96,4 +94,5 @@ public class OracleXmlType extends AbstractStructuredDbType {
   public static Class<?> getXmlTypeClass() throws ClassNotFoundException {
     return org.apache.commons.lang3.ClassUtils.getClass(ORACLE_XMLTYPE_CLASS);
   }
+
 }

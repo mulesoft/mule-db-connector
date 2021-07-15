@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+	  xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
 	  xmlns:db="http://www.mulesoft.org/schema/mule/db"
 	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	  xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
-	  xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
-	  xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
-        http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+	  xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	  xsi:schemaLocation="http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
         http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
         http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
-        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+		http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
 	<munit:config name="SelectTestCase.xml" minMuleVersion="4.1.6" />
 
 	<munit:before-test name="createATableWithLOBs">
@@ -77,4 +78,5 @@ payload]]></ee:set-payload>
 			</error-handler>
 		</try>
 	</munit:after-test>
+
 </mule>

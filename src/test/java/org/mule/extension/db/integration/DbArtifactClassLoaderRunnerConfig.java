@@ -6,7 +6,6 @@
  */
 package org.mule.extension.db.integration;
 
-
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 /**

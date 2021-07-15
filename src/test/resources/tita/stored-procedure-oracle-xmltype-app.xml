@@ -18,7 +18,7 @@
     </http:listener-config>
 
     <db:config name="Database_Config">
-        <db:oracle-connection host="localhost" port="${db.port}" user="SYSTEM" password="Oradoc_db1" instance="ORCLCDB" />
+        <db:oracle-connection host="localhost" port="${db.port}" user="SYSTEM" password="Oradoc_db1" instance="ORCLCDB"/>
     </db:config>
 
     <flow name="oraclesXmlTypeTest">
@@ -39,14 +39,14 @@
             <db:sql><![CDATA[CREATE TABLE ALIEN(NAME varchar2(255), DESCRIPTION XMLTYPE)]]></db:sql>
         </db:execute-ddl>
         <db:execute-ddl config-ref="Database_Config">
-            <db:sql><![CDATA[CREATE OR REPLACE PROCEDURE insertAlienDescription(pName IN VARCHAR2, pDescription IN XMLType) IS
+            <db:sql><![CDATA[CREATE OR REPLACE PROCEDURE insertAlienDescription(pName IN VARCHAR2, pDescription IN XMLTYPE) IS
                         BEGIN
                           INSERT INTO Alien VALUES (pName, pDescription);
                         END;]]>
             </db:sql>
         </db:execute-ddl>
         <db:execute-ddl config-ref="Database_Config">
-            <db:sql><![CDATA[CREATE OR REPLACE PROCEDURE getAlienDescription(pName IN VARCHAR2, pDescription OUT XMLType) IS
+            <db:sql><![CDATA[CREATE OR REPLACE PROCEDURE getAlienDescription(pName IN VARCHAR2, pDescription OUT XMLTYPE) IS
                             BEGIN
                               SELECT DESCRIPTION INTO pDescription FROM Alien WHERE NAME = pName;
                             END;]]>
@@ -62,7 +62,9 @@
                                         }]]]>
                 </db:input-parameters>
             </db:stored-procedure>
+
             <set-payload value="SUCCESS"/>
+
             <error-handler>
                 <on-error-continue enableNotifications="true" logException="true">
                     <set-payload value="ERROR"/>

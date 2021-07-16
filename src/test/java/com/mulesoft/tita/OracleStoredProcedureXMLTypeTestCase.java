@@ -22,13 +22,9 @@ import com.mulesoft.anypoint.tita.runner.ambar.annotation.Application;
 import com.mulesoft.anypoint.tita.runner.ambar.annotation.runtime.Standalone;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @RunWith(Ambar.class)
 public class OracleStoredProcedureXMLTypeTestCase {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(OracleStoredProcedureXMLTypeTestCase.class);
 
   private static final Identifier api = identifier("api1");
   private static final Identifier port = identifier("port");
@@ -52,8 +48,6 @@ public class OracleStoredProcedureXMLTypeTestCase {
 
       HttpResponse responseApi = runtime.api(api).request("/test").get();
       assertThat(responseApi.statusCode(), is(SC_OK));
-      LOGGER.info("-----------OracleStoredProcedureXMLTypeTestCase#oracleXMTypeTestCase: LOG-----------");
-      LOGGER.info(responseApi.asString());
       assertThat(responseApi.asString(), containsString("SUCCESS"));
     }
   }

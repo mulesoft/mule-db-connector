@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Loggers>
+
+        <!-- Mule classes -->
+        <AsyncLogger name="org.mule" level="INFO"/>
+
+        <AsyncLogger name="org.mule.maven.client" level="INFO"/>
+        <AsyncLogger name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor" level="DEBUG"/>
+        <AsyncLogger name="com.mulesoft.anypoint.tita" level="TRACE"/>
+        <AsyncLogger name="com.mulesoft.anypoint.discovery" level="TRACE"/>
+        <AsyncLogger name="com.mulesoft.anypoint.agw.system" level="TRACE"/>
+        <AsyncLogger name="com.mulesoft.anypoint.tita.core.maven" level="INFO"/>
+
+        <AsyncLogger name="org.mule.extension.db" level="DEBUG"/>
+        <AsyncLogger name="org.mule.db.commons" level="DEBUG"/>
+
+    </Loggers>
+</Configuration>

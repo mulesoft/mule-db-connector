@@ -29,7 +29,7 @@ public class OracleStoredProcedureXMLTypeTestCase {
   private static final Identifier api = identifier("api1");
   private static final Identifier port = identifier("port");
 
-  @Standalone
+  @Standalone(log4j = "tita/log4j2-tita-test.xml")
   Runtime runtime;
 
   @Application

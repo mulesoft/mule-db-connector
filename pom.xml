@@ -213,6 +213,7 @@
                         <mysql.db.port>${mysql.db.port}</mysql.db.port>
                         <mssql.db.port>${mssql.db.port}</mssql.db.port>
                         <tita.testing>4.2.2,4.3.0</tita.testing>
+                        <dbConnectorVersion>${version}</dbConnectorVersion>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

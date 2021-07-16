@@ -7,6 +7,7 @@
 package com.mulesoft.tita;
 
 import static com.mulesoft.anypoint.tita.environment.api.artifact.Identifier.identifier;
+import static java.lang.System.getProperty;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.StringContains.containsString;
@@ -20,6 +21,7 @@ import com.mulesoft.anypoint.tita.environment.api.runtime.Runtime;
 import com.mulesoft.anypoint.tita.runner.ambar.Ambar;
 import com.mulesoft.anypoint.tita.runner.ambar.annotation.Application;
 import com.mulesoft.anypoint.tita.runner.ambar.annotation.runtime.Standalone;
+import org.apache.maven.model.Dependency;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -36,6 +38,7 @@ public class OracleStoredProcedureXMLTypeTestCase {
   public static ApplicationBuilder app(ApplicationSelector runtimeBuilder) {
     return runtimeBuilder
         .custom("stored-procedure-oracle-xmltype-app", "tita/stored-procedure-oracle-xmltype-app.xml")
+        .withDependency(getDbConnectorDependency())
         .withTemplatePomFile("tita/stored-procedure-oracle-xmltype-app-pom.xml")
         .withProperty("db.port", System.getProperty("oracle.db.port"))
         .withApi(api, port);
@@ -50,6 +53,17 @@ public class OracleStoredProcedureXMLTypeTestCase {
       assertThat(responseApi.statusCode(), is(SC_OK));
       assertThat(responseApi.asString(), containsString("SUCCESS"));
     }
+  }
+
+  private static Dependency getDbConnectorDependency() {
+    Dependency dependency = new Dependency();
+
+    dependency.setGroupId("org.mule.connectors");
+    dependency.setArtifactId("mule-db-connector");
+    dependency.setVersion(getProperty("dbConnectorVersion"));
+    dependency.setClassifier("mule-plugin");
+
+    return dependency;
   }
 
 }

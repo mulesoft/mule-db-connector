@@ -8,6 +8,8 @@ package org.mule.extension.db.internal.domain.connection.oracle.types;
 
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.type.AbstractStructuredDbType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -24,6 +26,7 @@ public class OracleXmlTypeHandler extends AbstractStructuredDbType {
 
   private static final String XML_TYPE_INTERNAL_NAME = "SYS.XMLTYPE";
   public static final String ORACLE_XMLTYPE_CLASS = "oracle.xdb.XMLType";
+  private static final Logger LOGGER = LoggerFactory.getLogger(OracleXmlTypeHandler.class);
 
   public OracleXmlTypeHandler(int id, String name) {
     super(id, name);
@@ -38,6 +41,9 @@ public class OracleXmlTypeHandler extends AbstractStructuredDbType {
   public void setParameterValue(PreparedStatement statement, int index, Object value, DbConnection connection)
       throws SQLException {
     try {
+      LOGGER.debug("EXECUTION IS PASSING TROUGH OracleXmlTypeHandler --- TYPE ID: {}, TYPE NAME: {}", this.getId(),
+                   this.getName());
+
       if (value instanceof String) {
         statement.setObject(index, createXmlType(statement.getConnection(), (String) value), this.getId());
         return;

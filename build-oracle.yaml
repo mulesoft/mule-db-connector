@@ -1,4 +1,3 @@
 projectType: extension
 enableMavenDeployStage: false
 mavenTestGoal: install -Dmaven.javadoc.skip -Doracle
-archiveArtifacts: "**/target/**/logs/**"

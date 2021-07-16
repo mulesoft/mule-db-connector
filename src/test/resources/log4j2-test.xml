@@ -20,10 +20,6 @@
         <!-- Mule classes -->
         <AsyncLogger name="org.mule" level="WARN"/>
         <AsyncLogger name="com.mulesoft" level="WARN"/>
-        <AsyncLogger name="com.mulesoft.anypoint.tita" level="TRACE"/>
-
-        <AsyncLogger name="org.mule.extension.db" level="DEBUG"/>
-        <AsyncLogger name="org.mule.db.commons" level="DEBUG"/>
 
         <AsyncRoot level="INFO">
             <AppenderRef ref="Console"/>

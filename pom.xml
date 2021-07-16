@@ -32,7 +32,6 @@
         <cglibVersion>3.3.0</cglibVersion>
         <muleDbClientVersion>1.3.0-SNAPSHOT</muleDbClientVersion>
         <muleExtensionsShadeVersion>1.0.1</muleExtensionsShadeVersion>
-        <titaVersion>4.1.0</titaVersion>
 
         <caffeineVersion>2.9.2</caffeineVersion>
         <derbyVersion>10.14.2.0</derbyVersion>
@@ -49,7 +48,6 @@
         <munit.version>2.3.5</munit.version>
         <mtf-tools.version>1.1.0</mtf-tools.version>
         <skipTests>false</skipTests>
-        <settingsFile>${java.io.tmpdir}/effective-settings.xml</settingsFile>
     </properties>
 
     <dependencies>
@@ -132,18 +130,6 @@
             <version>${xmlunit.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.mulesoft.anypoint</groupId>
-            <artifactId>tita-junit-runner</artifactId>
-            <version>${titaVersion}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.mule</groupId>
-                    <artifactId>mule-maven-client-impl</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
 
         <!-- DB Drivers -->
         <dependency>
@@ -187,33 +173,13 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-help-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>process-test-resources</phase>
-                        <id>copy-settings</id>
-                        <goals>
-                            <goal>effective-settings</goal>
-                        </goals>
-                        <configuration>
-                            <output>${settingsFile}</output>
-                            <showPasswords>true</showPasswords>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <skipTests>${skipTests}</skipTests>
-                    <argLine>-Dmaven.settings.local=${settingsFile}</argLine>
                     <systemPropertyVariables>
                         <oracle.db.port>${oracle.db.port}</oracle.db.port>
                         <mysql.db.port>${mysql.db.port}</mysql.db.port>
                         <mssql.db.port>${mssql.db.port}</mssql.db.port>
-                        <tita.testing>4.2.2,4.3.0</tita.testing>
-                        <dbConnectorVersion>${version}</dbConnectorVersion>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

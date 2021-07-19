@@ -42,6 +42,7 @@
 
         <docker.maven.plugin.version>0.36.1</docker.maven.plugin.version>
         <maven-replacer-plugin.version>1.5.3</maven-replacer-plugin.version>
+        <maven.help.plugin.version>3.2.0</maven.help.plugin.version>
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
 
@@ -188,6 +189,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-help-plugin</artifactId>
+                <version>${maven.help.plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>process-test-resources</phase>

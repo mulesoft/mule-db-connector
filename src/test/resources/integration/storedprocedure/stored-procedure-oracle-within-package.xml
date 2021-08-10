@@ -38,4 +38,22 @@
         </db:stored-procedure>
     </flow>
 
+    <flow name="getClobResultFromStoredProcedurePackage">
+        <set-payload value="#[1 to 4]" />
+        <foreach  >
+            <try transactionalAction="ALWAYS_BEGIN">
+                <db:stored-procedure transactionalAction="ALWAYS_JOIN" config-ref="oracleDbConfig">
+                    <db:sql>{ call magicPackageVersionThree.getClob(:sys_refcursor) }</db:sql>
+                    <db:output-parameters>
+                        <db:output-parameter key="sys_refcursor" customType="CURSOR" />
+                    </db:output-parameters>
+                </db:stored-procedure>
+            </try>
+        </foreach>
+        <set-payload value='#[%dw 2.0
+output application/json
+---
+status: "OK"]'/>
+    </flow>
+
 </mule>

@@ -682,5 +682,7 @@ public class OracleTestDatabase extends AbstractTestDatabase {
                    "            select to_clob(1) from dual;\n" +
                    "    END getClob;" +
                    "END magicPackageVersionThree;");
+
+
   }
 }

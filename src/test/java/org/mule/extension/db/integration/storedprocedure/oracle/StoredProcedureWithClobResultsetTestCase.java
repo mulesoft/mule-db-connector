@@ -7,11 +7,9 @@
 
 package org.mule.extension.db.integration.storedprocedure.oracle;
 
-import static java.util.Collections.emptyList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mule.extension.db.integration.TestDbConfig.getOracleResource;
-
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runners.Parameterized;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.OracleTestDatabase;
 
@@ -20,11 +18,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runners.Parameterized;
+import static java.util.Collections.emptyList;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mule.extension.db.integration.TestDbConfig.getOracleResource;
 
-public class StoredProcedureWithinPackageTestCase extends AbstractDbIntegrationTestCase {
+public class StoredProcedureWithClobResultsetTestCase extends AbstractDbIntegrationTestCase {
 
   @Parameterized.Parameters(name = "{2}")
   public static List<Object[]> parameters() {
@@ -47,20 +46,6 @@ public class StoredProcedureWithinPackageTestCase extends AbstractDbIntegrationT
   @Before
   public void init() throws SQLException {
     ((OracleTestDatabase) this.testDatabase).createPackages(getDefaultDataSource().getConnection());
-  }
-
-  @Test
-  public void callStoredProceduresWithTheSameNameOnDifferentPackages() throws Exception {
-    Map<String, Object> payloadSP1 = runProcedure("magicPackageVersionOneAddMagicalNumber7");
-    Map<String, Object> payloadSP2 = runProcedure("magicPackageVersionTwoAddMagicalNumber9");
-    assertThat(payloadSP1.get("num").toString(), equalTo("17"));
-    assertThat(payloadSP2.get("num").toString(), equalTo("19"));
-  }
-
-  @Test
-  public void callStoredProcedureWithAUniqueIdentifier() throws Exception {
-    Map<String, Object> payloadSP = runProcedure("addMagicalNumberAndACardNumber11WithStoredProcedurePackage");
-    assertThat(payloadSP.get("num").toString(), equalTo("21"));
   }
 
   @Test

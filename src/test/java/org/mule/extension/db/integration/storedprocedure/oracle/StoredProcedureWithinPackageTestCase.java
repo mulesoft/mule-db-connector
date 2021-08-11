@@ -62,11 +62,4 @@ public class StoredProcedureWithinPackageTestCase extends AbstractDbIntegrationT
     Map<String, Object> payloadSP = runProcedure("addMagicalNumberAndACardNumber11WithStoredProcedurePackage");
     assertThat(payloadSP.get("num").toString(), equalTo("21"));
   }
-
-  @Test
-  public void getClobResultFromStoredProcedurePackage() throws Exception {
-    Map<String, Object> payloadSP = runProcedure("getClobResultFromStoredProcedurePackage");
-    assertThat(payloadSP.get("status").toString(), equalTo("OK"));
-  }
-
 }

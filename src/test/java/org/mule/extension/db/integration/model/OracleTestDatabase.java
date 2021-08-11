@@ -670,17 +670,17 @@ public class OracleTestDatabase extends AbstractTestDatabase {
                    "END magicPackageVersionTwo;");
 
     executeDdl(connection,
-            "CREATE OR REPLACE PACKAGE magicPackageVersionThree AS\n" +
-                    "  PROCEDURE getClob ( result OUT sys_refcursor );" +
-                    "END magicPackageVersionThree;");
+               "CREATE OR REPLACE PACKAGE magicPackageVersionThree AS\n" +
+                   "  PROCEDURE getClob ( result OUT sys_refcursor );" +
+                   "END magicPackageVersionThree;");
 
     executeDdl(connection,
-            "CREATE OR REPLACE PACKAGE BODY magicPackageVersionThree AS\n" +
-                    "  PROCEDURE getClob ( result OUT sys_refcursor ) AS\n" +
-                    "    BEGIN\n" +
-                    "        Open result for\n" +
-                    "            select to_clob(1) from dual;\n" +
-                    "    END getClob;" +
-                    "END magicPackageVersionThree;");
+               "CREATE OR REPLACE PACKAGE BODY magicPackageVersionThree AS\n" +
+                   "  PROCEDURE getClob ( result OUT sys_refcursor ) AS\n" +
+                   "    BEGIN\n" +
+                   "        Open result for\n" +
+                   "            select to_clob(1) from dual;\n" +
+                   "    END getClob;" +
+                   "END magicPackageVersionThree;");
   }
 }

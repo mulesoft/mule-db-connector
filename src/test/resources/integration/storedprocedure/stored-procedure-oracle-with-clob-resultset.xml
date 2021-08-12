@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+            http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+
+    <flow name="getClobResultFromStoredProcedurePackage">
+        <set-payload value="#[1 to 20]" />
+        <foreach  >
+            <try transactionalAction="ALWAYS_BEGIN">
+                <db:stored-procedure transactionalAction="ALWAYS_JOIN" config-ref="dbConfigWithPooling">
+                    <db:sql>{ call magicPackageVersionThree.getClob(:sys_refcursor) }</db:sql>
+                    <db:output-parameters>
+                        <db:output-parameter key="sys_refcursor" customType="CURSOR" />
+                    </db:output-parameters>
+                </db:stored-procedure>
+            </try>
+        </foreach>
+        <set-payload value='#[%dw 2.0
+output application/java
+---
+status: "OK"]'/>
+    </flow>
+
+</mule>

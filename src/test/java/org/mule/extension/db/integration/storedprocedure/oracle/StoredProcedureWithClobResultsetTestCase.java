@@ -40,7 +40,7 @@ public class StoredProcedureWithClobResultsetTestCase extends AbstractDbIntegrat
 
   @Override
   protected String[] getFlowConfigurationResources() {
-    return new String[] {"integration/storedprocedure/stored-procedure-oracle-within-package.xml"};
+    return new String[] {"integration/storedprocedure/stored-procedure-oracle-with-clob-resultset.xml"};
   }
 
   @Before

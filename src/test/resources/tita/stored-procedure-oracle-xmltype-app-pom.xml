@@ -20,7 +20,7 @@
             <plugin>
                 <groupId>org.mule.tools.maven</groupId>
                 <artifactId>mule-maven-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.5.3</version>
                 <extensions>true</extensions>
                 <configuration>
                     <classifier>mule-application</classifier>

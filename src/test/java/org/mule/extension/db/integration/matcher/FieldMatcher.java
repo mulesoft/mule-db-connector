@@ -13,7 +13,6 @@ import org.mule.extension.db.integration.model.Field;
 import org.mule.extension.db.integration.model.Record;
 
 import org.hamcrest.Description;
-import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
@@ -36,7 +35,6 @@ public class FieldMatcher extends TypeSafeMatcher<Record> {
                                + getValueAsString(field.getValue()));
   }
 
-  @Factory
   public static Matcher<Record> containsField(Field field) {
     return new FieldMatcher(field);
   }

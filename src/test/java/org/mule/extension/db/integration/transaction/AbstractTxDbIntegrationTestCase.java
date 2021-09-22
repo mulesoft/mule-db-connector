@@ -6,11 +6,11 @@
  */
 package org.mule.extension.db.integration.transaction;
 
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.collection.IsMapContaining.hasEntry;
+import static org.hamcrest.core.AnyOf.anyOf;
+import static org.hamcrest.core.IsIterableContaining.hasItems;
 import static org.junit.Assert.assertThat;
 import static org.mule.extension.db.integration.DbTestUtil.selectData;
 
@@ -63,7 +63,8 @@ public abstract class AbstractTxDbIntegrationTestCase extends AbstractDbIntegrat
     List<Map<String, Object>> result = selectData("select * from PLANET where POSITION=4", dataSource);
     Matcher<Map<? extends String, ?>> mapMatcher = hasEntry("NAME", planet);
     //Oracle returns BigDecimals
-    Matcher<Map<? extends String, ?>> numberMatcher = hasEntry(is("POSITION"), is(anyOf(is(4), is(new BigDecimal(4)))));
+    Matcher<Map<? extends String, ?>> numberMatcher =
+        hasEntry(is("POSITION"), is(anyOf(new Matcher[] {is(4), is(new BigDecimal(4))})));
     Matcher<Iterable<Map<String, Object>>> matcher = hasItems(mapMatcher, numberMatcher);
     assertThat(result, matcher);
   }

@@ -16,6 +16,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mule.db.commons.internal.domain.type.ClobResolvedDataType.createUnsupportedTypeErrorMessage;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.type.ClobResolvedDataType;
 import org.mule.tck.junit4.AbstractMuleTestCase;
@@ -25,6 +26,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.sql.Clob;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 
 import org.apache.commons.io.input.ReaderInputStream;
@@ -44,6 +46,7 @@ public class ClobResolvedDataTypeTestCase extends AbstractMuleTestCase {
   private ClobResolvedDataType dataType;
   private PreparedStatement statement;
   private Connection connection;
+  private DatabaseMetaData metadata;
   private DbConnection dbConnection;
   private Clob clob;
 
@@ -52,11 +55,13 @@ public class ClobResolvedDataTypeTestCase extends AbstractMuleTestCase {
     dataType = new ClobResolvedDataType(CLOB, null);
     statement = mock(PreparedStatement.class);
     connection = mock(Connection.class);
+    metadata = mock(DatabaseMetaData.class);
     dbConnection = mock(DbConnection.class);
     clob = mock(Clob.class);
 
     when(statement.getConnection()).thenReturn(connection);
     when(connection.createClob()).thenReturn(clob);
+    when(connection.getMetaData()).thenReturn(metadata);
   }
 
   @Test
@@ -108,6 +113,17 @@ public class ClobResolvedDataTypeTestCase extends AbstractMuleTestCase {
     dataType.setParameterValue(statement, PARAM_INDEX, clob, dbConnection);
 
     verify(statement).setObject(PARAM_INDEX, clob, CLOB);
+  }
+
+  @Test
+  public void setClobWithMoreThan4000CharWithJTDS() throws Exception {
+    String value = RandomStringUtils.randomPrint(4100);
+
+    when(metadata.getDriverName()).thenReturn("jTDS Type 4 JDBC Driver for MS SQL Server and Sybase");
+    when(connection.createClob()).thenThrow(new RuntimeException());
+    dataType.setParameterValue(statement, PARAM_INDEX, value, dbConnection);
+
+    verify(statement).setString(PARAM_INDEX, value);
   }
 
   @Test

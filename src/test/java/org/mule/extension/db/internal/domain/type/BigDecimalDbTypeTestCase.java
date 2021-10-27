@@ -12,8 +12,8 @@ import static java.sql.Types.NUMERIC;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyObject;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -70,7 +70,7 @@ public class BigDecimalDbTypeTestCase extends AbstractMuleTestCase {
   public void setBigDecimalValueFromInteger() throws Exception {
     Integer integerValue = 1234;
     resolvedDbType.setParameterValue(statement, 0, integerValue, null);
-    verify(statement).setObject(anyInt(), anyObject(), anyInt());
+    verify(statement).setObject(anyInt(), any(), anyInt());
   }
 
   private void verifyScale(Object value, int scale) throws Exception {
@@ -78,7 +78,7 @@ public class BigDecimalDbTypeTestCase extends AbstractMuleTestCase {
     doAnswer(invocation -> {
       bigDecimal[0] = (BigDecimal) invocation.getArguments()[1];
       return null;
-    }).when(statement).setObject(anyInt(), anyObject(), anyInt(), anyInt());
+    }).when(statement).setObject(anyInt(), any(), anyInt(), anyInt());
     resolvedDbType.setParameterValue(statement, 0, value, null);
     assertThat(bigDecimal[0].scale(), is(scale));
   }

@@ -19,10 +19,15 @@ import static org.mule.extension.db.internal.domain.connection.oracle.OracleConn
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
 import static org.mule.extension.db.internal.util.MigrationUtils.mapDataSourceConfig;
+import static org.mule.runtime.extension.api.error.MuleErrors.CONNECTIVITY;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
@@ -33,10 +38,13 @@ import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
 import org.mule.db.commons.internal.domain.connection.JdbcConnectionFactory;
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
 import org.mule.extension.db.internal.util.OracleCredentialsMaskUtils;
+import org.mule.runtime.api.connection.ConnectionException;
+import org.mule.runtime.api.tls.TlsContextFactory;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
+import org.mule.runtime.extension.api.exception.ModuleException;
 
 
 /**
@@ -54,16 +62,61 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
   private static final String UNKNOWN_SID_ORACLE_CODE = "ORA-12505";
   private static final String IO_ERROR = "IO Error: The Network Adapter could not establish the connection";
 
-
-
   @ParameterGroup(name = CONNECTION)
   private OracleConnectionParameters oracleConnectionParameters;
-
 
   Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache = new ConcurrentHashMap<>();
 
   @Override
   public java.util.Optional<DataSource> getDataSource() {
+    java.util.Optional<TlsContextFactory> tlsContextFactoryOptional = oracleConnectionParameters.getTlsContextFactory();
+
+    if (tlsContextFactoryOptional.isPresent()) {
+      TlsContextFactory tlsContextFactory = tlsContextFactoryOptional.get();
+      try {
+        Class<?> oracleDataSource = org.apache.commons.lang3.ClassUtils.getClass("oracle.jdbc.pool.OracleDataSource");
+        Constructor<?> oracleDataSourceConstructor = oracleDataSource.getConstructor();
+        Object oracleDataSourceInstance = oracleDataSourceConstructor.newInstance();
+
+        Properties sslInfo = new Properties();
+
+        // Set the key store, type, and password
+        if (tlsContextFactory.isKeyStoreConfigured()) {
+          sslInfo.put("javax.net.ssl.keyStore", tlsContextFactory.getKeyStoreConfiguration().getPath());
+          sslInfo.put("javax.net.ssl.keyStoreType", tlsContextFactory.getKeyStoreConfiguration().getType());
+          sslInfo.put("javax.net.ssl.keyStorePassword", tlsContextFactory.getKeyStoreConfiguration().getPassword());
+        }
+
+        // Set the trust store, type, and password
+        if (tlsContextFactory.isTrustStoreConfigured()) {
+          sslInfo.put("javax.net.ssl.trustStore", tlsContextFactory.getTrustStoreConfiguration().getPath());
+          sslInfo.put("javax.net.ssl.trustStoreType", tlsContextFactory.getTrustStoreConfiguration().getType());
+          sslInfo.put("javax.net.ssl.trustStorePassword", tlsContextFactory.getTrustStoreConfiguration().getPassword());
+        }
+
+        Method setUrlMethod =
+            oracleDataSourceInstance.getClass().getMethod("setURL", String.class);
+        Method setUserMethod =
+            oracleDataSourceInstance.getClass().getMethod("setUser", String.class);
+        Method setPasswordMethod =
+            oracleDataSourceInstance.getClass().getMethod("setPassword", String.class);
+        Method setConnectionPropertiesMethod =
+            oracleDataSourceInstance.getClass().getMethod("setConnectionProperties", Properties.class);
+
+        setUrlMethod.invoke(oracleDataSourceInstance, oracleConnectionParameters.getUrl());
+        setUserMethod.invoke(oracleDataSourceInstance, oracleConnectionParameters.getUser());
+        setPasswordMethod.invoke(oracleDataSourceInstance, oracleConnectionParameters.getPassword());
+        setConnectionPropertiesMethod.invoke(oracleDataSourceInstance, sslInfo);
+
+        return of((DataSource) oracleDataSourceInstance);
+      } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException
+          | InvocationTargetException e) {
+        // no possible ssl connection, kill app
+        e.printStackTrace();
+        throw new ModuleException(e.getMessage(), CONNECTIVITY, new ConnectionException(e.getMessage()));
+      }
+    }
+
     return empty();
   }
 

@@ -7,6 +7,7 @@
 
 package org.mule.extension.db.internal.domain.connection.oracle;
 
+import static java.lang.String.format;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
@@ -45,6 +46,8 @@ import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.exception.ModuleException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates connections to a Oracle database
@@ -57,6 +60,7 @@ import org.mule.runtime.extension.api.exception.ModuleException;
     nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, requiredClassName = DRIVER_CLASS_NAME, type = JAR)
 public class OracleDbConnectionProvider extends DbConnectionProvider {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(OracleDbConnectionProvider.class);
   private static final String INVALID_CREDENTIALS_ORACLE_CODE = "ORA-01017";
   private static final String UNKNOWN_SID_ORACLE_CODE = "ORA-12505";
   private static final String IO_ERROR = "IO Error: The Network Adapter could not establish the connection";
@@ -72,6 +76,7 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
 
     if (tlsContextFactoryOptional.isPresent()) {
       TlsContextFactory tlsContextFactory = tlsContextFactoryOptional.get();
+
       try {
         Class<?> oracleDataSource = org.apache.commons.lang3.ClassUtils.getClass("oracle.jdbc.pool.OracleDataSource");
         Constructor<?> oracleDataSourceConstructor = oracleDataSource.getConstructor();
@@ -115,8 +120,10 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
         return of((DataSource) oracleDataSourceInstance);
       } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException
           | InvocationTargetException e) {
-        // no possible ssl connection, kill app
-        e.printStackTrace();
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug(format("An error occurred during OracleDataSource instantiation with TLS: %s", e.getMessage()));
+        }
+
         throw new ModuleException(e.getMessage(), CONNECTIVITY, new ConnectionException(e.getMessage()));
       }
     }

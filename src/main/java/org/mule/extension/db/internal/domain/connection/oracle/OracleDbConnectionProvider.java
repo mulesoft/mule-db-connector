@@ -81,16 +81,21 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
 
         // Set the key store, type, and password
         if (tlsContextFactory.isKeyStoreConfigured()) {
-          sslInfo.put("javax.net.ssl.keyStore", tlsContextFactory.getKeyStoreConfiguration().getPath());
-          sslInfo.put("javax.net.ssl.keyStoreType", tlsContextFactory.getKeyStoreConfiguration().getType());
-          sslInfo.put("javax.net.ssl.keyStorePassword", tlsContextFactory.getKeyStoreConfiguration().getPassword());
+          sslInfo.put("javax.net.ssl.keyStore", ofNullable(tlsContextFactory.getKeyStoreConfiguration().getPath()).orElse(""));
+          sslInfo.put("javax.net.ssl.keyStoreType",
+                      ofNullable(tlsContextFactory.getKeyStoreConfiguration().getType()).orElse(""));
+          sslInfo.put("javax.net.ssl.keyStorePassword",
+                      ofNullable(tlsContextFactory.getKeyStoreConfiguration().getPassword()).orElse(""));
         }
 
         // Set the trust store, type, and password
         if (tlsContextFactory.isTrustStoreConfigured()) {
-          sslInfo.put("javax.net.ssl.trustStore", tlsContextFactory.getTrustStoreConfiguration().getPath());
-          sslInfo.put("javax.net.ssl.trustStoreType", tlsContextFactory.getTrustStoreConfiguration().getType());
-          sslInfo.put("javax.net.ssl.trustStorePassword", tlsContextFactory.getTrustStoreConfiguration().getPassword());
+          sslInfo.put("javax.net.ssl.trustStore",
+                      ofNullable(tlsContextFactory.getTrustStoreConfiguration().getPath()).orElse(""));
+          sslInfo.put("javax.net.ssl.trustStoreType",
+                      ofNullable(tlsContextFactory.getTrustStoreConfiguration().getType()).orElse(""));
+          sslInfo.put("javax.net.ssl.trustStorePassword",
+                      ofNullable(tlsContextFactory.getTrustStoreConfiguration().getPassword()).orElse(""));
         }
 
         Method setUrlMethod =

@@ -146,7 +146,7 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
     buf.append("(DESCRIPTION=");
 
     buf.append("(ADDRESS=");
-    buf.append("(PROTOCOL=").append(checkAndGetTlsProtocol()).append(")");
+    buf.append("(PROTOCOL=TCPS)");
     buf.append("(PORT=").append(port).append(")");
     buf.append("(HOST=").append(host).append(")");
     buf.append(")");
@@ -172,18 +172,6 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
 
       throw new ModuleException(errorMessage, CONNECTIVITY, new ConnectionException(errorMessage));
     }
-  }
-
-  private String checkAndGetTlsProtocol() {
-    String[] protocols = tlsContextFactory.getEnabledProtocols();
-
-    if (protocols.length != 1) {
-      String errorMessage = "Only one protocol for TLS connection is allowed: TCPS";
-
-      throw new ModuleException(errorMessage, CONNECTIVITY, new ConnectionException(errorMessage));
-    }
-
-    return protocols[0];
   }
 
 }

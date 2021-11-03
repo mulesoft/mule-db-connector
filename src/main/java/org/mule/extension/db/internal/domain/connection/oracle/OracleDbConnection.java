@@ -130,6 +130,7 @@ public class OracleDbConnection extends DefaultDbConnection {
       while (resultSet.next()) {
         tables.add(resultSet.getString(1));
       }
+
       return tables;
     }
   }

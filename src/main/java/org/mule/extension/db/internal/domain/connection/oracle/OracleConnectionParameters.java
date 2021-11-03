@@ -7,6 +7,7 @@
 package org.mule.extension.db.internal.domain.connection.oracle;
 
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
+import static org.mule.runtime.extension.api.annotation.param.display.Placement.SECURITY_TAB;
 import static org.mule.runtime.extension.api.error.MuleErrors.CONNECTIVITY;
 
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
@@ -88,7 +89,7 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
   @Parameter
   @Optional
   @Expression(NOT_SUPPORTED)
-  @Placement(tab = "SSL/TLS")
+  @Placement(tab = SECURITY_TAB)
   @DisplayName("TLS Context")
   @Summary("The TLS factory used to create TLS secured connections")
   private TlsContextFactory tlsContextFactory;

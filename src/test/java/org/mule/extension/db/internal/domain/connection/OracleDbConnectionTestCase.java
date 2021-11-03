@@ -12,7 +12,11 @@ import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnectio
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

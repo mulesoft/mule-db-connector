@@ -120,6 +120,7 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
     return user;
   }
 
+  @Override
   public java.util.Optional<TlsContextFactory> getTlsContextFactory() {
     return java.util.Optional.ofNullable(tlsContextFactory);
   }

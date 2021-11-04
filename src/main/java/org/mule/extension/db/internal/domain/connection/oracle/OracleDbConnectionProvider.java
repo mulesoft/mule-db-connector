@@ -72,72 +72,72 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
 
   @Override
   public java.util.Optional<DataSource> getDataSource() {
-    java.util.Optional<TlsContextFactory> tlsContextFactoryOptional = oracleConnectionParameters.getTlsContextFactory();
-
-    if (tlsContextFactoryOptional.isPresent()) {
-      TlsContextFactory tlsContextFactory = tlsContextFactoryOptional.get();
-
-      try {
-        Class<?> oracleDataSource = org.apache.commons.lang3.ClassUtils.getClass("oracle.jdbc.pool.OracleDataSource");
-        Constructor<?> oracleDataSourceConstructor = oracleDataSource.getConstructor();
-        Object oracleDataSourceInstance = oracleDataSourceConstructor.newInstance();
-
-        Properties sslInfo = new Properties();
-
-        // Set the key store, type, and password
-        if (tlsContextFactory.isKeyStoreConfigured()) {
-          if (!tlsContextFactory.getKeyStoreConfiguration().getPath().isEmpty()) {
-            sslInfo.put("javax.net.ssl.keyStore", tlsContextFactory.getKeyStoreConfiguration().getPath());
-          }
-
-          if (!tlsContextFactory.getKeyStoreConfiguration().getType().isEmpty()) {
-            sslInfo.put("javax.net.ssl.keyStoreType",tlsContextFactory.getKeyStoreConfiguration().getType());
-          }
-
-          if (!tlsContextFactory.getKeyStoreConfiguration().getPassword().isEmpty()) {
-            sslInfo.put("javax.net.ssl.keyStorePassword",tlsContextFactory.getKeyStoreConfiguration().getPassword());
-          }
-        }
-
-        // Set the trust store, type, and password
-        if (tlsContextFactory.isTrustStoreConfigured()) {
-          if (!tlsContextFactory.getTrustStoreConfiguration().getPath().isEmpty()) {
-            sslInfo.put("javax.net.ssl.trustStore", tlsContextFactory.getTrustStoreConfiguration().getPath());
-          }
-
-          if (!tlsContextFactory.getTrustStoreConfiguration().getType().isEmpty()) {
-            sslInfo.put("javax.net.ssl.trustStoreType",tlsContextFactory.getTrustStoreConfiguration().getType());
-          }
-
-          if (!tlsContextFactory.getTrustStoreConfiguration().getPassword().isEmpty()) {
-            sslInfo.put("javax.net.ssl.trustStorePassword",tlsContextFactory.getTrustStoreConfiguration().getPassword());
-          }
-        }
-
-        Method setUrlMethod =
-            oracleDataSourceInstance.getClass().getMethod("setURL", String.class);
-        Method setUserMethod =
-            oracleDataSourceInstance.getClass().getMethod("setUser", String.class);
-        Method setPasswordMethod =
-            oracleDataSourceInstance.getClass().getMethod("setPassword", String.class);
-        Method setConnectionPropertiesMethod =
-            oracleDataSourceInstance.getClass().getMethod("setConnectionProperties", Properties.class);
-
-        setUrlMethod.invoke(oracleDataSourceInstance, oracleConnectionParameters.getUrl());
-        setUserMethod.invoke(oracleDataSourceInstance, oracleConnectionParameters.getUser());
-        setPasswordMethod.invoke(oracleDataSourceInstance, oracleConnectionParameters.getPassword());
-        setConnectionPropertiesMethod.invoke(oracleDataSourceInstance, sslInfo);
-
-        return of((DataSource) oracleDataSourceInstance);
-      } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException
-          | InvocationTargetException e) {
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug(format("An error occurred during OracleDataSource instantiation with TLS: %s", e.getMessage()));
-        }
-
-        throw new ModuleException(e.getMessage(), CONNECTIVITY, new ConnectionException(e.getMessage()));
-      }
-    }
+    //    java.util.Optional<TlsContextFactory> tlsContextFactoryOptional = oracleConnectionParameters.getTlsContextFactory();
+    //
+    //    if (tlsContextFactoryOptional.isPresent()) {
+    //      TlsContextFactory tlsContextFactory = tlsContextFactoryOptional.get();
+    //
+    //      try {
+    //        Class<?> oracleDataSource = org.apache.commons.lang3.ClassUtils.getClass("oracle.jdbc.pool.OracleDataSource");
+    //        Constructor<?> oracleDataSourceConstructor = oracleDataSource.getConstructor();
+    //        Object oracleDataSourceInstance = oracleDataSourceConstructor.newInstance();
+    //
+    //        Properties sslInfo = new Properties();
+    //
+    //        // Set the key store, type, and password
+    //        if (tlsContextFactory.isKeyStoreConfigured()) {
+    //          if (!tlsContextFactory.getKeyStoreConfiguration().getPath().isEmpty()) {
+    //            sslInfo.put("javax.net.ssl.keyStore", tlsContextFactory.getKeyStoreConfiguration().getPath());
+    //          }
+    //
+    //          if (!tlsContextFactory.getKeyStoreConfiguration().getType().isEmpty()) {
+    //            sslInfo.put("javax.net.ssl.keyStoreType",tlsContextFactory.getKeyStoreConfiguration().getType());
+    //          }
+    //
+    //          if (!tlsContextFactory.getKeyStoreConfiguration().getPassword().isEmpty()) {
+    //            sslInfo.put("javax.net.ssl.keyStorePassword",tlsContextFactory.getKeyStoreConfiguration().getPassword());
+    //          }
+    //        }
+    //
+    //        // Set the trust store, type, and password
+    //        if (tlsContextFactory.isTrustStoreConfigured()) {
+    //          if (!tlsContextFactory.getTrustStoreConfiguration().getPath().isEmpty()) {
+    //            sslInfo.put("javax.net.ssl.trustStore", tlsContextFactory.getTrustStoreConfiguration().getPath());
+    //          }
+    //
+    //          if (!tlsContextFactory.getTrustStoreConfiguration().getType().isEmpty()) {
+    //            sslInfo.put("javax.net.ssl.trustStoreType",tlsContextFactory.getTrustStoreConfiguration().getType());
+    //          }
+    //
+    //          if (!tlsContextFactory.getTrustStoreConfiguration().getPassword().isEmpty()) {
+    //            sslInfo.put("javax.net.ssl.trustStorePassword",tlsContextFactory.getTrustStoreConfiguration().getPassword());
+    //          }
+    //        }
+    //
+    //        Method setUrlMethod =
+    //            oracleDataSourceInstance.getClass().getMethod("setURL", String.class);
+    //        Method setUserMethod =
+    //            oracleDataSourceInstance.getClass().getMethod("setUser", String.class);
+    //        Method setPasswordMethod =
+    //            oracleDataSourceInstance.getClass().getMethod("setPassword", String.class);
+    //        Method setConnectionPropertiesMethod =
+    //            oracleDataSourceInstance.getClass().getMethod("setConnectionProperties", Properties.class);
+    //
+    //        setUrlMethod.invoke(oracleDataSourceInstance, oracleConnectionParameters.getUrl());
+    //        setUserMethod.invoke(oracleDataSourceInstance, oracleConnectionParameters.getUser());
+    //        setPasswordMethod.invoke(oracleDataSourceInstance, oracleConnectionParameters.getPassword());
+    //        setConnectionPropertiesMethod.invoke(oracleDataSourceInstance, sslInfo);
+    //
+    //        return of((DataSource) oracleDataSourceInstance);
+    //      } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException
+    //          | InvocationTargetException e) {
+    //        if (LOGGER.isDebugEnabled()) {
+    //          LOGGER.debug(format("An error occurred during OracleDataSource instantiation with TLS: %s", e.getMessage()));
+    //        }
+    //
+    //        throw new ModuleException(e.getMessage(), CONNECTIVITY, new ConnectionException(e.getMessage()));
+    //      }
+    //    }
 
     return empty();
   }

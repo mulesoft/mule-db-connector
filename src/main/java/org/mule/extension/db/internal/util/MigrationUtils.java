@@ -19,9 +19,11 @@ import org.mule.db.commons.api.param.StoredProcedureCall;
 import org.mule.db.commons.api.param.TransactionIsolation;
 import org.mule.db.commons.api.param.TypeClassifier;
 import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
+import org.mule.runtime.api.tls.TlsContextFactory;
 
 import java.util.List;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Objects.isNull;
@@ -234,6 +236,11 @@ public class MigrationUtils {
       @Override
       public boolean isUseXaTransactions() {
         return dsConfig.isUseXaTransactions();
+      }
+
+      @Override
+      public Optional<TlsContextFactory> getTlsContextFactory() {
+        return dsConfig.getTlsContextFactory();
       }
     };
   }

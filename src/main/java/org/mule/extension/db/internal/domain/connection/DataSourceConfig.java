@@ -7,6 +7,7 @@
 package org.mule.extension.db.internal.domain.connection;
 
 import org.mule.extension.db.api.param.TransactionIsolation;
+import org.mule.runtime.api.tls.TlsContextFactory;
 
 import javax.sql.DataSource;
 
@@ -47,4 +48,12 @@ public interface DataSourceConfig {
    * false.
    */
   boolean isUseXaTransactions();
+
+  /**
+   * TLSContextFactory to provide secure connections
+   *
+   * @since 1.11.0
+   */
+  java.util.Optional<TlsContextFactory> getTlsContextFactory();
+
 }

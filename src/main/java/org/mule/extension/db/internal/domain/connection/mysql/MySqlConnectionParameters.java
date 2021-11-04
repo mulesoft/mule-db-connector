@@ -10,6 +10,7 @@ import org.mule.extension.db.api.logger.MuleMySqlLogger;
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory;
+import org.mule.runtime.api.tls.TlsContextFactory;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Password;
@@ -110,6 +111,11 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
   @Override
   public String getUser() {
     return user;
+  }
+
+  @Override
+  public java.util.Optional<TlsContextFactory> getTlsContextFactory() {
+    return java.util.Optional.empty();
   }
 
   public Map<String, String> getConnectionProperties() {

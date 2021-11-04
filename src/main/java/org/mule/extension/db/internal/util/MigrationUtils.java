@@ -238,7 +238,6 @@ public class MigrationUtils {
         return dsConfig.isUseXaTransactions();
       }
 
-      @Override
       public Optional<TlsContextFactory> getTlsContextFactory() {
         return dsConfig.getTlsContextFactory();
       }

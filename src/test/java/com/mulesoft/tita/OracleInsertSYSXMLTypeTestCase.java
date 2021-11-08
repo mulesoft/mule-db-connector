@@ -42,7 +42,7 @@ public class OracleInsertSYSXMLTypeTestCase {
   }
 
   @Test
-  public void oracleXMTypeInsertTestCase() throws Exception {
+  public void oracleSYSXMLTypeInsertTestCase() throws Exception {
     if (Boolean.parseBoolean(System.getProperty("oracle"))) {
       runtime.api(api).request("/test-insert").post();
 

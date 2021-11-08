@@ -13,8 +13,6 @@
 
     <api-gateway:autodiscovery apiId="${api1}" flowRef="oraclesXmlTypeTest"/>
 
-    <api-gateway:autodiscovery apiId="${api2}" flowRef="oracleXmlTypeInsertTest"/>
-
     <http:listener-config name="listenerConfig">
         <http:listener-connection host="localhost" port="${port}" protocol="HTTP"/>
     </http:listener-config>
@@ -73,35 +71,6 @@
                 </on-error-continue>
             </error-handler>
         </try>
-    </flow>
-
-    <flow name="oracleXmlTypeInsertTest">
-        <http:listener path="/test-insert" config-ref="listenerConfig"/>
-
-        <try>
-            <db:execute-script config-ref="oracleDbConfig">
-                <db:sql><![CDATA[DROP TABLE XMLTest]]></db:sql>
-            </db:execute-script>
-            <error-handler>
-                <on-error-continue enableNotifications="true" logException="false">
-                </on-error-continue>
-            </error-handler>
-        </try>
-        <db:execute-ddl config-ref="oracleDbConfig">
-            <db:sql><![CDATA[CREATE TABLE XMLTEST (ID NUMBER, PUBDATA XMLTYPE)]]></db:sql>
-        </db:execute-ddl>
-
-        <set-variable value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;note&gt;&#10;&lt;to&gt;Bob&lt;/to&gt;&#10;&lt;from&gt;Alice&lt;/from&gt; &#10;&lt;heading&gt;Reminder&lt;/heading&gt;&#10;&lt;body&gt;Don't forget me this weekend!&lt;/body&gt;&#10;&lt;/note&gt;" variableName="xmlVar" mimeType="text/plain"/>
-        <db:insert config-ref="oracleDbConfig">
-            <db:sql>
-                INSERT INTO XMLTEST (ID, PUBDATA) VALUES (1, :description)
-            </db:sql>
-            <db:input-parameters>
-                #[
-                {'description' : vars.xmlVar}
-                ]
-            </db:input-parameters>
-        </db:insert>
     </flow>
 
 </mule>

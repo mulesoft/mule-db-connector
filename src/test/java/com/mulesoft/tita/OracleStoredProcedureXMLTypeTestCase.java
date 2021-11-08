@@ -26,7 +26,8 @@ import org.junit.runner.RunWith;
 @RunWith(Ambar.class)
 public class OracleStoredProcedureXMLTypeTestCase {
 
-  private static final Identifier api = identifier("api1");
+  private static final Identifier api1 = identifier("api1");
+  private static final Identifier api2 = identifier("api1");
   private static final Identifier port = identifier("port");
 
   @Standalone(log4j = "tita/log4j2-tita-test.xml")
@@ -38,18 +39,28 @@ public class OracleStoredProcedureXMLTypeTestCase {
         .custom("stored-procedure-oracle-xmltype-app", "tita/stored-procedure-oracle-xmltype-app.xml")
         .withTemplatePomFile("tita/stored-procedure-oracle-xmltype-app-pom.xml")
         .withProperty("db.port", System.getProperty("oracle.db.port"))
-        .withApi(api, port);
+        .withApi(api1, port);
   }
 
   @Test
   public void oracleXMTypeTestCase() throws Exception {
     if (Boolean.parseBoolean(System.getProperty("oracle"))) {
-      runtime.api(api).request("/test").post();
+      runtime.api(api1).request("/test").post();
 
-      HttpResponse responseApi = runtime.api(api).request("/test").get();
+      HttpResponse responseApi = runtime.api(api1).request("/test").get();
       assertThat(responseApi.statusCode(), is(SC_OK));
       assertThat(responseApi.asString(), containsString("SUCCESS"));
     }
   }
 
+  @Test
+  public void oracleXMTypeInsertTestCase() throws Exception {
+    if (Boolean.parseBoolean(System.getProperty("oracle"))) {
+      runtime.api(api2).request("/test-insert").post();
+
+      HttpResponse responseApi = runtime.api(api2).request("/test-insert").get();
+      assertThat(responseApi.statusCode(), is(SC_OK));
+      assertThat(responseApi.asString(), containsString("SUCCESS"));
+    }
+  }
 }

@@ -15,6 +15,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
 
 /**
  * Defines a structured data type handler for the {@link #ORACLE_XMLTYPE_CLASS} class, multiple name/id pairs will
@@ -76,6 +77,19 @@ public class OracleXmlTypeHandler extends AbstractStructuredDbType {
    */
   public static Object createXmlType(Connection connection, InputStream xml) throws Exception {
     return createXmlType(connection, xml, InputStream.class);
+  }
+
+  /**
+   * Creates an {@link #ORACLE_XMLTYPE_CLASS} object from the received XML LinkedHashMap
+   *
+   * @param connection An active database connection, required by the {@link #ORACLE_XMLTYPE_CLASS} constructor
+   * @param xml A Stream object containing the XML content
+   * @return an new {@link #ORACLE_XMLTYPE_CLASS} with the XML passed
+   * @throws Exception if there is a problem while creating the {@link #ORACLE_XMLTYPE_CLASS} object
+   *         ({@link #ORACLE_XMLTYPE_CLASS} class is not found in the classpath, connection is closed, etc)
+   */
+  public static Object createXmlType(Connection connection, LinkedHashMap xml) throws Exception {
+    return createXmlType(connection, xml, LinkedHashMap.class);
   }
 
   private static <T> Object createXmlType(Connection connection, T xmlContent, Class<T> tClass) throws Exception {

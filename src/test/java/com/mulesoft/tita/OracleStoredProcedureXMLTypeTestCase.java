@@ -28,7 +28,8 @@ public class OracleStoredProcedureXMLTypeTestCase {
 
   private static final Identifier api1 = identifier("api1");
   private static final Identifier api2 = identifier("api1");
-  private static final Identifier port = identifier("port");
+  private static final Identifier port1 = identifier("port1");
+  private static final Identifier port2 = identifier("port2");
 
   @Standalone(log4j = "tita/log4j2-tita-test.xml")
   Runtime runtime;
@@ -39,7 +40,8 @@ public class OracleStoredProcedureXMLTypeTestCase {
         .custom("stored-procedure-oracle-xmltype-app", "tita/stored-procedure-oracle-xmltype-app.xml")
         .withTemplatePomFile("tita/stored-procedure-oracle-xmltype-app-pom.xml")
         .withProperty("db.port", System.getProperty("oracle.db.port"))
-        .withApi(api1, port);
+        .withApi(api1, port1)
+        .withApi(api2, port2);
   }
 
   @Test

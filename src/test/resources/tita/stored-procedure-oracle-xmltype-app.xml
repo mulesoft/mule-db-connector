@@ -16,7 +16,11 @@
     <api-gateway:autodiscovery apiId="${api2}" flowRef="oracleXmlTypeInsertTest"/>
 
     <http:listener-config name="listenerConfig">
-        <http:listener-connection host="localhost" port="${port}" protocol="HTTP"/>
+        <http:listener-connection host="localhost" port="${port1}" protocol="HTTP"/>
+    </http:listener-config>
+
+    <http:listener-config name="listenerConfig2">
+        <http:listener-connection host="localhost" port="${port2}" protocol="HTTP"/>
     </http:listener-config>
 
     <db:config name="Database_Config">
@@ -76,7 +80,7 @@
     </flow>
 
     <flow name="oracleXmlTypeInsertTest">
-        <http:listener path="/test-insert" config-ref="listenerConfig"/>
+        <http:listener path="/test-insert" config-ref="listenerConfig2"/>
 
         <try>
             <db:execute-script config-ref="oracleDbConfig">

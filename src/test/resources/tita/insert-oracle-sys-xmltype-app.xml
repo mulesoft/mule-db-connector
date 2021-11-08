@@ -11,7 +11,7 @@
 
     <configuration-properties file="${applicationsConfigProperties}"/>
 
-    <api-gateway:autodiscovery apiId="${api1}" flowRef="oraclesXmlTypeTest"/>
+    <api-gateway:autodiscovery apiId="${api1}" flowRef="oracleXmlTypeInsertTest"/>
 
     <http:listener-config name="listenerConfig">
         <http:listener-connection host="localhost" port="${port}" protocol="HTTP"/>

@@ -6,6 +6,7 @@
  */
 
 package org.mule.extension.db.internal.domain.connection.oracle;
+
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;

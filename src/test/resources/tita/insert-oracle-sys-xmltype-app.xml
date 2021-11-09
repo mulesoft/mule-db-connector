@@ -25,7 +25,7 @@
         <http:listener path="/test-insert" config-ref="listenerConfig"/>
 
         <try>
-            <db:execute-script config-ref="oracleDbConfig">
+            <db:execute-script config-ref="Database_Config">
                 <db:sql><![CDATA[DROP TABLE XMLTest]]></db:sql>
             </db:execute-script>
             <error-handler>
@@ -33,12 +33,12 @@
                 </on-error-continue>
             </error-handler>
         </try>
-        <db:execute-ddl config-ref="oracleDbConfig">
+        <db:execute-ddl config-ref="Database_Config">
             <db:sql><![CDATA[CREATE TABLE XMLTEST (ID NUMBER, PUBDATA XMLTYPE)]]></db:sql>
         </db:execute-ddl>
 
         <set-variable value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;note&gt;&#10;&lt;to&gt;Bob&lt;/to&gt;&#10;&lt;from&gt;Alice&lt;/from&gt; &#10;&lt;heading&gt;Reminder&lt;/heading&gt;&#10;&lt;body&gt;Don't forget me this weekend!&lt;/body&gt;&#10;&lt;/note&gt;" variableName="xmlVar" mimeType="text/plain"/>
-        <db:insert config-ref="oracleDbConfig">
+        <db:insert config-ref="Database_Config">
             <db:sql>
                 INSERT INTO XMLTEST (ID, PUBDATA) VALUES (1, :description)
             </db:sql>

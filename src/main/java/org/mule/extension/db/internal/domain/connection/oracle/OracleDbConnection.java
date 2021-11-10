@@ -22,6 +22,7 @@ import org.mule.db.commons.internal.domain.type.ResolvedDbType;
 import org.mule.extension.db.internal.domain.connection.oracle.types.OracleOlderXMLType;
 import org.mule.extension.db.internal.domain.connection.oracle.types.OracleOpaqueXMLType;
 import org.mule.extension.db.internal.domain.connection.oracle.types.OracleSQLXMLType;
+import org.mule.extension.db.internal.domain.connection.oracle.types.OracleSYSXMLType;
 import org.mule.extension.db.internal.domain.connection.oracle.types.OracleXMLType;
 
 import java.lang.reflect.Method;
@@ -93,6 +94,7 @@ public class OracleDbConnection extends DefaultDbConnection {
     dbTypes.add(new OracleSQLXMLType());
     dbTypes.add(new OracleXMLType());
     dbTypes.add(new OracleOlderXMLType());
+    dbTypes.add(new OracleSYSXMLType());
 
     return dbTypes;
   }

@@ -124,15 +124,17 @@ public class OracleDbConnection extends DefaultDbConnection {
 
   @Override
   public Set<String> getTables() throws SQLException {
-    Statement statement = getJdbcConnection().createStatement();
-    statement.execute("SELECT table_name FROM user_tables");
-    ResultSet resultSet = statement.getResultSet();
+    try (Statement statement = getJdbcConnection().createStatement()) {
+      statement.execute("SELECT table_name FROM user_tables");
+      ResultSet resultSet = statement.getResultSet();
 
-    Set<String> tables = new HashSet<>();
-    while (resultSet.next()) {
-      tables.add(resultSet.getString(1));
+      Set<String> tables = new HashSet<>();
+      while (resultSet.next()) {
+        tables.add(resultSet.getString(1));
+      }
+
+      return tables;
     }
-    return tables;
   }
 
   @Override

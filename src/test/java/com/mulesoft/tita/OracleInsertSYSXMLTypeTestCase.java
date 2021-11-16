@@ -48,7 +48,6 @@ public class OracleInsertSYSXMLTypeTestCase {
 
       HttpResponse responseApi = runtime.api(api).request("/test-insert").get();
       assertThat(responseApi.statusCode(), is(SC_OK));
-      assertThat(responseApi.asString(), containsString("SUCCESS"));
     }
   }
 }

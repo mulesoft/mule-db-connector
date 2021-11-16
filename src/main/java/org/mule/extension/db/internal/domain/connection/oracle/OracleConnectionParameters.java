@@ -98,11 +98,7 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
   public String getUrl() {
     StringBuilder buf = new StringBuilder(JDBC_URL_PREFIX);
 
-    if (tlsContextFactory != null) {
-      return generateSecureUrl(buf);
-    } else {
-      return generateBasicUrl(buf);
-    }
+    return tlsContextFactory != null ? generateSecureUrl(buf) : generateBasicUrl(buf);
   }
 
   @Override

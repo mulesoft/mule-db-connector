@@ -357,7 +357,7 @@
                                     <name>store/oracle/database-enterprise:12.2.0.1-slim</name>
                                     <alias>oracle-container</alias>
                                     <run>
-                                        <containerNamePattern>%a</containerNamePattern>
+                                        <containerNamePattern>%n-%i-%t</containerNamePattern>
                                         <ports>
                                             <port>oracle.db.port:1521</port>
                                         </ports>

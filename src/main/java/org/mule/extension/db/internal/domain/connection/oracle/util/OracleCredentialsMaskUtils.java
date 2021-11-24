@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.extension.db.internal.util;
+package org.mule.extension.db.internal.domain.connection.oracle.util;
 
 import org.mule.db.commons.internal.util.CredentialsMaskUtils;
 import java.util.regex.Pattern;

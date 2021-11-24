@@ -32,7 +32,7 @@ import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
 import org.mule.db.commons.internal.domain.connection.JdbcConnectionFactory;
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
-import org.mule.extension.db.internal.util.OracleCredentialsMaskUtils;
+import org.mule.extension.db.internal.domain.connection.oracle.util.OracleCredentialsMaskUtils;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.lifecycle.LifecycleUtils;
 import org.mule.runtime.extension.api.annotation.Alias;

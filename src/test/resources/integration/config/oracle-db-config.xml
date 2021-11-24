@@ -6,13 +6,13 @@
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
     <db:config name="dbConfig">
-        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
+        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" user="system" password="oracle" serviceName="XEPDB1">
             <db:pooling-profile/>
         </db:oracle-connection>
     </db:config>
 
     <db:config name="dbConfigWithPooling">
-        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
+        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" serviceName="XEPDB1" user="system" password="oracle">
             <db:pooling-profile maxPoolSize="10" maxWait="1">
             </db:pooling-profile>
         </db:oracle-connection>

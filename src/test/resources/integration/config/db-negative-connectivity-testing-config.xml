@@ -37,20 +37,20 @@
     </db:config>
 
     <db:config name="oracleConfigInvalidCredentials">
-        <db:oracle-connection host="0.0.0.0" instance="ORCLCDB" user="SYSTEM"
+        <db:oracle-connection host="0.0.0.0" serviceName="XEPDB1" user="system"
                               password="invalidPassword"/>
     </db:config>
 
     <db:config name="oracleConfigUnknownInstance">
-        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" instance="invalidInstance" user="system" password="Oradoc_db1"/>
+        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" instance="invalidInstance" user="system" password="oracle"/>
     </db:config>
 
     <db:config name="oracleConfigUnknownHost">
-        <db:oracle-connection host="invalidHost" port="${oracle.db.port}" instance="ORCLCDB" user="system" password="Oradoc_db1"/>
+        <db:oracle-connection host="invalidHost" port="${oracle.db.port}" serviceName="XEPDB1" user="system" password="oracle"/>
     </db:config>
 
     <db:config name="oracleInstanceAndServiceNameAtTheSameType">
-        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" instance="ORCLCDB" serviceName="ORCLCDB" user="system" password="Oradoc_db1"/>
+        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" instance="XEPDB1" serviceName="XEPDB1" user="system" password="oracle"/>
     </db:config>
 
     <db:config name="driverClassNotFound">

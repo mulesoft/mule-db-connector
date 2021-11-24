@@ -6,7 +6,7 @@
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
     <db:config name="dbConfig">
-        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" instance="ORCLCDB" user="SYSTEM" password="Oradoc_db1">
+        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" serviceName="XEPDB1" user="system" password="oracle">
             <db:column-types>
                 <db:column-type id="2002" typeName="CONTACT_DETAILS" className="org.mule.extension.db.integration.model.ContactDetails"/>
                 <db:column-type id="2003" typeName="CONTACT_DETAILS_ARRAY"/>

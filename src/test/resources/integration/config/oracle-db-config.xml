@@ -17,7 +17,7 @@
         <db:oracle-connection host="localhost" port="${oracle.db.mtls.port}" serviceName="XEPDB1" user="system" password="oracle">
             <tls:context >
                 <tls:trust-store path="${basedir}/target/docker/oracle-db-mtls/store/client-truststore.jks" password="WalletPasswd123" type="jks" />
-                <tls:key-store type="jks" path="${basedir}/target/docker/oracle-db-mtls/storeclient-keystore.jks" keyPassword="WalletPasswd123" password="WalletPasswd123" />
+                <tls:key-store type="jks" path="${basedir}/target/docker/oracle-db-mtls/store/client-keystore.jks" keyPassword="WalletPasswd123" password="WalletPasswd123" />
             </tls:context>
         </db:oracle-connection>
     </db:config>

@@ -141,12 +141,12 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
 
   private String generateSecureUrl(StringBuilder buf) {
     return new OracleTNSEntryBuilder()
-            .withProtocol("TCPS")
-            .withHost(host)
-            .withPort(port)
-            .withInstanceName(instance)
-            .withServiceName(serviceName)
-            .build(buf);
+        .withProtocol("TCPS")
+        .withHost(host)
+        .withPort(port)
+        .withInstanceName(instance)
+        .withServiceName(serviceName)
+        .build(buf);
   }
 
   private void checkInstanceAndServiceName() {
@@ -220,5 +220,5 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
     }
 
   }
-  
+
 }

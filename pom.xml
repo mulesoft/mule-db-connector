@@ -360,6 +360,7 @@
                                 <image>
                                     <name>oracle-db-mtls</name>
                                     <alias>oracle-db-mtls</alias>
+
                                     <build>
                                         <dockerFileDir>${project.basedir}/src/test/resources/docker/oracle-mtls</dockerFileDir>
                                     </build>
@@ -387,6 +388,7 @@
                                     </run>
                                 </image>
                             </images>
+                            <createContainers>true</createContainers>
                             <verbose>true</verbose>
                         </configuration>
                         <dependencies>
@@ -423,7 +425,7 @@
                             </execution>
                             <execution>
                                 <id>stop</id>
-                                <phase>post-integration-test</phase>
+                                <phase>clean</phase>
                                 <goals>
                                     <goal>stop</goal>
                                     <goal>remove</goal>

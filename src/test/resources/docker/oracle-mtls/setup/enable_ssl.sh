@@ -23,11 +23,13 @@ DN="CN=localhost"
 
 #PART 1: Creating server wallet and cert
 SERVER_WALLET="/u01/app/oracle/wallet"
-SERVER_CERT="/tmp/oracle-server-certificate.crt"
+ROOT_CERT="/tmp/root.p12"
+SERVER_CERT="/tmp/mule-oracle-server-certificate.crt"
 echoDebug "START >>> Creating server wallet and cert"
 mkdir -p /u01/app/oracle/wallet
 orapki wallet create  -wallet $SERVER_WALLET -pwd $WALLET_PWD -auto_login
-orapki wallet add     -wallet $SERVER_WALLET -pwd $WALLET_PWD -dn $DN -keysize 1024 -self_signed -validity 36500
+orapku wallet add -wallet $SERVER_WALLET -trusted_cert -cert $ROOT_CERT
+#orapki wallet add     -wallet $SERVER_WALLET -pwd $WALLET_PWD -dn $DN -keysize 1024 -self_signed -validity 36500
 orapki wallet display -wallet $SERVER_WALLET -pwd $WALLET_PWD
 orapki wallet export  -wallet $SERVER_WALLET -pwd $WALLET_PWD -dn $DN -cert $SERVER_CERT
 orapki cert display -cert $SERVER_CERT -complete
@@ -63,7 +65,8 @@ CLIENT_KEYSTORE="/client/oracle/store/client-keystore.jks"
 CLIENT_TRUSTSTORE="/client/oracle/store/client-truststore.jks"
 mkdir -p /client/oracle/store
 orapki wallet pkcs12_to_jks \
-  -wallet $CLIENT_WALLET/ewallet.p12 -pwd $WALLET_PWD \
+  #-wallet $CLIENT_WALLET/ewallet.p12 -pwd $WALLET_PWD \
+  -wallet $CLIENT_WALLET/root.p12 -pwd $WALLET_PWD \
   -jksKeyStoreLoc   $CLIENT_KEYSTORE   -jksKeyStorepwd $WALLET_PWD \
   -jksTrustStoreLoc $CLIENT_TRUSTSTORE -jksTrustStorepwd $WALLET_PWD
 echoDebug "DONE >>> Create JKS wallet"

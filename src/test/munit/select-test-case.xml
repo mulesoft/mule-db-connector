@@ -12,11 +12,24 @@
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 		http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 
-	<munit:config name="SelectTestCase.xml" minMuleVersion="4.1.6" />
+	<munit:config name="select-test-case.xml" minMuleVersion="4.1.6" >
+		<munit:parameterizations>
+			<munit:parameterization name="oracleInsecureConnectionWithNoPoolingProfile">
+				<munit:parameters>
+					<munit:parameter propertyName="config" value="oracleDbConfigWithoutPoolingProfile"/>
+				</munit:parameters>
+			</munit:parameterization>
+			<munit:parameterization name="oracleMTLSConnection">
+				<munit:parameters>
+					<munit:parameter propertyName="config" value="oracleMTLSDbConfig"/>
+				</munit:parameters>
+			</munit:parameterization>
+		</munit:parameterizations>
+	</munit:config>
 
 	<munit:before-test name="createATableWithLOBs">
 		<try>
-			<db:execute-script config-ref="oracleDbConfigWithoutPoolingProfile">
+			<db:execute-script config-ref="${config}">
 				<db:sql><![CDATA[DROP TABLE  LOBTEST]]></db:sql>
 			</db:execute-script>
 			<error-handler>
@@ -24,11 +37,11 @@
 				</on-error-continue>
 			</error-handler>
 		</try>
-		<db:execute-ddl config-ref="oracleDbConfigWithoutPoolingProfile">
+		<db:execute-ddl config-ref="${config}">
 			<db:sql><![CDATA[CREATE TABLE LOBTEST(COL1 number, COL2 BLOB, COL3 CLOB, COL4 NCLOB)]]></db:sql>
 		</db:execute-ddl>
 		<foreach collection="#[1 to 3]">
-			<db:execute-script config-ref="oracleDbConfigWithoutPoolingProfile">
+			<db:execute-script config-ref="${config}">
 				<db:sql ><![CDATA[INSERT INTO LOBTEST VALUES (1, hextoraw('453d7a34'), 'CLOB value is here', TO_NCLOB('NCLOB value is here'))]]></db:sql>
 			</db:execute-script>
 		</foreach>
@@ -40,7 +53,7 @@
 	there won't be any "Connection Closed" exception when trying to read the input streams. -->
 	<munit:test name="whenStreamsAreConsumedAfterPagingProviderIsClosed_ThenNoExceptionIsThrown" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
 		<munit:execution>
-			<db:select config-ref="oracleDbConfigWithoutPoolingProfile">
+			<db:select config-ref="${config}">
 				<ee:repeatable-file-store-iterable inMemoryObjects="10" />
 				<db:sql>SELECT * FROM LOBTEST</db:sql>
 			</db:select>
@@ -69,7 +82,7 @@ payload]]></ee:set-payload>
 
 	<munit:after-test name="dropTable">
 		<try>
-			<db:execute-script config-ref="oracleDbConfigWithoutPoolingProfile">
+			<db:execute-script config-ref="${config}">
 				<db:sql><![CDATA[DROP TABLE LOBTEST]]></db:sql>
 			</db:execute-script>
 			<error-handler>

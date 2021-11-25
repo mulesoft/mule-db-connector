@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+        http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+
+    <db:config name="oracleDbConfig">
+        <db:oracle-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('oracle')]" serviceName="XEPDB1" user="system" password="oracle">
+            <db:pooling-profile/>
+        </db:oracle-connection>
+    </db:config>
+
+    <db:config name="oracleDbConfigWithoutPoolingProfile">
+        <db:oracle-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('oracle')]" serviceName="XEPDB1" user="system" password="oracle">
+        </db:oracle-connection>
+    </db:config>
+
+    <db:config name="oracleMTLSDbConfig">
+        <db:oracle-connection host="localhost" port="#[java!org::mule::extension::db::DbMunitUtils::getSecureDbPort('oracle')]" serviceName="XEPDB1" user="system" password="oracle">
+            <tls:context >
+                <tls:trust-store path="docker/oracle-mtls/store/client-truststore.jks" password="WalletPasswd123" type="jks" insecure="true"/>
+                <tls:key-store type="jks" path="docker/oracle-mtls/store/client-keystore.jks" keyPassword="WalletPasswd123" password="WalletPasswd123" />
+            </tls:context>
+        </db:oracle-connection>
+    </db:config>
+
+</mule>

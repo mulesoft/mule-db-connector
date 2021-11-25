@@ -9,7 +9,7 @@
         http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
         http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
-    <munit:config name="StoredFunctionTestCase.xml"/>
+    <munit:config name="stored-function-test-case.xml"/>
 
     <munit:before-test name="createsStoredFunction">
         <db:execute-ddl config-ref="oracleDbConfigWithoutPoolingProfile">

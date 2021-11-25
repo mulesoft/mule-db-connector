@@ -7,7 +7,7 @@ RUN chmod 777 /tmp/setup/enable_ssl.sh
 RUN /tmp/setup/enable_ssl.sh
 RUN rm -rf /tmp/setup
 
-EXPOSE 1522
+EXPOSE 1521 1522
 
 CMD ["/bin/sh","-c", "exec $ORACLE_BASE/$RUN_FILE"]
 

@@ -23,9 +23,11 @@ import static org.mule.extension.db.internal.util.MigrationUtils.mapDataSourceCo
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.mule.db.commons.api.exception.connection.DbError;
 import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
@@ -99,6 +101,33 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
       return of(CANNOT_REACH);
     }
     return empty();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+
+    if (!super.equals(o)) {
+      return false;
+    }
+
+    if (!(o instanceof OracleDbConnectionProvider)) {
+      return false;
+    }
+
+    OracleDbConnectionProvider that = (OracleDbConnectionProvider) o;
+
+    return new EqualsBuilder()
+        .append(this.oracleConnectionParameters, that.oracleConnectionParameters)
+        .append(this.resolvedDbTypesCache, that.resolvedDbTypesCache)
+        .isEquals();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), oracleConnectionParameters, resolvedDbTypesCache);
   }
 
 }

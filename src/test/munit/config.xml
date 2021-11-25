@@ -22,8 +22,17 @@
     <db:config name="oracleMTLSDbConfig">
         <db:oracle-connection host="localhost" port="#[java!org::mule::extension::db::DbMunitUtils::getSecureDbPort('oracle')]" serviceName="XEPDB1" user="system" password="oracle">
             <tls:context >
-                <tls:trust-store path="docker/oracle-mtls/store/client-truststore.jks" password="WalletPasswd123" type="jks" insecure="true"/>
-                <tls:key-store type="jks" path="docker/oracle-mtls/store/client-keystore.jks" keyPassword="WalletPasswd123" password="WalletPasswd123" />
+                <tls:trust-store path="${project.build.directory}/src/test/resources/docker/oracle-mtls/store/client-truststore.jks" password="WalletPasswd123" type="jks" />
+                <tls:key-store type="jks" path="${project.build.directory}/src/test/resources/docker/oracle-mtls/store/client-keystore.jks" keyPassword="WalletPasswd123" password="WalletPasswd123" />
+            </tls:context>
+        </db:oracle-connection>
+    </db:config>
+
+    <db:config name="oracleInsecureTLSDbConfig">
+        <db:oracle-connection host="localhost" port="#[java!org::mule::extension::db::DbMunitUtils::getSecureDbPort('oracle')]" serviceName="XEPDB1" user="system" password="oracle">
+            <tls:context >
+                <tls:trust-store path="${project.build.directory}/src/test/resources/docker/oracle-mtls/store/client-truststore.jks" password="WalletPasswd123" type="jks" insecure="true"/>
+                <tls:key-store type="jks" path="${project.build.directory}/src/test/resources/docker/oracle-mtls/store/client-keystore.jks" keyPassword="WalletPasswd123" password="WalletPasswd123" />
             </tls:context>
         </db:oracle-connection>
     </db:config>

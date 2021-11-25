@@ -360,15 +360,14 @@
                                 <image>
                                     <name>oracle-db-mtls</name>
                                     <alias>oracle-db-mtls</alias>
-
                                     <build>
                                         <dockerFileDir>${project.basedir}/src/test/resources/docker/oracle-mtls</dockerFileDir>
                                     </build>
                                     <copy>
                                         <entries>
                                             <entry>
-                                                <containerPath>/client/oracle/store</containerPath>
-                                                <hostDirectory>${project.build.directory}/src/test/resources/docker/oracle-mtls/store</hostDirectory>
+                                                <containerPath>/client/oracle/store/</containerPath>
+                                                <hostDirectory>${project.build.directory}/src/test/resources/docker/oracle-mtls/</hostDirectory>
                                             </entry>
                                         </entries>
                                     </copy>
@@ -388,7 +387,6 @@
                                     </run>
                                 </image>
                             </images>
-                            <createContainers>true</createContainers>
                             <verbose>true</verbose>
                         </configuration>
                         <dependencies>
@@ -415,6 +413,13 @@
                                     <showLogs>true</showLogs>
                                     <logStdout>true</logStdout>
                                 </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
                             </execution>
                             <execution>
                                 <id>stop</id>

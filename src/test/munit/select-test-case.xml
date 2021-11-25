@@ -24,6 +24,11 @@
 					<munit:parameter propertyName="config" value="oracleMTLSDbConfig"/>
 				</munit:parameters>
 			</munit:parameterization>
+			<munit:parameterization name="oracleInsecureTLSConnection">
+				<munit:parameters>
+					<munit:parameter propertyName="config" value="oracleInsecureTLSDbConfig"/>
+				</munit:parameters>
+			</munit:parameterization>
 		</munit:parameterizations>
 	</munit:config>
 

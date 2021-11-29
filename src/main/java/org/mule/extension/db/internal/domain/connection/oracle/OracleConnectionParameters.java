@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.internal.domain.connection.oracle;
 
+import static java.util.Optional.ofNullable;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.SECURITY_TAB;
 import static org.mule.runtime.extension.api.error.MuleErrors.CONNECTIVITY;
@@ -119,7 +120,7 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
 
   @Override
   public java.util.Optional<TlsContextFactory> getTlsContextFactory() {
-    return java.util.Optional.ofNullable(tlsContextFactory);
+    return ofNullable(tlsContextFactory);
   }
 
   private String generateBasicUrl(StringBuilder buf) {

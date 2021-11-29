@@ -12,6 +12,8 @@ import org.mule.runtime.api.tls.TlsContextFactory;
 import javax.sql.DataSource;
 import java.util.Optional;
 
+import static java.util.Optional.empty;
+
 /**
  * Contract for DataSource Configurations that are used to build {@link DataSource} instances
  *
@@ -55,6 +57,8 @@ public interface DataSourceConfig {
    *
    * @since 1.11.0
    */
-  Optional<TlsContextFactory> getTlsContextFactory();
+  default Optional<TlsContextFactory> getTlsContextFactory() {
+    return empty();
+  }
 
 }

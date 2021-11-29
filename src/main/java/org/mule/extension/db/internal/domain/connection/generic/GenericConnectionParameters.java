@@ -9,15 +9,12 @@ package org.mule.extension.db.internal.domain.connection.generic;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.db.commons.internal.domain.connection.generic.GenericConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
-import org.mule.runtime.api.tls.TlsContextFactory;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.ClassValue;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Password;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
-
-import static java.util.Optional.empty;
 
 /**
  *  {@link DataSourceConfig}'s parameters for the {@link GenericConnectionProvider}
@@ -79,11 +76,6 @@ public class GenericConnectionParameters extends BaseDbConnectionParameters impl
   @Override
   public String getUser() {
     return user;
-  }
-
-  @Override
-  public java.util.Optional<TlsContextFactory> getTlsContextFactory() {
-    return empty();
   }
 
 }

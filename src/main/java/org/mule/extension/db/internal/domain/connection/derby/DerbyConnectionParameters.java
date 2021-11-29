@@ -6,11 +6,9 @@
  */
 package org.mule.extension.db.internal.domain.connection.derby;
 
-import static java.util.Optional.empty;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
 
-import org.mule.runtime.api.tls.TlsContextFactory;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
@@ -120,8 +118,4 @@ public final class DerbyConnectionParameters extends BaseDbConnectionParameters 
     return null;
   }
 
-  @Override
-  public java.util.Optional<TlsContextFactory> getTlsContextFactory() {
-    return empty();
-  }
 }

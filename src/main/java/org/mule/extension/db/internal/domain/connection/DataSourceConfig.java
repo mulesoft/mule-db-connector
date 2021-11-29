@@ -10,6 +10,7 @@ import org.mule.extension.db.api.param.TransactionIsolation;
 import org.mule.runtime.api.tls.TlsContextFactory;
 
 import javax.sql.DataSource;
+import java.util.Optional;
 
 /**
  * Contract for DataSource Configurations that are used to build {@link DataSource} instances
@@ -54,6 +55,6 @@ public interface DataSourceConfig {
    *
    * @since 1.11.0
    */
-  java.util.Optional<TlsContextFactory> getTlsContextFactory();
+  Optional<TlsContextFactory> getTlsContextFactory();
 
 }

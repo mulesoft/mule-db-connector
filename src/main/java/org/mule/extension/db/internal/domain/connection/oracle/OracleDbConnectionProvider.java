@@ -17,6 +17,7 @@ import static org.mule.db.commons.api.exception.connection.DbError.INVALID_DATAB
 import static org.mule.db.commons.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionParameters.DRIVER_CLASS_NAME;
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
+import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
 import static org.mule.extension.db.internal.util.MigrationUtils.mapDataSourceConfig;
 
@@ -36,7 +37,6 @@ import org.mule.db.commons.internal.domain.connection.JdbcConnectionFactory;
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
 import org.mule.extension.db.internal.domain.connection.oracle.util.OracleCredentialsMaskUtils;
 import org.mule.runtime.api.lifecycle.InitialisationException;
-import org.mule.runtime.core.api.lifecycle.LifecycleUtils;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
@@ -66,7 +66,7 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
   public void initialise() throws InitialisationException {
     super.initialise();
 
-    LifecycleUtils.initialiseIfNeeded(oracleConnectionParameters.getTlsContextFactory());
+    initialiseIfNeeded(oracleConnectionParameters.getTlsContextFactory());
   }
 
   @Override

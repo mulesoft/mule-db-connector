@@ -13,7 +13,7 @@ import static org.mule.runtime.extension.api.error.MuleErrors.CONNECTIVITY;
 
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
-import org.mule.extension.db.internal.domain.connection.oracle.util.OracleTNSEntryBuilder;
+import org.mule.extension.db.internal.domain.connection.oracle.util.OracleTNSEntryURLBuilder;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.tls.TlsContextFactory;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -142,7 +142,7 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
   }
 
   private String generateSecureUrl() {
-    return new OracleTNSEntryBuilder()
+    return new OracleTNSEntryURLBuilder()
         .withProtocol("TCPS")
         .withHost(host)
         .withPort(port)

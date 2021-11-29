@@ -8,7 +8,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @since 1.11.0
  */
-public final class OracleTNSEntryBuilder {
+public final class OracleTNSEntryURLBuilder {
 
   private String protocol;
   private String host;
@@ -16,29 +16,29 @@ public final class OracleTNSEntryBuilder {
   private String instanceName;
   private String serviceName;
 
-  public OracleTNSEntryBuilder() {}
+  public OracleTNSEntryURLBuilder() {}
 
-  public OracleTNSEntryBuilder withProtocol(String protocol) {
+  public OracleTNSEntryURLBuilder withProtocol(String protocol) {
     this.protocol = protocol;
     return this;
   }
 
-  public OracleTNSEntryBuilder withHost(String host) {
+  public OracleTNSEntryURLBuilder withHost(String host) {
     this.host = host;
     return this;
   }
 
-  public OracleTNSEntryBuilder withPort(Integer port) {
+  public OracleTNSEntryURLBuilder withPort(Integer port) {
     this.port = port;
     return this;
   }
 
-  public OracleTNSEntryBuilder withInstanceName(String instanceName) {
+  public OracleTNSEntryURLBuilder withInstanceName(String instanceName) {
     this.instanceName = instanceName;
     return this;
   }
 
-  public OracleTNSEntryBuilder withServiceName(String serviceName) {
+  public OracleTNSEntryURLBuilder withServiceName(String serviceName) {
     this.serviceName = serviceName;
     return this;
   }

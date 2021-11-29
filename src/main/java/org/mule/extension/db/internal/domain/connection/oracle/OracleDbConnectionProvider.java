@@ -119,10 +119,8 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
 
     OracleDbConnectionProvider that = (OracleDbConnectionProvider) o;
 
-    return new EqualsBuilder()
-        .append(this.oracleConnectionParameters, that.oracleConnectionParameters)
-        .append(this.resolvedDbTypesCache, that.resolvedDbTypesCache)
-        .isEquals();
+    return Objects.equals(this.oracleConnectionParameters, that.oracleConnectionParameters) &&
+        Objects.equals(this.resolvedDbTypesCache, that.resolvedDbTypesCache);
   }
 
   @Override

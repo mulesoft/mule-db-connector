@@ -17,6 +17,8 @@ import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 import org.mule.runtime.extension.api.annotation.param.display.Password;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
 
+import static java.util.Optional.empty;
+
 /**
  *  {@link DataSourceConfig}'s parameters for the {@link GenericConnectionProvider}
  *
@@ -81,7 +83,7 @@ public class GenericConnectionParameters extends BaseDbConnectionParameters impl
 
   @Override
   public java.util.Optional<TlsContextFactory> getTlsContextFactory() {
-    return java.util.Optional.empty();
+    return empty();
   }
 
 }

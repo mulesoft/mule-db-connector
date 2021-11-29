@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.internal.domain.connection.sqlserver;
 
+import static java.util.Optional.empty;
 import static org.mule.extension.db.internal.domain.connection.sqlserver.SqlServerConnectionProvider.DRIVER_CLASS_NAME;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 
@@ -141,7 +142,7 @@ public class SqlServerConnectionParameters extends BaseDbConnectionParameters im
 
   @Override
   public java.util.Optional<TlsContextFactory> getTlsContextFactory() {
-    return java.util.Optional.empty();
+    return empty();
   }
 
   public static String getSubProtocol() {

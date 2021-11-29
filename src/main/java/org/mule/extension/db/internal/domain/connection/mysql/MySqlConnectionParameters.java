@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static java.util.Optional.empty;
 import static org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory.MYSQL_DRIVER_CLASS;
 import static org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory.NEW_MYSQL_DRIVER_CLASS;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
@@ -115,7 +116,7 @@ public final class MySqlConnectionParameters extends BaseDbConnectionParameters 
 
   @Override
   public java.util.Optional<TlsContextFactory> getTlsContextFactory() {
-    return java.util.Optional.empty();
+    return empty();
   }
 
   public Map<String, String> getConnectionProperties() {

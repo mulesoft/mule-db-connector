@@ -12,11 +12,29 @@
         http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
         http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 
-    <munit:config name="insert-n-clob-test-case.xml" minMuleVersion="4.1.6" />
+    <munit:config name="insert-n-clob-test-case.xml" minMuleVersion="4.1.6" >
+        <munit:parameterizations>
+            <munit:parameterization name="oracleInsecureConnectionWithNoPoolingProfile">
+                <munit:parameters>
+                    <munit:parameter propertyName="config" value="oracleDbConfigWithoutPoolingProfile"/>
+                </munit:parameters>
+            </munit:parameterization>
+            <munit:parameterization name="oracleMTLSConnection">
+                <munit:parameters>
+                    <munit:parameter propertyName="config" value="oracleMTLSDbConfig"/>
+                </munit:parameters>
+            </munit:parameterization>
+            <munit:parameterization name="oracleInsecureTLSConnection">
+                <munit:parameters>
+                    <munit:parameter propertyName="config" value="oracleInsecureTLSDbConfig"/>
+                </munit:parameters>
+            </munit:parameterization>
+        </munit:parameterizations>
+    </munit:config>
 
     <munit:before-test name="createNCLOBTestTable">
         <try>
-            <db:execute-script config-ref="oracleDbConfig">
+            <db:execute-script config-ref="${config}">
                 <db:sql><![CDATA[DROP TABLE NCLOBTest]]></db:sql>
             </db:execute-script>
             <error-handler>
@@ -24,14 +42,14 @@
                 </on-error-continue>
             </error-handler>
         </try>
-        <db:execute-ddl config-ref="oracleDbConfig">
+        <db:execute-ddl config-ref="${config}">
             <db:sql><![CDATA[CREATE TABLE NCLOBTest(COL1 NCLOB)]]></db:sql>
         </db:execute-ddl>
     </munit:before-test>
 
     <munit:test name="whenInsertingANClobValue_thenNoExceptionIsThrown" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
         <munit:execution>
-            <db:insert config-ref="oracleDbConfig">
+            <db:insert config-ref="${config}">
                 <db:sql>
                     INSERT INTO NCLOBTest(COL1) VALUES (:description)
                 </db:sql>
@@ -62,7 +80,7 @@ payload]]></ee:set-payload>
 
     <munit:after-test name="dropNCLOBTestTable">
         <try>
-            <db:execute-script config-ref="oracleDbConfig">
+            <db:execute-script config-ref="${config}">
                 <db:sql><![CDATA[DROP TABLE NCLOBTest]]></db:sql>
             </db:execute-script>
             <error-handler>

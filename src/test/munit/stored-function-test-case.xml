@@ -9,10 +9,28 @@
         http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
         http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
-    <munit:config name="stored-function-test-case.xml"/>
+    <munit:config name="stored-function-test-case.xml">
+        <munit:parameterizations>
+            <munit:parameterization name="oracleInsecureConnectionWithNoPoolingProfile">
+                <munit:parameters>
+                    <munit:parameter propertyName="config" value="oracleDbConfigWithoutPoolingProfile"/>
+                </munit:parameters>
+            </munit:parameterization>
+            <munit:parameterization name="oracleMTLSConnection">
+                <munit:parameters>
+                    <munit:parameter propertyName="config" value="oracleMTLSDbConfig"/>
+                </munit:parameters>
+            </munit:parameterization>
+            <munit:parameterization name="oracleInsecureTLSConnection">
+                <munit:parameters>
+                    <munit:parameter propertyName="config" value="oracleInsecureTLSDbConfig"/>
+                </munit:parameters>
+            </munit:parameterization>
+        </munit:parameterizations>
+    </munit:config>
 
     <munit:before-test name="createsStoredFunction">
-        <db:execute-ddl config-ref="oracleDbConfigWithoutPoolingProfile">
+        <db:execute-ddl config-ref="${config}">
             <db:sql><![CDATA[CREATE OR REPLACE FUNCTION coolFunction (inout_num IN OUT NUMBER) RETURN NUMBER AS
                             BEGIN
                                 inout_num:= inout_num + 1000;
@@ -25,7 +43,7 @@
 
     <munit:test name="whenStoredFunctionIsExecuted_ThenReturnValueAndInOutExists" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
         <munit:execution>
-            <db:stored-procedure config-ref="oracleDbConfigWithoutPoolingProfile">
+            <db:stored-procedure config-ref="${config}">
                 <db:sql ><![CDATA[{:returnValue = call coolFunction(:num)}]]></db:sql>
                 <db:in-out-parameters>
                     <db:in-out-parameter key="num" value="1" />

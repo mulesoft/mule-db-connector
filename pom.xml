@@ -367,7 +367,7 @@
                                         <entries>
                                             <entry>
                                                 <containerPath>/client/oracle/store/</containerPath>
-                                                <hostDirectory>${project.build.directory}/src/test/resources/docker/oracle-mtls/</hostDirectory>
+                                                <hostDirectory>${project.basedir}/target/docker/oracle-db-mtls/</hostDirectory>
                                             </entry>
                                         </entries>
                                     </copy>
@@ -416,7 +416,7 @@
                             </execution>
                             <execution>
                                 <id>copy</id>
-                                <phase>pre-integration-test</phase>
+                                <phase>test-compile</phase>
                                 <goals>
                                     <goal>copy</goal>
                                 </goals>

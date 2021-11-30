@@ -6,7 +6,6 @@
  */
 package org.mule.extension.db.integration.function.oracle;
 
-import static java.lang.reflect.Array.get;
 import static java.util.Collections.emptyList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -18,7 +17,6 @@ import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.event.CoreEvent;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.Array;
 import java.sql.Clob;
 import java.sql.SQLException;

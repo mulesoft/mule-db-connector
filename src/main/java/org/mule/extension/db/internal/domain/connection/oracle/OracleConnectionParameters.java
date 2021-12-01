@@ -100,8 +100,7 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
   public String getUrl() {
     checkInstanceAndServiceName();
 
-    StringBuilder buf = new StringBuilder(JDBC_URL_PREFIX);
-    return tlsContextFactory != null ? generateSecureUrl() : generateBasicUrl(buf);
+    return tlsContextFactory != null ? (JDBC_URL_PREFIX + generateSecureUrl()) : generateBasicUrl();
   }
 
   @Override
@@ -124,7 +123,9 @@ public class OracleConnectionParameters extends BaseDbConnectionParameters imple
     return ofNullable(tlsContextFactory);
   }
 
-  private String generateBasicUrl(StringBuilder buf) {
+  private String generateBasicUrl() {
+    StringBuilder buf = new StringBuilder(JDBC_URL_PREFIX);
+
     buf.append(host);
     buf.append(":");
     buf.append(port);

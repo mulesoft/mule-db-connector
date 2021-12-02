@@ -37,4 +37,12 @@
         </db:oracle-connection>
     </db:config>
 
+    <db:config name="oracleMTLSNoUserPassDbConfig">
+        <db:oracle-connection host="localhost" port="#[java!org::mule::extension::db::DbMunitUtils::getSecureDbPort('oracle')]" serviceName="XE" >
+            <tls:context >
+                <tls:trust-store path="${project.build.directory}/docker/oracle-db-mtls/store/client-truststore.jks" password="WalletPasswd123" type="jks" />
+                <tls:key-store type="jks" path="${project.build.directory}/docker/oracle-db-mtls/store/client-keystore.jks" keyPassword="WalletPasswd123" password="WalletPasswd123" />
+            </tls:context>
+        </db:oracle-connection>
+    </db:config>
 </mule>

@@ -2,11 +2,17 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-            http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+            http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+            http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
 
     <db:config name="dbConfig">
-        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" serviceName="XEPDB1" user="system" password="oracle" >
+        <db:oracle-connection host="localhost" port="${oracle.db.mtls.port}" user="system" password="oracle" serviceName="XEPDB1">
+            <tls:context>
+                <tls:trust-store path="${basedir}/target/docker/oracle-db-mtls/store/client-truststore.jks" password="WalletPasswd123" type="jks" />
+                <tls:key-store type="jks" path="${basedir}/target/docker/oracle-db-mtls/store/client-keystore.jks" keyPassword="WalletPasswd123" password="WalletPasswd123" />
+            </tls:context>
             <db:column-types>
                 <db:column-type id="2002" typeName="CONTACT_DETAILS"/>
                 <db:column-type id="2003" typeName="CONTACT_DETAILS_ARRAY"/>
@@ -14,4 +20,5 @@
             </db:column-types>
         </db:oracle-connection>
     </db:config>
+
 </mule>

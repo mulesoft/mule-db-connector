@@ -8,18 +8,23 @@
             http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
 
     <db:config name="dbConfig">
-        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" user="system" password="oracle" serviceName="XEPDB1">
+        <db:oracle-connection host="localhost" port="${oracle.db.mtls.port}" user="system" password="oracle" serviceName="XEPDB1">
+            <tls:context>
+                <tls:trust-store path="${basedir}/target/docker/oracle-db-mtls/store/client-truststore.jks" password="WalletPasswd123" type="jks" />
+                <tls:key-store type="jks" path="${basedir}/target/docker/oracle-db-mtls/store/client-keystore.jks" keyPassword="WalletPasswd123" password="WalletPasswd123" />
+            </tls:context>
             <db:pooling-profile/>
         </db:oracle-connection>
     </db:config>
 
-
     <db:config name="dbConfigWithPooling">
-        <db:oracle-connection host="localhost" port="${oracle.db.mtls.port}" serviceName="XEPDB1" user="system" password="oracle">
-            <tls:context >
+        <db:oracle-connection host="localhost" port="${oracle.db.mtls.port}" user="system" password="oracle" serviceName="XEPDB1">
+            <tls:context>
                 <tls:trust-store path="${basedir}/target/docker/oracle-db-mtls/store/client-truststore.jks" password="WalletPasswd123" type="jks" />
                 <tls:key-store type="jks" path="${basedir}/target/docker/oracle-db-mtls/store/client-keystore.jks" keyPassword="WalletPasswd123" password="WalletPasswd123" />
             </tls:context>
+            <db:pooling-profile maxPoolSize="10" maxWait="1">
+            </db:pooling-profile>
         </db:oracle-connection>
     </db:config>
 

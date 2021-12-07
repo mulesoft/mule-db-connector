@@ -2,8 +2,10 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-            http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+            http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+            http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
 
     <db:config name="derbyConfigDatabaseNotFound">
         <db:derby-connection database="target/db1" create="false"/>
@@ -16,7 +18,6 @@
     <db:config name="mySqlConfigInvalidHost">
         <db:my-sql-connection host="0.0.0.0" port="8081"/>
     </db:config>
-
 
     <db:config name="mySqlConfigInvalidCredentials">
         <db:my-sql-connection host="192.168.99.100" port="${mysql.db.port}"/>
@@ -37,20 +38,39 @@
     </db:config>
 
     <db:config name="oracleConfigInvalidCredentials">
-        <db:oracle-connection host="0.0.0.0" serviceName="XEPDB1" user="system"
-                              password="invalidPassword"/>
+        <db:oracle-connection host="localhost" serviceName="XEPDB1" user="system" password="invalidPassword">
+            <tls:context>
+                <tls:trust-store path="${basedir}/target/docker/oracle-db-mtls/store/client-truststore.jks" password="WalletPasswd123" type="jks" />
+                <tls:key-store type="jks" path="${basedir}/target/docker/oracle-db-mtls/store/client-keystore.jks" keyPassword="WalletPasswd123" password="WalletPasswd123" />
+            </tls:context>
+        </db:oracle-connection>
     </db:config>
 
     <db:config name="oracleConfigUnknownInstance">
-        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" instance="invalidInstance" user="system" password="oracle"/>
+        <db:oracle-connection host="localhost" port="${oracle.db.mtls.port}" instance="invalidInstance" user="system" password="oracle">
+            <tls:context>
+                <tls:trust-store path="${basedir}/target/docker/oracle-db-mtls/store/client-truststore.jks" password="WalletPasswd123" type="jks" />
+                <tls:key-store type="jks" path="${basedir}/target/docker/oracle-db-mtls/store/client-keystore.jks" keyPassword="WalletPasswd123" password="WalletPasswd123" />
+            </tls:context>
+        </db:oracle-connection>
     </db:config>
 
     <db:config name="oracleConfigUnknownHost">
-        <db:oracle-connection host="invalidHost" port="${oracle.db.port}" serviceName="XEPDB1" user="system" password="oracle"/>
+        <db:oracle-connection host="invalidHost" port="${oracle.db.mtls.port}" serviceName="XEPDB1" user="system" password="oracle">
+            <tls:context>
+                <tls:trust-store path="${basedir}/target/docker/oracle-db-mtls/store/client-truststore.jks" password="WalletPasswd123" type="jks" />
+                <tls:key-store type="jks" path="${basedir}/target/docker/oracle-db-mtls/store/client-keystore.jks" keyPassword="WalletPasswd123" password="WalletPasswd123" />
+            </tls:context>
+        </db:oracle-connection>
     </db:config>
 
     <db:config name="oracleInstanceAndServiceNameAtTheSameType">
-        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" instance="XEPDB1" serviceName="XEPDB1" user="system" password="oracle"/>
+        <db:oracle-connection host="localhost" port="${oracle.db.mtls.port}" instance="XEPDB1" serviceName="XEPDB1" user="system" password="oracle">
+            <tls:context>
+                <tls:trust-store path="${basedir}/target/docker/oracle-db-mtls/store/client-truststore.jks" password="WalletPasswd123" type="jks" />
+                <tls:key-store type="jks" path="${basedir}/target/docker/oracle-db-mtls/store/client-keystore.jks" keyPassword="WalletPasswd123" password="WalletPasswd123" />
+            </tls:context>
+        </db:oracle-connection>
     </db:config>
 
     <db:config name="driverClassNotFound">

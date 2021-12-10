@@ -422,7 +422,7 @@
             <activation>
                 <property>
                     <name>mysql</name>
-                    <value>true</value>
+                    <value>false</value>
                 </property>
             </activation>
             <id>mysql</id>

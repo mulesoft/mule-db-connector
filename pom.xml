@@ -507,7 +507,7 @@
             <activation>
                 <property>
                     <name>mysql-old-version</name>
-                    <value>true</value>
+                    <value>false</value>
                 </property>
             </activation>
             <id>mysql-old-version</id>

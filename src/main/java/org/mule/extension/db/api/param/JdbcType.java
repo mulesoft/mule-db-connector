@@ -97,6 +97,8 @@ public enum JdbcType {
 
   SQLXML(new ResolvedDbType(Types.SQLXML, "SQLXML")),
 
+  REF_CURSOR(new ResolvedDbType(Types.REF_CURSOR, "REF_CURSOR")),
+
   UNKNOWN(UnknownDbType.getInstance());
 
   private final DbType dbType;

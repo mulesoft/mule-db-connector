@@ -1,2 +1,0 @@
-Map pipelineParams = [ "projectConfigYamlFile" : "build-mysql.yaml" ]
-runtimeBuild(pipelineParams)

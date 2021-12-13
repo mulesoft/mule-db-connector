@@ -22,6 +22,7 @@ import org.mule.db.commons.internal.domain.type.ResolvedDbType;
 import org.mule.extension.db.internal.domain.connection.oracle.types.OracleOlderXMLType;
 import org.mule.extension.db.internal.domain.connection.oracle.types.OracleOpaqueXMLType;
 import org.mule.extension.db.internal.domain.connection.oracle.types.OracleSQLXMLType;
+import org.mule.extension.db.internal.domain.connection.oracle.types.OracleSYSXMLType;
 import org.mule.extension.db.internal.domain.connection.oracle.types.OracleXMLType;
 
 import java.lang.reflect.Method;
@@ -93,6 +94,7 @@ public class OracleDbConnection extends DefaultDbConnection {
     dbTypes.add(new OracleSQLXMLType());
     dbTypes.add(new OracleXMLType());
     dbTypes.add(new OracleOlderXMLType());
+    dbTypes.add(new OracleSYSXMLType());
 
     return dbTypes;
   }
@@ -122,15 +124,17 @@ public class OracleDbConnection extends DefaultDbConnection {
 
   @Override
   public Set<String> getTables() throws SQLException {
-    Statement statement = getJdbcConnection().createStatement();
-    statement.execute("SELECT table_name FROM user_tables");
-    ResultSet resultSet = statement.getResultSet();
+    try (Statement statement = getJdbcConnection().createStatement()) {
+      statement.execute("SELECT table_name FROM user_tables");
+      ResultSet resultSet = statement.getResultSet();
 
-    Set<String> tables = new HashSet<>();
-    while (resultSet.next()) {
-      tables.add(resultSet.getString(1));
+      Set<String> tables = new HashSet<>();
+      while (resultSet.next()) {
+        tables.add(resultSet.getString(1));
+      }
+
+      return tables;
     }
-    return tables;
   }
 
   @Override

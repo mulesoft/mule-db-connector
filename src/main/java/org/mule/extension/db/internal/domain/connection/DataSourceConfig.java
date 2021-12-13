@@ -7,8 +7,12 @@
 package org.mule.extension.db.internal.domain.connection;
 
 import org.mule.extension.db.api.param.TransactionIsolation;
+import org.mule.runtime.api.tls.TlsContextFactory;
 
 import javax.sql.DataSource;
+import java.util.Optional;
+
+import static java.util.Optional.empty;
 
 /**
  * Contract for DataSource Configurations that are used to build {@link DataSource} instances
@@ -47,4 +51,14 @@ public interface DataSourceConfig {
    * false.
    */
   boolean isUseXaTransactions();
+
+  /**
+   * TLSContextFactory to provide secure connections
+   *
+   * @since 1.11.0
+   */
+  default Optional<TlsContextFactory> getTlsContextFactory() {
+    return empty();
+  }
+
 }

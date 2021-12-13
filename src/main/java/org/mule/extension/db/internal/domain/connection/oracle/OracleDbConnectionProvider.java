@@ -17,27 +17,30 @@ import static org.mule.db.commons.api.exception.connection.DbError.INVALID_DATAB
 import static org.mule.db.commons.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionParameters.DRIVER_CLASS_NAME;
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
+import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNeeded;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
 import static org.mule.extension.db.internal.util.MigrationUtils.mapDataSourceConfig;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.mule.db.commons.api.exception.connection.DbError;
 import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
 import org.mule.db.commons.internal.domain.connection.JdbcConnectionFactory;
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
-import org.mule.extension.db.internal.util.OracleCredentialsMaskUtils;
+import org.mule.extension.db.internal.domain.connection.oracle.util.OracleCredentialsMaskUtils;
+import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
-
 
 /**
  * Creates connections to a Oracle database
@@ -54,13 +57,17 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
   private static final String UNKNOWN_SID_ORACLE_CODE = "ORA-12505";
   private static final String IO_ERROR = "IO Error: The Network Adapter could not establish the connection";
 
-
-
   @ParameterGroup(name = CONNECTION)
   private OracleConnectionParameters oracleConnectionParameters;
 
-
   Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache = new ConcurrentHashMap<>();
+
+  @Override
+  public void initialise() throws InitialisationException {
+    super.initialise();
+
+    initialiseIfNeeded(oracleConnectionParameters.getTlsContextFactory());
+  }
 
   @Override
   public java.util.Optional<DataSource> getDataSource() {
@@ -94,6 +101,31 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
       return of(CANNOT_REACH);
     }
     return empty();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+
+    if (!super.equals(o)) {
+      return false;
+    }
+
+    if (!(o instanceof OracleDbConnectionProvider)) {
+      return false;
+    }
+
+    OracleDbConnectionProvider that = (OracleDbConnectionProvider) o;
+
+    return Objects.equals(this.oracleConnectionParameters, that.oracleConnectionParameters) &&
+        Objects.equals(this.resolvedDbTypesCache, that.resolvedDbTypesCache);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), oracleConnectionParameters, resolvedDbTypesCache);
   }
 
 }

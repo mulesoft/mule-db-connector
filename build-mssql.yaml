@@ -1,3 +1,0 @@
-projectType: extension
-enableMavenDeployStage: false
-mavenTestGoal: install -Dmaven.javadoc.skip -Dmssql

@@ -117,4 +117,5 @@ public final class DerbyConnectionParameters extends BaseDbConnectionParameters 
   public String getUser() {
     return null;
   }
+
 }

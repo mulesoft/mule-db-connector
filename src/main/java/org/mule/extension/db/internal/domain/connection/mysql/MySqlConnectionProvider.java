@@ -6,8 +6,7 @@
  */
 package org.mule.extension.db.internal.domain.connection.mysql;
 
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
+import static java.util.Optional.*;
 import static org.mule.db.commons.api.exception.connection.DbError.CANNOT_REACH;
 import static org.mule.db.commons.api.exception.connection.DbError.INVALID_CREDENTIALS;
 import static org.mule.db.commons.api.exception.connection.DbError.INVALID_DATABASE;
@@ -57,7 +56,7 @@ public class MySqlConnectionProvider extends DbConnectionProvider {
 
   @Override
   public java.util.Optional<DataSourceConfig> getDataSourceConfig() {
-    return java.util.Optional.ofNullable(mapDataSourceConfig(mySqlParameters));
+    return ofNullable(mapDataSourceConfig(mySqlParameters));
   }
 
   @Override

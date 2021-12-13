@@ -10,7 +10,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mule.db.commons.internal.util.CredentialsMaskUtils.maskUrlUserAndPassword;
-import static org.mule.extension.db.internal.util.OracleCredentialsMaskUtils.maskUrlUserAndPasswordForOracle;
+import static org.mule.extension.db.internal.domain.connection.oracle.util.OracleCredentialsMaskUtils.maskUrlUserAndPasswordForOracle;
 
 import org.junit.Test;
 

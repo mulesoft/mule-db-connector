@@ -15,6 +15,8 @@ import org.mule.tck.junit4.AbstractMuleTestCase;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -120,7 +122,23 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     assertThat(dbTypeCache.get(USER_TYPE_NAME_B).get(0).getName(), is(USER_TYPE_DBNAME_B));
     assertThat(dbTypeCache.keySet().size(), is(2));
     verify(preparedStatement, times(2)).executeQuery();
+  }
 
+  @Test
+  public void getTablesClosesTheStatement() throws SQLException {
+    Connection delegate = mock(Connection.class);
+    Statement statement = mock(Statement.class);
+    ResultSet resultSet = mock(ResultSet.class);
 
+    when(delegate.createStatement()).thenReturn(statement);
+    when(statement.getResultSet()).thenReturn(resultSet);
+    when(resultSet.next()).thenReturn(false);
+
+    Map<String, Map<Integer, ResolvedDbType>> dbTypeCache = new ConcurrentHashMap<>();
+    OracleDbConnection cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache);
+
+    cnx.getTables();
+
+    verify(statement).close();
   }
 }

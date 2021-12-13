@@ -1,2 +1,0 @@
-Map pipelineParams = [ "projectConfigYamlFile" : "build-oracle.yaml" ]
-runtimeBuild(pipelineParams)

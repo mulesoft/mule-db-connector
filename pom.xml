@@ -267,7 +267,7 @@
                         <oracle.db.mtls.port>${oracle.db.mtls.port}</oracle.db.mtls.port>
                         <oracle.db.mtls.port2>${oracle.db.mtls.port2}</oracle.db.mtls.port2>
                     </systemPropertyVariables>
-                    <!--munitTest>.*-test-case.xml</munitTest-->
+                    <munitTest>.*-test-case.xml</munitTest>
                     <runtimeConfiguration>
                         <discoverRuntimes>
                             <product>EE</product>

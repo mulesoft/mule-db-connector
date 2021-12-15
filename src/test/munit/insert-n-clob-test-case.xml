@@ -12,7 +12,7 @@
         http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
         http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 
-    <munit:config name="insert-n-clob-test-case.xml" minMuleVersion="4.1.6" >
+    <munit:config name="insert-n-clob-test-case.xml" minMuleVersion="4.1.6" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
         <munit:parameterizations>
             <munit:parameterization name="oracleInsecureConnectionWithNoPoolingProfile">
                 <munit:parameters>
@@ -52,7 +52,7 @@
         </db:execute-ddl>
     </munit:before-test>
 
-    <munit:test name="whenInsertingANClobValue_thenNoExceptionIsThrown" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+    <munit:test name="whenInsertingANClobValue_thenNoExceptionIsThrown">
         <munit:execution>
             <db:insert config-ref="${config}">
                 <db:sql>

@@ -12,7 +12,7 @@
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 		http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 
-	<munit:config name="select-test-case.xml" minMuleVersion="4.1.6" >
+	<munit:config name="select-test-case.xml" minMuleVersion="4.1.6" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
 		<munit:parameterizations>
 			<munit:parameterization name="oracleInsecureConnectionWithNoPoolingProfile">
 				<munit:parameters>
@@ -61,7 +61,7 @@
 	from a table that has LOB columns. On Oracle, these columns are returned as input streams. This test assures
 	that if there are open streams not yet consumed, the connection will stay open until the flow ends. In this way,
 	there won't be any "Connection Closed" exception when trying to read the input streams. -->
-	<munit:test name="whenStreamsAreConsumedAfterPagingProviderIsClosed_ThenNoExceptionIsThrown" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+	<munit:test name="whenStreamsAreConsumedAfterPagingProviderIsClosed_ThenNoExceptionIsThrown">
 		<munit:execution>
 			<db:select config-ref="${config}">
 				<ee:repeatable-file-store-iterable inMemoryObjects="10" />

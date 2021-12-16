@@ -9,7 +9,7 @@
         http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
         http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
-    <munit:config name="stored-function-test-case.xml" minMuleVersion="4.1.6" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+    <munit:config name="stored-function-test-case.xml">
         <munit:parameterizations>
             <munit:parameterization name="oracleInsecureConnectionWithNoPoolingProfile">
                 <munit:parameters>
@@ -46,7 +46,7 @@
         </db:execute-ddl>
     </munit:before-test>
 
-    <munit:test name="whenStoredFunctionIsExecuted_ThenReturnValueAndInOutExists">
+    <munit:test name="whenStoredFunctionIsExecuted_ThenReturnValueAndInOutExists" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
         <munit:execution>
             <db:stored-procedure config-ref="${config}">
                 <db:sql ><![CDATA[{:returnValue = call coolFunction(:num)}]]></db:sql>

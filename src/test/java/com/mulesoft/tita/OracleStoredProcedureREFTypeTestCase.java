@@ -48,7 +48,7 @@ public class OracleStoredProcedureREFTypeTestCase {
 
       HttpResponse responseApi = runtime.api(api).request("/test-cursor-ref").get();
       assertThat(responseApi.statusCode(), is(SC_OK));
-      assertThat(responseApi.asString(), containsString("SUCCESS11"));
+      assertThat(responseApi.asString(), containsString("SARASA"));
     }
   }
 

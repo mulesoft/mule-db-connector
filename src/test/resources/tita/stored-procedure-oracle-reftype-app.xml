@@ -53,18 +53,15 @@
             </db:execute-ddl>
             <error-handler>
                 <on-error-continue enableNotifications="true" logException="true">
-                    <set-payload value='#["ERROR-----&gt;" ++ "Error Description: " ++ error.description ++ "; Error errorType: " ++ error.errorType.identifier]'/>
+                    <set-payload value='#["ERROR Creating Stored Procedure -----&gt;" ++ "Error Description: " ++ error.description ++ "; Error errorType: " ++ error.errorType.identifier]'/>
                 </on-error-continue>
             </error-handler>
         </try>
 
         <try>
             <db:stored-procedure config-ref="Database_Config">
-                <db:sql><![CDATA[{ CALL getMessageById(:msgId, :out) }]]></db:sql>
-                <db:input-parameters><![CDATA[#[{
-                                          "msgId" : 1
-                                        }]]]>
-                </db:input-parameters>
+                <db:sql><![CDATA[{ call getMessageById(:msgId, :out) }]]></db:sql>
+                <db:input-parameters><![CDATA[#[msgId : 1]]]></db:input-parameters>
                 <db:output-parameters>
                     <db:output-parameter key="out" type="REF" />
                 </db:output-parameters>

@@ -63,7 +63,7 @@
                 <db:sql><![CDATA[{ call getMessageById(:msgId, :out) }]]></db:sql>
                 <db:input-parameters><![CDATA[#[msgId : 1]]]></db:input-parameters>
                 <db:output-parameters>
-                    <db:output-parameter key="out" type="REF" />
+                    <db:output-parameter key="out" type="REF_CURSOR" />
                 </db:output-parameters>
             </db:stored-procedure>
 
@@ -71,9 +71,9 @@
                 output application/json
                 ---
                 {
-                    id: payload[0].MSG_ID,
-                    state: payload[0].STATE,
-                    msg: payload[0].MSG
+                    id: payload.out[0].MSG_ID,
+                    state: payload.out[0].STATE,
+                    msg: payload.out[0].MSG
             }"/>
 
 

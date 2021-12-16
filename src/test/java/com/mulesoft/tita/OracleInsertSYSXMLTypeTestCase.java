@@ -34,11 +34,15 @@ public class OracleInsertSYSXMLTypeTestCase {
 
   @Application
   public static ApplicationBuilder app(ApplicationSelector runtimeBuilder) {
-    return runtimeBuilder
-        .custom("insert-oracle-sys-xmltype-app", "tita/insert-oracle-sys-xmltype-app.xml")
-        .withTemplatePomFile("tita/insert-oracle-sys-xmltype-app-pom.xml")
-        .withProperty("db.port", System.getProperty("oracle.db.port"))
-        .withApi(api, port);
+    if (Boolean.parseBoolean(System.getProperty("oracle"))) {
+      return runtimeBuilder
+          .custom("insert-oracle-sys-xmltype-app", "tita/insert-oracle-sys-xmltype-app.xml")
+          .withTemplatePomFile("tita/insert-oracle-sys-xmltype-app-pom.xml")
+          .withProperty("db.port", System.getProperty("oracle.db.port"))
+          .withApi(api, port);
+    } else {
+      return null;
+    }
   }
 
   @Test

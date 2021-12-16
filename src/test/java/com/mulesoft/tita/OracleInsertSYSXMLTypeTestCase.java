@@ -41,7 +41,9 @@ public class OracleInsertSYSXMLTypeTestCase {
           .withProperty("db.port", System.getProperty("oracle.db.port"))
           .withApi(api, port);
     } else {
-      return null;
+      return runtimeBuilder
+          .custom("default-app", "tita/default-app.xml")
+          .withApi(api, port);
     }
   }
 
@@ -52,6 +54,12 @@ public class OracleInsertSYSXMLTypeTestCase {
 
       HttpResponse responseApi = runtime.api(api).request("/test-insert").get();
       assertThat(responseApi.statusCode(), is(SC_OK));
+    } else {
+      runtime.api(api).request("/hello").post();
+
+      HttpResponse responseApi = runtime.api(api).request("/hello").get();
+      assertThat(responseApi.statusCode(), is(SC_OK));
+      assertThat(responseApi.asString(), containsString("Uh, Yeah Hi"));
     }
   }
 }

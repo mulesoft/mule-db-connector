@@ -1,4 +1,4 @@
-FROM kyleaure/oracle-18.4.0-xe-prebuilt:2.0
+FROM kyleaure/oracle-18.4.0-expanded:1.0.full.ssl
 
 COPY setup/ /tmp/setup/
 COPY startup/ /opt/oracle/scripts/startup

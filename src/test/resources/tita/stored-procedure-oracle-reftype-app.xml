@@ -41,7 +41,7 @@
                 <db:sql><![CDATA[INSERT INTO TEST_MESSAGE (STATE, MSG) values('SENT', 8)]]></db:sql>
             </db:execute-ddl>
             <db:execute-ddl config-ref="Database_Config">
-                <db:sql><![CDATA[CREATE OR REPLACE PROCEDURE getMessageById(pMsgId IN NUMBER, cur OUT SYS_REFCURSOR) IS
+                <db:sql><![CDATA[CREATE OR REPLACE PROCEDURE getMessageById(pMsgId IN NUMBER, cur OUT SYS_REFCURSOR) AS
                             BEGIN
                               OPEN cur FOR SELECT
                               FROM

@@ -38,7 +38,7 @@ public class OracleInsertSYSXMLTypeTestCase {
       return runtimeBuilder
           .custom("insert-oracle-sys-xmltype-app", "tita/insert-oracle-sys-xmltype-app.xml")
           .withTemplatePomFile("tita/insert-oracle-sys-xmltype-app-pom.xml")
-          .withProperty("db.port", System.getProperty("oracle.db.mtls.port"))
+          .withProperty("db.port", System.getProperty("oracle.db.port"))
           .withApi(api, port);
     } else {
       return runtimeBuilder

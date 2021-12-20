@@ -20,12 +20,7 @@
     </http:listener-config>
 
     <db:config name="Database_Config">
-        <db:oracle-connection host="localhost" port="${db.port}" user="system" password="oracle" serviceName="XEPDB1">
-            <tls:context>
-                <tls:trust-store path="${basedir}/target/docker/oracle-db-mtls/store/client-truststore.jks" password="WalletPasswd123" type="jks" />
-                <tls:key-store type="jks" path="${basedir}/target/docker/oracle-db-mtls/store/client-keystore.jks" keyPassword="WalletPasswd123" password="WalletPasswd123" />
-            </tls:context>
-        </db:oracle-connection>
+        <db:oracle-connection host="localhost" port="${db.port}" user="system" password="oracle" serviceName="XEPDB1"/>
     </db:config>
 
     <flow name="oraclesXmlTypeTest">

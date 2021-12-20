@@ -318,6 +318,9 @@
                                     </copy>
                                     <run>
                                         <containerNamePattern>%n-%i-%t</containerNamePattern>
+                                        <env>
+                                            <ORACLE_PASSWORD>oracle</ORACLE_PASSWORD>
+                                        </env>
                                         <ports>
                                             <port>oracle.db.port:1521</port>
                                             <port>oracle.db.mtls.port:1522</port>

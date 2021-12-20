@@ -29,7 +29,7 @@
 					<munit:parameter propertyName="config" value="oracleInsecureTLSDbConfig"/>
 				</munit:parameters>
 			</munit:parameterization>
-			// TODO DBCON-335: Investigate 'insufficient privileges' for oracleMTLSNoUserPassDbConfig tests
+<!--			// TODO DBCON-335: Investigate 'insufficient privileges' for oracleMTLSNoUserPassDbConfig tests-->
 <!--			<munit:parameterization name="oracleMTLSNoUserPassDbConfig">-->
 <!--				<munit:parameters>-->
 <!--					<munit:parameter propertyName="config" value="oracleMTLSNoUserPassDbConfig"/>-->

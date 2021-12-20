@@ -252,7 +252,6 @@
                         <oracle.db.mtls.port2>${oracle.db.mtls.port2}</oracle.db.mtls.port2>
                         <mysql.db.port>${mysql.db.port}</mysql.db.port>
                         <mssql.db.port>${mssql.db.port}</mssql.db.port>
-                        <tita.testing>4.2.2,4.3.0</tita.testing>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
@@ -433,6 +432,20 @@
                                 <classifier>mule-plugin</classifier>
                             </dependency>
                         </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skipTests>${skipTests}</skipTests>
+                            <argLine>-Dmaven.settings.local=${settingsFile}</argLine>
+                            <systemPropertyVariables>
+                                <oracle.db.port>${oracle.db.port}</oracle.db.port>
+                                <oracle.db.mtls.port>${oracle.db.mtls.port}</oracle.db.mtls.port>
+                                <oracle.db.mtls.port2>${oracle.db.mtls.port2}</oracle.db.mtls.port2>
+                                <tita.testing>4.2.2,4.3.0,4.4.0</tita.testing>
+                            </systemPropertyVariables>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

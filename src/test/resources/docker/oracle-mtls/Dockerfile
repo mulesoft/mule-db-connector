@@ -10,6 +10,7 @@ RUN rm -rf /tmp/setup
 
 EXPOSE 1521 1522
 
+USER oracle
 CMD ["/bin/sh","-c", "exec $ORACLE_BASE/$RUN_FILE"]
 
 # Currently tagged in DockerHub as: kyleaure/oracle-ssl-18.4.0-xe-prebuilt:2.0

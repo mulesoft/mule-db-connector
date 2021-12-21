@@ -313,6 +313,10 @@
                                                 <containerPath>/client/oracle/store/</containerPath>
                                                 <hostDirectory>${project.basedir}/target/docker/oracle-db-mtls/</hostDirectory>
                                             </entry>
+                                            <entry>
+                                                <containerPath>/client/oracle/store/</containerPath>
+                                                <hostDirectory>${project.basedir}/src/test/resources/tita/tls/</hostDirectory>
+                                            </entry>
                                         </entries>
                                     </copy>
                                     <run>

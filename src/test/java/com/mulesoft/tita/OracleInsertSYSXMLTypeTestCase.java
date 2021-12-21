@@ -34,11 +34,17 @@ public class OracleInsertSYSXMLTypeTestCase {
 
   @Application
   public static ApplicationBuilder app(ApplicationSelector runtimeBuilder) {
-    return runtimeBuilder
-        .custom("insert-oracle-sys-xmltype-app", "tita/insert-oracle-sys-xmltype-app.xml")
-        .withTemplatePomFile("tita/insert-oracle-sys-xmltype-app-pom.xml")
-        .withProperty("db.port", System.getProperty("oracle.db.port"))
-        .withApi(api, port);
+    if (Boolean.parseBoolean(System.getProperty("oracle"))) {
+      return runtimeBuilder
+          .custom("insert-oracle-sys-xmltype-app", "tita/insert-oracle-sys-xmltype-app.xml")
+          .withTemplatePomFile("tita/insert-oracle-sys-xmltype-app-pom.xml")
+          .withProperty("db.port", System.getProperty("oracle.db.port"))
+          .withApi(api, port);
+    } else {
+      return runtimeBuilder
+          .custom("default-app", "tita/default-app.xml")
+          .withApi(api, port);
+    }
   }
 
   @Test
@@ -48,6 +54,12 @@ public class OracleInsertSYSXMLTypeTestCase {
 
       HttpResponse responseApi = runtime.api(api).request("/test-insert").get();
       assertThat(responseApi.statusCode(), is(SC_OK));
+    } else {
+      runtime.api(api).request("/hello").post();
+
+      HttpResponse responseApi = runtime.api(api).request("/hello").get();
+      assertThat(responseApi.statusCode(), is(SC_OK));
+      assertThat(responseApi.asString(), containsString("Uh, Yeah Hi"));
     }
   }
 }

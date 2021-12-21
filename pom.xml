@@ -248,64 +248,12 @@
                     <argLine>-Dmaven.settings.local=${settingsFile}</argLine>
                     <systemPropertyVariables>
                         <oracle.db.port>${oracle.db.port}</oracle.db.port>
+                        <oracle.db.mtls.port>${oracle.db.mtls.port}</oracle.db.mtls.port>
+                        <oracle.db.mtls.port2>${oracle.db.mtls.port2}</oracle.db.mtls.port2>
                         <mysql.db.port>${mysql.db.port}</mysql.db.port>
                         <mssql.db.port>${mssql.db.port}</mssql.db.port>
-                        <tita.testing>4.2.2,4.3.0</tita.testing>
                     </systemPropertyVariables>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.mulesoft.munit</groupId>
-                <artifactId>munit-extensions-maven-plugin</artifactId>
-                <version>${munit.extensions.maven.plugin.version}</version>
-                <configuration>
-                    <munitFailIfNoTests>false</munitFailIfNoTests>
-                    <systemPropertyVariables>
-                        <oracle.db.port>${oracle.db.port}</oracle.db.port>
-                    </systemPropertyVariables>
-                    <munitTest>.*TestCase.xml</munitTest>
-                    <runtimeConfiguration>
-                        <discoverRuntimes>
-                            <product>EE</product>
-                            <minMuleVersion>4.1.1</minMuleVersion>
-                        </discoverRuntimes>
-                    </runtimeConfiguration>
-                    <sharedLibraries>
-                        <sharedLibrary>
-                            <groupId>com.oracle.database.jdbc</groupId>
-                            <artifactId>ojdbc8</artifactId>
-                        </sharedLibrary>
-                    </sharedLibraries>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>integration-test</phase>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <!-- MUnit Dependencies -->
-                    <dependency>
-                        <groupId>com.mulesoft.munit</groupId>
-                        <artifactId>munit-runner</artifactId>
-                        <version>${munit.version}</version>
-                        <classifier>mule-plugin</classifier>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.mulesoft.munit</groupId>
-                        <artifactId>munit-tools</artifactId>
-                        <version>${munit.version}</version>
-                        <classifier>mule-plugin</classifier>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.mulesoft.munit</groupId>
-                        <artifactId>mtf-tools</artifactId>
-                        <version>${mtf-tools.version}</version>
-                        <classifier>mule-plugin</classifier>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.mule.runtime.plugins</groupId>
@@ -354,26 +302,34 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>store/oracle/database-enterprise:12.2.0.1-slim</name>
-                                    <alias>oracle-container</alias>
+                                    <name>oracle-db-mtls</name>
+                                    <alias>oracle-db-mtls</alias>
+                                    <build>
+                                        <dockerFileDir>${project.basedir}/src/test/resources/docker/oracle-mtls</dockerFileDir>
+                                    </build>
+                                    <copy>
+                                        <entries>
+                                            <entry>
+                                                <containerPath>/client/oracle/store/</containerPath>
+                                                <hostDirectory>${project.basedir}/target/docker/oracle-db-mtls/</hostDirectory>
+                                            </entry>
+                                        </entries>
+                                    </copy>
                                     <run>
                                         <containerNamePattern>%n-%i-%t</containerNamePattern>
+                                        <env>
+                                            <ORACLE_PASSWORD>oracle</ORACLE_PASSWORD>
+                                        </env>
                                         <ports>
                                             <port>oracle.db.port:1521</port>
+                                            <port>oracle.db.mtls.port:1522</port>
+                                            <port>oracle.db.mtls.port2:5500</port>
                                         </ports>
-                                        <ulimits>
-                                            <ulimit>
-                                                <name>nofile</name>
-                                                <hard>10240</hard>
-                                                <soft>10240</soft>
-                                            </ulimit>
-                                        </ulimits>
                                         <log>
                                             <enabled>true</enabled>
                                         </log>
                                         <wait>
-                                            <log>Done ! The database is ready for use .</log>
-                                            <time>500000</time>
+                                            <time>90000</time>
                                         </wait>
                                     </run>
                                 </image>
@@ -395,7 +351,7 @@
                         <executions>
                             <execution>
                                 <id>start</id>
-                                <phase>test-compile</phase>
+                                <phase>generate-test-resources</phase>
                                 <goals>
                                     <goal>build</goal>
                                     <goal>start</goal>
@@ -406,13 +362,90 @@
                                 </configuration>
                             </execution>
                             <execution>
+                                <id>copy</id>
+                                <phase>test-compile</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                            </execution>
+                            <execution>
                                 <id>stop</id>
                                 <phase>post-integration-test</phase>
                                 <goals>
                                     <goal>stop</goal>
+                                    <goal>remove</goal>
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.mulesoft.munit</groupId>
+                        <artifactId>munit-extensions-maven-plugin</artifactId>
+                        <version>${munit.extensions.maven.plugin.version}</version>
+                        <configuration>
+                            <munitFailIfNoTests>false</munitFailIfNoTests>
+                            <systemPropertyVariables>
+                                <oracle.db.port>${oracle.db.port}</oracle.db.port>
+                                <oracle.db.mtls.port>${oracle.db.mtls.port}</oracle.db.mtls.port>
+                                <oracle.db.mtls.port2>${oracle.db.mtls.port2}</oracle.db.mtls.port2>
+                            </systemPropertyVariables>
+                            <munitTest>.*-test-case.xml</munitTest>
+                            <runtimeConfiguration>
+                                <discoverRuntimes>
+                                    <product>EE</product>
+                                    <minMuleVersion>4.1.1</minMuleVersion>
+                                </discoverRuntimes>
+                            </runtimeConfiguration>
+                            <sharedLibraries>
+                                <sharedLibrary>
+                                    <groupId>com.oracle.database.jdbc</groupId>
+                                    <artifactId>ojdbc8</artifactId>
+                                </sharedLibrary>
+                            </sharedLibraries>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <!-- MUnit Dependencies -->
+                            <dependency>
+                                <groupId>com.mulesoft.munit</groupId>
+                                <artifactId>munit-runner</artifactId>
+                                <version>${munit.version}</version>
+                                <classifier>mule-plugin</classifier>
+                            </dependency>
+                            <dependency>
+                                <groupId>com.mulesoft.munit</groupId>
+                                <artifactId>munit-tools</artifactId>
+                                <version>${munit.version}</version>
+                                <classifier>mule-plugin</classifier>
+                            </dependency>
+                            <dependency>
+                                <groupId>com.mulesoft.munit</groupId>
+                                <artifactId>mtf-tools</artifactId>
+                                <version>${mtf-tools.version}</version>
+                                <classifier>mule-plugin</classifier>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skipTests>${skipTests}</skipTests>
+                            <argLine>-Dmaven.settings.local=${settingsFile}</argLine>
+                            <systemPropertyVariables>
+                                <oracle.db.port>${oracle.db.port}</oracle.db.port>
+                                <oracle.db.mtls.port>${oracle.db.mtls.port}</oracle.db.mtls.port>
+                                <oracle.db.mtls.port2>${oracle.db.mtls.port2}</oracle.db.mtls.port2>
+                                <tita.testing>4.2.2,4.3.0,4.4.0</tita.testing>
+                            </systemPropertyVariables>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

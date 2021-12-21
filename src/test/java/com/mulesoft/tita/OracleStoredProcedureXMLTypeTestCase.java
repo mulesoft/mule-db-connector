@@ -34,11 +34,17 @@ public class OracleStoredProcedureXMLTypeTestCase {
 
   @Application
   public static ApplicationBuilder app(ApplicationSelector runtimeBuilder) {
-    return runtimeBuilder
-        .custom("stored-procedure-oracle-xmltype-app", "tita/stored-procedure-oracle-xmltype-app.xml")
-        .withTemplatePomFile("tita/stored-procedure-oracle-xmltype-app-pom.xml")
-        .withProperty("db.port", System.getProperty("oracle.db.port"))
-        .withApi(api, port);
+    if (Boolean.parseBoolean(System.getProperty("oracle"))) {
+      return runtimeBuilder
+          .custom("stored-procedure-oracle-xmltype-app", "tita/stored-procedure-oracle-xmltype-app.xml")
+          .withTemplatePomFile("tita/stored-procedure-oracle-xmltype-app-pom.xml")
+          .withProperty("db.port", System.getProperty("oracle.db.port"))
+          .withApi(api, port);
+    } else {
+      return runtimeBuilder
+          .custom("default-app", "tita/default-app.xml")
+          .withApi(api, port);
+    }
   }
 
   @Test
@@ -49,6 +55,12 @@ public class OracleStoredProcedureXMLTypeTestCase {
       HttpResponse responseApi = runtime.api(api).request("/test").get();
       assertThat(responseApi.statusCode(), is(SC_OK));
       assertThat(responseApi.asString(), containsString("SUCCESS"));
+    } else {
+      runtime.api(api).request("/hello").post();
+
+      HttpResponse responseApi = runtime.api(api).request("/hello").get();
+      assertThat(responseApi.statusCode(), is(SC_OK));
+      assertThat(responseApi.asString(), containsString("Uh, Yeah Hi"));
     }
   }
 

@@ -25,4 +25,11 @@ public class DbMunitUtils {
 
     return availableProperties.containsKey(port) ? availableProperties.getProperty(port) : DEFAULT_PORT;
   }
+
+  public static String getSecureDbPort(String dbName) {
+    Properties availableProperties = System.getProperties();
+    String port = String.format("%s.db.mtls.port", dbName);
+
+    return availableProperties.containsKey(port) ? availableProperties.getProperty(port) : DEFAULT_PORT;
+  }
 }

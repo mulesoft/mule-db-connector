@@ -39,6 +39,7 @@ public class OracleStoredProcedureXMLTypeTestCase {
           .custom("stored-procedure-oracle-xmltype-app", "tita/stored-procedure-oracle-xmltype-app.xml")
           .withTemplatePomFile("tita/stored-procedure-oracle-xmltype-app-pom.xml")
           .withProperty("db.port", System.getProperty("oracle.db.mtls.port"))
+          .withResources("tita")
           .withApi(api, port);
     } else {
       return runtimeBuilder

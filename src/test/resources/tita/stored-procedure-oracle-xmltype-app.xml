@@ -22,8 +22,8 @@
     <db:config name="Database_Config">
         <db:oracle-connection host="localhost" port="${db.port}" user="system" password="oracle" serviceName="XEPDB1">
             <tls:context>
-                <tls:trust-store path="tls/store/client-truststore.jks" password="WalletPasswd123" type="jks"/>
-                <tls:key-store path="tls/store/client-keystore.jks" keyPassword="WalletPasswd123" password="WalletPasswd123" type="jks"/>
+                <tls:trust-store path="store/client-truststore.jks" password="WalletPasswd123" type="jks"/>
+                <tls:key-store path="store/client-keystore.jks" keyPassword="WalletPasswd123" password="WalletPasswd123" type="jks"/>
             </tls:context>
         </db:oracle-connection>
     </db:config>

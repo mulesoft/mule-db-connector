@@ -439,7 +439,7 @@
                             <noLog>true</noLog>
                             <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                             <properties>
-                                <maven.settings.local>${settings.file}</maven.settings.local>
+                                <maven.settings.local>${settingsFile}</maven.settings.local>
                                 <oracle.db.port>${oracle.db.port}</oracle.db.port>
                             </properties>
                         </configuration>

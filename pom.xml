@@ -447,6 +447,30 @@
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <version>3.2.2</version>
+                        <configuration>
+                            <debug>false</debug>
+                            <streamLogs>true</streamLogs>
+                            <noLog>true</noLog>
+                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                            <properties>
+                                <maven.settings.local>${settings.file}</maven.settings.local>
+                                <oracle.db.port>${oracle.db.port}</oracle.db.port>
+                            </properties>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>tita-test</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration shutdownHook="disable">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%-5p %d [%t] %c: %m%n"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <!-- Mule classes -->
+        <AsyncLogger name="org.mule" level="WARN"/>
+        <AsyncLogger name="com.mulesoft" level="WARN"/>
+
+        <!-- Main ones -->
+        <AsyncLogger name="org.mule.maven.client" level="INFO"/>
+        <AsyncLogger name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor" level="DEBUG"/>
+        <AsyncLogger name="com.mulesoft.anypoint.tita" level="TRACE"/>
+        <AsyncLogger name="com.mulesoft.anypoint.discovery" level="TRACE"/>
+        <AsyncLogger name="com.mulesoft.anypoint.agw.system" level="TRACE"/>
+        <AsyncLogger name="com.mulesoft.anypoint.tita.core.maven" level="INFO"/>
+
+        <!-- DB Connector and Client -->
+        <AsyncLogger name="com.mulesoft.connectors.db" level="TRACE"/>
+        <AsyncLogger name="com.mulesoft.anypoint.tita" level="TRACE"/>
+
+        <AsyncRoot level="INFO">
+            <AppenderRef ref="Console"/>
+        </AsyncRoot>
+    </Loggers>
+
+</Configuration>

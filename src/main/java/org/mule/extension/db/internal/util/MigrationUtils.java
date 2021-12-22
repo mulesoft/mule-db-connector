@@ -152,6 +152,8 @@ public class MigrationUtils {
         return JdbcType.LONGNVARCHAR;
       case LONGVARBINARY:
         return JdbcType.LONGVARBINARY;
+      case REF_CURSOR:
+        return JdbcType.REF_CURSOR;
       default:
         throw new RuntimeException("Invalid JDBC Type Translation");
     }

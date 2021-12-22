@@ -4,7 +4,13 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package com.mulesoft.tita;
+package com.mulesoft.db.it;
+
+import static com.mulesoft.anypoint.tita.environment.api.artifact.Identifier.identifier;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.StringContains.containsString;
+import static org.apache.http.HttpStatus.SC_OK;
 
 import com.mulesoft.anypoint.tests.http.HttpResponse;
 import com.mulesoft.anypoint.tita.environment.api.ApplicationSelector;
@@ -17,43 +23,38 @@ import com.mulesoft.anypoint.tita.runner.ambar.annotation.runtime.Standalone;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static com.mulesoft.anypoint.tita.environment.api.artifact.Identifier.identifier;
-import static org.apache.http.HttpStatus.SC_OK;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.StringContains.containsString;
-
 @RunWith(Ambar.class)
-public class OracleInsertSYSXMLTypeTestCase {
+public class OracleStoredProcedureXMLTypeTestCase {
 
   private static final Identifier api = identifier("api1");
   private static final Identifier port = identifier("port");
 
-  @Standalone(log4j = "tita/log4j2-tita-test.xml")
+  @Standalone(log4j = "log4j2-test.xml")
   Runtime runtime;
 
   @Application
   public static ApplicationBuilder app(ApplicationSelector runtimeBuilder) {
     if (Boolean.parseBoolean(System.getProperty("oracle"))) {
       return runtimeBuilder
-          .custom("insert-oracle-sys-xmltype-app", "tita/insert-oracle-sys-xmltype-app.xml")
-          .withTemplatePomFile("tita/insert-oracle-sys-xmltype-app-pom.xml")
+          .custom("stored-procedure-oracle-xmltype-app", "stored-procedure-oracle-xmltype-app.xml")
+          .withTemplatePomFile("stored-procedure-oracle-xmltype-app-pom.xml")
           .withProperty("db.port", System.getProperty("oracle.db.port"))
           .withApi(api, port);
     } else {
       return runtimeBuilder
-          .custom("default-app", "tita/default-app.xml")
+          .custom("default-app", "default-app.xml")
           .withApi(api, port);
     }
   }
 
   @Test
-  public void oracleSYSXMLTypeInsertTestCase() throws Exception {
+  public void oracleXMTypeTestCase() throws Exception {
     if (Boolean.parseBoolean(System.getProperty("oracle"))) {
-      runtime.api(api).request("/test-insert").post();
+      runtime.api(api).request("/test").post();
 
-      HttpResponse responseApi = runtime.api(api).request("/test-insert").get();
+      HttpResponse responseApi = runtime.api(api).request("/test").get();
       assertThat(responseApi.statusCode(), is(SC_OK));
+      assertThat(responseApi.asString(), containsString("SUCCESS"));
     } else {
       runtime.api(api).request("/hello").post();
 
@@ -62,4 +63,5 @@ public class OracleInsertSYSXMLTypeTestCase {
       assertThat(responseApi.asString(), containsString("Uh, Yeah Hi"));
     }
   }
+
 }

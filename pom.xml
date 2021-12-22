@@ -34,7 +34,6 @@
         <cglibVersion>3.3.0</cglibVersion>
         <muleDbClientVersion>1.4.0-SNAPSHOT</muleDbClientVersion>
         <muleExtensionsShadeVersion>1.0.2</muleExtensionsShadeVersion>
-        <titaVersion>4.3.0</titaVersion>
 
         <caffeineVersion>2.9.2</caffeineVersion>
         <derbyVersion>10.14.2.0</derbyVersion>
@@ -164,22 +163,6 @@
             <artifactId>xmlunit</artifactId>
             <version>${xmlunit.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.mulesoft.anypoint</groupId>
-            <artifactId>tita-junit-runner</artifactId>
-            <version>${titaVersion}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.mule</groupId>
-                    <artifactId>mule-maven-client-impl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- DB Drivers -->
@@ -443,9 +426,33 @@
                                 <oracle.db.port>${oracle.db.port}</oracle.db.port>
                                 <oracle.db.mtls.port>${oracle.db.mtls.port}</oracle.db.mtls.port>
                                 <oracle.db.mtls.port2>${oracle.db.mtls.port2}</oracle.db.mtls.port2>
-                                <tita.testing>4.2.2,4.3.0,4.4.0</tita.testing>
                             </systemPropertyVariables>
                         </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <version>3.2.2</version>
+                        <configuration>
+                            <debug>false</debug>
+                            <streamLogs>true</streamLogs>
+                            <noLog>true</noLog>
+                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                            <properties>
+                                <maven.settings.local>${settingsFile}</maven.settings.local>
+                                <oracle.db.port>${oracle.db.port}</oracle.db.port>
+                            </properties>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>tita-tests</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <inherited>false</inherited>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

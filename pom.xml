@@ -445,12 +445,11 @@
                         </configuration>
                         <executions>
                             <execution>
-                                <id>tita-tests</id>
-                                <phase>install</phase>
+                                <id>tita-test</id>
+                                <phase>integration-test</phase>
                                 <goals>
                                     <goal>run</goal>
                                 </goals>
-                                <inherited>false</inherited>
                             </execution>
                         </executions>
                     </plugin>

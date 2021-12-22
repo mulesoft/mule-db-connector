@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package com.mulesoft.tita;
+package com.mulesoft.db.it;
 
 import static com.mulesoft.anypoint.tita.environment.api.artifact.Identifier.identifier;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -29,20 +29,20 @@ public class OracleStoredProcedureXMLTypeTestCase {
   private static final Identifier api = identifier("api1");
   private static final Identifier port = identifier("port");
 
-  @Standalone(log4j = "tita/log4j2-tita-test.xml")
+  @Standalone(log4j = "log4j2-test.xml")
   Runtime runtime;
 
   @Application
   public static ApplicationBuilder app(ApplicationSelector runtimeBuilder) {
     if (Boolean.parseBoolean(System.getProperty("oracle"))) {
       return runtimeBuilder
-          .custom("stored-procedure-oracle-xmltype-app", "tita/stored-procedure-oracle-xmltype-app.xml")
-          .withTemplatePomFile("tita/stored-procedure-oracle-xmltype-app-pom.xml")
+          .custom("stored-procedure-oracle-xmltype-app", "src/it/tita/src/test/resources/stored-procedure-oracle-xmltype-app.xml")
+          .withTemplatePomFile("src/it/tita/src/test/resources/stored-procedure-oracle-xmltype-app-pom.xml")
           .withProperty("db.port", System.getProperty("oracle.db.port"))
           .withApi(api, port);
     } else {
       return runtimeBuilder
-          .custom("default-app", "tita/default-app.xml")
+          .custom("default-app", "src/it/tita/src/test/resources/default-app.xml")
           .withApi(api, port);
     }
   }

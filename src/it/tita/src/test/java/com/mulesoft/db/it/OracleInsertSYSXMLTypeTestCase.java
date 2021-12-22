@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package com.mulesoft.tita;
+package com.mulesoft.db.it;
 
 import com.mulesoft.anypoint.tests.http.HttpResponse;
 import com.mulesoft.anypoint.tita.environment.api.ApplicationSelector;
@@ -29,20 +29,20 @@ public class OracleInsertSYSXMLTypeTestCase {
   private static final Identifier api = identifier("api1");
   private static final Identifier port = identifier("port");
 
-  @Standalone(log4j = "tita/log4j2-tita-test.xml")
+  @Standalone(log4j = "log4j2-test.xml")
   Runtime runtime;
 
   @Application
   public static ApplicationBuilder app(ApplicationSelector runtimeBuilder) {
     if (Boolean.parseBoolean(System.getProperty("oracle"))) {
       return runtimeBuilder
-          .custom("insert-oracle-sys-xmltype-app", "tita/insert-oracle-sys-xmltype-app.xml")
-          .withTemplatePomFile("tita/insert-oracle-sys-xmltype-app-pom.xml")
+          .custom("insert-oracle-sys-xmltype-app", "src/it/tita/src/test/resources/insert-oracle-sys-xmltype-app.xml")
+          .withTemplatePomFile("src/it/tita/src/test/resources/insert-oracle-sys-xmltype-app-pom.xml")
           .withProperty("db.port", System.getProperty("oracle.db.port"))
           .withApi(api, port);
     } else {
       return runtimeBuilder
-          .custom("default-app", "tita/default-app.xml")
+          .custom("default-app", "src/it/tita/src/test/resources/default-app.xml")
           .withApi(api, port);
     }
   }

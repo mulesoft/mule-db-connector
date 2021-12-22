@@ -36,7 +36,7 @@ public class StoredProcedureRefCursorTestCase {
   public static ApplicationBuilder app(ApplicationSelector runtimeBuilder) {
     return runtimeBuilder
             .custom("stored-procedure-oracle-reftype-app", "stored-procedure-oracle-reftype-app.xml")
-            .withTemplatePomFile("db-pom.xml")
+            .withTemplatePomFile("stored-procedure-oracle-reftype-app-pom.xml")
             .withProperty("db.port", System.getProperty("oracle.db.port"))
             .withApi(api, port);
   }

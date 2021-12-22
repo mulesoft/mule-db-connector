@@ -7,26 +7,22 @@
     </Appenders>
 
     <Loggers>
-
-        <!-- CXF is used heavily by Mule for web services -->
-        <AsyncLogger name="org.apache.cxf" level="WARN"/>
-
-        <!-- Apache Commons tend to make a lot of noise which can clutter the log-->
-        <AsyncLogger name="org.apache" level="WARN"/>
-
-        <!-- Reduce startup noise -->
-        <AsyncLogger name="org.springframework.beans.factory" level="WARN"/>
-
         <!-- Mule classes -->
         <AsyncLogger name="org.mule" level="WARN"/>
         <AsyncLogger name="com.mulesoft" level="WARN"/>
 
-        <!-- Reduce DM verbosity -->
-        <AsyncLogger name="org.jetel" level="WARN"/>
-        <AsyncLogger name="Tracking" level="WARN"/>
+        <!-- Main ones -->
+        <AsyncLogger name="org.mule.maven.client" level="INFO"/>
+        <AsyncLogger name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor" level="DEBUG"/>
+        <AsyncLogger name="com.mulesoft.anypoint.tita" level="TRACE"/>
+        <AsyncLogger name="com.mulesoft.anypoint.discovery" level="TRACE"/>
+        <AsyncLogger name="com.mulesoft.anypoint.agw.system" level="TRACE"/>
+        <AsyncLogger name="com.mulesoft.anypoint.tita.core.maven" level="INFO"/>
 
+        <!-- DB Connector and Client -->
         <AsyncLogger name="com.mulesoft.connectors.db" level="TRACE"/>
         <AsyncLogger name="com.mulesoft.anypoint.tita" level="TRACE"/>
+
         <AsyncRoot level="INFO">
             <AppenderRef ref="Console"/>
         </AsyncRoot>

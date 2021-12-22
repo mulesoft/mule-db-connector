@@ -30,7 +30,7 @@ public class StoredProcedureRefCursorTestCase {
   private static final Identifier port = identifier("port");
 
   @Standalone(log4j = "log4j2-test.xml")
-  private Runtime runtime;
+  Runtime runtime;
 
   @Application
   public static ApplicationBuilder app(ApplicationSelector runtimeBuilder) {

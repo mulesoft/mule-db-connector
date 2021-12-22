@@ -18,7 +18,7 @@
     </http:listener-config>
 
     <db:config name="Database_Config">
-        <db:oracle-connection host="localhost" port="${db.port}" user="SYSTEM" password="Oradoc_db1" instance="ORCLCDB"/>
+        <db:oracle-connection host="localhost" port="${db.port}" user="system" password="oracle" serviceName="XEPDB1"/>
     </db:config>
 
     <flow name="oracleXmlTypeInsertTest">

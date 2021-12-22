@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+            http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+            http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+
+    <configuration-properties file="${applicationsConfigProperties}"/>
+
+    <api-gateway:autodiscovery apiId="${api1}" flowRef="defaultHelloWorldTest"/>
+
+    <http:listener-config name="listenerConfig">
+        <http:listener-connection host="localhost" port="${port}" protocol="HTTP"/>
+    </http:listener-config>
+
+    <flow name="defaultHelloWorldTest">
+        <http:listener path="/hello" config-ref="listenerConfig"/>
+
+        <set-payload value="Uh, Yeah Hi"/>
+    </flow>
+
+</mule>

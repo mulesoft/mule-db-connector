@@ -36,13 +36,13 @@ public class OracleStoredProcedureXMLTypeTestCase {
   public static ApplicationBuilder app(ApplicationSelector runtimeBuilder) {
     if (Boolean.parseBoolean(System.getProperty("oracle"))) {
       return runtimeBuilder
-          .custom("stored-procedure-oracle-xmltype-app", "src/it/tita/src/test/resources/stored-procedure-oracle-xmltype-app.xml")
-          .withTemplatePomFile("src/it/tita/src/test/resources/stored-procedure-oracle-xmltype-app-pom.xml")
+          .custom("stored-procedure-oracle-xmltype-app", "stored-procedure-oracle-xmltype-app.xml")
+          .withTemplatePomFile("stored-procedure-oracle-xmltype-app-pom.xml")
           .withProperty("db.port", System.getProperty("oracle.db.port"))
           .withApi(api, port);
     } else {
       return runtimeBuilder
-          .custom("default-app", "src/it/tita/src/test/resources/default-app.xml")
+          .custom("default-app", "default-app.xml")
           .withApi(api, port);
     }
   }

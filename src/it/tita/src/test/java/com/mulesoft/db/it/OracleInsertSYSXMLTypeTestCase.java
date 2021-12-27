@@ -16,6 +16,8 @@ import com.mulesoft.anypoint.tita.runner.ambar.annotation.Application;
 import com.mulesoft.anypoint.tita.runner.ambar.annotation.runtime.Standalone;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.mulesoft.anypoint.tita.environment.api.artifact.Identifier.identifier;
 import static org.apache.http.HttpStatus.SC_OK;
@@ -26,6 +28,8 @@ import static org.hamcrest.core.StringContains.containsString;
 @RunWith(Ambar.class)
 public class OracleInsertSYSXMLTypeTestCase {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(OracleInsertSYSXMLTypeTestCase.class);
+
   private static final Identifier api = identifier("api1");
   private static final Identifier port = identifier("port");
 
@@ -35,12 +39,14 @@ public class OracleInsertSYSXMLTypeTestCase {
   @Application
   public static ApplicationBuilder app(ApplicationSelector runtimeBuilder) {
     if (Boolean.parseBoolean(System.getProperty("oracle"))) {
+      LOGGER.info("Setting Oracle configuration.");
       return runtimeBuilder
           .custom("insert-oracle-sys-xmltype-app", "insert-oracle-sys-xmltype-app.xml")
           .withTemplatePomFile("insert-oracle-sys-xmltype-app-pom.xml")
-          .withProperty("db.port", System.getProperty("oracle.db.port"))
+          .withProperty("db.port", System.getenv("oracle.db.port") == null ? "1521" : System.getenv("oracle.db.port"))
           .withApi(api, port);
     } else {
+      LOGGER.info("Setting default configuration.");
       return runtimeBuilder
           .custom("default-app", "default-app.xml")
           .withApi(api, port);
@@ -50,6 +56,7 @@ public class OracleInsertSYSXMLTypeTestCase {
   @Test
   public void oracleSYSXMLTypeInsertTestCase() throws Exception {
     if (Boolean.parseBoolean(System.getProperty("oracle"))) {
+      LOGGER.info("Oracle testing begins.");
       runtime.api(api).request("/test-insert").post();
 
       HttpResponse responseApi = runtime.api(api).request("/test-insert").get();

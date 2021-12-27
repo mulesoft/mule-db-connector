@@ -64,7 +64,7 @@ public class StoredProcedureRefCursorTestCase {
 
       assertThat(responseApi.asString(), containsString("SENT"));
     } else {
-      LOGGER.warning("The oracle system property is set to false, no tests are performed.");
+      LOGGER.warn("The oracle system property is set to false, no tests are performed.");
     }
   }
 }

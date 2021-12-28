@@ -16,6 +16,8 @@ import com.mulesoft.anypoint.tita.runner.ambar.annotation.runtime.Standalone;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import com.mulesoft.anypoint.tita.environment.api.runtime.Runtime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.mulesoft.anypoint.tita.environment.api.artifact.Identifier.identifier;
 import static org.apache.http.HttpStatus.SC_OK;
@@ -26,6 +28,8 @@ import static org.hamcrest.core.StringContains.containsString;
 @RunWith(Ambar.class)
 public class StoredProcedureRefCursorTestCase {
 
+  private static final Logger LOGGER = LoggerFactory.getLogger(StoredProcedureRefCursorTestCase.class);
+
   private static final Identifier api = identifier("api1");
   private static final Identifier port = identifier("port");
 
@@ -34,21 +38,35 @@ public class StoredProcedureRefCursorTestCase {
 
   @Application
   public static ApplicationBuilder app(ApplicationSelector runtimeBuilder) {
-    return runtimeBuilder
+    if (Boolean.parseBoolean(System.getProperty("oracle"))) {
+      LOGGER.info("Setting Oracle configuration.");
+      String oraclePort = System.getProperty("oracle.db.port");
+      LOGGER.trace("Port for Oracle database is: " + oraclePort);
+      return runtimeBuilder
             .custom("stored-procedure-oracle-reftype-app", "stored-procedure-oracle-reftype-app.xml")
             .withTemplatePomFile("stored-procedure-oracle-reftype-app-pom.xml")
-            .withProperty("db.port", System.getProperty("oracle.db.port"))
+            .withProperty("db.port", oraclePort == null ? "1521" :oraclePort)
             .withApi(api, port);
+    } else {
+      LOGGER.info("Setting default configuration.");
+      return runtimeBuilder
+              .custom("default-app", "default-app.xml")
+              .withApi(api, port);
+    }
   }
 
   @Test
   public void oracleREFTypeTestCase() throws Exception {
     if (Boolean.parseBoolean(System.getProperty("oracle"))) {
+      LOGGER.info("Oracle testing begins.");
       runtime.api(api).request("/test-cursor-ref").post();
 
       HttpResponse responseApi = runtime.api(api).request("/test-cursor-ref").get();
       assertThat(responseApi.statusCode(), is(SC_OK));
-      assertThat(responseApi.asString(), containsString("SARASA"));
+
+      assertThat(responseApi.asString(), containsString("SENT"));
+    } else {
+      LOGGER.warn("The oracle system property is set to false, no tests are performed.");
     }
   }
 }

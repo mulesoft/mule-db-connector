@@ -40,10 +40,12 @@ public class StoredProcedureRefCursorTestCase {
   public static ApplicationBuilder app(ApplicationSelector runtimeBuilder) {
     if (Boolean.parseBoolean(System.getProperty("oracle"))) {
       LOGGER.info("Setting Oracle configuration.");
+      String oraclePort = System.getProperty("oracle.db.port");
+      LOGGER.trace("Port for Oracle database is: " + oraclePort);
       return runtimeBuilder
             .custom("stored-procedure-oracle-reftype-app", "stored-procedure-oracle-reftype-app.xml")
             .withTemplatePomFile("stored-procedure-oracle-reftype-app-pom.xml")
-            .withProperty("db.port", System.getenv("oracle.db.port") == null ? "1521" : System.getenv("oracle.db.port"))
+            .withProperty("db.port", oraclePort == null ? "1521" :oraclePort)
             .withApi(api, port);
     } else {
       LOGGER.info("Setting default configuration.");

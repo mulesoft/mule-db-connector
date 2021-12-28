@@ -446,9 +446,6 @@
                                 <oracle.db.port>${oracle.db.port}</oracle.db.port>
                                 <oracle>${oracle}</oracle>
                             </properties>
-                            <environmentVariables>
-                                <oracle.db.port>${oracle.db.port}</oracle.db.port>
-                            </environmentVariables>
                             <goals>
                                 <goal>clean</goal>
                                 <goal>generate-sources</goal>

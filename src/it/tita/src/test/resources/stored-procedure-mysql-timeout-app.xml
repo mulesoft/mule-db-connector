@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+            http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+            http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+            http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
+
+    <configuration-properties file="${applicationsConfigProperties}"/>
+
+    <api-gateway:autodiscovery apiId="${api1}" flowRef="mysqlTimeoutTest"/>
+
+    <http:listener-config name="listenerConfig">
+        <http:listener-connection host="localhost" port="${port}" protocol="HTTP"/>
+    </http:listener-config>
+
+    <db:config name="Database_Config">
+        <db:my-sql-connection host="localhost" port="${db.port}" user="root" password="password" database="xe"/>
+    </db:config>
+
+    <flow name="mysqlTimeoutTest">
+        <http:listener path="/test-sp-timeout" config-ref="listenerConfig"/>
+
+        <try>
+            <db:execute-script config-ref="Database_Config">
+                <db:sql><![CDATA[DROP TABLE TEST_MESSAGE]]></db:sql>
+            </db:execute-script>
+
+            <db:execute-script config-ref="Database_Config">
+                <db:sql><![CDATA[DROP PROCEDURE IF EXISTS GET_DELAYED_MESSAGE_BY_ID;]]></db:sql>
+            </db:execute-script>
+
+            <error-handler>
+                <on-error-continue enableNotifications="true" logException="false">
+                </on-error-continue>
+            </error-handler>
+        </try>
+
+        <try>
+            <db:execute-ddl config-ref="Database_Config">
+                <db:sql><![CDATA[CREATE TABLE TEST_MESSAGE(MSG_ID int NOT NULL AUTO_INCREMENT,
+                    STATE varchar(255),
+                    MSG int,
+                    PRIMARY KEY (MSG_ID))]]>
+                </db:sql>
+            </db:execute-ddl>
+
+            <db:insert config-ref="Database_Config">
+                <db:sql ><![CDATA[INSERT INTO TEST_MESSAGE (STATE, MSG) values(:state, :msg)]]></db:sql>
+                <db:input-parameters ><![CDATA[#[{
+	                "state": "SENT",
+                    "msg": 8
+                    }]]]>
+                </db:input-parameters>
+            </db:insert>
+
+            <error-handler>
+                <on-error-continue enableNotifications="true" logException="true">
+                    <set-payload value='#["ERROR Initializing database -----&gt;" ++ "Error Description: " ++ error.description ++ "; Error errorType: " ++ error.errorType.identifier]'/>
+                </on-error-continue>
+            </error-handler>
+        </try>
+
+        <try>
+            <db:execute-ddl config-ref="Database_Config">
+                <db:sql><![CDATA[CREATE PROCEDURE GET_DELAYED_MESSAGE_BY_ID(IN pMsgId int, OUT pState varchar(255))
+                    BEGIN
+                      SELECT SLEEP(2.0);
+                      SELECT STATE into pState FROM
+                        TEST_MESSAGE MH
+                      WHERE
+                        MH.MSG_ID = pMsgId;
+                    END;]]>
+                </db:sql>
+            </db:execute-ddl>
+
+            <error-handler>
+                <on-error-continue enableNotifications="true" logException="true">
+                    <set-payload value='#["ERROR Creating Stored Procedure -----&gt;" ++ "Error Description: " ++ error.description ++ "; Error errorType: " ++ error.errorType.identifier]'/>
+                </on-error-continue>
+            </error-handler>
+        </try>
+
+        <try>
+            <db:stored-procedure config-ref="Database_Config" queryTimeout="500" queryTimeoutUnit="MILLISECONDS">
+                <db:sql><![CDATA[{ call GET_DELAYED_MESSAGE_BY_ID(:msgId, :out) }]]></db:sql>
+                <db:input-parameters><![CDATA[#[msgId : 1]]]></db:input-parameters>
+                <db:output-parameters>
+                    <db:output-parameter key="out" type="NVARCHAR" />
+                </db:output-parameters>
+            </db:stored-procedure>
+
+            <set-payload value="#[%dw 2.0 output application/json --- payload.out]"/>
+
+
+            <error-handler>
+                <on-error-continue enableNotifications="true" logException="true">
+                    <set-payload value='#["ERROR-----&gt;" ++ "Error Description: " ++ error.description ++ "; Error errorType: " ++ error.errorType.identifier]'/>
+                </on-error-continue>
+            </error-handler>
+        </try>
+    </flow>
+
+</mule>

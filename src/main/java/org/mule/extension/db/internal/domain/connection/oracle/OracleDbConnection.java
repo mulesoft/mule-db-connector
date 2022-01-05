@@ -72,6 +72,9 @@ public class OracleDbConnection extends DefaultDbConnection {
   private static final int PROCEDURE_NAME = 3;
   private static final int PARAM_NAME_COLUMN_INDEX = 4;
 
+  public static final String ORACLE_CONNECTION_CLASS = "oracle.jdbc.OracleConnection";
+
+  private Class<? extends Connection> oracleConnectionClass;
   private Method createArrayMethod;
 
   Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache;
@@ -139,27 +142,42 @@ public class OracleDbConnection extends DefaultDbConnection {
 
   @Override
   public Array createArray(String typeName, Object[] values) throws SQLException {
-    if (getCreateArrayMethod() == null) {
+    // Not using isWrapperFor() because this is expected to always succeed,
+    // since we already know that the Database is Oracle.
+    Connection oracleConnection = getJdbcConnection().unwrap(getOracleConnectionClass());
+    if (oracleConnection == null || getCreateArrayMethod() == null) {
       return super.createArray(typeName, values);
     } else {
       try {
         resolveLobs(typeName, values, new ArrayTypeResolver(this));
-        return (Array) getCreateArrayMethod().invoke(getJdbcConnection(), typeName, values);
+        return (Array) getCreateArrayMethod().invoke(oracleConnection, typeName, values);
       } catch (Exception e) {
         throw new SQLException("Error creating ARRAY", e);
       }
     }
   }
 
-  // TODO Look further the way this class and OracleJdbcConnectionWrapper solves Oracle's createARRAY resolution
+  private Class<? extends Connection> getOracleConnectionClass() {
+    if (oracleConnectionClass == null) {
+      try {
+        oracleConnectionClass =
+            OracleDbConnection.class.getClassLoader().loadClass(ORACLE_CONNECTION_CLASS).asSubclass(Connection.class);
+      } catch (ClassNotFoundException e) {
+        logger.error("No OracleConnection class found", e);
+      }
+    }
+    return oracleConnectionClass;
+  }
+
   private Method getCreateArrayMethod() {
     if (createArrayMethod == null) {
+      Class<? extends Connection> connectionClass = getOracleConnectionClass();
       try {
-        createArrayMethod = getJdbcConnection().getClass().getMethod("createARRAY", String.class, Object.class);
-        createArrayMethod.setAccessible(true);
+        createArrayMethod = connectionClass.getMethod("createARRAY", String.class, Object.class);
       } catch (NoSuchMethodException e) {
         if (logger.isDebugEnabled()) {
-          logger.debug("No such createARRAY method: {}. Proceeding with standard method.", e.getMessage());
+          logger.debug("No such createARRAY method: {}. Proceeding with standard method. Connection class was: {}",
+                       e.getMessage(), connectionClass.getName());
         }
       }
     }

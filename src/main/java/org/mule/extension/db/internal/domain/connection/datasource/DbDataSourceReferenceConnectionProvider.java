@@ -11,11 +11,18 @@ import static org.mule.db.commons.internal.domain.connection.DbConnectionProvide
 
 import javax.sql.DataSource;
 
+import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.datasource.DataSourceReferenceConnectionProvider;
+import org.mule.db.commons.internal.domain.type.ResolvedDbType;
+import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
+
+import java.sql.Connection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * {@link ConnectionProvider} implementation which creates DB connections from a referenced {@link
@@ -29,6 +36,15 @@ import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
     nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, type = JAR, optional = true)
 public class DbDataSourceReferenceConnectionProvider extends DataSourceReferenceConnectionProvider {
 
+  private final Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache = new ConcurrentHashMap<>();
 
+  @Override
+  protected DbConnection createDbConnection(Connection connection) throws Exception {
+    if (connection.getMetaData().getDatabaseProductName().equals("Oracle")) {
+      return new OracleDbConnection(connection, super.resolveCustomTypes(), resolvedDbTypesCache);
+    } else {
+      return super.createDbConnection(connection);
+    }
+  }
 
 }

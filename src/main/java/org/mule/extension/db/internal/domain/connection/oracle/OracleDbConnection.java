@@ -138,9 +138,9 @@ public class OracleDbConnection extends DefaultDbConnection {
   }
 
   @Override
-  public Array createArrayOf(String typeName, Object[] values) throws SQLException {
+  public Array createArray(String typeName, Object[] values) throws SQLException {
     if (getCreateArrayMethod() == null) {
-      return super.createArrayOf(typeName, values);
+      return super.createArray(typeName, values);
     } else {
       try {
         resolveLobs(typeName, values, new ArrayTypeResolver(this));

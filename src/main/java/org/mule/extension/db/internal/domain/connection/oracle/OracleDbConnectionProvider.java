@@ -80,12 +80,6 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
   }
 
   @Override
-  protected JdbcConnectionFactory createJdbcConnectionFactory() {
-    return new OracleJdbcConnectionFactory.Builder()
-        .withMaskCredentialsFunction(OracleCredentialsMaskUtils::maskUrlUserAndPasswordForOracle).build();
-  }
-
-  @Override
   protected DbConnection createDbConnection(Connection connection) throws Exception {
     return new OracleDbConnection(connection, super.resolveCustomTypes(), resolvedDbTypesCache);
   }

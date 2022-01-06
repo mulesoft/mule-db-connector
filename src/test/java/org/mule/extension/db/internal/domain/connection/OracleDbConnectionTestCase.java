@@ -7,6 +7,7 @@
 
 package org.mule.extension.db.internal.domain.connection;
 
+import oracle.jdbc.OracleConnection;
 import org.junit.Test;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
@@ -68,7 +69,8 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     final String USER_TYPE_DBNAME_B = "SANDWICH";
 
     //First call.
-    Connection delegate = mock(Connection.class);
+    OracleConnection delegate = mock(OracleConnection.class);
+    when(delegate.unwrap(OracleConnection.class)).thenReturn(delegate);
     PreparedStatement preparedStatement = mock(PreparedStatement.class);
     ResultSet resultSet = mock(ResultSet.class);
 
@@ -79,13 +81,14 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(USER_TYPE_DBNAME);
 
     OracleDbConnection cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache);
-    cnx.createArrayOf(USER_TYPE_NAME, params);
+    cnx.createArray(USER_TYPE_NAME, params);
     assertThat(dbTypeCache.containsKey(USER_TYPE_NAME), is(true));
     assertThat(dbTypeCache.get(USER_TYPE_NAME).get(0).getName(), is(USER_TYPE_DBNAME));
     verify(preparedStatement, times(2)).executeQuery();
 
     //Second Call
-    delegate = mock(Connection.class);
+    delegate = mock(OracleConnection.class);
+    when(delegate.unwrap(OracleConnection.class)).thenReturn(delegate);
     preparedStatement = mock(PreparedStatement.class);
     resultSet = mock(ResultSet.class);
 
@@ -96,7 +99,7 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(USER_TYPE_DBNAME);
 
     cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache);
-    cnx.createArrayOf(USER_TYPE_NAME, params);
+    cnx.createArray(USER_TYPE_NAME, params);
 
     assertThat(dbTypeCache.containsKey(USER_TYPE_NAME), is(true));
     assertThat(dbTypeCache.get(USER_TYPE_NAME).get(0).getName(), is(USER_TYPE_DBNAME));
@@ -105,7 +108,8 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     verify(preparedStatement, times(1)).executeQuery();
 
     //Third Call
-    delegate = mock(Connection.class);
+    delegate = mock(OracleConnection.class);
+    when(delegate.unwrap(OracleConnection.class)).thenReturn(delegate);
     preparedStatement = mock(PreparedStatement.class);
     resultSet = mock(ResultSet.class);
     when(preparedStatement.executeQuery()).thenReturn(resultSet);
@@ -116,7 +120,7 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(USER_TYPE_DBNAME_B);
 
     cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache);
-    cnx.createArrayOf(USER_TYPE_NAME_B, params);
+    cnx.createArray(USER_TYPE_NAME_B, params);
 
     assertThat(dbTypeCache.containsKey(USER_TYPE_NAME_B), is(true));
     assertThat(dbTypeCache.get(USER_TYPE_NAME_B).get(0).getName(), is(USER_TYPE_DBNAME_B));
@@ -126,7 +130,8 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
 
   @Test
   public void getTablesClosesTheStatement() throws SQLException {
-    Connection delegate = mock(Connection.class);
+    OracleConnection delegate = mock(OracleConnection.class);
+    when(delegate.unwrap(OracleConnection.class)).thenReturn(delegate);
     Statement statement = mock(Statement.class);
     ResultSet resultSet = mock(ResultSet.class);
 

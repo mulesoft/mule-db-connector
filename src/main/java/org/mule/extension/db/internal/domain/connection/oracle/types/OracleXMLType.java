@@ -6,9 +6,11 @@
  */
 package org.mule.extension.db.internal.domain.connection.oracle.types;
 
+import oracle.jdbc.OracleTypes;
+
 public class OracleXMLType extends OracleXmlTypeHandler {
 
-  private static final int XMLTYPE_TYPE_ID = 2009;
+  private static final int XMLTYPE_TYPE_ID = OracleTypes.SQLXML;
   private static final String XMLTYPE_TYPE_NAME = "XMLTYPE";
 
   public OracleXMLType() {

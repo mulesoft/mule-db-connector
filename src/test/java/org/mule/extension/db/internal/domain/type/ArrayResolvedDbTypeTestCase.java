@@ -47,7 +47,6 @@ public class ArrayResolvedDbTypeTestCase extends AbstractMuleTestCase {
 
   private ArrayResolvedDbType dataType;
   private PreparedStatement statement;
-  private Connection connection;
   private DbConnection dbConnection;
   private Array dbArray;
 
@@ -55,7 +54,7 @@ public class ArrayResolvedDbTypeTestCase extends AbstractMuleTestCase {
   public void setUp() throws Exception {
     dataType = new ArrayResolvedDbType(ARRAY, TYPE_NAME);
     statement = mock(PreparedStatement.class);
-    connection = mock(Connection.class);
+    Connection connection = mock(Connection.class);
     dbConnection = mock(DbConnection.class);
     dbArray = mock(Array.class);
 
@@ -66,7 +65,7 @@ public class ArrayResolvedDbTypeTestCase extends AbstractMuleTestCase {
   public void convertsJavaArray() throws Exception {
     Object[] value = new Object[] {"foo", "bar"};
 
-    when(dbConnection.createArrayOf(TYPE_NAME, value)).thenReturn(dbArray);
+    when(dbConnection.createArray(TYPE_NAME, value)).thenReturn(dbArray);
 
     dataType.setParameterValue(statement, PARAM_INDEX, value, dbConnection);
 
@@ -75,12 +74,12 @@ public class ArrayResolvedDbTypeTestCase extends AbstractMuleTestCase {
 
   @Test
   public void convertsList() throws Exception {
-    List value = new ArrayList<>();
+    List<String> value = new ArrayList<>();
     value.add("foo");
     value.add("bar");
 
 
-    when(dbConnection.createArrayOf(argThat(equalTo(TYPE_NAME)), argThat(arrayContaining("foo", "bar")))).thenReturn(dbArray);
+    when(dbConnection.createArray(argThat(equalTo(TYPE_NAME)), argThat(arrayContaining("foo", "bar")))).thenReturn(dbArray);
 
     dataType.setParameterValue(statement, PARAM_INDEX, value, dbConnection);
 

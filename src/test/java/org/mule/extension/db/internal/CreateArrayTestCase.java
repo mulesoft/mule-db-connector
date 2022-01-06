@@ -9,6 +9,7 @@ package org.mule.extension.db.internal;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -18,6 +19,8 @@ import static org.mule.db.commons.api.param.JdbcType.CLOB;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
 
+import oracle.jdbc.OracleConnection;
+import oracle.sql.ARRAY;
 import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
 
@@ -47,21 +50,25 @@ public class CreateArrayTestCase extends AbstractDbFunctionTestCase {
     createsDbArrayResolvingBlobWithOracleConnection(TYPE_NAME_WITH_OWNER);
   }
 
+  @SuppressWarnings("deprecation")
   private void createsDbArrayResolvingBlobWithOracleConnection(String typeName) throws Exception {
     Object[] structValues = {"blob", "foo"};
     Object[] structValues1 = {"blob1", "foo1"};
     Object[] params = {structValues, structValues1};
 
-    Connection connection = mock(Connection.class);
+    OracleConnection connection = mock(OracleConnection.class);
+    when(connection.unwrap(OracleConnection.class)).thenReturn(connection);
     Blob blob = mock(Blob.class);
     when(connection.createBlob()).thenReturn(blob);
 
-    Array array = mock(Array.class);
-    when(connection.createArrayOf(typeName, params)).thenReturn(array);
+    ARRAY array = mock(ARRAY.class);
+    when(connection.createARRAY(typeName, params)).thenReturn(array);
+    when(connection.createArrayOf(any(), any()))
+        .thenThrow(new UnsupportedOperationException("Oracle doesn't support createArrayOf"));
 
     testThroughOracleQuery(connection, params, BLOB.getDbType().getName(), typeName);
 
-    verify(connection).createArrayOf(typeName, params);
+    verify(connection).createARRAY(typeName, params);
     assertThat(((Object[]) params[0])[0], equalTo(blob));
     assertThat(((Object[]) params[1])[0], equalTo(blob));
   }
@@ -76,21 +83,25 @@ public class CreateArrayTestCase extends AbstractDbFunctionTestCase {
     createsDbArrayResolvingClobWithOracleConnection(TYPE_NAME_WITH_OWNER);
   }
 
+  @SuppressWarnings("deprecation")
   private void createsDbArrayResolvingClobWithOracleConnection(String typeName) throws Exception {
     Object[] structValues = {"clob", "foo"};
     Object[] structValues1 = {"clob1", "foo1"};
     Object[] params = {structValues, structValues1};
 
-    Connection connection = mock(Connection.class);
+    OracleConnection connection = mock(OracleConnection.class);
+    when(connection.unwrap(OracleConnection.class)).thenReturn(connection);
     Clob clob = mock(Clob.class);
     when(connection.createClob()).thenReturn(clob);
 
-    Array array = mock(Array.class);
-    when(connection.createArrayOf(typeName, params)).thenReturn(array);
+    ARRAY array = mock(ARRAY.class);
+    when(connection.createARRAY(typeName, params)).thenReturn(array);
+    when(connection.createArrayOf(any(), any()))
+        .thenThrow(new UnsupportedOperationException("Oracle doesn't support createArrayOf"));
 
     testThroughOracleQuery(connection, params, CLOB.getDbType().getName(), typeName);
 
-    verify(connection).createArrayOf(typeName, params);
+    verify(connection).createARRAY(typeName, params);
     assertThat(((Object[]) params[0])[0], equalTo(clob));
     assertThat(((Object[]) params[1])[0], equalTo(clob));
   }
@@ -119,7 +130,7 @@ public class CreateArrayTestCase extends AbstractDbFunctionTestCase {
 
     OracleDbConnection oracleConnection = new OracleDbConnection(delegate, new ArrayList<>(), new ConcurrentHashMap<>());
 
-    oracleConnection.createArrayOf(udtName, values);
+    oracleConnection.createArray(udtName, values);
 
     verify(preparedStatement, times(2)).setString(1, typeSimpleName);
     if (owner.isPresent()) {

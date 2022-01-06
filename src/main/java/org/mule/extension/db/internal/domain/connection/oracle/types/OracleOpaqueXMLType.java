@@ -6,9 +6,11 @@
  */
 package org.mule.extension.db.internal.domain.connection.oracle.types;
 
+import oracle.jdbc.OracleTypes;
+
 public class OracleOpaqueXMLType extends OracleXmlTypeHandler {
 
-  private static final int OPAQUEXML_TYPE_ID = 2009;
+  private static final int OPAQUEXML_TYPE_ID = OracleTypes.SQLXML;
   private static final String OPAQUEXML_TYPE_NAME = "OPAQUE/XMLTYPE";
 
   public OracleOpaqueXMLType() {

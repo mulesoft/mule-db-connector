@@ -13,6 +13,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
 
+import oracle.jdbc.OracleConnection;
+import oracle.jdbc.OracleTypes;
 import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
 import org.mule.db.commons.internal.domain.connection.type.resolver.ArrayTypeResolver;
 import org.mule.db.commons.internal.domain.connection.type.resolver.StructAndArrayTypeResolver;
@@ -25,7 +27,6 @@ import org.mule.extension.db.internal.domain.connection.oracle.types.OracleSQLXM
 import org.mule.extension.db.internal.domain.connection.oracle.types.OracleSYSXMLType;
 import org.mule.extension.db.internal.domain.connection.oracle.types.OracleXMLType;
 
-import java.lang.reflect.Method;
 import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -56,7 +57,7 @@ public class OracleDbConnection extends DefaultDbConnection {
 
   public static final String TABLE_TYPE_NAME = "TABLE";
 
-  private static final int CURSOR_TYPE_ID = -10;
+  private static final int CURSOR_TYPE_ID = OracleTypes.CURSOR;
   private static final String CURSOR_TYPE_NAME = "CURSOR";
 
   public static final String ATTR_TYPE_NAME_PARAM = "ATTR_TYPE_NAME";
@@ -71,11 +72,6 @@ public class OracleDbConnection extends DefaultDbConnection {
   private static final int PROCEDURE_SCHEM_COLUMN_INDEX = 2;
   private static final int PROCEDURE_NAME = 3;
   private static final int PARAM_NAME_COLUMN_INDEX = 4;
-
-  public static final String ORACLE_CONNECTION_CLASS = "oracle.jdbc.OracleConnection";
-
-  private Class<? extends Connection> oracleConnectionClass;
-  private Method createArrayMethod;
 
   Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache;
 
@@ -144,44 +140,15 @@ public class OracleDbConnection extends DefaultDbConnection {
   public Array createArray(String typeName, Object[] values) throws SQLException {
     // Not using isWrapperFor() because this is expected to always succeed,
     // since we already know that the Database is Oracle.
-    Connection oracleConnection = getJdbcConnection().unwrap(getOracleConnectionClass());
-    if (oracleConnection == null || getCreateArrayMethod() == null) {
+    OracleConnection oracleConnection = getJdbcConnection().unwrap(OracleConnection.class);
+
+    if (oracleConnection == null) {
+      logger.error("Can't reach Oracle extensions. Connection class was: {}", getJdbcConnection().getClass().getName());
       return super.createArray(typeName, values);
-    } else {
-      try {
-        resolveLobs(typeName, values, new ArrayTypeResolver(this));
-        return (Array) getCreateArrayMethod().invoke(oracleConnection, typeName, values);
-      } catch (Exception e) {
-        throw new SQLException("Error creating ARRAY", e);
-      }
     }
-  }
 
-  private Class<? extends Connection> getOracleConnectionClass() {
-    if (oracleConnectionClass == null) {
-      try {
-        oracleConnectionClass =
-            OracleDbConnection.class.getClassLoader().loadClass(ORACLE_CONNECTION_CLASS).asSubclass(Connection.class);
-      } catch (ClassNotFoundException e) {
-        logger.error("No OracleConnection class found", e);
-      }
-    }
-    return oracleConnectionClass;
-  }
-
-  private Method getCreateArrayMethod() {
-    if (createArrayMethod == null) {
-      Class<? extends Connection> connectionClass = getOracleConnectionClass();
-      try {
-        createArrayMethod = connectionClass.getMethod("createARRAY", String.class, Object.class);
-      } catch (NoSuchMethodException e) {
-        if (logger.isDebugEnabled()) {
-          logger.debug("No such createARRAY method: {}. Proceeding with standard method. Connection class was: {}",
-                       e.getMessage(), connectionClass.getName());
-        }
-      }
-    }
-    return createArrayMethod;
+    resolveLobs(typeName, values, new ArrayTypeResolver(this));
+    return oracleConnection.createARRAY(typeName, values);
   }
 
   @Override

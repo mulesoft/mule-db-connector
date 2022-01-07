@@ -22,9 +22,13 @@ import com.mulesoft.anypoint.tita.runner.ambar.annotation.Application;
 import com.mulesoft.anypoint.tita.runner.ambar.annotation.runtime.Standalone;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RunWith(Ambar.class)
 public class OracleStoredProcedureXMLTypeTestCase {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(OracleStoredProcedureXMLTypeTestCase.class);
 
   private static final Identifier api = identifier("api1");
   private static final Identifier port = identifier("port");
@@ -35,12 +39,16 @@ public class OracleStoredProcedureXMLTypeTestCase {
   @Application
   public static ApplicationBuilder app(ApplicationSelector runtimeBuilder) {
     if (Boolean.parseBoolean(System.getProperty("oracle"))) {
+      LOGGER.info("Setting Oracle configuration.");
+      String oraclePort = System.getProperty("oracle.db.port");
+      LOGGER.trace("Port for Oracle database is: " + oraclePort);
       return runtimeBuilder
           .custom("stored-procedure-oracle-xmltype-app", "stored-procedure-oracle-xmltype-app.xml")
           .withTemplatePomFile("stored-procedure-oracle-xmltype-app-pom.xml")
-          .withProperty("db.port", System.getProperty("oracle.db.port"))
+          .withProperty("db.port", oraclePort == null ? "1521" : oraclePort)
           .withApi(api, port);
     } else {
+      LOGGER.info("Setting default configuration.");
       return runtimeBuilder
           .custom("default-app", "default-app.xml")
           .withApi(api, port);
@@ -50,6 +58,7 @@ public class OracleStoredProcedureXMLTypeTestCase {
   @Test
   public void oracleXMTypeTestCase() throws Exception {
     if (Boolean.parseBoolean(System.getProperty("oracle"))) {
+      LOGGER.info("Oracle testing begins.");
       runtime.api(api).request("/test").post();
 
       HttpResponse responseApi = runtime.api(api).request("/test").get();

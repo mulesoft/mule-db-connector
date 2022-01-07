@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.internal.domain.connection.datasource;
 
+import static org.mule.extension.db.internal.domain.connection.ConnectionUtils.isOracle;
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.db.commons.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
 
@@ -40,7 +41,7 @@ public class DbDataSourceReferenceConnectionProvider extends DataSourceReference
 
   @Override
   protected DbConnection createDbConnection(Connection connection) throws Exception {
-    if (connection.getMetaData().getDatabaseProductName().equals("Oracle")) {
+    if (isOracle(connection)) {
       return new OracleDbConnection(connection, super.resolveCustomTypes(), resolvedDbTypesCache);
     } else {
       return super.createDbConnection(connection);

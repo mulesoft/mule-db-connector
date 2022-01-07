@@ -73,7 +73,7 @@ public class OracleDbConnection extends DefaultDbConnection {
   private static final int PROCEDURE_NAME = 3;
   private static final int PARAM_NAME_COLUMN_INDEX = 4;
 
-  Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache;
+  private final Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache;
 
 
   public OracleDbConnection(Connection jdbcConnection, List<DbType> customDataTypes,

@@ -143,8 +143,8 @@ public class OracleDbConnection extends DefaultDbConnection {
     OracleConnection oracleConnection = getJdbcConnection().unwrap(OracleConnection.class);
 
     if (oracleConnection == null) {
-      logger.error("Can't reach Oracle extensions. Connection class was: {}", getJdbcConnection().getClass().getName());
-      return super.createArray(typeName, values);
+      throw new RuntimeException("Can't reach Oracle extensions. Connection class was: "
+          + getJdbcConnection().getClass().getName());
     }
 
     resolveLobs(typeName, values, new ArrayTypeResolver(this));

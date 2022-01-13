@@ -36,6 +36,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -148,6 +150,15 @@ public class OracleDbConnection extends DefaultDbConnection {
     }
 
     resolveLobs(typeName, values, new ArrayTypeResolver(this));
+
+    values = Arrays.stream(values).map(e -> {
+      if (e instanceof Collection) {
+        return ((Collection<?>) e).toArray();
+      } else {
+        return e;
+      }
+    }).toArray();
+
     return oracleConnection.createARRAY(typeName, values);
   }
 
@@ -155,9 +166,9 @@ public class OracleDbConnection extends DefaultDbConnection {
   protected void resolveLobs(String typeName, Object[] attributes, StructAndArrayTypeResolver typeResolver) throws SQLException {
     Map<Integer, ResolvedDbType> dataTypes = getLobFieldsDataTypeInfo(typeResolver.resolveType(typeName));
 
-    for (Map.Entry entry : dataTypes.entrySet()) {
-      Integer index = (Integer) entry.getKey();
-      ResolvedDbType dataType = (ResolvedDbType) entry.getValue();
+    for (Map.Entry<Integer, ResolvedDbType> entry : dataTypes.entrySet()) {
+      int index = entry.getKey();
+      ResolvedDbType dataType = entry.getValue();
       // In Oracle we do not have the data type for structs or arrays, as the
       // the driver does not provide the getAttributes functionality
       // in their DatabaseMetaData.

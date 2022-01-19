@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+	  xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	  xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	  xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	  xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<munit:config name="DeleteJourney.xml" />
+	<munit:before-suite name="DeleteJourneyBefore_Suite" doc:id="33e5cebd-6466-4716-a8e6-8c9252ae55b4">
+			<flow-ref doc:name="CreateTable" doc:id="2cdd1cf7-4b29-4325-a7b5-76a0128488b3" name="CreateTableInDatabaseFlow" />
+		</munit:before-suite>
+	<munit:test name="DeleteSingleQueryTestCase" doc:id="2883e055-012d-4b66-a7fd-77b48b49dce3">
+			<munit:behavior>
+				<flow-ref doc:name="TruncateTable" doc:id="bd02d4c9-3cdf-4d3a-99e7-628d555961b1" name="TruncateTableFlow" />
+				<flow-ref doc:name="InsertItemsOnTable" doc:id="638ee16c-83b7-4c76-876a-8390a179511f" name="ComplexCaseSetup" />
+			<db:select doc:name="Select" doc:id="04a11b55-c938-43d4-9a71-ad68ad5f065a" config-ref="dbConfig">
+				<db:sql ><![CDATA[select * from flights;]]></db:sql>
+			</db:select>
+			</munit:behavior>
+			<munit:execution>
+			<db:delete doc:name="Delete" doc:id="dcf5f147-0e65-47ab-b999-b54993e00871" config-ref="dbConfig">
+				<db:sql ><![CDATA[DELETE from flights where id = 1;]]></db:sql>
+			</db:delete>
+			</munit:execution>
+		<munit:validation>
+				<db:select doc:name="Select" doc:id="ea936c29-b22c-415f-952e-52f3cd7ae27e" config-ref="dbConfig">
+					<db:sql><![CDATA[SELECT * from flights;]]></db:sql>
+				</db:select>
+			<ee:transform doc:name="payloadToJson" doc:id="c12100f4-fd5f-4306-9453-5ee0aafdf826">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			<munit-tools:assert-equals doc:name="equalToNYC" doc:id="eb95d4df-abdc-4eba-880c-e04c8dba5a54" actual="#[sizeOf(payload)]" expected='#[2]' message='The number of elements should be 2' />
+			</munit:validation>
+		</munit:test>
+	<munit:test name="DeleteComplexQueryTestCase" doc:id="d04c0d87-07e7-4119-a150-6b04d43a70d1">
+			<munit:behavior>
+				<flow-ref doc:name="TruncateTable" doc:id="6892965d-88d7-4f09-b32d-36cb5c437279" name="TruncateTableFlow" />
+				<flow-ref doc:name="InsertItemsOnTable" doc:id="85b0b417-b618-45f9-97aa-2dd987c0ad43" name="ComplexCaseSetup" />
+			</munit:behavior>
+			<munit:execution>
+				<db:delete doc:name="Delete" doc:id="24f99d14-6017-4bde-bebc-e02a7c263dfa" config-ref="dbConfig">
+				<db:sql ><![CDATA[Delete from flights where destination = "BR" and id = 1;]]></db:sql>
+			</db:delete>
+			</munit:execution>
+			<munit:validation>
+				<db:select doc:name="Select" doc:id="7275d4ce-16af-48fd-be69-e6179646c441" config-ref="dbConfig">
+					<db:sql><![CDATA[SELECT * from flights;]]></db:sql>
+				</db:select>
+			<ee:transform doc:name="payloadToJson" doc:id="38dab62a-2f80-4331-ad41-46f7925fb0d3">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			<munit-tools:assert-equals doc:name="sizeEqualToTwo" doc:id="93053381-cb0f-4e69-828e-c5e7c274d882" actual="#[sizeOf(payload)]" expected="#[2]" message="The size should be 2"/>
+			</munit:validation>
+		</munit:test>
+	<munit:test name="DeleteInputParametersTestCase" doc:id="e99ac1b3-ffed-4f23-9559-4ec1ad25d7f1">
+			<munit:behavior>
+				<flow-ref doc:name="TruncateTable" doc:id="f3a785ae-1b95-481d-a1d1-02621e816038" name="TruncateTableFlow" />
+				<flow-ref doc:name="InsertItemsOnTable" doc:id="07d1be85-abe9-4347-aa72-ad6b8b451da2" name="ComplexCaseSetup" />
+			</munit:behavior>
+			<munit:execution>
+			<db:delete doc:name="Delete" doc:id="6471fa1e-162e-4c70-a380-67056fae0b60" config-ref="dbConfig">
+				<db:sql ><![CDATA[DELETE from flights where start=:newYork;]]></db:sql>
+				<db:input-parameters ><![CDATA[#[{
+newYork:"NY",
+}]]]></db:input-parameters>
+			</db:delete>
+			</munit:execution>
+		<munit:validation>
+				<db:select doc:name="Select" doc:id="9f2050e3-a570-4861-a96d-02539acd4a6f" config-ref="dbConfig">
+					<db:sql><![CDATA[SELECT * FROM flights;]]></db:sql>
+				</db:select>
+			<ee:transform doc:name="payloadToJson" doc:id="c8497f08-b060-4999-8aa9-1fa2158809c5">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<munit-tools:assert-equals doc:name="equalToIdThree" doc:id="b4769b2d-c710-4234-9c6b-d4f83ea64afe" actual="#[sizeOf(payload)]" expected="#[1]" />
+			</munit:validation>
+		</munit:test>
+	<munit:test name="TransactionalActionsAlwaysJoinPositiveDeleteTestCase" doc:id="385161a6-e534-412b-8457-831e01ac7b57" ignore="true">
+			<munit:behavior>
+				<flow-ref doc:name="TruncateTable" doc:id="6272b61e-059d-414d-b472-64ae9387dbaa" name="TruncateTableFlow" />
+				<flow-ref doc:name="InsertItemsOnTable" doc:id="31b79dbd-f0ff-46c3-b181-0bc757d1d236" name="ComplexCaseSetup" />
+			</munit:behavior>
+			<munit:execution>
+				<try doc:name="Try" doc:id="23d133e4-89b4-4d36-a49a-797fdcf8e54e" transactionalAction="ALWAYS_BEGIN">
+				<db:delete doc:name="Delete" doc:id="ec1ca50f-5fc1-485b-9155-36dc60f4f557" target="singleDelete" config-ref="dbConfig">
+					<db:sql ><![CDATA[DELETE from flights where start=:newYork;]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+newYork:"NY",
+}]]]></db:input-parameters>
+				</db:delete>
+				<db:delete doc:name="Delete" doc:id="5c5049ee-e3e4-4f0f-b9c9-f80ce88891b1" config-ref="dbConfig" transactionalAction="ALWAYS_JOIN">
+					<db:sql ><![CDATA[DELETE from flights where start=:newYork;]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+newYork:"NY",
+}]]]></db:input-parameters>
+				</db:delete>
+				</try>
+				<db:select doc:name="Select" doc:id="3de642d6-24f1-488f-8621-fad66076ce27" config-ref="dbConfig" transactionalAction="ALWAYS_JOIN">
+						<db:sql><![CDATA[SELECT start from flights;]]></db:sql>
+					</db:select>
+			<ee:transform doc:name="payloadToJson" doc:id="964b034c-d46b-408f-868a-75baf50c44db">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</munit:execution>
+			<munit:validation>
+				<munit-tools:assert-equals doc:name="sizeEqualToThree" doc:id="e1fe896f-2848-46bc-99c2-80b486562bbc" actual="#[sizeOf(payload)]" expected="#[1]" />
+			</munit:validation>
+		</munit:test>
+	<munit:test name="TransactionalActionsAlwaysJoinNegativeDeleteTestCase" doc:id="80d77bb1-a110-48ce-ab47-624d21ab820f" expectedErrorType="MULE:UNKNOWN">
+			<munit:behavior>
+				<flow-ref doc:name="TruncateTable" doc:id="6fb1f84c-0c2f-492a-b4d1-43bbe60c1829" name="TruncateTableFlow" />
+				<flow-ref doc:name="InsertItemOnTable" doc:id="1bed28be-d16c-45aa-8394-d089d58250c7" name="ComplexCaseSetup" />
+			</munit:behavior>
+		<munit:execution>
+			<db:delete doc:name="Delete" doc:id="cc1f58ba-c7b1-486c-9969-7292c8fb3f78" config-ref="dbConfig" transactionalAction="ALWAYS_JOIN">
+				<db:sql><![CDATA[Delete from flights;]]></db:sql>
+			</db:delete>
+			</munit:execution>
+		</munit:test>
+	<munit:test name="JoinIfPossiblePositiveDeleteTestCase" doc:id="810c0e95-b88b-4a03-ba66-3a75dd70bc73">
+			<munit:behavior>
+				<flow-ref doc:name="TruncateTable" doc:id="8f896780-527a-435e-9535-48760043e7fd" name="TruncateTableFlow" />
+				<flow-ref doc:name="InsertItemOnTable" doc:id="81d60df4-1660-4780-8c44-cc1f5cebd1fc" name="ComplexCaseSetup" />
+			</munit:behavior>
+			<munit:execution>
+				<try doc:name="Try" doc:id="1462c23c-b0ca-4cca-a727-43a684fd15a1" transactionalAction="ALWAYS_BEGIN">
+				<db:delete doc:name="Delete" doc:id="0272bc0e-03e3-4400-b648-5e7a8325aaf4" config-ref="dbConfig">
+					<db:sql ><![CDATA[Delete from flights;]]></db:sql>
+				</db:delete>
+				</try>
+				<db:select doc:name="Select" doc:id="e261303d-ab85-4826-b7b1-26c58e6f4451" config-ref="dbConfig">
+						<db:sql><![CDATA[SELECT start from flights;]]></db:sql>
+					</db:select>
+			<ee:transform doc:name="payloadToJson" doc:id="e1a03071-5ef3-45a0-9d90-c27faee6c35e">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</munit:execution>
+			<munit:validation>
+				<munit-tools:assert-equals doc:name="sizeEqualToThree" doc:id="1b83dcd2-7cc1-4531-bb1f-9984802c84bf" actual="#[sizeOf(payload)]" expected="#[0]" />
+			</munit:validation>
+		</munit:test>
+	<munit:test name="JoinNotSupportedPositiveDeleteTestCase" doc:id="73d8343c-ca19-48fb-830e-f6b1c95a18fb">
+			<munit:behavior>
+				<flow-ref doc:name="TruncateTable" doc:id="05a01ada-59e4-4141-aa6d-06270d07375c" name="TruncateTableFlow" />
+				<flow-ref doc:name="InsertItemsOnTable" doc:id="70fceb88-e20b-4a79-9135-afc8c2f2f6e9" name="ComplexCaseSetup" />
+			</munit:behavior>
+			<munit:execution>
+				<try doc:name="Try" doc:id="3f117f81-50a7-43fa-a936-02cfc62f85e4" transactionalAction="ALWAYS_BEGIN">
+				<db:delete doc:name="Delete" doc:id="c242f461-cec1-4f23-9cdc-34b80ba4a330" config-ref="dbConfig" transactionalAction="NOT_SUPPORTED" target="singleDelete">
+					<db:sql ><![CDATA[Delete from flights where id = 1;]]></db:sql>
+				</db:delete>
+				</try>
+				<db:select doc:name="Select" doc:id="e4660e22-af9f-49be-bb3e-e1b7231a5117" config-ref="dbConfig">
+						<db:sql><![CDATA[SELECT * from flights;]]></db:sql>
+					</db:select>
+			<ee:transform doc:name="payloadToJson" doc:id="cb9fed07-3344-4642-8c7b-8a362e59dcf8">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</munit:execution>
+			<munit:validation>
+				<munit-tools:assert-equals doc:name="sizeEqualToThree" doc:id="f76a0d45-eb36-4877-afcc-bc2b7250774a" actual="#[sizeOf(payload)]" expected="#[2]" />
+			</munit:validation>
+		</munit:test>
+	<munit:test name="JoinNotSupportedNegativeDeleteTestCase" doc:id="8c0675a6-93c2-4898-9dc4-0164b95b7755">
+			<munit:behavior>
+				<flow-ref doc:name="TruncateTable" doc:id="af629b43-d34b-42c2-b128-0cb102b0673b" name="TruncateTableFlow" />
+				<flow-ref doc:name="InsertItemOnTable" doc:id="7798d88b-8714-47e6-a62f-7ebbcccd1da3" name="ComplexCaseSetup" />
+			</munit:behavior>
+			<munit:execution>
+				<db:delete doc:name="Delete" doc:id="300f36e2-c42c-4343-bbcc-a3f84321a5f9" config-ref="dbConfig" transactionalAction="NOT_SUPPORTED" target="singleDelete">
+				<db:sql><![CDATA[Delete from flights where id = 1;]]></db:sql>
+			</db:delete>
+			</munit:execution>
+			<munit:validation>
+				<ee:transform doc:name="payloadToJson" doc:id="bf5958f2-3942-42ed-afac-b02e92578138">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			<db:select doc:name="Select" doc:id="f8cd221d-a5e4-47cf-99f4-85240afd3093" config-ref="dbConfig" transactionalAction="NOT_SUPPORTED">
+					<db:sql><![CDATA[SELECT start from flights;]]></db:sql>
+				</db:select>
+			<munit-tools:assert-equals doc:name="sizeEqualToThree" doc:id="b1c807d2-1da9-4da9-9b13-4e5ae4d1c7b3" actual="#[sizeOf(payload)]" expected="#[2]" />
+			</munit:validation>
+		</munit:test>
+	<munit:after-suite name="DeleteJourneyAfter_Suite" doc:id="c59d177c-9a7e-445a-ba46-70f92f1cea9a">
+			<flow-ref doc:name="DropTable" doc:id="5cb791af-d507-44c1-b711-3f202042e354" name="DropFlightsTable" />
+		</munit:after-suite>
+
+</mule>

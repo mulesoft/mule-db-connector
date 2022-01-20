@@ -244,7 +244,7 @@
                 <version>${muleExtensionsShadeVersion}</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>

@@ -33,7 +33,7 @@
         <xaPoolVersion>1.5.0</xaPoolVersion>
         <cglibVersion>3.3.0</cglibVersion>
         <muleDbClientVersion>1.4.0-SNAPSHOT</muleDbClientVersion>
-        <muleExtensionsShadeVersion>1.0.1</muleExtensionsShadeVersion>
+        <muleExtensionsShadeVersion>1.0.2</muleExtensionsShadeVersion>
 
         <caffeineVersion>2.9.3</caffeineVersion>
         <derbyVersion>10.14.2.0</derbyVersion>
@@ -244,7 +244,7 @@
                 <version>${muleExtensionsShadeVersion}</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>

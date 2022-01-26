@@ -33,11 +33,11 @@
         <xaPoolVersion>1.5.0</xaPoolVersion>
         <cglibVersion>3.3.0</cglibVersion>
         <muleDbClientVersion>1.4.0-SNAPSHOT</muleDbClientVersion>
-        <muleExtensionsShadeVersion>1.0.1</muleExtensionsShadeVersion>
+        <muleExtensionsShadeVersion>1.0.2</muleExtensionsShadeVersion>
 
         <caffeineVersion>2.9.3</caffeineVersion>
         <derbyVersion>10.14.2.0</derbyVersion>
-        <mySqlVersion>8.0.27</mySqlVersion>
+        <mySqlVersion>8.0.28</mySqlVersion>
         <mssqlVersion>7.0.0.jre8</mssqlVersion>
         <oracle.driver.version>21.4.0.0.1</oracle.driver.version>
 
@@ -48,7 +48,7 @@
         <formatterConfigPath>formatter.xml</formatterConfigPath>
 
         <munit.extensions.maven.plugin.version>1.1.2</munit.extensions.maven.plugin.version>
-        <munit.version>2.3.7</munit.version>
+        <munit.version>2.3.8</munit.version>
         <mtf-tools.version>1.1.1</mtf-tools.version>
         <skipTests>false</skipTests>
         <settingsFile>${java.io.tmpdir}/effective-settings.xml</settingsFile>
@@ -244,7 +244,7 @@
                 <version>${muleExtensionsShadeVersion}</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
@@ -328,7 +328,7 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>jcl-over-slf4j</artifactId>
-                                <version>1.7.33</version>
+                                <version>1.7.35</version>
                             </dependency>
                         </dependencies>
                         <executions>
@@ -523,7 +523,7 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>jcl-over-slf4j</artifactId>
-                                <version>1.7.33</version>
+                                <version>1.7.35</version>
                             </dependency>
                         </dependencies>
                         <executions>
@@ -642,7 +642,7 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>jcl-over-slf4j</artifactId>
-                                <version>1.7.33</version>
+                                <version>1.7.35</version>
                             </dependency>
                         </dependencies>
                         <executions>
@@ -735,7 +735,7 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>jcl-over-slf4j</artifactId>
-                                <version>1.7.33</version>
+                                <version>1.7.35</version>
                             </dependency>
                         </dependencies>
                         <executions>

@@ -33,7 +33,8 @@
         <xaPoolVersion>1.5.0</xaPoolVersion>
         <cglibVersion>3.3.0</cglibVersion>
         <muleDbClientVersion>1.4.0-SNAPSHOT</muleDbClientVersion>
-        <muleExtensionsShadeVersion>1.0.1</muleExtensionsShadeVersion>
+        <muleExtensionsShadeVersion>1.0.3</muleExtensionsShadeVersion>
+        <skipShade>false</skipShade>
 
         <caffeineVersion>2.9.3</caffeineVersion>
         <derbyVersion>10.14.2.0</derbyVersion>
@@ -251,6 +252,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <skipShade>${skipShade}</skipShade>
                     <artifactSet>
                         <includes combine.children="append">
                             <include>org.mule.connectors:mule-db-client</include>

@@ -28,7 +28,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<db:sql ><![CDATA[INSERT INTO flights(start, destination) VALUES('AR', 'CL');]]></db:sql>
 		</db:insert>
 		<db:insert doc:name="Insert" doc:id="8b3a8b9c-3c09-4426-9168-d68059faa4af" config-ref="dbConfig">
-			<db:sql ><![CDATA[INSERT INTO flights(start, destination) VALUES('NY', 'BR');]]></db:sql>
+			<db:sql ><![CDATA[INSERT INTO flights(start, destination) VALUES('CL', 'BR');]]></db:sql>
 		</db:insert>
 	</flow>
 	<flow name="TruncateTableFlow" doc:id="249dd5ec-6a20-4da8-97f5-f4a1e277a9ae" >

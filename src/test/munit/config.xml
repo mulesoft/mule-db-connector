@@ -51,4 +51,8 @@
             <db:pooling-profile/>
         </db:my-sql-connection>
     </db:config>
+
+    <db:config name="mySqlDbLocal">
+        <db:my-sql-connection host="localhost" port="33061" user="root" password="Rejectabsolution11!" database="q3testing" />
+    </db:config>
 </mule>

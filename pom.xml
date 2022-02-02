@@ -549,6 +549,60 @@
                         </executions>
                     </plugin>
                     <plugin>
+                        <groupId>com.mulesoft.munit</groupId>
+                        <artifactId>munit-extensions-maven-plugin</artifactId>
+                        <version>${munit.extensions.maven.plugin.version}</version>
+                        <configuration>
+                            <munitFailIfNoTests>false</munitFailIfNoTests>
+                            <systemPropertyVariables>
+                                <mysql.db.port>${mysql.db.port}</mysql.db.port>
+                                <mssql.db.port>${mssql.db.port}</mssql.db.port>
+                            </systemPropertyVariables>
+                            <munitTest>.*-test-case.xml</munitTest>
+                            <runtimeConfiguration>
+                                <discoverRuntimes>
+                                    <product>EE</product>
+                                    <minMuleVersion>4.1.1</minMuleVersion>
+                                </discoverRuntimes>
+                            </runtimeConfiguration>
+                            <sharedLibraries>
+                                <sharedLibrary>
+                                    <groupId>mysql</groupId>
+                                    <artifactId>mysql-connector-java</artifactId>
+                                </sharedLibrary>
+                            </sharedLibraries>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <!-- MUnit Dependencies -->
+                            <dependency>
+                                <groupId>com.mulesoft.munit</groupId>
+                                <artifactId>munit-runner</artifactId>
+                                <version>${munit.version}</version>
+                                <classifier>mule-plugin</classifier>
+                            </dependency>
+                            <dependency>
+                                <groupId>com.mulesoft.munit</groupId>
+                                <artifactId>munit-tools</artifactId>
+                                <version>${munit.version}</version>
+                                <classifier>mule-plugin</classifier>
+                            </dependency>
+                            <dependency>
+                                <groupId>com.mulesoft.munit</groupId>
+                                <artifactId>mtf-tools</artifactId>
+                                <version>${mtf-tools.version}</version>
+                                <classifier>mule-plugin</classifier>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
                         <version>3.2.2</version>

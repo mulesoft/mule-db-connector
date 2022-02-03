@@ -25,7 +25,7 @@
         <commonsDbUtilsVersion>1.7</commonsDbUtilsVersion>
         <commonsLangVersion>3.12.0</commonsLangVersion>
         <commonsIoVersion>2.11.0</commonsIoVersion>
-        <mockito-core.version>4.2.0</mockito-core.version>
+        <mockito-core.version>4.3.1</mockito-core.version>
         <junit.version>4.13.2</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
         <xmlunit.version>1.6</xmlunit.version>
@@ -33,7 +33,7 @@
         <xaPoolVersion>1.5.0</xaPoolVersion>
         <cglibVersion>3.3.0</cglibVersion>
         <muleDbClientVersion>1.4.0-SNAPSHOT</muleDbClientVersion>
-        <muleExtensionsShadeVersion>1.0.2</muleExtensionsShadeVersion>
+        <muleExtensionsShadeVersion>1.0.1</muleExtensionsShadeVersion>
 
         <caffeineVersion>2.9.3</caffeineVersion>
         <derbyVersion>10.14.2.0</derbyVersion>
@@ -244,7 +244,7 @@
                 <version>${muleExtensionsShadeVersion}</version>
                 <executions>
                     <execution>
-                        <phase>install</phase>
+                        <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
@@ -323,7 +323,7 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>slf4j-api</artifactId>
-                                <version>1.7.33</version>
+                                <version>1.7.35</version>
                             </dependency>
                             <dependency>
                                 <groupId>org.slf4j</groupId>
@@ -518,7 +518,7 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>slf4j-api</artifactId>
-                                <version>1.7.33</version>
+                                <version>1.7.35</version>
                             </dependency>
                             <dependency>
                                 <groupId>org.slf4j</groupId>
@@ -691,7 +691,7 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>slf4j-api</artifactId>
-                                <version>1.7.33</version>
+                                <version>1.7.35</version>
                             </dependency>
                             <dependency>
                                 <groupId>org.slf4j</groupId>
@@ -784,7 +784,7 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>slf4j-api</artifactId>
-                                <version>1.7.33</version>
+                                <version>1.7.35</version>
                             </dependency>
                             <dependency>
                                 <groupId>org.slf4j</groupId>

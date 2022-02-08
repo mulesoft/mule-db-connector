@@ -9,7 +9,7 @@
 		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<munit:config name="update-journey-test-case.xml" />
+	<munit:config name="update-journey-test-case.xml" minMuleVersion="4.1.6"/>
 	<munit:before-suite name="UpdateJourneyBefore_Suite">
 			<flow-ref name="CreateTableInDatabaseFlow" />
 		</munit:before-suite>

@@ -378,6 +378,7 @@
                                 <discoverRuntimes>
                                     <product>EE</product>
                                     <minMuleVersion>4.1.1</minMuleVersion>
+                                    <skip>true</skip>
                                 </discoverRuntimes>
                             </runtimeConfiguration>
                             <sharedLibraries>
@@ -565,6 +566,7 @@
                                 <discoverRuntimes>
                                     <product>EE</product>
                                     <minMuleVersion>4.1.1</minMuleVersion>
+                                    <skip>true</skip>
                                 </discoverRuntimes>
                             </runtimeConfiguration>
                             <sharedLibraries>

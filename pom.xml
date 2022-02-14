@@ -371,12 +371,14 @@
                                 <oracle.db.port>${oracle.db.port}</oracle.db.port>
                                 <oracle.db.mtls.port>${oracle.db.mtls.port}</oracle.db.mtls.port>
                                 <oracle.db.mtls.port2>${oracle.db.mtls.port2}</oracle.db.mtls.port2>
+                                <mysql.db.port>${mysql.db.port}</mysql.db.port>
                             </systemPropertyVariables>
                             <munitTest>.*-test-case.xml</munitTest>
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
                                     <minMuleVersion>4.1.1</minMuleVersion>
+                                    <includeSnapshots>false</includeSnapshots>
                                 </discoverRuntimes>
                             </runtimeConfiguration>
                             <sharedLibraries>
@@ -426,6 +428,7 @@
                                 <oracle.db.port>${oracle.db.port}</oracle.db.port>
                                 <oracle.db.mtls.port>${oracle.db.mtls.port}</oracle.db.mtls.port>
                                 <oracle.db.mtls.port2>${oracle.db.mtls.port2}</oracle.db.mtls.port2>
+                                <mysql.db.port>${mysql.db.port}</mysql.db.port>
                             </systemPropertyVariables>
                         </configuration>
                     </plugin>
@@ -563,6 +566,7 @@
                                 <discoverRuntimes>
                                     <product>EE</product>
                                     <minMuleVersion>4.1.1</minMuleVersion>
+                                    <includeSnapshots>false</includeSnapshots>
                                 </discoverRuntimes>
                             </runtimeConfiguration>
                             <sharedLibraries>

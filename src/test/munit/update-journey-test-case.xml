@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<munit:config name="update-journey-test-case.xml" minMuleVersion="4.1.6"/>
+	<munit:before-suite name="UpdateJourneyBefore_Suite">
+			<flow-ref name="CreateTableInDatabaseFlow" />
+		</munit:before-suite>
+	<munit:test name="UpdateSingleQueryTestCase">
+			<munit:behavior>
+				<flow-ref name="TruncateTableFlow" />
+				<flow-ref name="ComplexCaseSetup" />
+			<db:select config-ref="dbConfig">
+				<db:sql ><![CDATA[select * from flights;]]></db:sql>
+			</db:select>
+			</munit:behavior>
+			<munit:execution>
+			<db:update config-ref="dbConfig">
+				<db:sql ><![CDATA[UPDATE flights SET start='AR' where id = 1; ]]></db:sql>
+			</db:update>
+			</munit:execution>
+		<munit:validation>
+				<db:select config-ref="dbConfig">
+					<db:sql><![CDATA[SELECT * FROM flights where start="AR";]]></db:sql>
+				</db:select>
+			<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			<munit-tools:assert-equals actual="#[payload[0].start]" expected="#['AR']" message='The number of elements should be 2' />
+			</munit:validation>
+		</munit:test>
+	<munit:test name="UpdateComplexQueryTestCase">
+			<munit:behavior>
+				<flow-ref name="TruncateTableFlow" />
+				<flow-ref name="ComplexCaseSetup" />
+			</munit:behavior>
+			<munit:execution>
+			<db:update config-ref="dbConfig">
+				<db:sql ><![CDATA[UPDATE flights SET start='AR' where destination = "BR" and id = 1;]]></db:sql>
+			</db:update>
+			</munit:execution>
+			<munit:validation>
+				<db:select config-ref="dbConfig">
+					<db:sql><![CDATA[SELECT * from flights where start = "AR";]]></db:sql>
+				</db:select>
+			<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			<munit-tools:assert-equals actual="#[payload[0].start]" expected="#['AR']" message="The size should be 2"/>
+			</munit:validation>
+		</munit:test>
+	<munit:test name="UpdateInputParametersTestCase">
+			<munit:behavior>
+				<flow-ref name="TruncateTableFlow" />
+				<flow-ref name="ComplexCaseSetup" />
+			</munit:behavior>
+			<munit:execution>
+			<db:update config-ref="dbConfig">
+				<db:sql ><![CDATA[UPDATE flights SET start=:argentina where destination=:brazil]]></db:sql>
+				<db:input-parameters ><![CDATA[#[{
+argentina:'AR',
+brazil:'BR',
+chile:'CL'
+}]]]></db:input-parameters>
+			</db:update>
+			</munit:execution>
+		<munit:validation>
+				<db:select config-ref="dbConfig">
+					<db:sql><![CDATA[SELECT * FROM flights where start = "AR";]]></db:sql>
+				</db:select>
+			<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<munit-tools:assert-equals actual="#[payload[0].start]" expected="#['AR']" />
+			</munit:validation>
+		</munit:test>
+	<munit:test name="TransactionalActionsAlwaysJoinPositiveUpdateTestCase" ignore="true">
+			<munit:behavior>
+				<flow-ref name="TruncateTableFlow" />
+				<flow-ref name="ComplexCaseSetup" />
+			</munit:behavior>
+			<munit:execution>
+				<try transactionalAction="ALWAYS_BEGIN">
+				<db:update config-ref="dbConfig" target="noneChanges">
+					<db:sql ><![CDATA[UPDATE flights SET start=:argentina where destination=:brazil and id=:id;]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+argentina:'AR',
+brazil:'BR',
+id:1
+}]]]></db:input-parameters>
+				</db:update>
+				<db:update config-ref="dbConfig" transactionalAction="ALWAYS_JOIN">
+					<db:sql ><![CDATA[UPDATE flights SET start=:mexico where destination=:brazil and id=:id;]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+mexico:'MX',
+brazil:'BR',
+id:1
+}]]]></db:input-parameters>
+				</db:update>
+				</try>
+				<db:select config-ref="dbConfig" transactionalAction="ALWAYS_JOIN">
+						<db:sql><![CDATA[SELECT * from flights where id = 1;]]></db:sql>
+					</db:select>
+			<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</munit:execution>
+			<munit:validation>
+				<munit-tools:assert-equals actual="#[payload[0].start]" expected="#['MX']" />
+			</munit:validation>
+		</munit:test>
+	<munit:test name="TransactionalActionsAlwaysJoinNegativeUpdateTestCase" expectedErrorType="MULE:UNKNOWN">
+			<munit:behavior>
+				<flow-ref name="TruncateTableFlow" />
+				<flow-ref name="ComplexCaseSetup" />
+			</munit:behavior>
+		<munit:execution>
+			<db:update config-ref="dbConfig" target="noneChanges" transactionalAction="ALWAYS_JOIN">
+				<db:sql ><![CDATA[UPDATE flights SET start=:argentina where destination=:brazil and id=:id;]]></db:sql>
+				<db:input-parameters ><![CDATA[#[{
+argentina:'AR',
+brazil:'BR',
+id:1
+}]]]></db:input-parameters>
+			</db:update>
+			</munit:execution>
+		</munit:test>
+	<munit:test name="JoinIfPossiblePositiveUpdateTestCase">
+			<munit:behavior>
+				<flow-ref name="TruncateTableFlow" />
+				<flow-ref name="ComplexCaseSetup" />
+			</munit:behavior>
+			<munit:execution>
+				<try transactionalAction="ALWAYS_BEGIN">
+				<db:update config-ref="dbConfig" target="noneChanges" >
+					<db:sql ><![CDATA[UPDATE flights SET start=:argentina where destination=:brazil and id=:id;]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+argentina:'AR',
+brazil:'BR',
+id:1
+}]]]></db:input-parameters>
+				</db:update>
+				</try>
+				<db:select config-ref="dbConfig">
+						<db:sql><![CDATA[SELECT * from flights where start="AR";]]></db:sql>
+					</db:select>
+			<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</munit:execution>
+			<munit:validation>
+				<munit-tools:assert-equals actual="#[payload[0].start]" expected="#['AR']" />
+			</munit:validation>
+		</munit:test>
+	<munit:test name="JoinNotSupportedPositiveUpdateTestCase">
+			<munit:behavior>
+				<flow-ref name="TruncateTableFlow" />
+				<flow-ref name="ComplexCaseSetup" />
+			</munit:behavior>
+			<munit:execution>
+				<try transactionalAction="ALWAYS_BEGIN">
+				<db:update config-ref="dbConfig" target="noneChanges" transactionalAction="NOT_SUPPORTED">
+					<db:sql ><![CDATA[UPDATE flights SET start=:argentina where destination=:brazil and id=:id;]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+argentina:'AR',
+brazil:'BR',
+id:1
+}]]]></db:input-parameters>
+				</db:update>
+				</try>
+				<db:select config-ref="dbConfig">
+						<db:sql><![CDATA[SELECT * from flights where start="AR";]]></db:sql>
+					</db:select>
+			<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</munit:execution>
+			<munit:validation>
+				<munit-tools:assert-equals actual="#[payload[0].start]" expected="#['AR']" />
+			</munit:validation>
+		</munit:test>
+	<munit:test name="JoinNotSupportedNegativeUpdateTestCase">
+			<munit:behavior>
+				<flow-ref name="TruncateTableFlow" />
+				<flow-ref name="ComplexCaseSetup" />
+			</munit:behavior>
+			<munit:execution>
+			<db:update config-ref="dbConfig" transactionalAction="NOT_SUPPORTED" target="noneChanges" >
+				<db:sql ><![CDATA[UPDATE flights SET start=:argentina where destination=:brazil and id=:id;]]></db:sql>
+				<db:input-parameters ><![CDATA[#[{
+argentina:'AR',
+brazil:'BR',
+id:1
+}]]]></db:input-parameters>
+			</db:update>
+			</munit:execution>
+		<munit:validation>
+				<db:select config-ref="dbConfig" transactionalAction="NOT_SUPPORTED">
+					<db:sql><![CDATA[SELECT * from flights where start = "AR";]]></db:sql>
+				</db:select>
+			<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			<munit-tools:assert-equals actual="#[payload[0].start]" expected="#['AR']" />
+			</munit:validation>
+		</munit:test>
+	<munit:after-suite name="UpdateJourneyAfter_Suite" >
+			<flow-ref name="DropFlightsTable" />
+		</munit:after-suite>
+
+</mule>

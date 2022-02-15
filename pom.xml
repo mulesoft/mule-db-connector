@@ -51,6 +51,7 @@
         <munit.version>2.3.8</munit.version>
         <mtf-tools.version>1.1.1</mtf-tools.version>
         <skipTests>false</skipTests>
+        <skipTita>false</skipTita>
         <settingsFile>${java.io.tmpdir}/effective-settings.xml</settingsFile>
     </properties>
 
@@ -561,7 +562,7 @@
                                 <mysql.db.port>${mysql.db.port}</mysql.db.port>
                                 <mssql.db.port>${mssql.db.port}</mssql.db.port>
                             </systemPropertyVariables>
-                            <munitTest>.*-test-case.xml</munitTest>
+                            <munitTest>mysql/.*-test-case.xml</munitTest>
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
@@ -615,6 +616,7 @@
                             <streamLogs>true</streamLogs>
                             <noLog>true</noLog>
                             <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                            <skipInvocation>${skipTita}</skipInvocation>
                             <pomIncludes>
                                 <pomInclude>*/pom.xml</pomInclude>
                             </pomIncludes>

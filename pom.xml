@@ -234,7 +234,7 @@
                         <oracle.db.port>${oracle.db.port}</oracle.db.port>
                         <oracle.db.mtls.port>${oracle.db.mtls.port}</oracle.db.mtls.port>
                         <oracle.db.mtls.port2>${oracle.db.mtls.port2}</oracle.db.mtls.port2>
-                        <mysql.db.port>${mysql.db.port}</mysql.db.port>
+<!--                        <mysql.db.port>${mysql.db.port}</mysql.db.port>-->
                         <mssql.db.port>${mssql.db.port}</mssql.db.port>
                     </systemPropertyVariables>
                 </configuration>

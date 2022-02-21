@@ -17,17 +17,17 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<munit:behavior>
 				<flow-ref name="TruncateTableFlow" />
 				<flow-ref name="ComplexCaseSetup" />
-			<db:select config-ref="dbConfig">
+			<db:select config-ref="dbConfigMySQL">
 				<db:sql ><![CDATA[select * from flights;]]></db:sql>
 			</db:select>
 			</munit:behavior>
 			<munit:execution>
-			<db:update config-ref="dbConfig">
+			<db:update config-ref="dbConfigMySQL">
 				<db:sql ><![CDATA[UPDATE flights SET start='AR' where id = 1; ]]></db:sql>
 			</db:update>
 			</munit:execution>
 		<munit:validation>
-				<db:select config-ref="dbConfig">
+				<db:select config-ref="dbConfigMySQL">
 					<db:sql><![CDATA[SELECT * FROM flights where start="AR";]]></db:sql>
 				</db:select>
 			<ee:transform>
@@ -47,12 +47,12 @@ payload]]></ee:set-payload>
 				<flow-ref name="ComplexCaseSetup" />
 			</munit:behavior>
 			<munit:execution>
-			<db:update config-ref="dbConfig">
+			<db:update config-ref="dbConfigMySQL">
 				<db:sql ><![CDATA[UPDATE flights SET start='AR' where destination = "BR" and id = 1;]]></db:sql>
 			</db:update>
 			</munit:execution>
 			<munit:validation>
-				<db:select config-ref="dbConfig">
+				<db:select config-ref="dbConfigMySQL">
 					<db:sql><![CDATA[SELECT * from flights where start = "AR";]]></db:sql>
 				</db:select>
 			<ee:transform>
@@ -72,7 +72,7 @@ payload]]></ee:set-payload>
 				<flow-ref name="ComplexCaseSetup" />
 			</munit:behavior>
 			<munit:execution>
-			<db:update config-ref="dbConfig">
+			<db:update config-ref="dbConfigMySQL">
 				<db:sql ><![CDATA[UPDATE flights SET start=:argentina where destination=:brazil]]></db:sql>
 				<db:input-parameters ><![CDATA[#[{
 argentina:'AR',
@@ -82,7 +82,7 @@ chile:'CL'
 			</db:update>
 			</munit:execution>
 		<munit:validation>
-				<db:select config-ref="dbConfig">
+				<db:select config-ref="dbConfigMySQL">
 					<db:sql><![CDATA[SELECT * FROM flights where start = "AR";]]></db:sql>
 				</db:select>
 			<ee:transform>
@@ -103,7 +103,7 @@ payload]]></ee:set-payload>
 			</munit:behavior>
 			<munit:execution>
 				<try transactionalAction="ALWAYS_BEGIN">
-				<db:update config-ref="dbConfig" target="noneChanges">
+				<db:update config-ref="dbConfigMySQL" target="noneChanges">
 					<db:sql ><![CDATA[UPDATE flights SET start=:argentina where destination=:brazil and id=:id;]]></db:sql>
 					<db:input-parameters ><![CDATA[#[{
 argentina:'AR',
@@ -111,7 +111,7 @@ brazil:'BR',
 id:1
 }]]]></db:input-parameters>
 				</db:update>
-				<db:update config-ref="dbConfig" transactionalAction="ALWAYS_JOIN">
+				<db:update config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN">
 					<db:sql ><![CDATA[UPDATE flights SET start=:mexico where destination=:brazil and id=:id;]]></db:sql>
 					<db:input-parameters ><![CDATA[#[{
 mexico:'MX',
@@ -120,7 +120,7 @@ id:1
 }]]]></db:input-parameters>
 				</db:update>
 				</try>
-				<db:select config-ref="dbConfig" transactionalAction="ALWAYS_JOIN">
+				<db:select config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN">
 						<db:sql><![CDATA[SELECT * from flights where id = 1;]]></db:sql>
 					</db:select>
 			<ee:transform>
@@ -142,7 +142,7 @@ payload]]></ee:set-payload>
 				<flow-ref name="ComplexCaseSetup" />
 			</munit:behavior>
 		<munit:execution>
-			<db:update config-ref="dbConfig" target="noneChanges" transactionalAction="ALWAYS_JOIN">
+			<db:update config-ref="dbConfigMySQL" target="noneChanges" transactionalAction="ALWAYS_JOIN">
 				<db:sql ><![CDATA[UPDATE flights SET start=:argentina where destination=:brazil and id=:id;]]></db:sql>
 				<db:input-parameters ><![CDATA[#[{
 argentina:'AR',
@@ -159,7 +159,7 @@ id:1
 			</munit:behavior>
 			<munit:execution>
 				<try transactionalAction="ALWAYS_BEGIN">
-				<db:update config-ref="dbConfig" target="noneChanges" >
+				<db:update config-ref="dbConfigMySQL" target="noneChanges" >
 					<db:sql ><![CDATA[UPDATE flights SET start=:argentina where destination=:brazil and id=:id;]]></db:sql>
 					<db:input-parameters ><![CDATA[#[{
 argentina:'AR',
@@ -168,7 +168,7 @@ id:1
 }]]]></db:input-parameters>
 				</db:update>
 				</try>
-				<db:select config-ref="dbConfig">
+				<db:select config-ref="dbConfigMySQL">
 						<db:sql><![CDATA[SELECT * from flights where start="AR";]]></db:sql>
 					</db:select>
 			<ee:transform>
@@ -191,7 +191,7 @@ payload]]></ee:set-payload>
 			</munit:behavior>
 			<munit:execution>
 				<try transactionalAction="ALWAYS_BEGIN">
-				<db:update config-ref="dbConfig" target="noneChanges" transactionalAction="NOT_SUPPORTED">
+				<db:update config-ref="dbConfigMySQL" target="noneChanges" transactionalAction="NOT_SUPPORTED">
 					<db:sql ><![CDATA[UPDATE flights SET start=:argentina where destination=:brazil and id=:id;]]></db:sql>
 					<db:input-parameters ><![CDATA[#[{
 argentina:'AR',
@@ -200,7 +200,7 @@ id:1
 }]]]></db:input-parameters>
 				</db:update>
 				</try>
-				<db:select config-ref="dbConfig">
+				<db:select config-ref="dbConfigMySQL">
 						<db:sql><![CDATA[SELECT * from flights where start="AR";]]></db:sql>
 					</db:select>
 			<ee:transform>
@@ -222,7 +222,7 @@ payload]]></ee:set-payload>
 				<flow-ref name="ComplexCaseSetup" />
 			</munit:behavior>
 			<munit:execution>
-			<db:update config-ref="dbConfig" transactionalAction="NOT_SUPPORTED" target="noneChanges" >
+			<db:update config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED" target="noneChanges" >
 				<db:sql ><![CDATA[UPDATE flights SET start=:argentina where destination=:brazil and id=:id;]]></db:sql>
 				<db:input-parameters ><![CDATA[#[{
 argentina:'AR',
@@ -232,7 +232,7 @@ id:1
 			</db:update>
 			</munit:execution>
 		<munit:validation>
-				<db:select config-ref="dbConfig" transactionalAction="NOT_SUPPORTED">
+				<db:select config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED">
 					<db:sql><![CDATA[SELECT * from flights where start = "AR";]]></db:sql>
 				</db:select>
 			<ee:transform>

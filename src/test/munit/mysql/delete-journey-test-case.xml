@@ -19,17 +19,17 @@
 			<munit:behavior>
 				<flow-ref name="TruncateTableFlow" />
 				<flow-ref name="ComplexCaseSetup" />
-			<db:select config-ref="dbConfig">
+			<db:select config-ref="dbConfigMySQL">
 				<db:sql ><![CDATA[select * from flights;]]></db:sql>
 			</db:select>
 			</munit:behavior>
 			<munit:execution>
-			<db:delete config-ref="dbConfig">
+			<db:delete config-ref="dbConfigMySQL">
 				<db:sql ><![CDATA[DELETE from flights where id = 1;]]></db:sql>
 			</db:delete>
 			</munit:execution>
 		<munit:validation>
-				<db:select config-ref="dbConfig">
+				<db:select config-ref="dbConfigMySQL">
 					<db:sql><![CDATA[SELECT * from flights;]]></db:sql>
 				</db:select>
 			<ee:transform>
@@ -49,12 +49,12 @@ payload]]></ee:set-payload>
 				<flow-ref name="ComplexCaseSetup" />
 			</munit:behavior>
 			<munit:execution>
-				<db:delete config-ref="dbConfig">
+				<db:delete config-ref="dbConfigMySQL">
 				<db:sql ><![CDATA[Delete from flights where start = "NY" and destination = "BR";]]></db:sql>
 			</db:delete>
 			</munit:execution>
 			<munit:validation>
-				<db:select config-ref="dbConfig">
+				<db:select config-ref="dbConfigMySQL">
 					<db:sql><![CDATA[SELECT * from flights;]]></db:sql>
 				</db:select>
 			<ee:transform>
@@ -74,7 +74,7 @@ payload]]></ee:set-payload>
 				<flow-ref name="ComplexCaseSetup" />
 			</munit:behavior>
 			<munit:execution>
-			<db:delete config-ref="dbConfig">
+			<db:delete config-ref="dbConfigMySQL">
 				<db:sql ><![CDATA[DELETE from flights where start=:newYork;]]></db:sql>
 				<db:input-parameters ><![CDATA[#[{
 newYork:"NY",
@@ -82,7 +82,7 @@ newYork:"NY",
 			</db:delete>
 			</munit:execution>
 		<munit:validation>
-				<db:select config-ref="dbConfig">
+				<db:select config-ref="dbConfigMySQL">
 					<db:sql><![CDATA[SELECT * FROM flights;]]></db:sql>
 				</db:select>
 			<ee:transform>
@@ -103,20 +103,20 @@ payload]]></ee:set-payload>
 			</munit:behavior>
 			<munit:execution>
 				<try transactionalAction="ALWAYS_BEGIN">
-				<db:delete target="singleDelete" config-ref="dbConfig">
+				<db:delete target="singleDelete" config-ref="dbConfigMySQL">
 					<db:sql ><![CDATA[DELETE from flights where start=:newYork;]]></db:sql>
 					<db:input-parameters ><![CDATA[#[{
 newYork:"NY",
 }]]]></db:input-parameters>
 				</db:delete>
-				<db:delete config-ref="dbConfig" transactionalAction="ALWAYS_JOIN">
+				<db:delete config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN">
 					<db:sql ><![CDATA[DELETE from flights where start=:newYork;]]></db:sql>
 					<db:input-parameters ><![CDATA[#[{
 newYork:"NY",
 }]]]></db:input-parameters>
 				</db:delete>
 				</try>
-				<db:select config-ref="dbConfig" transactionalAction="ALWAYS_JOIN">
+				<db:select config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN">
 						<db:sql><![CDATA[SELECT start from flights;]]></db:sql>
 					</db:select>
 			<ee:transform>
@@ -138,7 +138,7 @@ payload]]></ee:set-payload>
 				<flow-ref name="ComplexCaseSetup" />
 			</munit:behavior>
 		<munit:execution>
-			<db:delete config-ref="dbConfig" transactionalAction="ALWAYS_JOIN">
+			<db:delete config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN">
 				<db:sql><![CDATA[Delete from flights;]]></db:sql>
 			</db:delete>
 			</munit:execution>
@@ -150,11 +150,11 @@ payload]]></ee:set-payload>
 			</munit:behavior>
 			<munit:execution>
 				<try transactionalAction="ALWAYS_BEGIN">
-				<db:delete config-ref="dbConfig">
+				<db:delete config-ref="dbConfigMySQL">
 					<db:sql ><![CDATA[Delete from flights;]]></db:sql>
 				</db:delete>
 				</try>
-				<db:select config-ref="dbConfig">
+				<db:select config-ref="dbConfigMySQL">
 						<db:sql><![CDATA[SELECT start from flights;]]></db:sql>
 					</db:select>
 			<ee:transform>
@@ -177,11 +177,11 @@ payload]]></ee:set-payload>
 			</munit:behavior>
 			<munit:execution>
 				<try transactionalAction="ALWAYS_BEGIN">
-				<db:delete config-ref="dbConfig" transactionalAction="NOT_SUPPORTED" target="singleDelete">
+				<db:delete config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED" target="singleDelete">
 					<db:sql ><![CDATA[Delete from flights where start = "NY";]]></db:sql>
 				</db:delete>
 				</try>
-				<db:select config-ref="dbConfig">
+				<db:select config-ref="dbConfigMySQL">
 						<db:sql><![CDATA[SELECT * from flights;]]></db:sql>
 					</db:select>
 			<ee:transform>
@@ -203,7 +203,7 @@ payload]]></ee:set-payload>
 				<flow-ref name="ComplexCaseSetup" />
 			</munit:behavior>
 			<munit:execution>
-				<db:delete config-ref="dbConfig" transactionalAction="NOT_SUPPORTED" target="singleDelete">
+				<db:delete config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED" target="singleDelete">
 				<db:sql><![CDATA[Delete from flights where start = "NY";]]></db:sql>
 			</db:delete>
 			</munit:execution>
@@ -216,7 +216,7 @@ output application/json
 payload]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-			<db:select config-ref="dbConfig" transactionalAction="NOT_SUPPORTED">
+			<db:select config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED">
 					<db:sql><![CDATA[SELECT start from flights;]]></db:sql>
 				</db:select>
 			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[2]" />

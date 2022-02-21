@@ -2,22 +2,16 @@
 
 <mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+      xmlns="http://www.mulesoft.org/schema/mule/core" 
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
         http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
         ">
 
-<!--  TODO fix this workaround, crossed references between mysql/config and oracle/config  -->
-    <xsl:if>
-        <xsl:value-of select="${mysql.db.port}">
-            <db:config name="dbConfigMySQL">
-                <db:my-sql-connection host="0.0.0.0" port="${mysql.db.port}" user="root" password="password" database="xe">
-                    <db:pooling-profile/>
-                </db:my-sql-connection>
-            </db:config>
-        </xsl:value-of>
-    </xsl:if>
-
-
+    <db:config name="dbConfigMySQL">
+        <db:my-sql-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('mysql')"
+                              user="root" password="password" database="xe">
+            <db:pooling-profile/>
+        </db:my-sql-connection>
+    </db:config>
 
 </mule>

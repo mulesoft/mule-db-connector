@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	  xmlns="http://www.mulesoft.org/schema/mule/core"
+	  xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	  xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	  xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<munit:config name="execute-ddl-journey-test-case.xml" minMuleVersion="4.1.6" />
+	<munit:test name="ExecuteDDLSingleQueryTestCase">
+		<munit:execution>
+			<db:execute-ddl config-ref="dbConfigMySQL">
+				<db:sql ><![CDATA[CREATE TABLE IF NOT EXISTS flights (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    start VARCHAR(255),
+    destination VARCHAR(255)
+);]]></db:sql>
+			</db:execute-ddl>
+			<db:insert config-ref="dbConfigMySQL">
+				<db:sql ><![CDATA[INSERT INTO flights(start, destination) VALUES("NY", "BR");]]></db:sql>
+			</db:insert>
+			<db:select config-ref="dbConfigMySQL">
+				<db:sql><![CDATA[SELECT * from flights;]]></db:sql>
+			</db:select>
+		</munit:execution>
+		<munit:validation>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected='#[1]' message='The number of elements should be 2' />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="ExecuteDDLComplexQueryTestCase">
+		<munit:execution>
+			<db:execute-ddl config-ref="dbConfigMySQL">
+				<db:sql ><![CDATA[CREATE TABLE suppliers
+( supplier_id int NOT NULL,
+  supplier_name char(50) NOT NULL,
+  city char(50),
+  state char(50),
+  CONSTRAINT suppliers_pk PRIMARY KEY (supplier_id)
+);]]></db:sql>
+			</db:execute-ddl>
+			<db:insert config-ref="dbConfigMySQL">
+				<db:sql ><![CDATA[INSERT INTO suppliers
+(supplier_id, supplier_name, city, state)
+VALUES
+(900, 'Electronic Arts', 'Redwood City', 'California');]]></db:sql>
+			</db:insert>
+			<db:select config-ref="dbConfigMySQL">
+				<db:sql><![CDATA[SELECT * from suppliers;]]></db:sql>
+			</db:select>
+		</munit:execution>
+		<munit:validation>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]" message="The size should be 1"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="TransactionalActionsAlwaysJoinPositiveExecuteDDLTestCase" ignore="true">
+		<munit:execution>
+			<try transactionalAction="ALWAYS_BEGIN">
+				<db:execute-ddl config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN">
+					<db:sql ><![CDATA[CREATE TABLE IF NOT EXISTS flights (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    start VARCHAR(255),
+    destination VARCHAR(255)
+);]]></db:sql>
+				</db:execute-ddl>
+			</try>
+			<db:insert config-ref="dbConfigMySQL">
+				<db:sql ><![CDATA[INSERT INTO flights(start, destination) VALUES("NY", "BR");]]></db:sql>
+			</db:insert>
+			<db:select config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN">
+				<db:sql><![CDATA[SELECT start from flights;]]></db:sql>
+			</db:select>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="TransactionalActionsAlwaysJoinNegativeExecuteDDLTestCase" expectedErrorType="MULE:UNKNOWN">
+		<munit:execution>
+			<db:execute-ddl config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN" >
+				<db:sql ><![CDATA[CREATE TABLE IF NOT EXISTS flights (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    start VARCHAR(255),
+    destination VARCHAR(255)
+);]]></db:sql>
+			</db:execute-ddl>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="JoinIfPossiblePositiveExecuteDDLTestCase">
+		<munit:execution>
+			<try transactionalAction="ALWAYS_BEGIN">
+				<db:execute-ddl config-ref="dbConfigMySQL">
+					<db:sql ><![CDATA[CREATE TABLE IF NOT EXISTS flights (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    start VARCHAR(255),
+    destination VARCHAR(255)
+);]]></db:sql>
+				</db:execute-ddl>
+			</try>
+			<db:insert config-ref="dbConfigMySQL">
+				<db:sql><![CDATA[INSERT INTO flights(start, destination) VALUES("NY", "BR");]]></db:sql>
+			</db:insert>
+			<db:select config-ref="dbConfigMySQL">
+				<db:sql><![CDATA[SELECT start from flights;]]></db:sql>
+			</db:select>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="JoinNotSupportedPositiveExecuteDDLTestCase">
+		<munit:execution>
+			<try transactionalAction="ALWAYS_BEGIN">
+				<db:execute-ddl config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED">
+					<db:sql ><![CDATA[CREATE TABLE IF NOT EXISTS flights (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    start VARCHAR(255),
+    destination VARCHAR(255)
+);]]></db:sql>
+				</db:execute-ddl>
+			</try>
+			<db:insert config-ref="dbConfigMySQL">
+				<db:sql><![CDATA[INSERT INTO flights(start, destination) VALUES("NY", "BR");]]></db:sql>
+			</db:insert>
+			<db:select config-ref="dbConfigMySQL">
+				<db:sql><![CDATA[SELECT * from flights;]]></db:sql>
+			</db:select>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="JoinNotSupportedNegativeExecuteDDLTestCase">
+		<munit:execution>
+			<db:execute-ddl config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED" >
+				<db:sql ><![CDATA[CREATE TABLE IF NOT EXISTS flights (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    start VARCHAR(255),
+    destination VARCHAR(255)
+);]]></db:sql>
+			</db:execute-ddl>
+			<db:insert config-ref="dbConfigMySQL" >
+				<db:sql ><![CDATA[INSERT INTO flights(start, destination) VALUES("NY", "BR");]]></db:sql>
+			</db:insert>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<db:select config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED">
+				<db:sql><![CDATA[SELECT start from flights;]]></db:sql>
+			</db:select>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]" />
+		</munit:validation>
+	</munit:test>
+	<munit:after-test name="execute-ddl-journey-test-caseAfter_Test" doc:id="bcfff666-e527-45ba-8e64-8396ba2e9937" >
+		<flow-ref name="DropFlightsTable" />
+	</munit:after-test>
+
+</mule>

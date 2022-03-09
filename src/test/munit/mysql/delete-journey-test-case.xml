@@ -11,7 +11,7 @@
         http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
         http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
         http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<munit:config name="delete-journey-test-case.xml" minMuleVersion="4.1.6" />
+	<munit:config name="delete-journey-test-case.xml" />
 	<munit:before-suite name="DeleteJourneyBefore_Suite">
 			<flow-ref name="CreateTableInDatabaseFlow" />
 		</munit:before-suite>
@@ -25,7 +25,7 @@
 			</munit:behavior>
 			<munit:execution>
 			<db:delete config-ref="dbConfigMySQL">
-				<db:sql ><![CDATA[DELETE from flights where id = 1;]]></db:sql>
+				<db:sql ><![CDATA[DELETE from flights where destination = "CL";]]></db:sql>
 			</db:delete>
 			</munit:execution>
 		<munit:validation>

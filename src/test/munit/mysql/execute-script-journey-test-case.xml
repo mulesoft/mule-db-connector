@@ -11,7 +11,7 @@
         http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
         http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
         http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<munit:config name="execute-script-journey-test-case.xml" minMuleVersion="4.1.6" />
+	<munit:config name="execute-script-journey-test-case.xml" />
 	<munit:test name="ExecuteScriptSingleQueryTestCase">
 		<munit:execution>
 			<db:execute-script config-ref="dbConfigMySQL">
@@ -64,6 +64,9 @@ payload]]></ee:set-payload>
 				</ee:message>
 			</ee:transform>
 			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]" message="The size should be 1"/>
+			<db:execute-script config-ref="dbConfigMySQL" >
+				<db:sql ><![CDATA[DROP TABLE IF EXISTS suppliers;]]></db:sql>
+			</db:execute-script>
 		</munit:validation>
 	</munit:test>
 	<munit:test name="TransactionalActionsAlwaysJoinPositiveExecuteScriptTestCase" ignore="true">
@@ -197,9 +200,6 @@ payload]]></ee:set-payload>
 	</munit:test>
 	<munit:after-test name="execute-script-journey-test-caseAfter_Test" doc:id="72dbf0ca-6856-49f3-a8f9-327f106c0467" >
 		<flow-ref name="DropFlightsTable" />
-		<db:execute-script>
-			<db:sql ><![CDATA[DROP TABLE IF EXISTS suppliers;]]></db:sql>
-		</db:execute-script>
 	</munit:after-test>
 
 </mule>

@@ -204,6 +204,9 @@ payload]]></ee:set-payload>
 	</munit:test>
 	<munit:after-test name="execute-ddl-journey-test-caseAfter_Test" doc:id="bcfff666-e527-45ba-8e64-8396ba2e9937" >
 		<flow-ref name="DropFlightsTable" />
+		<db:execute-script>
+			<db:sql ><![CDATA[DROP TABLE IF EXISTS suppliers;]]></db:sql>
+		</db:execute-script>
 	</munit:after-test>
 
 </mule>

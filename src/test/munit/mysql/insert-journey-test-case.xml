@@ -9,8 +9,8 @@
 		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<munit:config name="InsertJourney.xml"  />
-	<munit:before-suite name="InsertJourneyBefore_Suite" minMuleVersion="4.1.6">
+	<munit:config name="InsertJourney.xml" minMuleVersion="4.1.6" />
+	<munit:before-suite name="InsertJourneyBefore_Suite" >
 		<flow-ref name="CreateTableInDatabaseFlow" />
 	</munit:before-suite>
 	<munit:test name="SingleInsertTestCase" >

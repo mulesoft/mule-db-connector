@@ -20,6 +20,16 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 );]]></db:sql>
 		</db:execute-ddl>
 	</flow>
+    <flow name="BulkDeleteCaseSetup" doc:id="ca77bb1e-8b89-4682-8346-e500f92711be">
+        <db:bulk-insert doc:name="Bulk insert" doc:id="9ef2a230-8233-4581-9fa9-d540533eaa9c" config-ref="dbConfigMySQL">
+            <db:bulk-input-parameters><![CDATA[#[[
+	{'start': 'NY', 'destination': 'BR'},
+	{'start': 'CL', 'destination': 'FR'},
+	{'start': 'CL', 'destination': 'FR'},
+]]]]></db:bulk-input-parameters>
+            <db:sql><![CDATA[INSERT INTO flights (start, destination) values (:start, :destination)]]></db:sql>
+        </db:bulk-insert>
+    </flow>
 	<flow name="ComplexCaseSetup" doc:id="c09ffa6b-ea01-4212-b3a0-17a9f4dc9b89" >
 		<db:insert doc:name="Insert" doc:id="7bb168f9-9370-4228-8077-ca39ddf4714f" config-ref="dbConfigMySQL">
 			<db:sql ><![CDATA[INSERT INTO flights(start, destination) VALUES("NY", "BR");]]></db:sql>

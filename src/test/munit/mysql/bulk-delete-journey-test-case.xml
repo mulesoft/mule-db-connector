@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	  xmlns="http://www.mulesoft.org/schema/mule/core"
+	  xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	  xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	  xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<munit:config name="bulk-delete-journey-test-case.xml" minMuleVersion="4.1.6"/>
+	<munit:before-suite name="BulkDeleteJourneyBefore_Suite">
+			<flow-ref name="CreateTableInDatabaseFlow" />
+		</munit:before-suite>
+	<munit:test name="BulkDeleteSimpleQueryTestCase">
+			<munit:behavior>
+				<flow-ref name="TruncateTableFlow" />
+				<flow-ref name="BulkDeleteCaseSetup" />
+			</munit:behavior>
+			<munit:execution>
+			<db:bulk-delete config-ref="dbConfigMySQL">
+				<db:bulk-input-parameters ><![CDATA[#[[
+	{'start': 'CL'}
+]]]]></db:bulk-input-parameters>
+				<db:sql ><![CDATA[DELETE from flights where start = :start;]]></db:sql>
+			</db:bulk-delete>
+			</munit:execution>
+		<munit:validation>
+				<db:select config-ref="dbConfigMySQL">
+					<db:sql><![CDATA[SELECT * from flights;]]></db:sql>
+				</db:select>
+			<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected='#[1]' message='The number of elements should be 1' />
+			</munit:validation>
+		</munit:test>
+	<munit:test name="BulkDeleteComplexQueryTestCase">
+		<munit:behavior>
+			<flow-ref name="TruncateTableFlow" />
+			<flow-ref name="BulkDeleteCaseSetup" />
+		</munit:behavior>
+		<munit:execution>
+			<db:bulk-delete config-ref="dbConfigMySQL">
+				<db:bulk-input-parameters ><![CDATA[#[[
+	{'start': 'CL', 'destination': 'FR'}
+]]]]></db:bulk-input-parameters>
+				<db:sql ><![CDATA[DELETE from flights where start=:start and destination=:destination;]]></db:sql>
+			</db:bulk-delete>
+		</munit:execution>
+		<munit:validation>
+			<db:select config-ref="dbConfigMySQL">
+				<db:sql><![CDATA[SELECT * from flights;]]></db:sql>
+			</db:select>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]" message="The number of elements should be 1"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="BulkDeleteInputParametersTestCase">
+			<munit:behavior>
+				<flow-ref name="TruncateTableFlow" />
+				<flow-ref name="BulkDeleteCaseSetup"/>
+			</munit:behavior>
+		<munit:execution>
+			<db:bulk-delete config-ref="dbConfigMySQL" >
+				<db:bulk-input-parameters ><![CDATA[#[[
+	{'start': 'CL', 'destination': 'FR'}
+]]]]></db:bulk-input-parameters>
+				<db:sql ><![CDATA[DELETE from flights where start=:start and destination=:destination;]]></db:sql>
+			</db:bulk-delete>
+			</munit:execution>
+		<munit:validation>
+				<db:select config-ref="dbConfigMySQL">
+					<db:sql><![CDATA[SELECT * FROM flights;]]></db:sql>
+				</db:select>
+			<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+ ---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]" />
+			</munit:validation>
+		</munit:test>
+	<munit:test name="TransactionalActionsAlwaysJoinPositiveBulkDeleteTestCase" ignore="true">
+			<munit:behavior>
+				<flow-ref name="TruncateTableFlow" />
+				<flow-ref name="BulkDeleteCaseSetup"/>
+			</munit:behavior>
+			<munit:execution>
+				<try transactionalAction="ALWAYS_BEGIN">
+				<db:bulk-delete target="singleDelete" config-ref="dbConfigMySQL">
+					<db:bulk-input-parameters ><![CDATA[#[[
+	{'start': 'NY'}
+]]]]></db:bulk-input-parameters>
+					<db:sql ><![CDATA[DELETE from flights where start=:start;]]></db:sql>
+				</db:bulk-delete>
+				<db:bulk-delete config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN">
+					<db:bulk-input-parameters ><![CDATA[#[[
+	{'start': 'CL', 'destination': 'FR'}
+]]]]></db:bulk-input-parameters>
+					<db:sql ><![CDATA[DELETE from flights where start=:start and destination=:destination;]]></db:sql>
+				</db:bulk-delete>
+				</try>
+				<db:select config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN">
+						<db:sql><![CDATA[SELECT start from flights;]]></db:sql>
+					</db:select>
+			<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+ ---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</munit:execution>
+			<munit:validation>
+				<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]" />
+			</munit:validation>
+		</munit:test>
+	<munit:test name="TransactionalActionsAlwaysJoinNegativeBulkDeleteTestCase" expectedErrorType="MULE:UNKNOWN">
+		<munit:execution>
+			<db:bulk-delete config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN">
+				<db:bulk-input-parameters ><![CDATA[#[[
+	{'start': 'CL', 'destination': 'FR'}
+]]]]></db:bulk-input-parameters>
+				<db:sql><![CDATA[Delete from flights;]]></db:sql>
+			</db:bulk-delete>
+			</munit:execution>
+		</munit:test>
+	<munit:test name="JoinIfPossiblePositiveBulkDeleteTestCase">
+			<munit:behavior>
+				<flow-ref name="TruncateTableFlow" />
+				<flow-ref name="BulkDeleteCaseSetup" />
+			</munit:behavior>
+			<munit:execution>
+				<try transactionalAction="ALWAYS_BEGIN">
+				<db:bulk-delete config-ref="dbConfigMySQL" target="singleDelete" >
+					<db:bulk-input-parameters ><![CDATA[#[[
+	{'start': 'CL', 'destination': 'FR'}
+]]]]></db:bulk-input-parameters>
+					<db:sql ><![CDATA[DELETE from flights where start=:start and destination=:destination;]]></db:sql>
+				</db:bulk-delete>
+				</try>
+				<db:select config-ref="dbConfigMySQL">
+						<db:sql><![CDATA[SELECT start from flights;]]></db:sql>
+					</db:select>
+			<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</munit:execution>
+			<munit:validation>
+				<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]" />
+			</munit:validation>
+		</munit:test>
+	<munit:test name="JoinNotSupportedPositiveBulkDeleteTestCase" ignore="true">
+			<munit:behavior>
+				<flow-ref name="TruncateTableFlow" />
+				<flow-ref name="ComplexCaseSetup" />
+			</munit:behavior>
+			<munit:execution>
+				<try transactionalAction="ALWAYS_BEGIN">
+				<db:bulk-delete config-ref="dbConfigMySQL" target="singleDelete" transactionalAction="NOT_SUPPORTED">
+					<db:bulk-input-parameters ><![CDATA[#[[
+	{'start': 'CL', 'destination': 'FR'}
+]]]]></db:bulk-input-parameters>
+					<db:sql ><![CDATA[DELETE from flights where start=:start and destination=:destination;]]></db:sql>
+				</db:bulk-delete>
+				</try>
+				<db:select config-ref="dbConfigMySQL">
+						<db:sql><![CDATA[SELECT * from flights;]]></db:sql>
+					</db:select>
+			<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</munit:execution>
+			<munit:validation>
+				<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[2]" />
+			</munit:validation>
+		</munit:test>
+	<munit:test name="JoinNotSupportedNegativeBulkDeleteTestCase">
+			<munit:behavior>
+				<flow-ref name="TruncateTableFlow" />
+				<flow-ref name="ComplexCaseSetup" />
+			</munit:behavior>
+			<munit:execution>
+			<db:bulk-delete config-ref="dbConfigMySQL" target="singleDelete" >
+				<db:bulk-input-parameters ><![CDATA[#[[
+	{'start': 'CL', 'destination': 'FR'}
+]]]]></db:bulk-input-parameters>
+				<db:sql ><![CDATA[DELETE from flights where start=:start and destination=:destination;]]></db:sql>
+			</db:bulk-delete>
+			</munit:execution>
+			<munit:validation>
+				<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			<db:select config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED">
+					<db:sql><![CDATA[SELECT start from flights;]]></db:sql>
+				</db:select>
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[3]" />
+			</munit:validation>
+		</munit:test>
+	<munit:after-suite name="BulkDeleteJourneyAfter_Suite" >
+			<flow-ref name="DropFlightsTable" />
+		</munit:after-suite>
+
+</mule>

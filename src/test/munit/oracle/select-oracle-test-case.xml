@@ -12,7 +12,7 @@
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 		http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 
-	<munit:config name="select-test-case.xml" minMuleVersion="4.1.6" >
+	<munit:config name="select-test-case.xml" minMuleVersion="4.3.0" >
 		<munit:parameterizations>
 			<munit:parameterization name="oracleInsecureConnectionWithNoPoolingProfile">
 				<munit:parameters>

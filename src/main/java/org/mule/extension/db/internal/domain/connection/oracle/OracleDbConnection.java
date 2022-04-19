@@ -259,7 +259,8 @@ public class OracleDbConnection extends DefaultDbConnection {
       procedureColumns = dbMetaData.getProcedureColumns(storedProcedureOwner, connectionSchema, storedProcedureName, "%");
       if (!procedureColumns.isBeforeFirst()) {
         procedureColumns.close();
-        procedureColumns = dbMetaData.getProcedureColumns(catalogName == null ? "" : catalogName, storedProcedureOwner, storedProcedureName, "%");
+        procedureColumns = dbMetaData.getProcedureColumns(catalogName == null ? "" : catalogName, storedProcedureOwner,
+                                                          storedProcedureName, "%");
       }
     } else {
       procedureColumns = dbMetaData.getProcedureColumns(catalogName, connectionSchema, storedProcedureName, "%");

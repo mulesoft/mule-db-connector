@@ -387,6 +387,11 @@
                                     <artifactId>ojdbc8</artifactId>
                                 </sharedLibrary>
                             </sharedLibraries>
+                            <argLines>
+                                <argLine>
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco.exec
+                                </argLine>
+                            </argLines>
                         </configuration>
                         <executions>
                             <execution>
@@ -574,6 +579,11 @@
                                     <artifactId>mysql-connector-java</artifactId>
                                 </sharedLibrary>
                             </sharedLibraries>
+                            <argLines>
+                                <argLine>
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco.exec
+                                </argLine>
+                            </argLines>
                         </configuration>
                         <executions>
                             <execution>

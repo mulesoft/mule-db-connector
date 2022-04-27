@@ -57,7 +57,7 @@ payload]]></ee:set-payload>
 			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]"/>
 		</munit:validation>
 	</munit:test>
-	<munit:test name="InputParametersTestCase" ignore="true">
+	<munit:test name="SelectInputParametersTestCase" ignore="true">
 		<munit:behavior>
 			<flow-ref name="TruncateTableFlow"/>
 			<flow-ref name="SimpleCaseSetupFlow"/>

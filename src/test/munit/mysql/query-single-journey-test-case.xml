@@ -34,7 +34,7 @@ payload]]></ee:set-payload>
 				<munit-tools:assert-equals actual="#[payload.start]" expected='#["NY"]' message='The element must be "NY"' />
 			</munit:validation>
 		</munit:test>
-	<munit:test name="InputParametersTestCase" >
+	<munit:test name="QuerySingleInputParametersTestCase" >
 		<munit:behavior>
 			<flow-ref name="SimpleCaseSetupFlow"/>
 		</munit:behavior>

@@ -46,7 +46,15 @@ payload]]></ee:set-payload>
 			</db:stored-procedure>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-equals actual="#[sizeOf(payload.resultSet1)]" expected="#[2]"/>
+			<ee:transform>
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<munit-tools:assert-equals actual="#[payload.resultSet1.destination]" expected="#['BR']"/>
 		</munit:validation>
 	</munit:test>
 	<munit:after-test name="stored-procedure-test-caseAfter_Test" >

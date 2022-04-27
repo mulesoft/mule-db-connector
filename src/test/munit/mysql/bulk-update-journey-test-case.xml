@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<munit:config name="bulk-update-journey-test-case.xml" minMuleVersion="4.3.0"/>
+	<munit:before-suite name="bulk-update-journey-test-caseBefore_Suite">
+		<flow-ref  name="CreateTableInDatabaseFlow"/>
+	</munit:before-suite>
+	<munit:test name="SimpleUpdateTestCase">
+		<munit:behavior >
+			<flow-ref name="BulkDeleteCaseSetup"/>
+			<db:select config-ref="dbConfigMySQL">
+				<db:sql ><![CDATA[SELECT start from flights where start = "NY";]]></db:sql>
+			</db:select>
+			<ee:transform >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<munit-tools:assert-equals actual="#[payload.start[0]]" expected="#['NY']"/>
+		</munit:behavior>
+		<munit:execution >
+			<db:bulk-update config-ref="dbConfigMySQL">
+				<db:bulk-input-parameters ><![CDATA[#[[{'start': 'AR'}]]]]></db:bulk-input-parameters>
+				<db:sql ><![CDATA[UPDATE flights SET start = :start  WHERE start = 'NY' or start = 'CL';]]></db:sql>
+			</db:bulk-update>
+		</munit:execution>
+		<munit:validation >
+			<db:select config-ref="dbConfigMySQL">
+				<db:sql ><![CDATA[SELECT start from flights where start = "AR";]]></db:sql>
+			</db:select>
+			<ee:transform>
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<munit-tools:assert >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+'AR' must beOneOf(payload.start)]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="TransactionalActionsAlwaysJoinPositiveBulkUpdateTestCase" >
+		<munit:execution>
+			<try transactionalAction="BEGIN_OR_JOIN">
+				<db:bulk-insert config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED" target="example">
+					<db:bulk-input-parameters ><![CDATA[#[[{'start': 'AR', 'destination': 'FR'}, {'start': 'NY', 'destination': 'JP'}, {'start': 'VE', 'destination': 'GE'}]]]]></db:bulk-input-parameters>
+					<db:sql ><![CDATA[INSERT INTO flights (start, destination) values (:start, :destination)]]></db:sql>
+				</db:bulk-insert>
+				<db:bulk-insert config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN">
+					<db:bulk-input-parameters ><![CDATA[#[[{'start': 'NY', 'destination': 'BR'}, {'start': 'AR', 'destination': 'IT'}, {'start': 'CL', 'destination': 'FR'}]]]]></db:bulk-input-parameters>
+					<db:sql ><![CDATA[INSERT INTO flights (start, destination) values (:start, :destination)]]></db:sql>
+				</db:bulk-insert>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[3]"/>
+			<db:select config-ref="dbConfigMySQL">
+				<db:sql ><![CDATA[Select destination from flights where start="AR";]]></db:sql>
+			</db:select>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<munit-tools:assert>
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload.destination[0] must beOneOf(['FR'])]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="TransactionalActionsAlwaysJoinNegativeBulkUpdateTestCase" expectedErrorType="MULE:UNKNOWN">
+		<munit:execution >
+			<db:bulk-insert config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN">
+				<db:bulk-input-parameters ><![CDATA[#[[{'start': 'NY', 'destination': 'BR'}, {'start': 'AR', 'destination': 'IT'}, {'start': 'CL', 'destination': 'FR'}]]]]></db:bulk-input-parameters>
+				<db:sql ><![CDATA[INSERT INTO flights (start, destination) values (:start, :destination)]]></db:sql>
+			</db:bulk-insert>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="JoinIfPossiblePositiveBulkUpdateTestCase" >
+		<munit:execution>
+			<try transactionalAction="ALWAYS_BEGIN">
+				<db:bulk-insert config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN" >
+					<db:bulk-input-parameters ><![CDATA[#[[{'start': 'NY', 'destination': 'BR'}, {'start': 'AR', 'destination': 'IT'}, {'start': 'CL', 'destination': 'FR'}]]]]></db:bulk-input-parameters>
+					<db:sql ><![CDATA[INSERT INTO flights (start, destination) values (:start, :destination)]]></db:sql>
+				</db:bulk-insert>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<db:select config-ref="dbConfigMySQL">
+				<db:sql><![CDATA[SELECT start from flights where start = "NY";]]></db:sql>
+			</db:select>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<munit-tools:assert-equals actual="#[payload.start[0]]" expected='#["NY"]' message='The element must be "NY"' />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="JoinNotSupportedPositiveBulkUpdateTestCase" >
+		<munit:execution >
+			<try transactionalAction="ALWAYS_BEGIN">
+				<db:bulk-insert config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED" target="example">
+					<db:bulk-input-parameters><![CDATA[#[[{'start': 'AR', 'destination': 'FR'}, {'start': 'NY', 'destination': 'JP'}, {'start': 'VE', 'destination': 'GE'}]]]]></db:bulk-input-parameters>
+					<db:sql><![CDATA[INSERT INTO flights (start, destination) values (:start, :destination)]]></db:sql>
+				</db:bulk-insert>
+				<db:bulk-insert config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN" >
+					<db:bulk-input-parameters ><![CDATA[#[[{'start': 'NY', 'destination': 'BR'}, {'start': 'AR', 'destination': 'IT'}, {'start': 'CL', 'destination': 'FR'}]]]]></db:bulk-input-parameters>
+					<db:sql ><![CDATA[INSERT INTO flights (start, destination) values (:start, :destination)]]></db:sql>
+				</db:bulk-insert>
+			</try>
+		</munit:execution>
+		<munit:validation >
+			<ee:transform>
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[3]" />
+			<db:select config-ref="dbConfigMySQL">
+				<db:sql><![CDATA[SELECT start from flights where start = "NY";]]></db:sql>
+			</db:select>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<munit-tools:assert-equals actual="#[payload.start[0]]" expected='#["NY"]' message='The element must be "NY"' />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="JoinNotSupportedNegativeBulkUpdateTestCase" >
+		<munit:execution >
+			<db:bulk-insert config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED" >
+				<db:bulk-input-parameters ><![CDATA[#[[{'start': 'NY', 'destination': 'BR'}, {'start': 'AR', 'destination': 'IT'}, {'start': 'CL', 'destination': 'FR'}]]]]></db:bulk-input-parameters>
+				<db:sql ><![CDATA[INSERT INTO flights (start, destination) values (:start, :destination)]]></db:sql>
+			</db:bulk-insert>
+		</munit:execution>
+		<munit:validation >
+			<ee:transform>
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[3]" />
+			<db:select config-ref="dbConfigMySQL">
+				<db:sql><![CDATA[SELECT start from flights where start = "NY";]]></db:sql>
+			</db:select>
+			<ee:transform >
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<munit-tools:assert-equals actual="#[payload.start[0]]" expected='#["NY"]' message='The element must be "NY"' />
+		</munit:validation>
+	</munit:test>
+	<munit:after-test name="bulk-update-journey-test-caseAfter_Test" >
+		<flow-ref name="TruncateTableFlow"/>
+	</munit:after-test>
+
+</mule>

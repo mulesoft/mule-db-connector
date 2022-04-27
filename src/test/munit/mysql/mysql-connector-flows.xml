@@ -11,6 +11,39 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 ]]></db:sql>
 		</db:insert>
 	</flow>
+	<flow name="StoreProcedureSetup" doc:id="5147b479-4f51-49ae-92bf-8602c488c2e1" >
+		<db:execute-ddl doc:name="Execute DDL" doc:id="e574db1c-675a-475a-b80a-6e6a8f56db7d" config-ref="dbConfigMySQL" >
+			<db:sql ><![CDATA[CREATE TABLE IF NOT EXISTS flights (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    start VARCHAR(255),
+    destination VARCHAR(255)
+);]]></db:sql>
+		</db:execute-ddl>
+		<db:execute-ddl doc:name="Execute DDL" doc:id="935c8730-1073-479c-b7d2-8a59038a93ab" config-ref="dbConfigMySQL">
+			<db:sql ><![CDATA[CREATE PROCEDURE insertFlight (e_start CHAR(2), e_destination CHAR(2))
+BEGIN
+	INSERT INTO flights(start, destination) VALUES(e_start, e_destination);
+END]]></db:sql>
+		</db:execute-ddl>
+		<db:execute-ddl doc:name="Execute DDL" doc:id="c0e26d87-c700-41e3-b3cb-0fa0ed693713" config-ref="dbConfigMySQL">
+			<db:sql ><![CDATA[CREATE PROCEDURE selectFlight (e_destination CHAR(2))
+BEGIN
+	SELECT * FROM flights WHERE destination = e_destination;
+END]]></db:sql>
+		</db:execute-ddl>
+		<db:execute-ddl doc:name="Execute DDL" doc:id="a66e704c-d14c-4e14-b603-7f20060602d0" config-ref="dbConfigMySQL">
+			<db:sql ><![CDATA[CREATE PROCEDURE deleteFlight (e_destination CHAR(2))
+BEGIN
+	DELETE FROM flights WHERE destination = e_destination;
+END]]></db:sql>
+		</db:execute-ddl>
+		<db:execute-ddl doc:name="Execute DDL" doc:id="3f25f1d8-c3b7-4079-b132-4a4628e1f3ab" config-ref="dbConfigMySQL">
+			<db:sql ><![CDATA[CREATE PROCEDURE updateFlight (e_start CHAR(2), e_destination CHAR(2))
+BEGIN
+	UPDATE flights SET start = e_start WHERE destination = e_destination;
+END]]></db:sql>
+		</db:execute-ddl>
+	</flow>
 	<flow name="CreateTableInDatabaseFlow" doc:id="0191906c-8324-45ea-808f-fa302b5d4677" >
 		<db:execute-ddl doc:name="Execute DDL" doc:id="68fa8051-eac6-4d00-893b-5554c1cfe3e1" config-ref="dbConfigMySQL">
 			<db:sql><![CDATA[CREATE TABLE IF NOT EXISTS flights (

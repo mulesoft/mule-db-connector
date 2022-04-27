@@ -243,7 +243,7 @@ output application/json
 payload]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-			<munit-tools:assert-equals actual="#[payload[0].start]" expected="#['AR']" />
+			<munit-tools:assert-equals actual="#[payload[0].start]" expected="#['AR']"/>
 			</munit:validation>
 		</munit:test>
 	<munit:after-suite name="UpdateJourneyAfter_Suite" >

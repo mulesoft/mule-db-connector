@@ -10,12 +10,12 @@
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<munit:config name="select-journey-test-case.xml" minMuleVersion="4.3.0"/>
-	<munit:before-suite name="SelectJourneyBefore_Suite" >
+	<munit:before-suite name="SelectJourneyBefore_Suite">
 		<flow-ref name="CreateTableInDatabaseFlow"/>
 	</munit:before-suite>
 	<munit:test name="SelectSingleQueryTestCase">
 		<munit:behavior>
-			<flow-ref name="TruncateTableFlow" />
+			<flow-ref name="TruncateTableFlow"/>
 			<flow-ref name="SimpleCaseSetupFlow"/>
 		</munit:behavior>
 		<munit:execution>
@@ -32,10 +32,10 @@ payload]]></ee:set-payload>
 				</ee:transform>
 			</munit:execution>
 		<munit:validation>
-				<munit-tools:assert-equals actual="#[payload.start[0]]" expected='#["NY"]' message='The element must be "NY"' />
+				<munit-tools:assert-equals actual="#[payload.start[0]]" expected='#["NY"]' message='The element must be "NY"'/>
 			</munit:validation>
 		</munit:test>
-	<munit:test name="SelectComplexQueryTestCase" >
+	<munit:test name="SelectComplexQueryTestCase">
 		<munit:behavior >
 			<flow-ref name="TruncateTableFlow"/>
 			<flow-ref name="ComplexCaseSetup"/>
@@ -59,13 +59,13 @@ payload]]></ee:set-payload>
 	</munit:test>
 	<munit:test name="InputParametersTestCase" ignore="true">
 		<munit:behavior>
-			<flow-ref name="TruncateTableFlow" />
-			<flow-ref name="SimpleCaseSetupFlow" />
+			<flow-ref name="TruncateTableFlow"/>
+			<flow-ref name="SimpleCaseSetupFlow"/>
 		</munit:behavior>
 		<munit:execution>
-			<db:select config-ref="dbConfigMySQL" >
+			<db:select config-ref="dbConfigMySQL">
 				<db:sql ><![CDATA[SELECT * FROM :flight WHERE start IN(SELECT start FROM :flight GROUP BY start HAVING COUNT(*) > 1) GROUP BY id;]]></db:sql>
-				<db:input-parameters ><![CDATA[#[{'flight': 'flights'}]]]></db:input-parameters>
+				<db:input-parameters ><![CDATA[#[{'flight': flights'}]]]></db:input-parameters>
 			</db:select>
 			<ee:transform>
 				<ee:message>
@@ -77,14 +77,14 @@ payload]]></ee:set-payload>
 			</ee:transform>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-equals actual="#[payload[0].id]" expected="#[2]" />
-			<munit-tools:assert-equals actual="#[payload[1].id]" expected="#[3]" />
+			<munit-tools:assert-equals actual="#[payload[0].id]" expected="#[2]"/>
+			<munit-tools:assert-equals actual="#[payload[1].id]" expected="#[3]"/>
 		</munit:validation>
 	</munit:test>
-	<munit:test name="TransactionalActionsAlwaysJoinPositiveSelectTestCase" >
+	<munit:test name="TransactionalActionsAlwaysJoinPositiveSelectTestCase">
 		<munit:behavior >
-			<flow-ref name="TruncateTableFlow" />
-			<flow-ref name="ComplexCaseSetup" />
+			<flow-ref name="TruncateTableFlow"/>
+			<flow-ref name="ComplexCaseSetup"/>
 		</munit:behavior>
 		<munit:execution >
 			<try transactionalAction="ALWAYS_BEGIN">
@@ -110,11 +110,11 @@ payload]]></ee:set-payload>
 	</munit:test>
 	<munit:test name="TransactionalActionsAlwaysJoinNegativeTestCase" expectedErrorType="MULE:UNKNOWN">
 		<munit:behavior >
-			<flow-ref name="TruncateTableFlow" />
-			<flow-ref name="ComplexCaseSetup" />
+			<flow-ref name="TruncateTableFlow"/>
+			<flow-ref name="ComplexCaseSetup"/>
 		</munit:behavior>
 		<munit:execution >
-			<db:select config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN" >
+			<db:select config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN">
 				<db:sql ><![CDATA[SELECT start from flights;]]></db:sql>
 			</db:select>
 			<ee:transform >
@@ -127,10 +127,10 @@ payload]]></ee:set-payload>
 			</ee:transform>
 		</munit:execution>
 	</munit:test>
-	<munit:test name="JoinIfPossiblePositiveTestCase" >
+	<munit:test name="JoinIfPossiblePositiveTestCase">
 		<munit:behavior >
-			<flow-ref name="TruncateTableFlow" />
-			<flow-ref name="ComplexCaseSetup" />
+			<flow-ref name="TruncateTableFlow"/>
+			<flow-ref name="ComplexCaseSetup"/>
 		</munit:behavior>
 		<munit:execution >
 			<try transactionalAction="ALWAYS_BEGIN">
@@ -151,13 +151,13 @@ payload]]></ee:set-payload>
 			</ee:transform>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[3]" />
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[3]"/>
 		</munit:validation>
 	</munit:test>
-	<munit:test name="JoinNotSupportedPositiveTestCase" >
+	<munit:test name="JoinNotSupportedPositiveTestCase">
 		<munit:behavior>
-			<flow-ref name="TruncateTableFlow" />
-			<flow-ref name="ComplexCaseSetup" />
+			<flow-ref name="TruncateTableFlow"/>
+			<flow-ref name="ComplexCaseSetup"/>
 		</munit:behavior>
 		<munit:execution >
 			<try transactionalAction="ALWAYS_BEGIN">
@@ -178,13 +178,13 @@ payload]]></ee:set-payload>
 			</ee:transform>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[3]" />
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[3]"/>
 		</munit:validation>
 	</munit:test>
 	<munit:test name="JoinNotSupportedNegativeTestCase">
 		<munit:behavior >
-			<flow-ref name="TruncateTableFlow" />
-			<flow-ref name="ComplexCaseSetup" />
+			<flow-ref name="TruncateTableFlow"/>
+			<flow-ref name="ComplexCaseSetup"/>
 		</munit:behavior>
 		<munit:execution >
 			<db:select config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED">
@@ -200,13 +200,13 @@ payload]]></ee:set-payload>
 			</ee:transform>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[3]" />
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[3]"/>
 		</munit:validation>
 	</munit:test>
-	<munit:test name="SelectMaxRowsConfiguredTestCase"  >
+	<munit:test name="SelectMaxRowsConfiguredTestCase">
 		<munit:behavior >
-			<flow-ref name="TruncateTableFlow" />
-			<flow-ref name="ComplexCaseSetup" />
+			<flow-ref name="TruncateTableFlow"/>
+			<flow-ref name="ComplexCaseSetup"/>
 		</munit:behavior>
 		<munit:execution>
 			<db:select config-ref="dbConfigMySQL" maxRows="2">
@@ -222,10 +222,10 @@ payload]]></ee:set-payload>
 			</ee:transform>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[2]" />
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[2]"/>
 		</munit:validation>
 	</munit:test>
-	<munit:after-suite name="SelectJourneyAfter_Suite" >
+	<munit:after-suite name="SelectJourneyAfter_Suite">
 		<flow-ref name="DropFlightsTable" />
 	</munit:after-suite>
 

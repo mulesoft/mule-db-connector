@@ -11,6 +11,9 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<munit:config name="stored-procedure-test-case.xml" minMuleVersion="4.3.0"/>
 	<munit:before-suite name="stored-procedure-test-caseBefore_Suite">
+		<db:execute-ddl doc:name="Execute DDL" doc:id="950b2873-0c6e-428b-a853-9ef488fbe3c5" config-ref="dbConfigMySQL" >
+			<db:sql ><![CDATA[DROP TABLE IF EXISTS flights;]]></db:sql>
+		</db:execute-ddl>
 		<flow-ref name="StoreProcedureSetup"/>
 	</munit:before-suite>
 	<munit:test name="storedProcedureInsertItemTestCase">
@@ -54,7 +57,7 @@ output application/json
 payload]]></ee:set-payload>
 				</ee:message>
 			</ee:transform>
-			<munit-tools:assert-equals actual="#[payload.resultSet1.destination]" expected="#['BR']"/>
+			<munit-tools:assert-equals actual="#[payload.resultSet1.destination[0]" expected="#['BR']"/>
 		</munit:validation>
 	</munit:test>
 	<munit:after-test name="stored-procedure-test-caseAfter_Test" >

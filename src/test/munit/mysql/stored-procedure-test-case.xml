@@ -10,12 +10,9 @@
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<munit:config name="stored-procedure-test-case.xml" minMuleVersion="4.3.0"/>
-	<munit:before-suite name="stored-procedure-test-caseBefore_Suite">
-		<db:execute-ddl doc:name="Execute DDL" doc:id="950b2873-0c6e-428b-a853-9ef488fbe3c5" config-ref="dbConfigMySQL" >
-			<db:sql ><![CDATA[DROP TABLE IF EXISTS flights;]]></db:sql>
-		</db:execute-ddl>
+	<munit:before-test name="stored-procedure-test-caseBefore_Suite">
 		<flow-ref name="StoreProcedureSetup"/>
-	</munit:before-suite>
+	</munit:before-test>
 	<munit:test name="storedProcedureInsertItemTestCase">
 		<munit:execution >
 			<db:stored-procedure config-ref="dbConfigMySQL">
@@ -60,11 +57,8 @@ payload]]></ee:set-payload>
 			<munit-tools:assert-equals actual="#[payload.resultSet1.destination[0]]" expected="#['BR']"/>
 		</munit:validation>
 	</munit:test>
-	<munit:after-test name="stored-procedure-test-caseAfter_Test" >
-		<flow-ref name="TruncateTableFlow"/>
-	</munit:after-test>
-	<munit:after-suite name="stored-procedure-test-caseAfter_Suite">
+	<munit:after-test name="stored-procedure-test-caseAfter_Suite">
 		<flow-ref name="DropFlightsTable"/>
-	</munit:after-suite>
+	</munit:after-test>
 
 </mule>

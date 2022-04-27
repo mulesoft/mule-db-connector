@@ -57,7 +57,7 @@ output application/json
 payload]]></ee:set-payload>
 				</ee:message>
 			</ee:transform>
-			<munit-tools:assert-equals actual="#[payload.resultSet1.destination[0]" expected="#['BR']"/>
+			<munit-tools:assert-equals actual="#[payload.resultSet1.destination[0]]" expected="#['BR']"/>
 		</munit:validation>
 	</munit:test>
 	<munit:after-test name="stored-procedure-test-caseAfter_Test" >

@@ -83,5 +83,18 @@ END]]></db:sql>
 		<db:execute-ddl doc:name="Execute DDL" doc:id="950b2873-0c6e-428b-a853-9ef488fbe3c5" config-ref="dbConfigMySQL" >
 			<db:sql ><![CDATA[DROP TABLE IF EXISTS flights;]]></db:sql>
 		</db:execute-ddl>
+		<db:execute-ddl doc:name="Execute DDL" config-ref="dbConfigMySQL" >
+			<db:sql ><![CDATA[DROP PROCEDURE IF EXISTS insertFlight;
+]]></db:sql>
+		</db:execute-ddl>
+		<db:execute-ddl doc:name="Execute DDL" doc:id="950b2873-0c6e-428b-a853-9ef488fbe3c5" config-ref="dbConfigMySQL" >
+			<db:sql ><![CDATA[DROP PROCEDURE IF EXISTS selectFlight]]></db:sql>
+		</db:execute-ddl>
+		<db:execute-ddl doc:name="Execute DDL" doc:id="950b2873-0c6e-428b-a853-9ef488fbe3c5" config-ref="dbConfigMySQL" >
+			<db:sql ><![CDATA[DROP PROCEDURE IF EXISTS updateFlight]]></db:sql>
+		</db:execute-ddl>
+		<db:execute-ddl doc:name="Execute DDL" doc:id="950b2873-0c6e-428b-a853-9ef488fbe3c5" config-ref="dbConfigMySQL" >
+			<db:sql ><![CDATA[DROP PROCEDURE IF EXISTS deleteFlight]]></db:sql>
+		</db:execute-ddl>
 	</flow>
 </mule>

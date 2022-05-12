@@ -33,6 +33,11 @@ payload]]></ee:set-payload>
 				</ee:message>
 			</ee:transform>
 			<munit-tools:assert-equals actual="#[payload.destination[0]]" expected='#["FR"]'/>
+			<munit-tools:assert doc:name="Assert expression" doc:id="6c584f99-fa98-4323-8272-61217cc3815a" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+attributes[0] must beOneOf(["UPPERCASE"])]]]></munit-tools:that>
+			</munit-tools:assert>
 		</munit:validation>
 	</munit:test>
 	<munit:test name="storedProcedureSelectItemTestCase">
@@ -57,7 +62,57 @@ payload]]></ee:set-payload>
 			<munit-tools:assert-equals actual="#[payload.resultSet1.destination[0]]" expected="#['BR']"/>
 		</munit:validation>
 	</munit:test>
-	<munit:after-test name="stored-procedure-test-caseAfter_Suite">
+	<munit:test name="storedProcedureUpdateItemTestCase" >
+		<munit:behavior >
+			<flow-ref name="SimpleCaseSetupFlow"/>
+		</munit:behavior>
+		<munit:execution >
+			<db:stored-procedure config-ref="dbConfigMySQL">
+				<db:sql ><![CDATA[{ call updateFlight(:start, :destination) }]]></db:sql>
+				<db:input-parameters ><![CDATA[#[{'start': 'AR', 'destination': 'BR'}]]]></db:input-parameters>
+			</db:stored-procedure>
+		</munit:execution>
+		<munit:validation >
+			<db:select config-ref="dbConfigMySQL">
+				<db:sql ><![CDATA[SELECT * FROM flights where destination = 'BR';]]></db:sql>
+			</db:select>
+			<ee:transform >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<munit-tools:assert-equals actual="#[payload.start[0]]" expected="#['AR']"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="storedProcedureDeleteItemTestCase" >
+		<munit:behavior >
+			<flow-ref name="ComplexCaseSetup"/>
+		</munit:behavior>
+		<munit:execution >
+			<db:stored-procedure config-ref="dbConfigMySQL">
+				<db:sql ><![CDATA[{ call deleteFlight(:destination) }]]></db:sql>
+				<db:input-parameters ><![CDATA[#[{'destination': 'CL'}]]]></db:input-parameters>
+			</db:stored-procedure>
+		</munit:execution>
+		<munit:validation >
+			<db:select config-ref="dbConfigMySQL">
+				<db:sql ><![CDATA[SELECT * FROM flights;]]></db:sql>
+			</db:select>
+			<ee:transform >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[2]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:after-test name="stored-procedure-test-caseAfter_Test">
 		<flow-ref name="DropFlightsTable"/>
 	</munit:after-test>
 

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <munit:config name="stored-procedure-clob-output-oracle-test-case.xml" minMuleVersion="4.1.6" >
+        <munit:parameterizations>
+            <munit:parameterization name="oracleDbPoolingConfig">
+                <munit:parameters>
+                    <munit:parameter propertyName="config" value="oracleDbPoolingConfig"/>
+                </munit:parameters>
+            </munit:parameterization>
+        </munit:parameterizations>
+    </munit:config>
+    <munit:before-suite name="createStoreProcedure">
+        <db:execute-ddl config-ref="${config}" >
+            <db:sql ><![CDATA[create or replace PROCEDURE myProcClobOut(myParam OUT CLOB) AS aClob CLOB;
+BEGIN
+  SELECT to_clob(1) into aClob FROM dual;
+  myParam := aClob;
+END;]]></db:sql>
+        </db:execute-ddl>
+    </munit:before-suite>
+    <munit:test name="whenHavingOutClobConnectionNotLeaked" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+        <munit:execution>
+            <db:stored-procedure config-ref="${config}">
+                <db:sql><![CDATA[call myProcClobOut(:clobdata)]]></db:sql>
+                <db:output-parameters>
+                    <db:output-parameter key="clobdata" type="CLOB" />
+                </db:output-parameters>
+            </db:stored-procedure>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[%dw 2.0
+                        output application/java
+                        ---
+                        payload[0]]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+            <db:stored-procedure config-ref="${config}">
+                <db:sql><![CDATA[call myProcClobOut(:clobdata)]]></db:sql>
+                <db:output-parameters>
+                    <db:output-parameter key="clobdata" type="CLOB" />
+                </db:output-parameters>
+            </db:stored-procedure>
+            <ee:transform>
+                <ee:message>
+                    <ee:set-payload><![CDATA[%dw 2.0
+                        output application/java
+                        ---
+                        payload[0]]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+        </munit:execution>
+    </munit:test>
+    <munit:after-suite name="deleteStoreProcedure">
+        <db:execute-script config-ref="${config}">
+            <db:sql ><![CDATA[drop procedure myProcClobOut]]></db:sql>
+        </db:execute-script>
+    </munit:after-suite>
+</mule>

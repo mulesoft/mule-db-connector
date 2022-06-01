@@ -17,7 +17,6 @@ import static org.mule.db.commons.api.param.JdbcType.CLOB;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
 
-import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
 
 import java.sql.Blob;
@@ -31,39 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.junit.Test;
 
-public class CreateStructTestCase extends AbstractDbFunctionTestCase {
-
-  @Test
-  public void createStructResolvingBlobInDefaultDbConnection() throws Exception {
-    Object[] structValues = {"foo", "bar"};
-    Connection delegate = mock(Connection.class);
-    Blob blob = mock(Blob.class);
-    when(delegate.createBlob()).thenReturn(blob);
-
-    DefaultDbConnection defaultDbConnection =
-        mockDefaultDbConnectionMetadata(delegate, BLOB.getDbType().getId(), BLOB.getDbType().getName());
-
-    defaultDbConnection.createStruct(TYPE_NAME, structValues);
-
-    verify(delegate).createStruct(TYPE_NAME, structValues);
-    assertThat(structValues[0], equalTo(blob));
-  }
-
-  @Test
-  public void createStructResolvingClobInDefaultDbConnection() throws Exception {
-    Object[] structValues = {"foo", "bar"};
-    Connection delegate = mock(Connection.class);
-    Clob clob = mock(Clob.class);
-    when(delegate.createClob()).thenReturn(clob);
-
-    DefaultDbConnection defaultDbConnection =
-        mockDefaultDbConnectionMetadata(delegate, CLOB.getDbType().getId(), CLOB.getDbType().getName());
-
-    defaultDbConnection.createStruct(TYPE_NAME, structValues);
-
-    verify(delegate).createStruct(TYPE_NAME, structValues);
-    assertThat(structValues[0], equalTo(clob));
-  }
+public class OracleCreateStructTestCase extends AbstractDbFunctionTestCase {
 
   @Test
   public void createStructResolvingBlobInOracleDbUsingUDTSimpleName() throws Exception {

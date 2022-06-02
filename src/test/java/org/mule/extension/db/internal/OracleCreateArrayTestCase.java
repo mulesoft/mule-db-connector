@@ -21,10 +21,8 @@ import static org.mule.extension.db.internal.domain.connection.oracle.OracleConn
 
 import oracle.jdbc.OracleConnection;
 import oracle.sql.ARRAY;
-import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
 
-import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Connection;
@@ -36,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.junit.Test;
 
 
-public class CreateArrayTestCase extends AbstractDbFunctionTestCase {
+public class OracleCreateArrayTestCase extends AbstractDbFunctionTestCase {
 
   private static final String QUERY_ALL_COLL_TYPES = "SELECT * FROM SYS.ALL_COLL_TYPES WHERE TYPE_NAME = ?";
 
@@ -137,51 +135,4 @@ public class CreateArrayTestCase extends AbstractDbFunctionTestCase {
       verify(preparedStatement, times(2)).setString(2, owner.get());
     }
   }
-
-  @Test
-  public void createsDbArrayResolvingClobWithDefaultConnection() throws Exception {
-    Object[] structValues = {"clob", "foo"};
-    Object[] structValues1 = {"clob1", "foo1"};
-    Object[] params = {structValues, structValues1};
-
-    Connection connection = mock(Connection.class);
-    Clob clob = mock(Clob.class);
-    when(connection.createClob()).thenReturn(clob);
-
-    Array array = mock(Array.class);
-    when(connection.createArrayOf(TYPE_NAME, params)).thenReturn(array);
-
-    DefaultDbConnection defaultDbConnection =
-        mockDefaultDbConnectionMetadata(connection, CLOB.getDbType().getId(), CLOB.getDbType().getName());
-
-    defaultDbConnection.createArrayOf(TYPE_NAME, params);
-
-    verify(connection).createArrayOf(TYPE_NAME, params);
-    assertThat(((Object[]) params[0])[0], equalTo(clob));
-    assertThat(((Object[]) params[1])[0], equalTo(clob));
-  }
-
-  @Test
-  public void createsDbArrayResolvingBlobWithDefaultConnection() throws Exception {
-    Object[] structValues = {"blob", "foo"};
-    Object[] structValues1 = {"blob1", "foo1"};
-    Object[] params = {structValues, structValues1};
-
-    Connection connection = mock(Connection.class);
-    Blob blob = mock(Blob.class);
-    when(connection.createBlob()).thenReturn(blob);
-
-    Array array = mock(Array.class);
-    when(connection.createArrayOf(TYPE_NAME, params)).thenReturn(array);
-
-    DefaultDbConnection defaultDbConnection =
-        mockDefaultDbConnectionMetadata(connection, BLOB.getDbType().getId(), BLOB.getDbType().getName());
-
-    defaultDbConnection.createArrayOf(TYPE_NAME, params);
-
-    verify(connection).createArrayOf(TYPE_NAME, params);
-    assertThat(((Object[]) params[0])[0], equalTo(blob));
-    assertThat(((Object[]) params[1])[0], equalTo(blob));
-  }
-
 }

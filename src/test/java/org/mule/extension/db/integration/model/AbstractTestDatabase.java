@@ -421,6 +421,10 @@ public abstract class AbstractTestDatabase {
 
   public abstract void createStoredProcedureExtractReducedBio(DataSource dataSource) throws SQLException;
 
+  public void createStoredProcedureOutputClob(DataSource dataSource) throws SQLException {
+    throw new UnsupportedOperationException(NO_SQLXML_SUPPORT_ERROR);
+  }
+
   public void createStoredProcedureGetAlienDescription(DataSource dataSource) throws SQLException {
     throw new UnsupportedOperationException(NO_SQLXML_SUPPORT_ERROR);
   }

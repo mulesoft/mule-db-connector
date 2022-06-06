@@ -46,6 +46,24 @@
         </db:oracle-connection>
     </db:config>
 
+    <db:config name="dbConfigWithPooling">
+        <db:oracle-connection host="localhost" port="#[java!org::mule::extension::db::DbMunitUtils::getSecureDbPort('oracle')]" user="system" password="oracle" serviceName="XEPDB1">
+            <tls:context>
+                <tls:trust-store path="${basedir}/target/docker/oracle-db-mtls/store/client-truststore.jks" password="WalletPasswd123" type="jks" />
+                <tls:key-store type="jks" path="${basedir}/target/docker/oracle-db-mtls/store/client-keystore.jks" keyPassword="WalletPasswd123" password="WalletPasswd123" />
+            </tls:context>
+            <db:pooling-profile maxPoolSize="10" maxWait="1">
+            </db:pooling-profile>
+        </db:oracle-connection>
+    </db:config>
+
+    <db:config name="oracleDbPoolingConfig">
+        <db:oracle-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('oracle')]" serviceName="XEPDB1" user="system" password="oracle">
+            <db:pooling-profile maxPoolSize="1" minPoolSize="1"/>
+        </db:oracle-connection>
+    </db:config>
+
+
 <!--    <db:config name="dbConfig">-->
 <!--        <db:my-sql-connection host="0.0.0.0" port="${mysql.db.port}" user="root" password="password" database="xe">-->
 <!--            <db:pooling-profile/>-->

@@ -141,14 +141,14 @@ END PACKAGE1;]]></db:sql>
 
         <munit:validation>
             <db:select config-ref="${config}">
-                <db:sql ><![CDATA[SELECT COUNT(*) FROM PERSONS WHERE PersonID = :a AND LastName = :b AND FirstName = :c AND Address = :d AND City = :e]]></db:sql>
-                <db:input-parameters ><![CDATA[#[{a: 19 , b: 'SampleLastname', c: 'TEST', d: '123', e: 'asd'}]]]></db:input-parameters>
+                <db:sql ><![CDATA[SELECT COUNT(*) FROM PERSONS WHERE PersonID = :a]]></db:sql>
+                <db:input-parameters ><![CDATA[#[{a: 19}]]]></db:input-parameters>
             </db:select>
             <munit-tools:assert-equals actual="#[payload[0].'COUNT(*)']" expected="#[1]"/>
 
             <db:select config-ref="${config}">
-                <db:sql ><![CDATA[SELECT COUNT(*) FROM PERSONS WHERE PersonID = :a AND LastName = :b AND FirstName = :c AND Address = :d AND City = :e]]></db:sql>
-                <db:input-parameters ><![CDATA[#[{a: 0, b: 'CACHO', c: 'TEST', d: '123', e: 'asd'}]]]></db:input-parameters>
+                <db:sql ><![CDATA[SELECT COUNT(*) FROM PERSONS WHERE PersonID = :a]]></db:sql>
+                <db:input-parameters ><![CDATA[#[{a: 0}]]]></db:input-parameters>
             </db:select>
             <munit-tools:assert-equals actual="#[payload[0].'COUNT(*)']" expected="#[1]"/>
         </munit:validation>

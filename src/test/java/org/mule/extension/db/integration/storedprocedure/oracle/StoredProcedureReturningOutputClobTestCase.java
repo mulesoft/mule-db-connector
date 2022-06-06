@@ -7,23 +7,20 @@
 
 package org.mule.extension.db.integration.storedprocedure.oracle;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runners.Parameterized;
+import static org.mule.extension.db.integration.TestDbConfig.getOracleResource;
+import static java.util.Collections.emptyList;
+
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.OracleTestDatabase;
 
-import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import static java.util.Collections.emptyList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mule.extension.db.integration.TestDbConfig.getOracleResource;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runners.Parameterized;
 
-public class StoredProcedureWithClobResultsetTestCase extends AbstractDbIntegrationTestCase {
+public class StoredProcedureReturningOutputClobTestCase extends AbstractDbIntegrationTestCase {
 
   @Parameterized.Parameters(name = "{2}")
   public static List<Object[]> parameters() {
@@ -40,17 +37,18 @@ public class StoredProcedureWithClobResultsetTestCase extends AbstractDbIntegrat
 
   @Override
   protected String[] getFlowConfigurationResources() {
-    return new String[] {"integration/storedprocedure/stored-procedure-oracle-with-clob-resultset.xml"};
-  }
-
-  @Before
-  public void init() throws SQLException {
-    ((OracleTestDatabase) this.testDatabase).createPackages(getDefaultDataSource().getConnection());
+    return new String[] {"integration/storedprocedure/stored-procedure-oracle-with-clob-output.xml"};
   }
 
   @Test
-  public void getClobResultFromStoredProcedurePackage() throws Exception {
-    Map<String, Object> payloadSP = runProcedure("getClobResultFromStoredProcedurePackage");
-    assertThat(payloadSP.get("status").toString(), equalTo("OK"));
+  public void verifyConnectionIsReleasedOutputClob() throws Exception {
+    flowRunner("getClobOutputFromStoredProcedurePackage").run();
+    flowRunner("getClobOutputFromStoredProcedurePackage").run();
   }
+
+  @Before
+  public void setupStoredProcedure() throws Exception {
+    testDatabase.createStoredProcedureOutputClob(getDefaultDataSource());
+  }
+
 }

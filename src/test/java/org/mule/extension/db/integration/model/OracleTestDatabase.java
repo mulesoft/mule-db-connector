@@ -357,6 +357,14 @@ public class OracleTestDatabase extends AbstractTestDatabase {
     executeDdl(dataSource, sql);
   }
 
+  public void createStoredProcedureOutputClob(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "create or replace PROCEDURE myProcClobOut(myParam OUT CLOB) AS aClob CLOB;\n" +
+        "BEGIN\n" +
+        "SELECT to_clob(1) into aClob FROM dual;\n" +
+        "myParam := aClob;\n" +
+        "END;");
+  }
+
   @Override
   public void createStoredProcedureGetContactDetails(DataSource dataSource) throws SQLException {
     final String sql =

@@ -22,62 +22,82 @@
 
     <munit:before-suite name="prepareEverything">
         <db:execute-ddl config-ref="${config}">
-            <db:sql ><![CDATA[CREATE TABLE TABLE_DEMO_DEFAULT_VALUE
-(
-	ID NUMBER generated as identity,
-	PARAMETER_A VARCHAR2(50) not null,
-	PARAMETER_B VARCHAR2(50) not null,
-	PARAMETER_C NUMBER not null
-)]]></db:sql>
+            <db:sql><![CDATA[CREATE TABLE TABLE_DEMO_DEFAULT_VALUE
+                            (
+                                ID NUMBER generated as identity,
+                                PARAMETER_A VARCHAR2(50) not null,
+                                PARAMETER_B VARCHAR2(50) not null,
+                                PARAMETER_C NUMBER not null
+                            )]]>
+            </db:sql>
         </db:execute-ddl>
         <db:execute-ddl config-ref="${config}">
-            <db:sql ><![CDATA[CREATE TABLE PERSONS
-(
-    PersonID int,
-    LastName varchar(255),
-    FirstName varchar(255),
-    Address varchar(255),
-    City varchar(255)
-)]]></db:sql>
+            <db:sql><![CDATA[CREATE TABLE PERSONS
+                            (
+                                PersonID int,
+                                LastName varchar(255),
+                                FirstName varchar(255),
+                                Address varchar(255),
+                                City varchar(255)
+                            )]]>
+            </db:sql>
         </db:execute-ddl>
         <db:execute-ddl config-ref="${config}">
-            <db:sql ><![CDATA[CREATE PROCEDURE SP_DEMO(PARAMETERA VARCHAR2, PARAMETERB VARCHAR2, PARAMETERC NUMBER)
-IS
- BEGIN
- INSERT INTO TABLE_DEMO_DEFAULT_VALUE (PARAMETER_A, PARAMETER_B, PARAMETER_C) VALUES (PARAMETERA, PARAMETERB, PARAMETERC);
-END;]]></db:sql>
+            <db:sql><![CDATA[CREATE PROCEDURE SP_DEMO(PARAMETERA VARCHAR2, PARAMETERB VARCHAR2, PARAMETERC NUMBER)
+                             IS
+                                BEGIN
+                                    INSERT INTO TABLE_DEMO_DEFAULT_VALUE (PARAMETER_A, PARAMETER_B, PARAMETER_C) VALUES (PARAMETERA, PARAMETERB, PARAMETERC);
+                                END;]]>
+            </db:sql>
         </db:execute-ddl>
         <db:execute-ddl config-ref="${config}">
-            <db:sql ><![CDATA[CREATE PROCEDURE SP_DEMO_DEFAULT_VALUE(PARAMETERA VARCHAR2, PARAMETERB VARCHAR2 DEFAULT 'CHACHA', PARAMETERC NUMBER)
-IS
-  BEGIN
-    INSERT INTO TABLE_DEMO_DEFAULT_VALUE (PARAMETER_A, PARAMETER_B, PARAMETER_C) VALUES (PARAMETERA, PARAMETERB, PARAMETERC);
-  END;]]></db:sql>
+            <db:sql><![CDATA[CREATE PROCEDURE SP_DEMO_WITH_OUT(PARAMETERA VARCHAR2, PARAMETERB VARCHAR2, PARAMETERC NUMBER, PARAMETERD OUT NUMBER)
+                            IS
+                                BEGIN
+                                    PARAMETERD := 1000;
+                                END;]]>
+            </db:sql>
         </db:execute-ddl>
         <db:execute-ddl config-ref="${config}">
-            <db:sql ><![CDATA[CREATE OR REPLACE
-PACKAGE PACKAGE1 AS
- PROCEDURE searchFor (l_name IN VARCHAR2);
- PROCEDURE searchFor (id_test IN INT);
-END PACKAGE1;]]></db:sql>
+            <db:sql><![CDATA[CREATE PROCEDURE SP_DEMO_WITH_INOUT(PARAMETERA VARCHAR2, PARAMETERB IN OUT VARCHAR2, PARAMETERC NUMBER)
+                              IS
+                                BEGIN
+                                    INSERT INTO TABLE_DEMO_DEFAULT_VALUE (PARAMETER_A, PARAMETER_B, PARAMETER_C) VALUES (PARAMETERA, PARAMETERB, PARAMETERC);
+                                    PARAMETERB := 3000;
+                                END;]]>
+            </db:sql>
         </db:execute-ddl>
         <db:execute-ddl config-ref="${config}">
-            <db:sql ><![CDATA[CREATE OR REPLACE
-PACKAGE BODY PACKAGE1 AS
-
-  PROCEDURE SEARCHFOR (l_name IN VARCHAR2)
-  AS
-    BEGIN
-      INSERT INTO PERSONS VALUES (0, l_name, 'TEST', '123', 'asd');
-    END;
-
-  PROCEDURE SEARCHFOR (id_test IN INT)
-  AS
-    BEGIN
-      INSERT INTO PERSONS VALUES (id_test, 'SampleLastname', 'TEST', '123', 'asd');
-    END;
-
-END PACKAGE1;]]></db:sql>
+            <db:sql><![CDATA[CREATE PROCEDURE SP_DEMO_DEFAULT_VALUE(PARAMETERA VARCHAR2, PARAMETERB VARCHAR2 DEFAULT 'CHACHA', PARAMETERC NUMBER)
+                              IS
+                                BEGIN
+                                    INSERT INTO TABLE_DEMO_DEFAULT_VALUE (PARAMETER_A, PARAMETER_B, PARAMETER_C) VALUES (PARAMETERA, PARAMETERB, PARAMETERC);
+                                END;]]>
+            </db:sql>
+        </db:execute-ddl>
+        <db:execute-ddl config-ref="${config}">
+            <db:sql><![CDATA[CREATE OR REPLACE PACKAGE PACKAGE1
+                              AS
+                                PROCEDURE searchFor (l_name IN VARCHAR2);
+                                PROCEDURE searchFor (id_test IN INT);
+                              END PACKAGE1;]]>
+            </db:sql>
+        </db:execute-ddl>
+        <db:execute-ddl config-ref="${config}">
+            <db:sql><![CDATA[CREATE OR REPLACE PACKAGE BODY PACKAGE1
+                             AS
+                                PROCEDURE SEARCHFOR (l_name IN VARCHAR2)
+                                    AS
+                                        BEGIN
+                                            INSERT INTO PERSONS VALUES (0, l_name, 'TEST', '123', 'asd');
+                                        END;
+                                PROCEDURE SEARCHFOR (id_test IN INT)
+                                    AS
+                                        BEGIN
+                                            INSERT INTO PERSONS VALUES (id_test, 'SampleLastname', 'TEST', '123', 'asd');
+                                        END;
+                            END PACKAGE1;]]>
+            </db:sql>
         </db:execute-ddl>
     </munit:before-suite>
 
@@ -93,6 +113,44 @@ END PACKAGE1;]]></db:sql>
             <db:select config-ref="${config}">
                 <db:sql ><![CDATA[SELECT COUNT(*) FROM TABLE_DEMO_DEFAULT_VALUE WHERE PARAMETER_A = :parametera AND PARAMETER_B = :parameterb AND PARAMETER_C = :parameterc]]></db:sql>
                 <db:input-parameters ><![CDATA[#[{parametera: 'SARLANDA', parameterb: 'C', parameterc: 123456}]]]></db:input-parameters>
+            </db:select>
+            <munit-tools:assert-equals actual="#[payload[0].'COUNT(*)']" expected="#[1]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="testNamedParametersWithOut" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+        <munit:execution>
+            <db:stored-procedure config-ref="${config}">
+                <db:sql><![CDATA[call SP_DEMO_WITH_OUT(PARAMETERB => :parameterb, PARAMETERD=>:parameterOUT, PARAMETERC=> :parameterc, PARAMETERA =>:parametera)]]></db:sql>
+                <db:input-parameters><![CDATA[#[{parametera: 'SARLANDA', parameterb: 'C', parameterc: 123456}]]]></db:input-parameters>
+                <db:output-parameters >
+                    <db:output-parameter key="parameterOUT" type="NUMERIC" />
+                </db:output-parameters>
+            </db:stored-procedure>
+        </munit:execution>
+
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[payload.parameterOUT]" expected="#[1000]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="testNamedParametersWithInOut" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+        <munit:execution>
+            <db:stored-procedure config-ref="${config}">
+                <db:sql><![CDATA[call SP_DEMO_WITH_INOUT(PARAMETERB => :parameterb, PARAMETERC=> :parameterc, PARAMETERA =>:parametera)]]></db:sql>
+                <db:input-parameters><![CDATA[#[{parametera: 'SARLANDA', parameterc: 9999}]]]></db:input-parameters>
+                <db:in-out-parameters >
+                    <db:in-out-parameter key="parameterb" value="W" />
+                </db:in-out-parameters>
+            </db:stored-procedure>
+        </munit:execution>
+
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[payload.parameterb]" expected="#['3000']"/>
+
+            <db:select config-ref="${config}">
+                <db:sql ><![CDATA[SELECT COUNT(*) FROM TABLE_DEMO_DEFAULT_VALUE WHERE PARAMETER_A = :parametera AND PARAMETER_B = :parameterb AND PARAMETER_C = :parameterc]]></db:sql>
+                <db:input-parameters ><![CDATA[#[{parametera: 'SARLANDA', parameterb: 'W', parameterc: 9999}]]]></db:input-parameters>
             </db:select>
             <munit-tools:assert-equals actual="#[payload[0].'COUNT(*)']" expected="#[1]"/>
         </munit:validation>
@@ -161,12 +219,14 @@ END PACKAGE1;]]></db:sql>
                     drop package SYS.PACKAGE1;
                     drop procedure SP_DEMO_DEFAULT_VALUE;
                     drop procedure SP_DEMO;
+                    drop procedure SP_DEMO_WITH_OUT;
+                    drop procedure SP_DEMO_WITH_INOUT;
                     drop table PERSONS;
                     drop table TABLE_DEMO_DEFAULT_VALUE;
                 </db:sql>
             </db:execute-script>
             <error-handler>
-                <on-error-continue logException="false"/>
+                <on-error-continue logException="true"/>
             </error-handler>
         </try>
     </munit:after-suite>

@@ -36,7 +36,7 @@
         <muleExtensionsShadeVersion>1.0.4</muleExtensionsShadeVersion>
 
         <caffeineVersion>2.9.3</caffeineVersion>
-        <derbyVersion>10.14.2.0</derbyVersion>
+        <derbyVersion>10.16.1.1</derbyVersion>
         <mySqlVersion>8.0.29</mySqlVersion>
         <mssqlVersion>7.0.0.jre8</mssqlVersion>
         <oracle.driver.version>21.5.0.0</oracle.driver.version>

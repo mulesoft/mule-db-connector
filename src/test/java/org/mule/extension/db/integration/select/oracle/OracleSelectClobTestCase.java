@@ -45,9 +45,4 @@ public class OracleSelectClobTestCase extends AbstractDbIntegrationTestCase {
     flowRunner("select-clob").keepStreamsOpen().run();
     flowRunner("select-clob").run();
   }
-
-  @Override
-  protected void doTearDown() {
-
-  }
 }

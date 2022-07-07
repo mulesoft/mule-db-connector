@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+            http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+            http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <flow name="select-clob">
+        <db:select config-ref="oracleDbPoolingConfig">
+            <db:sql>
+                SELECT * FROM LANGUAGES
+            </db:sql>
+        </db:select>
+
+        <!--With sizeOf pagingprovider will attempt to close the connection but won't be able to since CLOB hasn't been consumed yet. -->
+        <set-variable value="#[sizeOf(payload)]" variableName="size"/>
+        <set-variable value="#[payload[0].SAMPLE_TEXT]" variableName="first"/>
+        <set-variable value="#[payload[1].SAMPLE_TEXT]" variableName="second"/>
+        <set-payload value="#[vars.first ++ vars.second]" />
+        <!--CLOB is now consumed and connection can be released-->
+        <logger level="INFO" message='#[payload as String]' />
+
+    </flow>
+
+    <flow name="select-clob-plus">
+        <db:select config-ref="oracleDbPoolingConfig">
+            <db:sql>
+                SELECT * FROM LANGUAGES
+            </db:sql>
+        </db:select>
+
+        <set-variable value="#[sizeOf(payload)]" variableName="size"/>
+        <set-variable value="#[payload[0].SAMPLE_TEXT]" variableName="first"/>
+        <set-variable value="#[payload[1].SAMPLE_TEXT]" variableName="second"/>
+        <set-payload value="#[vars.size]" />
+        <logger level="ERROR" message='#["Soy ERROR PLUS: " ++ payload]' />
+
+    </flow>
+</mule>

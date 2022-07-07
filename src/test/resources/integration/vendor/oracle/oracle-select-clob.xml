@@ -28,18 +28,4 @@
 
     </flow>
 
-    <flow name="select-clob-plus">
-        <db:select config-ref="oracleDbPoolingConfig">
-            <db:sql>
-                SELECT * FROM LANGUAGES
-            </db:sql>
-        </db:select>
-
-        <set-variable value="#[sizeOf(payload)]" variableName="size"/>
-        <set-variable value="#[payload[0].SAMPLE_TEXT]" variableName="first"/>
-        <set-variable value="#[payload[1].SAMPLE_TEXT]" variableName="second"/>
-        <set-payload value="#[vars.size]" />
-        <logger level="ERROR" message='#["Soy ERROR PLUS: " ++ payload]' />
-
-    </flow>
 </mule>

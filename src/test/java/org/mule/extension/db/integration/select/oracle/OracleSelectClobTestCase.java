@@ -6,13 +6,10 @@
  */
 package org.mule.extension.db.integration.select.oracle;
 
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.OracleTestDatabase;
-import org.mule.runtime.api.message.Message;
-import org.mule.tck.junit4.rule.DynamicPort;
 
 import java.util.LinkedList;
 import java.util.List;

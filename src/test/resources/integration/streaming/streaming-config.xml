@@ -30,15 +30,11 @@
                 <db:sql>SELECT * FROM PLANET</db:sql>
             </db:select>
             <!--For each used to consume the entire stream-->
-            <foreach>
-                <set-variable variableName="accumulator" value="#[vars.accumulator + payload]"/>
-            </foreach>
+            <set-variable variableName="accumulator" value="#[vars.accumulator + payload[0] + payload[1] + payload[2]]"/>
             <db:select config-ref="dbConfig">
                 <db:sql>SELECT * FROM PLANET</db:sql>
             </db:select>
-            <foreach>
-                <set-variable variableName="accumulator" value="#[vars.accumulator + payload]"/>
-            </foreach>
+            <set-variable variableName="accumulator" value="#[vars.accumulator + payload[0] + payload[1] + payload[2]]"/>
         </try>
         <set-payload value="#[vars.accumulator]"/>
     </flow>

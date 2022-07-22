@@ -8,10 +8,6 @@
         http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
         http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
 
-    <db:config name="Database_Config_Local">
-        <db:oracle-connection host="localhost" user="sys as sysdba" password="password" serviceName="XE"/>
-    </db:config>
-
     <db:config name="oracleDbConfig">
         <db:oracle-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('oracle')]" serviceName="XEPDB1" user="system" password="oracle">
             <db:pooling-profile/>
@@ -20,12 +16,6 @@
 
     <db:config name="oracleDbConfigWithoutPoolingProfile">
         <db:oracle-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('oracle')]" serviceName="XEPDB1" user="system" password="oracle">
-        </db:oracle-connection>
-        <expiration-policy maxIdleTime="24" timeUnit="HOURS" />
-    </db:config>
-
-    <db:config name="oracleDbConfigLister">
-        <db:oracle-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('oracle')]" serviceName="XE" user="system" password="oracle">
         </db:oracle-connection>
     </db:config>
 

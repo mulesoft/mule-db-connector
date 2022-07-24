@@ -11,13 +11,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.mule.connectors</groupId>
-    <artifactId>mule-db-connector</artifactId>
+    <groupId>com.teradata.mulesoft</groupId>
+    <artifactId>teradata-connector</artifactId>
     <packaging>mule-extension</packaging>
-    <version>1.14.0-SNAPSHOT</version>
-
-    <name>Database Connector</name>
-    <description>A Mule extension that provides functionality for connecting to Databases through the JDBC standard</description>
+    <version>0.0.1</version>
+    <name>Teradata Connector</name>
+    <description>An extension that provides functionality for connecting any Mule project to Teradata JDBC Databases</description>
 
     <properties>
         <c3p0Version>0.9.5.5</c3p0Version>

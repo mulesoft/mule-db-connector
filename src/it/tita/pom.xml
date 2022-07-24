@@ -8,7 +8,7 @@
     <artifactId>mule-db-connector-it</artifactId>
     <version>2.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>DB Connector - Integration Tests</name>
+    <name>Teradata Connector - Integration Tests</name>
 
     <properties>
         <tita.version>4.5.0</tita.version>

@@ -458,6 +458,7 @@
                                 <goal>generate-sources</goal>
                                 <goal>test</goal>
                             </goals>
+                            <skipInvocation>${skipTita}</skipInvocation>
                         </configuration>
                         <executions>
                             <execution>

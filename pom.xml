@@ -16,7 +16,7 @@
     <packaging>mule-extension</packaging>
     <version>0.0.1</version>
     <name>Teradata Connector</name>
-    <description>An extension that provides functionality for connecting any Mule project to Teradata JDBC Databases</description>
+    <description>An extension that provides functionality for connecting any Mule project to Teradata Vantage</description>
 
     <properties>
         <c3p0Version>0.9.5.5</c3p0Version>
@@ -190,6 +190,11 @@
             <artifactId>ojdbc8</artifactId>
             <version>${oracle.driver.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.teradata</groupId>
+            <artifactId>terajdbc4</artifactId>
+            <version>17.10.00.24</version>
         </dependency>
     </dependencies>
 

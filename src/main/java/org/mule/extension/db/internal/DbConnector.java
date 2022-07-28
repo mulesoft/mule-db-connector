@@ -21,6 +21,7 @@ import org.mule.extension.db.internal.domain.connection.generic.DbGenericConnect
 import org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.sqlserver.SqlServerConnectionProvider;
+import org.mule.extension.db.internal.domain.connection.teradata.TeradataConnectionProvider;
 import org.mule.extension.db.internal.operation.DbBulkOperations;
 import org.mule.extension.db.internal.operation.DbDdlOperations;
 import org.mule.extension.db.internal.operation.DbDmlOperations;
@@ -43,10 +44,8 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
 @Extension(name = "Teradata")
 @Operations({DbBulkOperations.class, DbDdlOperations.class, DbDmlOperations.class})
 @Sources(RowListener.class)
-@ConnectionProviders({DbDataSourceReferenceConnectionProvider.class, DbGenericConnectionProvider.class,
-    DerbyConnectionProvider.class, MySqlConnectionProvider.class, OracleDbConnectionProvider.class,
-    SqlServerConnectionProvider.class})
-@Xml(prefix = "db")
+@ConnectionProviders({DbGenericConnectionProvider.class, TeradataConnectionProvider.class})
+@Xml(prefix = "teradata")
 @ErrorTypes(DbError.class)
 @ExpressionFunctions(DbFunctions.class)
 @OnException(DbExceptionHandler.class)

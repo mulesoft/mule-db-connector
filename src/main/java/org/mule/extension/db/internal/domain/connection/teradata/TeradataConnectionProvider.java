@@ -6,20 +6,27 @@
  */
 package org.mule.extension.db.internal.domain.connection.teradata;
 
+import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
-import org.mule.db.commons.internal.domain.connection.generic.GenericConnectionProvider;
+import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
+import org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionParameters;
 import org.mule.runtime.api.connection.ConnectionProvider;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
+import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
 import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.mule.db.commons.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
+import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
+import static org.mule.extension.db.internal.util.MigrationUtils.mapDataSourceConfig;
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
+import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
 
 /**
  * {@link ConnectionProvider} that creates connections for any kind of database using a JDBC URL
@@ -27,15 +34,19 @@ import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
  */
 @DisplayName("Teradata Connection")
 @Alias("teradata")
-@ExternalLib(name = "JDBC Driver", description = "A JDBC driver which supports connecting to the Database",
-    nameRegexpMatcher = DRIVER_FILE_NAME_PATTERN, type = JAR)
-public class TeradataConnectionProvider extends GenericConnectionProvider {
+public class TeradataConnectionProvider extends DbConnectionProvider {
 
   private final Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache = new ConcurrentHashMap<>();
+  @ParameterGroup(name = CONNECTION)
+  private TeradataConnectionParameters teradataConnectionParameters;
 
   @Override
-  protected DbConnection createDbConnection(Connection connection) throws Exception {
-    return super.createDbConnection(connection);
+  public java.util.Optional<DataSource> getDataSource() {
+    return empty();
   }
 
+  @Override
+  public java.util.Optional<DataSourceConfig> getDataSourceConfig() {
+    return ofNullable(mapDataSourceConfig(teradataConnectionParameters));
+  }
 }

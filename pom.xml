@@ -14,7 +14,7 @@
     <groupId>com.teradata.mulesoft</groupId>
     <artifactId>teradata-connector</artifactId>
     <packaging>mule-extension</packaging>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <name>Teradata Connector</name>
     <description>An extension that provides functionality for connecting any Mule project to Teradata Vantage</description>
 

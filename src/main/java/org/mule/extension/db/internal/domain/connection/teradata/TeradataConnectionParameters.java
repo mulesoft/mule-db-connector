@@ -19,10 +19,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
 /**
  *  {@link DataSourceConfig}'s parameters for the {@link GenericConnectionProvider}
  *
- * @since 1.0
- *  @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
-@Deprecated
 public class TeradataConnectionParameters extends BaseDbConnectionParameters implements DataSourceConfig {
 
   /**
@@ -34,18 +31,10 @@ public class TeradataConnectionParameters extends BaseDbConnectionParameters imp
   private String url;
 
   /**
-   * Fully-qualified name of the database driver class.
-   */
-  @Parameter
-  @Placement(order = 2)
-  @ClassValue(extendsOrImplements = "java.sql.Driver")
-  private String driverClassName;
-
-  /**
    * Database username
    */
   @Parameter
-  @Placement(order = 3)
+  @Placement(order = 2)
   @Optional
   private String user;
 
@@ -53,7 +42,7 @@ public class TeradataConnectionParameters extends BaseDbConnectionParameters imp
    * Database password
    */
   @Parameter
-  @Placement(order = 4)
+  @Placement(order = 3)
   @Password
   @Optional
   private String password;
@@ -65,7 +54,7 @@ public class TeradataConnectionParameters extends BaseDbConnectionParameters imp
 
   @Override
   public String getDriverClassName() {
-    return driverClassName;
+    return "com.teradata.jdbc.TeraDriver";
   }
 
   @Override

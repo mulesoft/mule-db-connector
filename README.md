@@ -1,8 +1,12 @@
 
 
-#### Compile  **Import add -D{vendor/profile}**
+#### Compile running all the tests  **Import add -D{vendor/profile}**
 ```
-mvn clean install  -DruntimeProduct=MULE_EE -DruntimeVersion=4.3.0  -Dmunit.disable.lazy.initialization=false -Doracle
+mvn clean install  -DruntimeProduct=MULE_EE -DruntimeVersion=4.3.0  -Doracle
+```
+#### Compile test running skip tests **Import add -D{vendor/profile}** lazy.initialization to avoid connection issues
+```
+mvn clean install  -DruntimeProduct=MULE_EE -DruntimeVersion=4.3.0  -Dmunit.disable.lazy.initialization=false  -Doracle
 ```
 #### Compile test running skip tests **Import add -D{vendor/profile}**
 ```

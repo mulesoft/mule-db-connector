@@ -20,7 +20,7 @@
         </munit:parameterizations>
     </munit:config>
 
-    <munit:before-test name="createATableForListenerTest">
+    <munit:before-suite name="createATableForListenerTest">
         <try>
             <db:execute-script config-ref="${config}">
                 <db:sql><![CDATA[DROP TABLE  TEST_LISTENER]]></db:sql>
@@ -30,8 +30,21 @@
                 </on-error-continue>
             </error-handler>
         </try>
+        <try>
+            <db:execute-script config-ref="${config}">
+                <db:sql><![CDATA[DROP TABLE  TEST_LISTENER_EXTERNAL_CONNECTION]]></db:sql>
+            </db:execute-script>
+            <error-handler>
+                <on-error-continue enableNotifications="true" logException="false">
+                </on-error-continue>
+            </error-handler>
+        </try>
         <db:execute-ddl config-ref="${config}">
             <db:sql><![CDATA[CREATE TABLE TEST_LISTENER (id number)]]></db:sql>
+        </db:execute-ddl>
+
+        <db:execute-ddl config-ref="${config}">
+            <db:sql><![CDATA[CREATE TABLE TEST_LISTENER_EXTERNAL_CONNECTION (id number)]]></db:sql>
         </db:execute-ddl>
 
         <db:execute-ddl config-ref="${config}">
@@ -51,7 +64,7 @@ begin
 end;
 ]]></db:sql>
         </db:execute-ddl>
-    </munit:before-test>
+    </munit:before-suite>
 
     <munit:test name="prepareArrayAndStructLocalTransactionSource" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
         <munit:enable-flow-sources>
@@ -64,7 +77,25 @@ end;
             </db:insert>
 
             <munit-tools:dequeue queueName="sourceLocalTransactionTestQueue" timeout="100" timeoutUnit="SECONDS"/>
-            <logger level="INFO"  message="Hello test pop"/>
+
+        </munit:execution>
+
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[payload.list[0][1]]" expected="#[1]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="prepareArrayAndStructLocalTransactionSourceWithExternalConnection" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="dbListenerFlowExternalConnection"/>
+        </munit:enable-flow-sources>
+
+        <munit:execution>
+            <db:insert config-ref="${config}">
+                <db:sql><![CDATA[INSERT INTO TEST_LISTENER(ID) VALUES(1)]]></db:sql>
+            </db:insert>
+
+            <munit-tools:dequeue queueName="sourceLocalTransactionTestQueueExternalConnection" timeout="100" timeoutUnit="SECONDS"/>
 
         </munit:execution>
 
@@ -107,5 +138,30 @@ end;
         <logger level="INFO"  message="#[payload]"/>
 
         <munit-tools:queue queueName="sourceLocalTransactionTestQueue"/>
+    </flow>
+
+    <flow name="dbListenerFlowExternalConnection">
+        <db:listener config-ref="${config}" table="TEST_LISTENER" transactionalAction="ALWAYS_BEGIN">
+            <scheduling-strategy>
+                <fixed-frequency  frequency="10"/>
+            </scheduling-strategy>
+        </db:listener>
+
+        <db:insert config-ref="oracleDbPoolingListenerExternalConfig">
+            <db:sql><![CDATA[INSERT INTO TEST_LISTENER_EXTERNAL_CONNECTION VALUES(1)]]></db:sql>
+        </db:insert>
+
+        <set-variable
+                value="#[Db::prepareArray('TEST_STRUCT_COLLECTION', [ Db::prepareStruct('TEST_STRUCT', ['hi', 1, 'bye']), Db::prepareStruct('TEST_STRUCT', ['hi2', 2, 'bye2']) ])]"
+                variableName="list"/>
+
+        <db:stored-procedure config-ref="${config}" inOutParameters='#[{ "list": vars.list }]'>
+            <db:sql>call retain_first_struct(:list)</db:sql>
+        </db:stored-procedure>
+
+        <set-payload value="#[payload]"/>
+        <logger level="INFO"  message="#[payload]"/>
+
+        <munit-tools:queue queueName="sourceLocalTransactionTestQueueExternalConnection"/>
     </flow>
 </mule>

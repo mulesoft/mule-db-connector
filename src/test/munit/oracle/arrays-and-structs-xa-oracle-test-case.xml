@@ -91,6 +91,9 @@ end;
                     <db:sql ><![CDATA[INSERT INTO TEST_XA_TRANSACTION VALUES(1)]]></db:sql>
                 </db:insert>
                 <set-variable value="#[Db::prepareArray('TEST_STRUCT_COLLECTION', [ Db::prepareStruct('TEST_STRUCT', ['hi', 1, 'bye']), Db::prepareStruct('TEST_STRUCT', ['hi2', 2, 'bye2']) ])]" variableName="list" />
+                <db:stored-procedure config-ref="oracleDbPoolingListenerExternalConfig" inOutParameters='#[{ "list": vars.list }]'>
+                    <db:sql>call retain_first_struct(:list)</db:sql>
+                </db:stored-procedure>
                 <db:stored-procedure  config-ref="${config}" inOutParameters='#[{ "list": vars.list }]'>
                     <db:sql><![CDATA[call retain_first_struct(:list)]]></db:sql>
                 </db:stored-procedure>

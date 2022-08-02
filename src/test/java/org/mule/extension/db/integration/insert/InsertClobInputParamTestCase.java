@@ -9,13 +9,18 @@ package org.mule.extension.db.integration.insert;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.runtime.api.message.Message;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileInputStream;
+
 public class InsertClobInputParamTestCase extends AbstractDbIntegrationTestCase {
+
+  private static final String FILE_TEST_TEXT = "Hello Pluto!";
 
   @Override
   protected String[] getFlowConfigurationResources() {
@@ -34,6 +39,13 @@ public class InsertClobInputParamTestCase extends AbstractDbIntegrationTestCase 
     Message response = flowRunner("usesStringOnExplicitParam").withPayload(TEST_MESSAGE).run().getMessage();
 
     assertThat(response.getPayload().getValue(), equalTo(TEST_MESSAGE));
+  }
+
+  @Test
+  public void usesStreamOnImplicitParam() throws Exception {
+    FileInputStream stream = new FileInputStream("src/test/resources/testFile.txt");
+    Message response = flowRunner("usesStringOnImplicitParam").withPayload(stream).run().getMessage();
+    assertThat(response.getPayload().getValue(), equalTo(FILE_TEST_TEXT));
   }
 
   @Before

@@ -10,13 +10,13 @@ package org.mule.extension.db.integration.insert;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-import java.io.FileInputStream;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.runtime.api.message.Message;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileInputStream;
 
 public class InsertClobInputParamTestCase extends AbstractDbIntegrationTestCase {
 

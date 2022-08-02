@@ -4,11 +4,9 @@
 	  xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
 	  xmlns:db="http://www.mulesoft.org/schema/mule/db"
 	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	  xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
 	  xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
 	  xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
-	  xsi:schemaLocation="http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
-        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+	  xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
         http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
         http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
@@ -17,16 +15,11 @@
 	<munit:config name="select-clob-java-oracle-test-case.xml" minMuleVersion="4.1.6" />
 
 	<munit:before-test name="createATableWithLOBs">
-		<logger level="DEBUG" message='HElloo1' />
 		<db:execute-ddl config-ref="oracleDbConfig">
 			<db:sql><![CDATA[CREATE TABLE CLOBTEST(Name VARCHAR2(50), SampleText CLOB)]]></db:sql>
 		</db:execute-ddl>
 	</munit:before-test>
 
-	<!-- This test uses a batch job to process the results of the select operation. The select operation returns results
-	from a table that has LOB columns. On Oracle, these columns are returned as input streams. This test assures
-	that if there are open streams not yet consumed, the connection will stay open until the flow ends. In this way,
-	there won't be any "Connection Closed" exception when trying to read the input streams. -->
 	<munit:test name="insertClobJava" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
 		<munit:execution>
 			<ee:transform>

@@ -67,7 +67,7 @@ output text/plain
 			<munit-tools:assert-equals
 					actual="#[payload.SampleText]"
 					expected="HelloWorld"
-					message="The number of affected rows should be 1."/>
+					message="Message should be HelloWorld."/>
 		</munit:validation>
 	</munit:test>
 

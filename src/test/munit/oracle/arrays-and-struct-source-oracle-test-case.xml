@@ -54,7 +54,7 @@
             <db:sql><![CDATA[create or replace type TEST_STRUCT_COLLECTION as table of TEST_STRUCT]]></db:sql>
         </db:execute-ddl>
         <db:execute-ddl config-ref="${config}">
-        <db:sql><![CDATA[
+            <db:sql><![CDATA[
 create or replace procedure retain_first_struct (z in out TEST_STRUCT_COLLECTION)
     IS
 begin

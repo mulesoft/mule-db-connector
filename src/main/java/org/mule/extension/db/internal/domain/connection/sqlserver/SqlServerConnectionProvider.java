@@ -46,7 +46,7 @@ import org.mule.runtime.extension.api.annotation.param.display.DisplayName;
 public class SqlServerConnectionProvider extends DbConnectionProvider {
 
   static final String DRIVER_CLASS_NAME = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-  static final String MSSQL_GAV = "com.microsoft.sqlserver:mssql-jdbc:6.2.2.jre8";
+  static final String MSSQL_GAV = "com.microsoft.sqlserver:mssql-jdbc:7.0.0.jre8";
 
 
 

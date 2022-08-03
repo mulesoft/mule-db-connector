@@ -45,7 +45,7 @@ public class DerbyConnectionProvider extends DbConnectionProvider {
 
   private static final String FAILED_TO_START_DATABASE = "Failed to start database";
   private static final String NOT_FOUND = "not found";
-  static final String DERBY_GAV = "org.apache.derby:derby:10.13.1.1";
+  static final String DERBY_GAV = "org.apache.derby:derby:10.14.2.0";
 
 
   @ParameterGroup(name = CONNECTION)

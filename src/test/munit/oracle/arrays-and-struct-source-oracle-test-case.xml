@@ -10,7 +10,7 @@
         http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
-    <munit:config name="arrays-and-struct-source-oracle-test-case.xml">
+    <munit:config name="arrays-and-struct-source-oracle-test-case.xml" minMuleVersion="4.1.6">
         <munit:parameterizations>
             <munit:parameterization name="oracleDbPoolingListenerConfig">
                 <munit:parameters>
@@ -48,10 +48,10 @@
         </db:execute-ddl>
 
         <db:execute-ddl config-ref="${config}">
-            <db:sql>create or replace type TEST_STRUCT as object (field1 varchar2(3), field2 number(2), field3 varchar2(60))</db:sql>
+            <db:sql><![CDATA[create or replace type TEST_STRUCT as object (field1 varchar2(3), field2 number(2), field3 varchar2(60))]]></db:sql>
         </db:execute-ddl>
         <db:execute-ddl config-ref="${config}">
-            <db:sql>create or replace type TEST_STRUCT_COLLECTION as table of TEST_STRUCT</db:sql>
+            <db:sql><![CDATA[create or replace type TEST_STRUCT_COLLECTION as table of TEST_STRUCT]]></db:sql>
         </db:execute-ddl>
         <db:execute-ddl config-ref="${config}">
             <db:sql><![CDATA[
@@ -108,9 +108,11 @@ end;
         <try>
             <db:execute-script config-ref="${config}">
                 <db:sql>
+                    <![CDATA[
                     drop procedure retain_first_struct;
                     drop type TEST_STRUCT_COLLECTION;
                     drop type TEST_STRUCT;
+                    ]]>
                 </db:sql>
             </db:execute-script>
             <error-handler>
@@ -131,7 +133,7 @@ end;
                 variableName="list"/>
 
         <db:stored-procedure config-ref="${config}" inOutParameters='#[{ "list": vars.list }]'>
-            <db:sql>call retain_first_struct(:list)</db:sql>
+            <db:sql><![CDATA[call retain_first_struct(:list)]]></db:sql>
         </db:stored-procedure>
 
         <set-payload value="#[payload]"/>
@@ -156,11 +158,11 @@ end;
                 variableName="list"/>
 
         <db:stored-procedure config-ref="oracleDbPoolingListenerExternalConfig" inOutParameters='#[{ "list": vars.list }]'>
-            <db:sql>call retain_first_struct(:list)</db:sql>
+            <db:sql><![CDATA[call retain_first_struct(:list)]]></db:sql>
         </db:stored-procedure>
 
         <db:stored-procedure config-ref="${config}" inOutParameters='#[{ "list": vars.list }]'>
-            <db:sql>call retain_first_struct(:list)</db:sql>
+            <db:sql><![CDATA[call retain_first_struct(:list)]]></db:sql>
         </db:stored-procedure>
 
         <set-payload value="#[payload]"/>

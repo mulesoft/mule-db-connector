@@ -43,7 +43,7 @@
 
         <docker.maven.plugin.version>0.40.2</docker.maven.plugin.version>
         <maven-replacer-plugin.version>1.5.3</maven-replacer-plugin.version>
-        <maven.help.plugin.version>3.2.0</maven.help.plugin.version>
+        <maven.help.plugin.version>3.3.0</maven.help.plugin.version>
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
 

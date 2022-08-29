@@ -66,7 +66,7 @@ end;
 
     <munit:test name="prepareArrayAndStructLocalTransaction" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
         <munit:execution>
-            <try transactionType="LOCAL">
+            <try transactionType="LOCAL" transactionalAction="ALWAYS_BEGIN">
                 <db:insert  config-ref="${config}">
                     <db:sql ><![CDATA[INSERT INTO TEST_TRANSACTION VALUES(1)]]></db:sql>
                 </db:insert>
@@ -83,7 +83,7 @@ end;
 
     <munit:test name="prepareArrayAndStructLocalTransactionExternalConnection" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
         <munit:execution>
-            <try transactionType="LOCAL">
+            <try transactionType="LOCAL" transactionalAction="ALWAYS_BEGIN">
                 <db:insert config-ref="oracleDbPoolingListenerExternalConfig">
                     <db:sql><![CDATA[INSERT INTO TEST_LISTENER_EXTERNAL_CONNECTION VALUES(1)]]></db:sql>
                 </db:insert>

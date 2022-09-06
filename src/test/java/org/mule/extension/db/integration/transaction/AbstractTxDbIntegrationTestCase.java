@@ -62,7 +62,7 @@ public abstract class AbstractTxDbIntegrationTestCase extends AbstractDbIntegrat
   private void checkState(String planet, DataSource dataSource) throws java.sql.SQLException {
     List<Map<String, Object>> result = selectData("select * from PLANET where POSITION=4", dataSource);
     Matcher<Map<? extends String, ?>> mapMatcher = hasEntry("NAME", planet);
-    //Oracle returns BigDecimals
+    // Oracle returns BigDecimals
     Matcher<Map<? extends String, ?>> numberMatcher =
         hasEntry(is("POSITION"), is(anyOf(new Matcher[] {is(4), is(new BigDecimal(4))})));
     Matcher<Iterable<Map<String, Object>>> matcher = hasItems(mapMatcher, numberMatcher);

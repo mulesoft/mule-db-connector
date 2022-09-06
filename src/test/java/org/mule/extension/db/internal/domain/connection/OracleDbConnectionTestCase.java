@@ -43,19 +43,13 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
 
 
     /*
-    The main goal of this test is to assert that lob resolution is performed using
-    database query only once for every type.
-    
-    Assertions required:
-            * Assert that the query is executed only once for
-              every Type.
-            * Assert that the right value is present in the cache.
-            * Assert that on the following calls for lob resolution
-              the value comes from the cache.
-            * The mock must be reset for every call.
-    
-     Important Note. Fixing DBCON-179 will change the statements executed
-     on every call.
+     * The main goal of this test is to assert that lob resolution is performed using database query only once for every type.
+     * 
+     * Assertions required: Assert that the query is executed only once for every Type. Assert that the right value is present in
+     * the cache. Assert that on the following calls for lob resolution the value comes from the cache. The mock must be reset for
+     * every call.
+     * 
+     * Important Note. Fixing DBCON-179 will change the statements executed on every call.
      */
 
     Map<String, Map<Integer, ResolvedDbType>> dbTypeCache = new ConcurrentHashMap<>();
@@ -68,7 +62,7 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     final String USER_TYPE_NAME_B = "ICECREAM";
     final String USER_TYPE_DBNAME_B = "SANDWICH";
 
-    //First call.
+    // First call.
     OracleConnection delegate = mock(OracleConnection.class);
     when(delegate.unwrap(OracleConnection.class)).thenReturn(delegate);
     PreparedStatement preparedStatement = mock(PreparedStatement.class);
@@ -86,7 +80,7 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     assertThat(dbTypeCache.get(USER_TYPE_NAME).get(0).getName(), is(USER_TYPE_DBNAME));
     verify(preparedStatement, times(2)).executeQuery();
 
-    //Second Call
+    // Second Call
     delegate = mock(OracleConnection.class);
     when(delegate.unwrap(OracleConnection.class)).thenReturn(delegate);
     preparedStatement = mock(PreparedStatement.class);
@@ -104,10 +98,10 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     assertThat(dbTypeCache.containsKey(USER_TYPE_NAME), is(true));
     assertThat(dbTypeCache.get(USER_TYPE_NAME).get(0).getName(), is(USER_TYPE_DBNAME));
     assertThat(dbTypeCache.keySet().size(), is(1));
-    //Fixing DBCON-179 will result in 0 times.
+    // Fixing DBCON-179 will result in 0 times.
     verify(preparedStatement, times(1)).executeQuery();
 
-    //Third Call
+    // Third Call
     delegate = mock(OracleConnection.class);
     when(delegate.unwrap(OracleConnection.class)).thenReturn(delegate);
     preparedStatement = mock(PreparedStatement.class);

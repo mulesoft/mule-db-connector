@@ -25,8 +25,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * {@link ConnectionProvider} that creates connections for any kind of database using a JDBC URL
- * and the required JDBC Driver Class
+ * {@link ConnectionProvider} that creates connections for any kind of database using a JDBC URL and the required JDBC Driver
+ * Class
  */
 @DisplayName("Generic Connection")
 @Alias("generic")

@@ -38,8 +38,8 @@ public class OracleSelectClobTestCase extends AbstractDbIntegrationTestCase {
     return new String[] {"integration/vendor/oracle/oracle-select-clob.xml"};
   }
 
-  //DB Config used has a pool of 1 connection. keepStreamsOpen ensures connection is not closed.
-  //If method is not used, even if there is a leak, the flow runner closes the connection as part of cleanup.
+  // DB Config used has a pool of 1 connection. keepStreamsOpen ensures connection is not closed.
+  // If method is not used, even if there is a leak, the flow runner closes the connection as part of cleanup.
   @Test
   public void selectWith() throws Exception {
     flowRunner("select-clob").keepStreamsOpen().run();

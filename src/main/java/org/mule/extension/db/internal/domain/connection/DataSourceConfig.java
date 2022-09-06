@@ -47,8 +47,7 @@ public interface DataSourceConfig {
   TransactionIsolation getTransactionIsolation();
 
   /**
-   * Indicates whether or not the created datasource has to support XA transactions. Default is
-   * false.
+   * Indicates whether or not the created datasource has to support XA transactions. Default is false.
    */
   boolean isUseXaTransactions();
 

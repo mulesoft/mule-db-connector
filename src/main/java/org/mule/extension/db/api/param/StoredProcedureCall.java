@@ -42,9 +42,8 @@ public class StoredProcedureCall extends ParameterizedStatementDefinition<Stored
   protected LinkedHashMap<String, Object> inOutParameters = new LinkedHashMap<>();
 
   /**
-   * A list of output parameters to be set on the JDBC prepared
-   * statement. Each parameter should be referenced in the sql
-   * text using a semicolon prefix (E.g: {@code call multiply(:value, :result)})
+   * A list of output parameters to be set on the JDBC prepared statement. Each parameter should be referenced in the sql text
+   * using a semicolon prefix (E.g: {@code call multiply(:value, :result)})
    */
   @Parameter
   @Optional

@@ -15,8 +15,7 @@ import org.mule.runtime.extension.api.values.ValueResolvingException;
 import java.util.Set;
 
 /**
- * A static {@link ValueProvider} implementation for Derby Connection provider which hints the available
- * Subsub Protocols.
+ * A static {@link ValueProvider} implementation for Derby Connection provider which hints the available Subsub Protocols.
  *
  * @since 1.1.0
  */

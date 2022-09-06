@@ -57,9 +57,9 @@ import static org.mule.extension.db.internal.util.MigrationUtils.mapParameterize
 /**
  * Selects from a table at a regular interval and generates one message per each obtained row.
  * <p>
- * Optionally, watermark and id columns can be provided. If a watermark column is provided, the values taken from that column
- * will be used to filter the contents of the next poll, so that only rows with a greater watermark value are returned. If an
- * id column is provided, this component will automatically make sure that the same row is not picked twice by concurrent polls
+ * Optionally, watermark and id columns can be provided. If a watermark column is provided, the values taken from that column will
+ * be used to filter the contents of the next poll, so that only rows with a greater watermark value are returned. If an id column
+ * is provided, this component will automatically make sure that the same row is not picked twice by concurrent polls
  *
  * @since 1.3
  */
@@ -93,8 +93,8 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
   private String watermarkColumn;
 
   /**
-   * The name of the column to consider as row ID. If provided, this component will make sure that the same row is not
-   * processed twice by concurrent polls.
+   * The name of the column to consider as row ID. If provided, this component will make sure that the same row is not processed
+   * twice by concurrent polls.
    */
   @Parameter
   @Optional

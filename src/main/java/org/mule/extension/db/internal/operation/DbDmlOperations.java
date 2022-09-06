@@ -61,8 +61,8 @@ public class DbDmlOperations implements Initialisable {
   /**
    * Selects data from a database.
    *
-   * Streaming is automatically applied to avoid preemptive consumption of such results, which may lead
-   * to performance and memory issues.
+   * Streaming is automatically applied to avoid preemptive consumption of such results, which may lead to performance and memory
+   * issues.
    *
    * @param query     a {@link QueryDefinition} as a parameter group
    * @param connector the acting connector
@@ -81,12 +81,14 @@ public class DbDmlOperations implements Initialisable {
   }
 
   /**
-   * Selects single result from a database. If the indicated SQL query returns more than one record, only the first one is returned.
+   * Selects single result from a database. If the indicated SQL query returns more than one record, only the first one is
+   * returned.
    *
-   * Streaming is not used for this operation, which means that you must be careful because all selected fields will be loaded to memory.
+   * Streaming is not used for this operation, which means that you must be careful because all selected fields will be loaded to
+   * memory.
    *
-   * @param query a {@link QueryDefinition} as a parameter group
-   * @param connector the acting connector
+   * @param query      a {@link QueryDefinition} as a parameter group
+   * @param connector  the acting connector
    * @param connection the acting connection
    * @return a map with a single entry containing the operation's output
    * @throws SQLException if an error is produced
@@ -164,9 +166,8 @@ public class DbDmlOperations implements Initialisable {
   /**
    * Invokes a Stored Procedure on the database.
    * <p>
-   * When the stored procedure returns one or more {@link ResultSet} instances, streaming
-   * is automatically applied to avoid preemptive consumption of such results, which may lead
-   * to performance and memory issues.
+   * When the stored procedure returns one or more {@link ResultSet} instances, streaming is automatically applied to avoid
+   * preemptive consumption of such results, which may lead to performance and memory issues.
    *
    * @param call       a {@link StoredProcedureCall} as a parameter group
    * @param connector  the acting connector

@@ -20,13 +20,12 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
  * You can either configure a standard type or a custom one.
  *
  * @since 1.0
-  */
+ */
 @ExclusiveOptionals
 public class TypeClassifier {
 
   /**
-   * Standard type name. Use this attribute to specify
-   * a standard JDBC type
+   * Standard type name. Use this attribute to specify a standard JDBC type
    */
   @Parameter
   @Optional
@@ -34,8 +33,7 @@ public class TypeClassifier {
   private JdbcType type;
 
   /**
-   * Custom type name. Use this attribute to specify
-   * a custom defined type
+   * Custom type name. Use this attribute to specify a custom defined type
    */
   @Parameter
   @Optional

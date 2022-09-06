@@ -29,6 +29,7 @@ import static org.mule.extension.db.internal.util.MigrationUtils.mapQuerySetting
 
 /**
  * Operations to manipulate data definitions in a relational Database
+ * 
  * @since 1.0
  */
 @Throws(OperationErrorTypeProvider.class)

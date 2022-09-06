@@ -36,8 +36,7 @@ public final class DerbyConnectionParameters extends BaseDbConnectionParameters 
   private String database;
 
   /**
-   * Specifies where Derby should look for the database. The available options are:
-   * 'directory', 'memory', 'classpath' and 'jar'.
+   * Specifies where Derby should look for the database. The available options are: 'directory', 'memory', 'classpath' and 'jar'.
    */
   @Parameter
   @Optional(defaultValue = "directory")

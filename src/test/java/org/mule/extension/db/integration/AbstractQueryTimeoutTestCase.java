@@ -40,7 +40,7 @@ public abstract class AbstractQueryTimeoutTestCase extends AbstractDbIntegration
    */
   @Test
   public void timeoutsQuery() throws Exception {
-    //TODO: SQL Server and ORACLE doesn't support delay inside functions.
+    // TODO: SQL Server and ORACLE doesn't support delay inside functions.
     assumeThat(dbType, is(not(SQLSERVER)));
     assumeThat(dbType, is(not(ORACLE)));
     CoreEvent responseEvent = flowRunner(QUERY_TIMEOUT_FLOW).withPayload(0).run();

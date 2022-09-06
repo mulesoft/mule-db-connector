@@ -34,8 +34,7 @@ public abstract class ParameterizedStatementDefinition<T extends ParameterizedSt
 
 
   /**
-   * A {@link Map} which keys are the name of an input parameter to be set on the JDBC prepared statement.
-   * Each parameter should
+   * A {@link Map} which keys are the name of an input parameter to be set on the JDBC prepared statement. Each parameter should
    * be referenced in the sql text using a semicolon prefix (E.g: {@code where id = :myParamName)}).
    * <p>
    * The map's values will contain the actual assignation for each parameter.
@@ -75,7 +74,7 @@ public abstract class ParameterizedStatementDefinition<T extends ParameterizedSt
    * Adds a new input parameter
    *
    * @param paramName the parameter name
-   * @param value the parameter value
+   * @param value     the parameter value
    */
   public void addInputParameter(String paramName, Object value) {
     inputParameters.put(paramName, value);

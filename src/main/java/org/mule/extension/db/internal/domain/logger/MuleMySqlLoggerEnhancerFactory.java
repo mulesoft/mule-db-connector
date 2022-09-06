@@ -11,9 +11,9 @@ import net.sf.cglib.proxy.MethodInterceptor;
 import org.mule.extension.db.api.logger.MuleMySqlLogger;
 
 /**
- * Factory class that creates instances of {@link MuleMySqlLogger} wrapped by CGLIB's {@link Enhancer} implementing the
- * available Log interface (either com.mysql.cj.log.Log or com.mysql.jdbc.log.Log) at runtime and delegating the method
- * call to the passed instance.
+ * Factory class that creates instances of {@link MuleMySqlLogger} wrapped by CGLIB's {@link Enhancer} implementing the available
+ * Log interface (either com.mysql.cj.log.Log or com.mysql.jdbc.log.Log) at runtime and delegating the method call to the passed
+ * instance.
  */
 public class MuleMySqlLoggerEnhancerFactory {
 

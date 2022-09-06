@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Logger which captures the driver logs and dispatches them using the application logger.
- * This is used to prevent logs from MySql driver be printed in the mule container logs.
+ * Logger which captures the driver logs and dispatches them using the application logger. This is used to prevent logs from MySql
+ * driver be printed in the mule container logs.
  *
  * @since 1.0
  */

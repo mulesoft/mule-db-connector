@@ -12,6 +12,7 @@ import org.mule.runtime.extension.api.exception.ModuleException;
 
 /**
  * Thrown to indicate an error creating a connection
+ * 
  * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
 @Deprecated

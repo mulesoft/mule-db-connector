@@ -26,8 +26,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * {@link ConnectionProvider} implementation which creates DB connections from a referenced {@link
- * DataSource}
+ * {@link ConnectionProvider} implementation which creates DB connections from a referenced {@link DataSource}
  *
  * @since 1.0
  */

@@ -283,7 +283,7 @@ public class SqlServerTestDataBase extends AbstractTestDatabase {
 
   @Override
   public void createDelayFunction(DataSource dataSource) throws SQLException {
-    //SQL Server doesn't support delays inside functions
+    // SQL Server doesn't support delays inside functions
   }
 
   @Override

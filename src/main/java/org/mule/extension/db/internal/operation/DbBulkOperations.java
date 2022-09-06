@@ -56,11 +56,11 @@ public class DbBulkOperations implements Initialisable {
    * Allows executing one insert statement various times using different parameter bindings. This happens using one single
    * Database statement, which has performance advantages compared to executing one single update operation various times.
    *
-   * @param query a {@link BulkQueryDefinition} as a parameter group
-   * @param bulkInputParameters A {@link List} of {@link Map}s in which every list item represents a row to be inserted, and the map
-   *        contains the parameter names as keys and the value the parameter is bound to.
-   * @param connector the acting connector
-   * @param connection the acting connection
+   * @param query               a {@link BulkQueryDefinition} as a parameter group
+   * @param bulkInputParameters A {@link List} of {@link Map}s in which every list item represents a row to be inserted, and the
+   *                            map contains the parameter names as keys and the value the parameter is bound to.
+   * @param connector           the acting connector
+   * @param connection          the acting connection
    * @return an array of update counts containing one element for each executed command. The elements of the array are ordered
    *         according to the order in which commands were added to the batch.
    * @throws SQLException if an error is produced
@@ -80,11 +80,11 @@ public class DbBulkOperations implements Initialisable {
    * Allows executing one update statement various times using different parameter bindings. This happens using one single
    * Database statement, which has performance advantages compared to executing one single update operation various times.
    *
-   * @param query a {@link BulkQueryDefinition} as a parameter group
-   * @param bulkInputParameters A {@link List} of {@link Map}s in which every list item represents a row to be inserted, and the map
-   *        contains the parameter names as keys and the value the parameter is bound to.
-   * @param connector the acting connector
-   * @param connection the acting connection
+   * @param query               a {@link BulkQueryDefinition} as a parameter group
+   * @param bulkInputParameters A {@link List} of {@link Map}s in which every list item represents a row to be inserted, and the
+   *                            map contains the parameter names as keys and the value the parameter is bound to.
+   * @param connector           the acting connector
+   * @param connection          the acting connection
    * @return an array of update counts containing one element for each executed command. The elements of the array are ordered
    *         according to the order in which commands were added to the batch.
    * @throws SQLException if an error is produced
@@ -103,11 +103,11 @@ public class DbBulkOperations implements Initialisable {
    * Allows executing one delete statement various times using different parameter bindings. This happens using one single
    * Database statement, which has performance advantages compared to executing one single delete operation various times.
    *
-   * @param query a {@link BulkQueryDefinition} as a parameter group
-   * @param bulkInputParameters A {@link List} of {@link Map}s in which every list item represents a row to be inserted, and the map
-   *        contains the parameter names as keys and the value the parameter is bound to.
-   * @param connector the acting connector
-   * @param connection the acting connection
+   * @param query               a {@link BulkQueryDefinition} as a parameter group
+   * @param bulkInputParameters A {@link List} of {@link Map}s in which every list item represents a row to be inserted, and the
+   *                            map contains the parameter names as keys and the value the parameter is bound to.
+   * @param connector           the acting connector
+   * @param connection          the acting connection
    * @return an array of update counts containing one element for each executed command. The elements of the array are ordered
    *         according to the order in which commands were added to the batch.
    * @throws SQLException if an error is produced
@@ -126,8 +126,8 @@ public class DbBulkOperations implements Initialisable {
    * Executes a SQL script in one single Database statement. The script is executed as provided by the user, without any parameter
    * binding.
    *
-   * @param script a {@link BulkScript} as a parameter group
-   * @param settings a {@link QuerySettings} as a parameter group
+   * @param script     a {@link BulkScript} as a parameter group
+   * @param settings   a {@link QuerySettings} as a parameter group
    * @param connection the acting connection
    * @return an array of update counts containing one element for each executed command. The elements of the array are ordered
    *         according to the order in which commands were added to the batch.

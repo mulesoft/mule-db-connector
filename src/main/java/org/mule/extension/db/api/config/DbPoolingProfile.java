@@ -67,8 +67,8 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
   private int preparedStatementCacheSize = 5;
 
   /**
-   * The amount of time a client trying to obtain a connection waits for it to be acquired when the pool is
-   * exhausted. Zero (default) means wait indefinitely
+   * The amount of time a client trying to obtain a connection waits for it to be acquired when the pool is exhausted. Zero
+   * (default) means wait indefinitely
    */
   @Parameter
   @Optional(defaultValue = "0")
@@ -86,8 +86,8 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
   private TimeUnit maxWaitUnit;
 
   /**
-   * Determines how many seconds a Connection can remain pooled but unused before being discarded.
-   * Zero means idle connections never expire.
+   * Determines how many seconds a Connection can remain pooled but unused before being discarded. Zero means idle connections
+   * never expire.
    */
   @Parameter
   @Optional(defaultValue = "0")

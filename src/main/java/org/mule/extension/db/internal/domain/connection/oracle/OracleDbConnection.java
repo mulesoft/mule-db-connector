@@ -226,16 +226,16 @@ public class OracleDbConnection extends DefaultDbConnection {
                                        String catalogName)
       throws SQLException {
     /*
-     * Since Oracle does not have multiples catalog but it has packages, the recommended way to get a procedure description
-     * of a procedure within a package is to use the argument named catalog of DatabaseMetaData#getProcedureColumns to
-     * specify the package name.
+     * Since Oracle does not have multiples catalog but it has packages, the recommended way to get a procedure description of a
+     * procedure within a package is to use the argument named catalog of DatabaseMetaData#getProcedureColumns to specify the
+     * package name.
      *
-     * Under certain circumstances calling DatabaseMetaData#getProcedureColumns not specifying schema, package, and
-     * catalog might take too long to resolve. For this reason we try to call this method avoiding any null value.
+     * Under certain circumstances calling DatabaseMetaData#getProcedureColumns not specifying schema, package, and catalog might
+     * take too long to resolve. For this reason we try to call this method avoiding any null value.
      *
-     * When the owner is defined but the parent owner it is not, we cannot know whether a stored procedure owner is a
-     * schema or a package. In this case we try first considering the owner as the package and using the schema from the
-     * connection. If that fails to find the procedure, we considered the owner as the schema.
+     * When the owner is defined but the parent owner it is not, we cannot know whether a stored procedure owner is a schema or a
+     * package. In this case we try first considering the owner as the package and using the schema from the connection. If that
+     * fails to find the procedure, we considered the owner as the schema.
      *
      * If we cannot find the stored procedure under the specified schema and/or package we try specifying only the stored
      * procedure name.

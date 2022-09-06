@@ -18,15 +18,15 @@ import javax.sql.XADataSource;
  * Groups DataSource related parameters
  *
  * @since 1.0
- *  @deprecated since 1.10.1. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
+ * @deprecated since 1.10.1. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
 @Deprecated
 public final class DbDataSourceConnectionSettings
     implements org.mule.db.commons.internal.domain.connection.datasource.DataSourceConnectionSettings {
 
   /**
-   * Reference to a JDBC {@link DataSource} object. This object is typically created using Spring.
-   * When using XA transactions, an {@link XADataSource} object must be provided.
+   * Reference to a JDBC {@link DataSource} object. This object is typically created using Spring. When using XA transactions, an
+   * {@link XADataSource} object must be provided.
    */
   @Parameter
   @Expression(NOT_SUPPORTED)

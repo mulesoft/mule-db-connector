@@ -34,7 +34,7 @@ public class StatementResult {
   /**
    * Creates a new instance
    * 
-   * @param affectedRows the amount of affected rows
+   * @param affectedRows  the amount of affected rows
    * @param generatedKeys the auto generated keys
    */
   public StatementResult(int affectedRows, Map<String, BigInteger> generatedKeys) {
@@ -45,6 +45,7 @@ public class StatementResult {
 
   /**
    * Creates a new Instance from DB Client Statement Result.
+   * 
    * @param result
    */
   public StatementResult(org.mule.db.commons.api.StatementResult result) {

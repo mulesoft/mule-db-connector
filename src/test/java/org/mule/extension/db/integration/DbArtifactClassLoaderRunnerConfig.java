@@ -9,8 +9,8 @@ package org.mule.extension.db.integration;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 /**
- * Interface to extract the common {@link ArtifactClassLoaderRunnerConfig} for all DB Test Cases without the
- * need of extend of a unique abstract test case.
+ * Interface to extract the common {@link ArtifactClassLoaderRunnerConfig} for all DB Test Cases without the need of extend of a
+ * unique abstract test case.
  *
  * @since 1.0
  */

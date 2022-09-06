@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+    <bean id="oracleDataSourceXA"  class="oracle.jdbc.xa.client.OracleXADataSource">
+        <property name="URL"
+                  value="jdbc:oracle:thin:@//localhost:${oracle.db.mtls.port}/XEPDB1"/>
+        <property name="user" value="system"/>
+        <property name="password" value="oracle"/>
+    </bean>
+
+<!--    <bean class="oracle.jdbc.xa.client.OracleXADataSource" id="oracleDataSourceXA">-->
+<!--        &lt;!&ndash; oracle.jdbc.xa.client.OracleXADataSource &ndash;&gt;-->
+<!--        <property name="URL"-->
+<!--                  value="jdbc:oracle:thin:@//localhost:1521/XE"/>-->
+<!--        <property name="user" value="sys as sysdba"/>-->
+<!--        <property name="password" value="password"/>-->
+<!--    </bean>-->
+</beans>

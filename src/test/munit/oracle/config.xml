@@ -63,6 +63,29 @@
         </db:oracle-connection>
     </db:config>
 
+    <db:config name="oracleDbPoolingListenerExternalConfig">
+        <db:oracle-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('oracle')]" serviceName="XEPDB1" user="system" password="oracle">
+            <db:pooling-profile maxPoolSize="4" minPoolSize="1"/>
+        </db:oracle-connection>
+    </db:config>
+
+    <db:config name="oracleDbPoolingListenerConfig">
+        <db:oracle-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('oracle')]" serviceName="XEPDB1" user="system" password="oracle">
+            <db:pooling-profile maxPoolSize="4" minPoolSize="1"/>
+        </db:oracle-connection>
+    </db:config>
+
+    <db:config name="oracleXADbPoolingConfig">
+        <db:oracle-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('oracle')]" serviceName="XEPDB1" user="system" password="oracle" useXaTransactions="true">
+            <db:pooling-profile maxPoolSize="4" minPoolSize="1"/>
+        </db:oracle-connection>
+    </db:config>
+
+    <db:config name="oracleLocalDbPoolingConfig">
+        <db:oracle-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('oracle')]" serviceName="XEPDB1" user="system" password="oracle">
+            <db:pooling-profile maxPoolSize="4" minPoolSize="1"/>
+        </db:oracle-connection>
+    </db:config>
 
 <!--    <db:config name="dbConfig">-->
 <!--        <db:my-sql-connection host="0.0.0.0" port="${mysql.db.port}" user="root" password="password" database="xe">-->

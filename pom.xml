@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.mule.extensions</groupId>
         <artifactId>mule-core-modules-parent</artifactId>
-        <version>1.5.100-SNAPSHOT</version>
+        <version>1.1.9</version>
         <relativePath></relativePath>
     </parent>
 
@@ -18,7 +18,8 @@
     <version>1.14.0-SNAPSHOT</version>
 
     <name>Database Connector</name>
-    <description>A Mule extension that provides functionality for connecting to Databases through the JDBC standard</description>
+    <description>A Mule extension that provides functionality for connecting to Databases through the JDBC standard
+    </description>
 
     <properties>
         <c3p0Version>0.9.5.5</c3p0Version>
@@ -57,6 +58,11 @@
         <skipTests>false</skipTests>
         <skipTita>false</skipTita>
         <settingsFile>${java.io.tmpdir}/effective-settings.xml</settingsFile>
+
+        <munit.disable.lazy.initialization>true</munit.disable.lazy.initialization>
+
+
+
     </properties>
 
     <dependencies>
@@ -229,43 +235,20 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>${maven.helper.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>reserve-network-port</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>reserve-network-port</goal>
-                        </goals>
-                        <configuration>
-                            <outputFile>target/test-classes/ports.properties</outputFile>
-                            <portNames>
-                                <portName>oracle.db.port</portName>
-                                <portName>oracle.db.mtls.port</portName>
-                                <portName>oracle.db.mtls.port2</portName>
-                                <portName>mysql.db.port</portName>
-                            </portNames>
-                        </configuration>
-                    </execution>
-                </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>${skipTests}</skipTests>
+                    <argLine>-Dmaven.settings.local=${settingsFile}</argLine>
+                    <systemPropertyVariables>
+                        <oracle.db.port>${oracle.db.port}</oracle.db.port>
+                        <oracle.db.mtls.port>${oracle.db.mtls.port}</oracle.db.mtls.port>
+                        <oracle.db.mtls.port2>${oracle.db.mtls.port2}</oracle.db.mtls.port2>
+                        <mysql.db.port>${mysql.db.port}</mysql.db.port>
+                        <mssql.db.port>${mssql.db.port}</mssql.db.port>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-surefire-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <skipTests>${skipTests}</skipTests>-->
-<!--                    <argLine>-Dmaven.settings.local=${settingsFile}</argLine>-->
-<!--                    <systemPropertyVariables>-->
-<!--                        <oracle.db.port>${oracle.db.port}</oracle.db.port>-->
-<!--                        <oracle.db.mtls.port>${oracle.db.mtls.port}</oracle.db.mtls.port>-->
-<!--                        <oracle.db.mtls.port2>${oracle.db.mtls.port2}</oracle.db.mtls.port2>-->
-<!--                        <mysql.db.port>${mysql.db.port}</mysql.db.port>-->
-<!--                        <mssql.db.port>${mssql.db.port}</mssql.db.port>-->
-<!--                    </systemPropertyVariables>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
             <plugin>
                 <groupId>org.mule.runtime.plugins</groupId>
                 <artifactId>mule-extensions-shade-plugin</artifactId>
@@ -305,7 +288,46 @@
             </activation>
             <id>oracle</id>
             <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                        <filtering>true</filtering>
+                    </testResource>
+                </testResources>
                 <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>${maven.helper.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>reserve-network-port</id>
+                                <phase>process-test-sources</phase>
+                                <goals>
+                                    <goal>reserve-network-port</goal>
+                                </goals>
+                                <configuration>
+                                    <portNames>
+                                        <portName>oracle.db.port</portName>
+                                        <portName>oracle.db.mtls.port</portName>
+                                        <portName>oracle.db.mtls.port2</portName>
+                                        <portName>mysql.db.port</portName>
+                                    </portNames>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
@@ -334,9 +356,9 @@
                                             <ORACLE_PASSWORD>oracle</ORACLE_PASSWORD>
                                         </env>
                                         <ports>
-                                            <port>${oracle.db.port}:1521</port>
-                                            <port>${oracle.db.mtls.port}:1522</port>
-                                            <port>${oracle.db.mtls.port2}:5500</port>
+                                            <port>oracle.db.port:1521</port>
+                                            <port>oracle.db.mtls.port:1522</port>
+                                            <port>oracle.db.mtls.port2:5500</port>
                                         </ports>
                                         <log>
                                             <enabled>true</enabled>
@@ -364,7 +386,7 @@
                         <executions>
                             <execution>
                                 <id>start</id>
-                                <phase>generate-test-resources</phase>
+                                <phase>pre-integration-test</phase>
                                 <goals>
                                     <goal>build</goal>
                                     <goal>start</goal>
@@ -376,7 +398,7 @@
                             </execution>
                             <execution>
                                 <id>copy</id>
-                                <phase>test-compile</phase>
+                                <phase>pre-integration-test</phase>
                                 <goals>
                                     <goal>copy</goal>
                                 </goals>
@@ -402,8 +424,9 @@
                                 <oracle.db.port>${oracle.db.port}</oracle.db.port>
                                 <oracle.db.mtls.port>${oracle.db.mtls.port}</oracle.db.mtls.port>
                                 <oracle.db.mtls.port2>${oracle.db.mtls.port2}</oracle.db.mtls.port2>
+                                <munit.disable.lazy.initialization>true</munit.disable.lazy.initialization>
                             </systemPropertyVariables>
-                            <munitTest>oracle/arrays-and-structs-xa-pool-oracle-test-case.xml</munitTest>
+                            <munitTest>oracle/.*oracle-test-case.xml</munitTest>
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
@@ -471,12 +494,6 @@
                                 <version>${mtf-tools.version}</version>
                                 <classifier>mule-plugin</classifier>
                             </dependency>
-<!--                            <dependency>-->
-<!--                                <groupId>org.mule.modules</groupId>-->
-<!--                                <artifactId>mule-spring-test-plugin</artifactId>-->
-<!--                                <version>1.3.6</version>-->
-<!--                                <classifier>mule-plugin</classifier>-->
-<!--                            </dependency>-->
                             <dependency>
                                 <groupId>org.mule.modules</groupId>
                                 <artifactId>mule-spring-module</artifactId>
@@ -510,68 +527,19 @@
                             </dependency>
                         </dependencies>
                     </plugin>
-<!--                    <plugin>-->
-<!--                        <groupId>org.apache.maven.plugins</groupId>-->
-<!--                        <artifactId>maven-surefire-plugin</artifactId>-->
-<!--                        <configuration>-->
-<!--                            <skipTests>${skipTests}</skipTests>-->
-<!--                            <argLine>-Dmaven.settings.local=${settingsFile}</argLine>-->
-<!--                            <systemPropertyVariables>-->
-<!--                                <oracle.db.port>${oracle.db.port}</oracle.db.port>-->
-<!--                                <oracle.db.mtls.port>${oracle.db.mtls.port}</oracle.db.mtls.port>-->
-<!--                                <oracle.db.mtls.port2>${oracle.db.mtls.port2}</oracle.db.mtls.port2>-->
-<!--                            </systemPropertyVariables>-->
-<!--                        </configuration>-->
-<!--                    </plugin>-->
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>properties-maven-plugin</artifactId>
-                        <version>1.1.0</version>
-                        <executions>
-                            <execution>
-                                <phase>test-compile</phase>
-                                <goals>
-                                    <goal>write-active-profile-properties</goal>
-                                </goals>
-                                <configuration>
-                                    <outputFile>
-                                        src/test/resources/app-test.properties
-                                    </outputFile>
-                                </configuration>
-                            </execution>
-                        </executions>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.mulesoft.munit</groupId>
-                                <artifactId>munit-extensions-maven-plugin</artifactId>
-                                <version>${munit.extensions.maven.plugin.version}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.internetitem</groupId>
-                        <artifactId>write-properties-file-maven-plugin</artifactId>
-                        <version>1.0.1</version>
-                        <executions>
-                            <execution>
-                                <id>write-properties-file</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>write-properties-file</goal>
-                                </goals>
-                                <configuration>
-                                    <filename>app-test.properties</filename>
-                                    <outputDirectory>src/test/resources/</outputDirectory>
-                                    <properties>
-                                        <property>
-                                            <name>revision</name>
-                                            <value>${oracle.db.port}</value>
-                                        </property>
-
-                                    </properties>
-                                </configuration>
-                            </execution>
-                        </executions>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skipTests>${skipTests}</skipTests>
+                            <argLine>-Dmaven.settings.local=${settingsFile}</argLine>
+                            <systemPropertyVariables>
+                                <oracle.db.port>${oracle.db.port}</oracle.db.port>
+                                <oracle.db.mtls.port>${oracle.db.mtls.port}</oracle.db.mtls.port>
+                                <oracle.db.mtls.port2>${oracle.db.mtls.port2}</oracle.db.mtls.port2>
+                                <munit.disable.lazy.initialization>true</munit.disable.lazy.initialization>
+                            </systemPropertyVariables>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>

@@ -366,7 +366,7 @@
                         <executions>
                             <execution>
                                 <id>start</id>
-                                <phase>pre-integration-test</phase>
+                                <phase>generate-test-resources</phase>
                                 <goals>
                                     <goal>build</goal>
                                     <goal>start</goal>
@@ -378,7 +378,7 @@
                             </execution>
                             <execution>
                                 <id>copy</id>
-                                <phase>pre-integration-test</phase>
+                                <phase>test-compile</phase>
                                 <goals>
                                     <goal>copy</goal>
                                 </goals>

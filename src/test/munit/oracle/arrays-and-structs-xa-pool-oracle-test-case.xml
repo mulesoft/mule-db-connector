@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:spring="http://www.mulesoft.org/schema/mule/spring"
+      xmlns:bti="http://www.mulesoft.org/schema/mule/ee/bti"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/ee/bti http://www.mulesoft.org/schema/mule/ee/bti/current/mule-bti-ee.xsd
+        http://www.mulesoft.org/schema/mule/spring http://www.mulesoft.org/schema/mule/spring/current/mule-spring.xsd
+		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd ">
+
+
+    <munit:config name="arrays-and-structs-xa-pool-oracle-test-case.xml" minMuleVersion="4.4.0"/>
+
+    <configuration-properties file="application.properties"/>
+
+    <spring:config files="_spring-config-oracle.xml" name="spring-config-oracle"/>
+    <bti:transaction-manager/>
+    <bti:xa-data-source-pool acquireIncrement="1" acquireTimeoutSeconds="50000" dataSource-ref="oracleDataSourceXA"
+                             maxIdleTime="10000" maxPoolSize="16" minPoolSize="3" name="oracleBitronixDataSource"
+                             preparedStatementCacheSize="100"/>
+    <db:config name="ORACLE">
+        <db:data-source-connection dataSourceRef="oracleBitronixDataSource"/>
+    </db:config>
+
+    <munit:before-suite name="createATableForListenerTest">
+        <try>
+            <db:execute-script config-ref="ORACLE">
+                <db:sql><![CDATA[DROP TABLE  TEST_XA_TRANSACTION]]></db:sql>
+            </db:execute-script>
+            <error-handler>
+                <on-error-continue enableNotifications="true" logException="false">
+                </on-error-continue>
+            </error-handler>
+        </try>
+        <try>
+            <db:execute-script config-ref="ORACLE">
+                <db:sql><![CDATA[DROP TABLE  TEST_LISTENER_EXTERNAL_CONNECTION]]></db:sql>
+            </db:execute-script>
+            <error-handler>
+                <on-error-continue enableNotifications="true" logException="false">
+                </on-error-continue>
+            </error-handler>
+        </try>
+        <try>
+            <db:execute-script config-ref="ORACLE">
+                <db:sql><![CDATA[DROP TABLE  DEMO]]></db:sql>
+            </db:execute-script>
+            <error-handler>
+                <on-error-continue enableNotifications="true" logException="false">
+                </on-error-continue>
+            </error-handler>
+        </try>
+        <db:execute-ddl config-ref="ORACLE">
+            <db:sql><![CDATA[CREATE TABLE demo (field1 varchar2(3), field2 number(2), field3 varchar2(60))]]></db:sql>
+        </db:execute-ddl>
+        <db:execute-ddl config-ref="ORACLE">
+            <db:sql><![CDATA[CREATE TABLE TEST_XA_TRANSACTION (id number)]]></db:sql>
+        </db:execute-ddl>
+        <db:execute-ddl config-ref="ORACLE">
+            <db:sql><![CDATA[CREATE TABLE TEST_LISTENER_EXTERNAL_CONNECTION (id number)]]></db:sql>
+        </db:execute-ddl>
+        <db:execute-ddl config-ref="ORACLE">
+            <db:sql><![CDATA[create or replace type TEST_STRUCT as object (field1 varchar2(3), field2 number(2), field3 varchar2(60))]]></db:sql>
+        </db:execute-ddl>
+        <db:execute-ddl config-ref="ORACLE">
+            <db:sql><![CDATA[create or replace type TEST_STRUCT_COLLECTION as table of TEST_STRUCT]]></db:sql>
+        </db:execute-ddl>
+        <db:execute-ddl config-ref="ORACLE">
+            <db:sql><![CDATA[
+create or replace procedure retain_first_struct (z in out TEST_STRUCT_COLLECTION)
+    IS
+begin
+    if z is not null and z.count > 1 then
+        z := TEST_STRUCT_COLLECTION(z(1));
+    end if;
+end;
+]]></db:sql>
+        </db:execute-ddl>
+        <db:execute-ddl config-ref="ORACLE">
+            <db:sql><![CDATA[
+create or replace procedure retain_first_struct_no_out (z in TEST_STRUCT_COLLECTION)
+    IS
+begin
+    FOR idx IN z.first .. z.last LOOP
+		INSERT INTO demo(field1, field2, field3) VALUES(z(idx).field1, z(idx).field2, z(idx).field3);
+	END LOOP;
+end;
+]]></db:sql>
+        </db:execute-ddl>
+    </munit:before-suite>
+
+    <!--TODO:W-11743085-->
+    <munit:test name="prepareArrayAndStructBitronixXATransactionWithOut" ignore="true">
+        <munit:execution>
+            <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
+                <set-variable value="#[Db::prepareArray('TEST_STRUCT_COLLECTION', [ Db::prepareStruct('TEST_STRUCT', ['hi', 1, 'bye']), Db::prepareStruct('TEST_STRUCT', ['hi2', 2, 'bye2']) ])]" variableName="list" />
+                <db:stored-procedure config-ref="ORACLE"   inOutParameters='#[{"list" : vars.list}]'>
+                    <db:sql ><![CDATA[call retain_first_struct(:list)]]></db:sql>
+                </db:stored-procedure>
+            </try>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[payload.list[0][1]]" expected="#[1]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="prepareArrayAndStructBitronixXATransactionWithoutOut" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+        <munit:execution>
+            <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
+                <set-variable value="#[Db::prepareArray('TEST_STRUCT_COLLECTION', [ Db::prepareStruct('TEST_STRUCT', ['hi', 1, 'bye']), Db::prepareStruct('TEST_STRUCT', ['hi2', 2, 'bye2']) ])]" variableName="list" />
+                <db:stored-procedure config-ref="ORACLE">
+                    <db:sql ><![CDATA[call retain_first_struct_no_out(:testParameter)]]></db:sql>
+                    <db:input-parameters ><![CDATA[#[{"testParameter" : vars.list}]]]></db:input-parameters>
+                </db:stored-procedure>
+                <db:select config-ref="ORACLE">
+                    <db:sql>select * from DEMO</db:sql>
+                </db:select>
+            </try>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[2]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:after-suite name="dropStuff">
+        <try>
+            <db:execute-script config-ref="oracleDbPoolingListenerExternalConfig">
+                <db:sql>
+                    <![CDATA[
+                        drop procedure retain_first_struct;
+                        drop type TEST_STRUCT_COLLECTION;
+                        drop type TEST_STRUCT;
+                        ]]>
+                </db:sql>
+            </db:execute-script>
+            <error-handler>
+                <on-error-continue logException="false"/>
+            </error-handler>
+        </try>
+    </munit:after-suite>
+</mule>

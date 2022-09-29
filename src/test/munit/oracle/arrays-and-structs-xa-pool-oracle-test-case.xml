@@ -99,7 +99,7 @@ end;
     </munit:before-suite>
 
     <!--TODO:W-11743085-->
-    <munit:test name="prepareArrayAndStructBitronixXATransactionWithOut" ignore="true">
+    <munit:test name="prepareArrayAndStructBitronixXATransactionWithOut" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
         <munit:execution>
             <try transactionType="XA" transactionalAction="ALWAYS_BEGIN">
                 <set-variable value="#[Db::prepareArray('TEST_STRUCT_COLLECTION', [ Db::prepareStruct('TEST_STRUCT', ['hi', 1, 'bye']), Db::prepareStruct('TEST_STRUCT', ['hi2', 2, 'bye2']) ])]" variableName="list" />

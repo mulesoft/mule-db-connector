@@ -6,15 +6,14 @@
  */
 package org.mule.extension.db.integration.select.oracle;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 import static org.mule.tck.junit4.matcher.IsEmptyOptional.empty;
 
-import org.junit.After;
-import org.junit.Before;
-import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
+
+import org.mule.extension.db.integration.AbstractDbMetadataIntegrationTestCase;
 import org.mule.extension.db.integration.model.OracleTestDatabase;
 import org.mule.metadata.api.ClassTypeLoader;
 import org.mule.metadata.api.model.ArrayType;
@@ -29,10 +28,12 @@ import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFacto
 import java.sql.SQLException;
 import java.util.Optional;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
-public abstract class AbstractOracleUDTMetadataTestCase extends AbstractDbIntegrationTestCase {
+public abstract class AbstractOracleUDTMetadataTestCase extends AbstractDbMetadataIntegrationTestCase {
 
   @Parameterized.Parameter(4)
   public String flowSuffix;

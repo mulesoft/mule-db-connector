@@ -6,24 +6,22 @@
  */
 package org.mule.extension.db.integration.source;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertThat;
 import static org.mule.extension.db.integration.model.AbstractTestDatabase.ADDITIONAL_PLANET_VALUES;
 import static org.mule.extension.db.integration.model.AbstractTestDatabase.PLANET_TEST_VALUES;
 import static org.mule.runtime.api.component.location.Location.builder;
 import static org.mule.runtime.api.metadata.MetadataKeyBuilder.newKey;
 import static org.mule.tck.probe.PollingProber.check;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+
+import org.mule.extension.db.integration.AbstractDbMetadataIntegrationTestCase;
 import org.mule.extension.db.integration.model.Planet;
 import org.mule.metadata.api.model.ObjectType;
 import org.mule.runtime.api.component.location.Location;
 import org.mule.runtime.api.lifecycle.Startable;
 import org.mule.runtime.api.meta.model.source.SourceModel;
-import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.metadata.descriptor.ComponentMetadataDescriptor;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
 import org.mule.runtime.core.api.event.CoreEvent;
@@ -33,9 +31,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
-public class RowListenerTestCase extends AbstractDbIntegrationTestCase {
+public class RowListenerTestCase extends AbstractDbMetadataIntegrationTestCase {
 
   private static final int TIMEOUT_MILLIS = 5000;
   public static List<Map<String, Object>> PAYLOADS;

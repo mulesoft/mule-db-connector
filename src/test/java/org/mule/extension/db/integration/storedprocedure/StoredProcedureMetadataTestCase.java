@@ -10,7 +10,8 @@ package org.mule.extension.db.integration.storedprocedure;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.core.Is.is;
-import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
+
+import org.mule.extension.db.integration.AbstractDbMetadataIntegrationTestCase;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.metadata.api.model.ObjectType;
 import org.mule.runtime.api.meta.model.operation.OperationModel;
@@ -20,7 +21,7 @@ import org.mule.runtime.api.metadata.resolving.MetadataResult;
 import org.junit.Before;
 import org.junit.Test;
 
-public class StoredProcedureMetadataTestCase extends AbstractDbIntegrationTestCase {
+public class StoredProcedureMetadataTestCase extends AbstractDbMetadataIntegrationTestCase {
 
   @Override
   protected String[] getFlowConfigurationResources() {

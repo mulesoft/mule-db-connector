@@ -8,12 +8,14 @@
 package org.mule.extension.db.integration.update;
 
 import static org.mule.extension.db.AllureConstants.DbFeature.DB_EXTENSION;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import org.mule.extension.db.api.StatementResult;
-import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
+import org.mule.extension.db.integration.AbstractDbMetadataIntegrationTestCase;
 import org.mule.metadata.api.model.ArrayType;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.metadata.api.model.NullType;
@@ -23,12 +25,13 @@ import org.mule.runtime.api.metadata.descriptor.ComponentMetadataDescriptor;
 import org.mule.runtime.api.metadata.resolving.MetadataResult;
 
 import org.junit.Test;
+
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
 
 @Feature(DB_EXTENSION)
 @Story("Update Statement")
-public class UpdateMetadataTestCase extends AbstractDbIntegrationTestCase {
+public class UpdateMetadataTestCase extends AbstractDbMetadataIntegrationTestCase {
 
   @Override
   protected String[] getFlowConfigurationResources() {

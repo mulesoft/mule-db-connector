@@ -50,7 +50,7 @@
         <formatterConfigPath>formatter.xml</formatterConfigPath>
 
         <munit.extensions.maven.plugin.version>1.1.3</munit.extensions.maven.plugin.version>
-        <munit.version>2.3.12</munit.version>
+        <munit.version>2.3.14</munit.version>
 
         <mtf-tools.version>1.1.2</mtf-tools.version>
         <skipTests>false</skipTests>

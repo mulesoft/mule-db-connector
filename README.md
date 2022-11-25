@@ -1,5 +1,4 @@
 
-
 #### Compile running all the tests  **Import add -D{vendor/profile}**
 ```
 mvn clean install  -DruntimeProduct=MULE_EE -DruntimeVersion=4.3.0  -Doracle

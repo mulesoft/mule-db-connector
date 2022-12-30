@@ -126,7 +126,7 @@ public class OracleCreateArrayTestCase extends AbstractDbFunctionTestCase {
     when(resultSet.getInt(ATTR_NO_PARAM)).thenReturn(1);
     when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(dataTypeName);
 
-    OracleDbConnection oracleConnection = new OracleDbConnection(delegate, new ArrayList<>(), new ConcurrentHashMap<>());
+    OracleDbConnection oracleConnection = new OracleDbConnection(delegate, new ArrayList<>(), new ConcurrentHashMap<>(), 100);
 
     oracleConnection.createArray(udtName, values);
 

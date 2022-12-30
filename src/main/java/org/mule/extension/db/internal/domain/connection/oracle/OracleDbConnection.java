@@ -79,8 +79,8 @@ public class OracleDbConnection extends DefaultDbConnection {
 
 
   public OracleDbConnection(Connection jdbcConnection, List<DbType> customDataTypes,
-                            Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache) {
-    super(jdbcConnection, customDataTypes);
+                            Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache, long cacheQueryTemplateSize) {
+    super(jdbcConnection, customDataTypes, cacheQueryTemplateSize);
     this.resolvedDbTypesCache = resolvedDbTypesCache;
   }
 

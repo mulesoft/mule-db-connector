@@ -19,8 +19,8 @@ import java.util.List;
  */
 public class DerbyConnection extends DefaultDbConnection {
 
-  DerbyConnection(Connection connection, List<DbType> dbTypes) {
-    super(connection, dbTypes);
+  DerbyConnection(Connection connection, List<DbType> dbTypes, long cacheQueryTemplateSize) {
+    super(connection, dbTypes, cacheQueryTemplateSize);
   }
 
   // We are disabling content streaming for Derby because of a incompatibility between the connector logic and the

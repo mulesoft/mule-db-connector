@@ -23,8 +23,8 @@ import java.util.List;
  */
 public class SqlServerConnection extends DefaultDbConnection {
 
-  SqlServerConnection(Connection jdbcConnection, List<DbType> customDataTypes) {
-    super(jdbcConnection, customDataTypes);
+  SqlServerConnection(Connection jdbcConnection, List<DbType> customDataTypes, long cacheQueryTemplateSize) {
+    super(jdbcConnection, customDataTypes, cacheQueryTemplateSize);
   }
 
   /**

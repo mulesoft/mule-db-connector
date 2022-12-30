@@ -80,7 +80,7 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     when(resultSet.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
     when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(USER_TYPE_DBNAME);
 
-    OracleDbConnection cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache);
+    OracleDbConnection cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache, 1000);
     cnx.createArray(USER_TYPE_NAME, params);
     assertThat(dbTypeCache.containsKey(USER_TYPE_NAME), is(true));
     assertThat(dbTypeCache.get(USER_TYPE_NAME).get(0).getName(), is(USER_TYPE_DBNAME));
@@ -98,7 +98,7 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     when(resultSet.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
     when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(USER_TYPE_DBNAME);
 
-    cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache);
+    cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache, 100);
     cnx.createArray(USER_TYPE_NAME, params);
 
     assertThat(dbTypeCache.containsKey(USER_TYPE_NAME), is(true));
@@ -119,7 +119,7 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     when(resultSet.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
     when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(USER_TYPE_DBNAME_B);
 
-    cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache);
+    cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache, 100);
     cnx.createArray(USER_TYPE_NAME_B, params);
 
     assertThat(dbTypeCache.containsKey(USER_TYPE_NAME_B), is(true));
@@ -140,7 +140,7 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     when(resultSet.next()).thenReturn(false);
 
     Map<String, Map<Integer, ResolvedDbType>> dbTypeCache = new ConcurrentHashMap<>();
-    OracleDbConnection cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache);
+    OracleDbConnection cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache, 1000);
 
     cnx.getTables();
 

@@ -42,7 +42,8 @@ public class DbDataSourceReferenceConnectionProvider extends DataSourceReference
   @Override
   protected DbConnection createDbConnection(Connection connection) throws Exception {
     if (isOracle(connection)) {
-      return new OracleDbConnection(connection, super.resolveCustomTypes(), resolvedDbTypesCache);
+      return new OracleDbConnection(connection, super.resolveCustomTypes(), resolvedDbTypesCache,
+                                    super.getCacheQueryTemplateSize());
     } else {
       return super.createDbConnection(connection);
     }

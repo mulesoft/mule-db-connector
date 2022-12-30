@@ -49,7 +49,7 @@ public class AbstractDbFunctionTestCase extends AbstractMuleTestCase {
     when(resultSet.getString(ATTR_TYPE_NAME_INDEX)).thenReturn(dataTypeName);
     when(metadata.getAttributes("catalog", null, TYPE_NAME, null)).thenReturn(resultSet);
 
-    return new DefaultDbConnection(delegate, new ArrayList<>());
+    return new DefaultDbConnection(delegate, new ArrayList<>(), 1000);
   }
 
 }

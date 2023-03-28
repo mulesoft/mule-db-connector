@@ -46,9 +46,16 @@ public class StoredProcedureReturningOutputClobTestCase extends AbstractDbIntegr
     flowRunner("getClobOutputFromStoredProcedurePackage").run();
   }
 
+  @Test
+  public void verifyConnectionIsReleasedOutputBlob() throws Exception {
+    flowRunner("getBlobOutputFromStoredProcedurePackage").run();
+    flowRunner("getBlobOutputFromStoredProcedurePackage").run();
+  }
+
   @Before
   public void setupStoredProcedure() throws Exception {
     testDatabase.createStoredProcedureOutputClob(getDefaultDataSource());
+    testDatabase.createStoredProcedureOutputBlob(getDefaultDataSource());
   }
 
 }

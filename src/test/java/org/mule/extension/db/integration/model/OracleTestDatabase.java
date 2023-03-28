@@ -365,6 +365,14 @@ public class OracleTestDatabase extends AbstractTestDatabase {
         "END;");
   }
 
+  public void createStoredProcedureOutputBlob(DataSource dataSource) throws SQLException {
+    executeDdl(dataSource, "create or replace PROCEDURE myProcBlobOut(myParam OUT BLOB) AS aBlob BLOB;\n" +
+            "BEGIN\n" +
+            "SELECT to_blob(1) into aBlob FROM dual;\n" +
+            "myParam := aBlob;\n" +
+            "END;");
+  }
+
   @Override
   public void createStoredProcedureGetContactDetails(DataSource dataSource) throws SQLException {
     final String sql =

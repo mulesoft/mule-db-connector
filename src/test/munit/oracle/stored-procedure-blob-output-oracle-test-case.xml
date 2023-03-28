@@ -21,20 +21,6 @@ BEGIN
   myParam := aBlob;
 END;]]></db:sql>
         </db:execute-ddl>
-        <db:execute-ddl config-ref="dbConfigWithPooling" >
-            <db:sql ><![CDATA[CREATE OR REPLACE PACKAGE magicPackageVersionThree AS
-                    PROCEDURE getBlob(result OUT sys_refcursor);
-                   END magicPackageVersionThree;]]></db:sql>
-        </db:execute-ddl>
-        <db:execute-ddl config-ref="dbConfigWithPooling" >
-            <db:sql ><![CDATA[CREATE OR REPLACE PACKAGE BODY magicPackageVersionThree AS
-                     PROCEDURE getBlob(result OUT sys_refcursor) AS
-                       BEGIN
-                           Open result for
-                               select to_blob(1) from dual;
-                       END getBlob;
-                   END magicPackageVersionThree;]]></db:sql>
-        </db:execute-ddl>
     </munit:before-suite>
 
     <munit:test name="getBlobResultFromStoredProcedurePackage" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
@@ -64,11 +50,4 @@ output application/java
 status: "OK"]'/>
         </munit:execution>
     </munit:test>
-
-    <munit:after-suite name="deleteStoreProcedure">
-        <db:execute-script config-ref="oracleDbPoolingConfig">
-            <db:sql ><![CDATA[drop procedure myProcBlobOut;
-drop package magicPackageVersionThree]]></db:sql>
-        </db:execute-script>
-    </munit:after-suite>
 </mule>

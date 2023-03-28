@@ -16,6 +16,7 @@
     <munit:before-suite name="createStoreProcedure">
         <db:execute-ddl config-ref="oracleDbPoolingConfig" >
             <db:sql ><![CDATA[create or replace PROCEDURE myProcBlobOut(myParam OUT BLOB) AS aBlob BLOB;
+            ALTER FUNCTION myProcBlobOut COMPILE;
 BEGIN
   SELECT to_blob(1) into aBlob FROM dual;
   myParam := aBlob;

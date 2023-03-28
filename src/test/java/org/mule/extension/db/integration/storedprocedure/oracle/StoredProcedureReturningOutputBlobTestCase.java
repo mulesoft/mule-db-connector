@@ -7,20 +7,19 @@
 
 package org.mule.extension.db.integration.storedprocedure.oracle;
 
-import static org.mule.extension.db.integration.TestDbConfig.getOracleResource;
-import static java.util.Collections.emptyList;
-
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runners.Parameterized;
 import org.mule.extension.db.integration.AbstractDbIntegrationTestCase;
 import org.mule.extension.db.integration.model.OracleTestDatabase;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runners.Parameterized;
+import static java.util.Collections.emptyList;
+import static org.mule.extension.db.integration.TestDbConfig.getOracleResource;
 
-public class StoredProcedureReturningOutputClobTestCase extends AbstractDbIntegrationTestCase {
+public class StoredProcedureReturningOutputBlobTestCase extends AbstractDbIntegrationTestCase {
 
   @Parameterized.Parameters(name = "{2}")
   public static List<Object[]> parameters() {
@@ -37,18 +36,17 @@ public class StoredProcedureReturningOutputClobTestCase extends AbstractDbIntegr
 
   @Override
   protected String[] getFlowConfigurationResources() {
-    return new String[] {"integration/storedprocedure/stored-procedure-oracle-with-clob-output.xml"};
+    return new String[] {"integration/storedprocedure/stored-procedure-oracle-with-blob-output.xml"};
   }
 
   @Test
-  public void verifyConnectionIsReleasedOutputClob() throws Exception {
-    flowRunner("getClobOutputFromStoredProcedurePackage").run();
-    flowRunner("getClobOutputFromStoredProcedurePackage").run();
+  public void verifyConnectionIsReleasedOutputBlob() throws Exception {
+    flowRunner("getBlobOutputFromStoredProcedurePackage").run();
+    flowRunner("getBlobOutputFromStoredProcedurePackage").run();
   }
 
   @Before
   public void setupStoredProcedure() throws Exception {
-    testDatabase.createStoredProcedureOutputClob(getDefaultDataSource());
+    testDatabase.createStoredProcedureOutputBlob(getDefaultDataSource());
   }
-
 }

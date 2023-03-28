@@ -5,11 +5,11 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
-    <flow name="getClobOutputFromStoredProcedurePackage">
+    <flow name="getBlobOutputFromStoredProcedurePackage">
         <db:stored-procedure config-ref="oracleDbPoolingConfig">
-            <db:sql><![CDATA[call myProcClobOut(:clobdata)]]></db:sql>
+            <db:sql><![CDATA[call myProcBlobOut(:blobdata)]]></db:sql>
             <db:output-parameters>
-                <db:output-parameter key="clobdata" type="CLOB" />
+                <db:output-parameter key="blobdata" type="BLOB" />
             </db:output-parameters>
         </db:stored-procedure>
     </flow>

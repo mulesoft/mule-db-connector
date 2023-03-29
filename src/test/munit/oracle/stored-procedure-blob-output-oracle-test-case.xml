@@ -39,7 +39,7 @@ END;]]></db:sql>
                         <ee:message>
                             <ee:set-payload><![CDATA[%dw 2.0
                         output application/json
-                        - - -
+                        ---
                         payload[0]]]></ee:set-payload>
                         </ee:message>
                     </ee:transform>
@@ -47,7 +47,7 @@ END;]]></db:sql>
             </foreach>
             <set-payload value='#[%dw 2.0
 output application/java
-
+---
 status: "OK"]'/>
         </munit:execution>
     </munit:test>

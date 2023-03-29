@@ -54,7 +54,7 @@ status: "OK"]'/>
 
     <munit:after-suite name="deleteStoreProcedureBlob">
         <db:execute-script config-ref="oracleDbPoolingConfig">
-            <db:sql ><![CDATA[drop procedure myProcBlobOut;]]></db:sql>
+            <db:sql ><![CDATA[drop procedure myProcBlobOut]]></db:sql>
         </db:execute-script>
     </munit:after-suite>
 

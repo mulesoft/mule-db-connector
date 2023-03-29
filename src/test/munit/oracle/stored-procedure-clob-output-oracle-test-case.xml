@@ -35,14 +35,6 @@ END;]]></db:sql>
                        END getClob;
                    END magicPackageVersionThree;]]></db:sql>
         </db:execute-ddl>
-        <db:execute-ddl config-ref="oracleDbPoolingConfig" >
-            <db:sql ><![CDATA[CREATE OR REPLACE PROCEDURE myProcBlobOut(myParam OUT BLOB) AS
-  aBlob NUMBER;
-BEGIN
-  SELECT to_number('1') into aBlob FROM dual;
-  myParam := utl_raw.cast_to_raw(aBlob);
-END;]]></db:sql>
-        </db:execute-ddl>
     </munit:before-suite>
     <munit:test name="whenHavingOutClobConnectionNotLeaked" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
         <munit:execution>

@@ -15,11 +15,11 @@
     <munit:config name="stored-procedure-blob-output-oracle-test-case.xml" minMuleVersion="4.1.6"/>
     <munit:before-suite name="createStoreProcedure">
         <db:execute-ddl config-ref="oracleDbPoolingConfig" >
-            <db:sql ><![CDATA[create or replace PROCEDURE myProcBlobOut(myParam OUT BLOB) AS aBlob BLOB;
-            ALTER FUNCTION myProcBlobOut COMPILE;
+            <db:sql ><![CDATA[CREATE OR REPLACE PROCEDURE myProcBlobOut(myParam OUT BLOB) AS
+  aBlob NUMBER;
 BEGIN
-  SELECT to_blob(1) into aBlob FROM dual;
-  myParam := aBlob;
+  SELECT to_number('1') into aBlob FROM dual;
+  myParam := utl_raw.cast_to_raw(aBlob);
 END;]]></db:sql>
         </db:execute-ddl>
     </munit:before-suite>

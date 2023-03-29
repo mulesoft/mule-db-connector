@@ -425,10 +425,6 @@ public abstract class AbstractTestDatabase {
     throw new UnsupportedOperationException(NO_SQLXML_SUPPORT_ERROR);
   }
 
-  public void createStoredProcedureOutputBlob(DataSource dataSource) throws SQLException {
-    throw new UnsupportedOperationException(NO_SQLXML_SUPPORT_ERROR);
-  }
-
   public void createStoredProcedureGetAlienDescription(DataSource dataSource) throws SQLException {
     throw new UnsupportedOperationException(NO_SQLXML_SUPPORT_ERROR);
   }

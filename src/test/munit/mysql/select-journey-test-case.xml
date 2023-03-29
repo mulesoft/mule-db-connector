@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<munit:config name="select-journey-test-case.xml" minMuleVersion="4.1.6" />
+	<munit:before-suite name="SelectJourneyBefore_Suite" >
+		<flow-ref name="CreateTableInDatabaseFlow"/>
+	</munit:before-suite>
+	<munit:test name="SelectSingleQueryTestCase">
+		<munit:behavior>
+			<flow-ref name="TruncateTableFlow" />
+			<flow-ref name="SimpleCaseSetupFlow"/>
+		</munit:behavior>
+		<munit:execution>
+			<db:select config-ref="dbConfigMySQL">
+				<db:sql ><![CDATA[SELECT start from flights where start = "NY";]]></db:sql>
+			</db:select>
+			<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</munit:execution>
+		<munit:validation>
+				<munit-tools:assert-equals actual="#[payload.start[0]]" expected='#["NY"]' message='The element must be "NY"' />
+			</munit:validation>
+		</munit:test>
+	<munit:test name="SelectComplexQueryTestCase" >
+		<munit:behavior >
+			<flow-ref name="TruncateTableFlow"/>
+			<flow-ref name="ComplexCaseSetup"/>
+		</munit:behavior>
+		<munit:execution >
+			<db:select config-ref="dbConfigMySQL">
+				<db:sql ><![CDATA[SELECT * FROM flights WHERE destination = "BR" and start= "CL";]]></db:sql>
+			</db:select>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="InputParametersTestCase" ignore="true">
+		<munit:behavior>
+			<flow-ref name="TruncateTableFlow" />
+			<flow-ref name="SimpleCaseSetupFlow" />
+		</munit:behavior>
+		<munit:execution>
+			<db:select config-ref="dbConfigMySQL" >
+				<db:sql ><![CDATA[SELECT * FROM :flight WHERE start IN(SELECT start FROM :flight GROUP BY start HAVING COUNT(*) > 1) GROUP BY id;]]></db:sql>
+				<db:input-parameters ><![CDATA[#[{'flight': 'flights'}]]]></db:input-parameters>
+			</db:select>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals actual="#[payload[0].id]" expected="#[2]" />
+			<munit-tools:assert-equals actual="#[payload[1].id]" expected="#[3]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="TransactionalActionsAlwaysJoinPositiveSelectTestCase" >
+		<munit:behavior >
+			<flow-ref name="TruncateTableFlow" />
+			<flow-ref name="ComplexCaseSetup" />
+		</munit:behavior>
+		<munit:execution >
+			<try transactionalAction="ALWAYS_BEGIN">
+				<db:select config-ref="dbConfigMySQL" target="SingleQuery">
+					<db:sql ><![CDATA[SELECT start from flights where id = 1;]]></db:sql>
+				</db:select>
+				<db:select transactionalAction="ALWAYS_JOIN" config-ref="dbConfigMySQL">
+					<db:sql ><![CDATA[SELECT start from flights;]]></db:sql>
+				</db:select>
+			</try>
+			<ee:transform >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[3]"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="TransactionalActionsAlwaysJoinNegativeTestCase" expectedErrorType="MULE:UNKNOWN">
+		<munit:behavior >
+			<flow-ref name="TruncateTableFlow" />
+			<flow-ref name="ComplexCaseSetup" />
+		</munit:behavior>
+		<munit:execution >
+			<db:select config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN" >
+				<db:sql ><![CDATA[SELECT start from flights;]]></db:sql>
+			</db:select>
+			<ee:transform >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="JoinIfPossiblePositiveTestCase" >
+		<munit:behavior >
+			<flow-ref name="TruncateTableFlow" />
+			<flow-ref name="ComplexCaseSetup" />
+		</munit:behavior>
+		<munit:execution >
+			<try transactionalAction="ALWAYS_BEGIN">
+				<db:select config-ref="dbConfigMySQL" target="firstValue">
+					<db:sql ><![CDATA[SELECT start from flights;]]></db:sql>
+				</db:select>
+				<db:select config-ref="dbConfigMySQL">
+					<db:sql ><![CDATA[SELECT start from flights;]]></db:sql>
+				</db:select>
+			</try>
+			<ee:transform >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[3]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="JoinNotSupportedPositiveTestCase" >
+		<munit:behavior>
+			<flow-ref name="TruncateTableFlow" />
+			<flow-ref name="ComplexCaseSetup" />
+		</munit:behavior>
+		<munit:execution >
+			<try transactionalAction="ALWAYS_BEGIN">
+				<db:select config-ref="dbConfigMySQL" target="firstValue">
+					<db:sql><![CDATA[SELECT start from flights;]]></db:sql>
+				</db:select>
+				<db:select config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED">
+					<db:sql><![CDATA[SELECT start from flights;]]></db:sql>
+				</db:select>
+			</try>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[3]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="JoinNotSupportedNegativeTestCase">
+		<munit:behavior >
+			<flow-ref name="TruncateTableFlow" />
+			<flow-ref name="ComplexCaseSetup" />
+		</munit:behavior>
+		<munit:execution >
+			<db:select config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED">
+				<db:sql><![CDATA[SELECT start from flights;]]></db:sql>
+			</db:select>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[3]" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="SelectMaxRowsConfiguredTestCase"  >
+		<munit:behavior >
+			<flow-ref name="TruncateTableFlow" />
+			<flow-ref name="ComplexCaseSetup" />
+		</munit:behavior>
+		<munit:execution>
+			<db:select config-ref="dbConfigMySQL" maxRows="2">
+				<db:sql><![CDATA[SELECT start from flights;]]></db:sql>
+			</db:select>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[2]" />
+		</munit:validation>
+	</munit:test>
+	<munit:after-suite name="SelectJourneyAfter_Suite" >
+		<flow-ref name="DropFlightsTable" />
+	</munit:after-suite>
+
+</mule>

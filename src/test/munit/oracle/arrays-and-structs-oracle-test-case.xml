@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+	  xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	  xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	  xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	  xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+
+	<munit:config name="arrays-and-structs-oracle-test-case.xml">
+		<munit:parameterizations>
+			<munit:parameterization name="oracleDbConfigOneConnection">
+				<munit:parameters>
+					<munit:parameter propertyName="config" value="oracleDbConfigWithoutPoolingProfile"/>
+				</munit:parameters>
+			</munit:parameterization>
+		</munit:parameterizations>
+	</munit:config>
+
+	<munit:before-suite name="prepareEverything">
+		<db:execute-ddl config-ref="${config}">
+			<db:sql>create or replace type TEST_STRUCT as object (field1 varchar2(3), field2 number(2), field3 varchar2(60))</db:sql>
+		</db:execute-ddl>
+		<db:execute-ddl config-ref="${config}">
+			<db:sql>create or replace type TEST_STRUCT_COLLECTION as table of TEST_STRUCT</db:sql>
+		</db:execute-ddl>
+		<db:execute-ddl config-ref="${config}">
+			<db:sql><![CDATA[
+create or replace procedure retain_first_struct (z in out TEST_STRUCT_COLLECTION)
+    IS
+begin
+    if z is not null and z.count > 1 then
+        z := TEST_STRUCT_COLLECTION(z(1));
+    end if;
+end;
+]]></db:sql>
+		</db:execute-ddl>
+	</munit:before-suite>
+
+	<munit:test name="prepareArrayAndStruct" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+		<munit:execution>
+			<set-variable value="#[Db::prepareArray('TEST_STRUCT_COLLECTION', [ Db::prepareStruct('TEST_STRUCT', ['hi', 1, 'bye']), Db::prepareStruct('TEST_STRUCT', ['hi2', 2, 'bye2']) ])]" variableName="list"/>
+
+			<db:stored-procedure config-ref="${config}" inOutParameters='#[{ "list": vars.list }]'>
+				<db:sql >call retain_first_struct(:list)</db:sql>
+			</db:stored-procedure>
+		</munit:execution>
+
+		<munit:validation>
+			<munit-tools:assert-equals actual="#[payload.list[0][1]]" expected="#[1]"/>
+		</munit:validation>
+	</munit:test>
+
+	<munit:test name="preparedStructsInsideNormalArray" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+		<munit:execution>
+			<set-variable value="#[ [Db::prepareStruct('TEST_STRUCT', ['hi', 1, 'bye']), Db::prepareStruct('TEST_STRUCT', ['hi2', 2, 'bye2'])] ]" variableName="list"/>
+
+			<db:stored-procedure config-ref="${config}" inOutParameters='#[{ "list": vars.list }]'>
+				<db:sql >call retain_first_struct(:list)</db:sql>
+			</db:stored-procedure>
+		</munit:execution>
+
+		<munit:validation>
+			<munit-tools:assert-equals actual="#[payload.list[0][1]]" expected="#[1]"/>
+		</munit:validation>
+	</munit:test>
+
+	<munit:after-suite name="dropStuff">
+		<try>
+			<db:execute-script config-ref="${config}">
+				<db:sql>
+					drop procedure retain_first_struct;
+					drop type TEST_STRUCT_COLLECTION;
+					drop type TEST_STRUCT;
+				</db:sql>
+			</db:execute-script>
+			<error-handler>
+				<on-error-continue logException="false"/>
+			</error-handler>
+		</try>
+	</munit:after-suite>
+
+</mule>

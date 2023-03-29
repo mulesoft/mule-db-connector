@@ -13,10 +13,7 @@
         http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 
     <munit:config name="stored-procedure-blob-output-oracle-test-case.xml" minMuleVersion="4.1.6"/>
-
-    <!--
-
-    <munit:before-suite name="createStoreProcedure">
+    <munit:before-test name="createStoreProcedure">
         <db:execute-ddl config-ref="oracleDbPoolingConfig" >
             <db:sql ><![CDATA[CREATE OR REPLACE PROCEDURE myProcBlobOut(myParam OUT BLOB) AS
   aBlob NUMBER;
@@ -25,7 +22,7 @@ BEGIN
   myParam := utl_raw.cast_to_raw(aBlob);
 END;]]></db:sql>
         </db:execute-ddl>
-    </munit:before-suite>
+    </munit:before-test>
 
     <munit:test name="getBlobResultFromStoredProcedurePackage" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
         <munit:execution>
@@ -55,5 +52,10 @@ status: "OK"]'/>
         </munit:execution>
     </munit:test>
 
-    -->
+    <munit:after-suite name="deleteStoreProcedure">
+        <db:execute-script config-ref="oracleDbPoolingConfig">
+            <db:sql ><![CDATA[drop procedure myProcBlobOut;]]></db:sql>
+        </db:execute-script>
+    </munit:after-suite>
+
 </mule>

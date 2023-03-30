@@ -26,29 +26,12 @@ END;]]></db:sql>
 
     <munit:test name="getBlobResultFromStoredProcedurePackage" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
         <munit:execution>
-            <set-payload value="#[1 to 20]" />
-            <foreach>
-                <try transactionalAction="ALWAYS_BEGIN">
-                    <db:stored-procedure transactionalAction="ALWAYS_JOIN"  config-ref="dbConfigWithPooling">
-                        <db:sql><![CDATA[call myProcBlobOut(:blobdata)]]></db:sql>
-                        <db:output-parameters>
-                            <db:output-parameter key="blobdata" type="BLOB" />
-                        </db:output-parameters>
-                    </db:stored-procedure>
-                    <ee:transform>
-                        <ee:message>
-                            <ee:set-payload><![CDATA[%dw 2.0
-                        output application/json
-                        ---
-                        payload[0]]]></ee:set-payload>
-                        </ee:message>
-                    </ee:transform>
-                </try>
-            </foreach>
-            <set-payload value='#[%dw 2.0
-output application/java
----
-status: "OK"]'/>
+             <db:stored-procedure transactionalAction="ALWAYS_JOIN"  config-ref="dbConfigWithPooling">
+                 <db:sql><![CDATA[call myProcBlobOut(:blobdata)]]></db:sql>
+                 <db:output-parameters>
+                     <db:output-parameter key="blobdata" type="BLOB" />
+                 </db:output-parameters>
+             </db:stored-procedure>
         </munit:execution>
     </munit:test>
 

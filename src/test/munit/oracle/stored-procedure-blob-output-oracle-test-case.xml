@@ -26,7 +26,7 @@ END;]]></db:sql>
 
     <munit:test name="getBlobResultFromStoredProcedurePackage" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
         <munit:execution>
-             <db:stored-procedure transactionalAction="ALWAYS_JOIN"  config-ref="dbConfigWithPooling">
+             <db:stored-procedure config-ref="dbConfigWithPooling">
                  <db:sql><![CDATA[call myProcBlobOut(:blobdata)]]></db:sql>
                  <db:output-parameters>
                      <db:output-parameter key="blobdata" type="BLOB" />

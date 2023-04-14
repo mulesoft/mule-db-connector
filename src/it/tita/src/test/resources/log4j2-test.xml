@@ -13,7 +13,7 @@
 
         <!-- Main ones -->
         <AsyncLogger name="org.mule.maven.client" level="INFO"/>
-        <AsyncLogger name="org.mule.runtime.core.internal.processor.LoggerMessageProcessor" level="DEBUG"/>
+        <AsyncLogger name="org.mule.runtime.core.components.internal.processor.LoggerMessageProcessor" level="DEBUG"/>
         <AsyncLogger name="com.mulesoft.anypoint.tita" level="TRACE"/>
         <AsyncLogger name="com.mulesoft.anypoint.discovery" level="TRACE"/>
         <AsyncLogger name="com.mulesoft.anypoint.agw.system" level="TRACE"/>

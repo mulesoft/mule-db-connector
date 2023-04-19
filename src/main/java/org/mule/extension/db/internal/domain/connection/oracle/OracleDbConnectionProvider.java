@@ -7,10 +7,6 @@
 
 package org.mule.extension.db.internal.domain.connection.oracle;
 
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
-import static java.util.Optional.ofNullable;
-
 import static org.mule.db.commons.api.exception.connection.DbError.CANNOT_REACH;
 import static org.mule.db.commons.api.exception.connection.DbError.INVALID_CREDENTIALS;
 import static org.mule.db.commons.api.exception.connection.DbError.INVALID_DATABASE;
@@ -21,6 +17,10 @@ import static org.mule.runtime.core.api.lifecycle.LifecycleUtils.initialiseIfNee
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;
 import static org.mule.extension.db.internal.util.MigrationUtils.mapDataSourceConfig;
 
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
+
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -30,6 +30,7 @@ import java.util.Map;
 
 import org.mule.db.commons.api.exception.connection.DbError;
 import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
+import org.mule.db.commons.internal.domain.connection.GenericConfigDbConnectionTracingMetadata;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
@@ -79,7 +80,8 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
   @Override
   protected DbConnection createDbConnection(Connection connection) throws Exception {
     return new OracleDbConnection(connection, super.resolveCustomTypes(), resolvedDbTypesCache,
-                                  super.getCacheQueryTemplateSize());
+                                  super.getCacheQueryTemplateSize(),
+                                  new GenericConfigDbConnectionTracingMetadata(getDataSourceConfig().get()));
   }
 
   @Override

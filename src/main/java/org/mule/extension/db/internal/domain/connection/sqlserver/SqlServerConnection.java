@@ -6,11 +6,14 @@
  */
 package org.mule.extension.db.internal.domain.connection.sqlserver;
 
+import static org.mule.db.commons.internal.domain.connection.DbConnectionTracingMetadata.getNotResolvedDbConnectionTracingMetadata;
+
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
 import org.mule.extension.db.internal.domain.connection.sqlserver.types.SqlServerBinaryDbType;
 import org.mule.extension.db.internal.domain.connection.sqlserver.types.SqlServerVarBinaryDbType;
 import org.mule.db.commons.internal.domain.type.DbType;
+import org.mule.db.commons.internal.domain.connection.DbConnectionTracingMetadata;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -24,7 +27,12 @@ import java.util.List;
 public class SqlServerConnection extends DefaultDbConnection {
 
   SqlServerConnection(Connection jdbcConnection, List<DbType> customDataTypes, long cacheQueryTemplateSize) {
-    super(jdbcConnection, customDataTypes, cacheQueryTemplateSize);
+    super(jdbcConnection, customDataTypes, cacheQueryTemplateSize, getNotResolvedDbConnectionTracingMetadata());
+  }
+
+  SqlServerConnection(Connection jdbcConnection, List<DbType> customDataTypes, long cacheQueryTemplateSize,
+                      DbConnectionTracingMetadata dbConnectionTracingMetadata) {
+    super(jdbcConnection, customDataTypes, cacheQueryTemplateSize, dbConnectionTracingMetadata);
   }
 
   /**

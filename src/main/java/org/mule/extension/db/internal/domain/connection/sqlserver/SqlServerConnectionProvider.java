@@ -23,10 +23,12 @@ import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CON
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+
 import org.mule.db.commons.api.exception.connection.DbError;
 import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
+import org.mule.extension.db.internal.domain.connection.sqlserver.tracing.SqlServerDbConnectionTracingMetadata;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
@@ -56,7 +58,8 @@ public class SqlServerConnectionProvider extends DbConnectionProvider {
 
   @Override
   protected DbConnection createDbConnection(Connection connection) throws Exception {
-    return new SqlServerConnection(connection, super.resolveCustomTypes(), super.getCacheQueryTemplateSize());
+    return new SqlServerConnection(connection, super.resolveCustomTypes(), super.getCacheQueryTemplateSize(),
+                                   new SqlServerDbConnectionTracingMetadata(connectionParameters));
   }
 
   @Override

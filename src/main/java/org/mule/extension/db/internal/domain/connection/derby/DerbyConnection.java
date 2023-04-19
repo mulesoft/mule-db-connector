@@ -6,8 +6,11 @@
  */
 package org.mule.extension.db.internal.domain.connection.derby;
 
+import static org.mule.db.commons.internal.domain.connection.DbConnectionTracingMetadata.getNotResolvedDbConnectionTracingMetadata;
+
 import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
 import org.mule.db.commons.internal.domain.type.DbType;
+import org.mule.db.commons.internal.domain.connection.DbConnectionTracingMetadata;
 
 import java.sql.Connection;
 import java.util.List;
@@ -20,7 +23,12 @@ import java.util.List;
 public class DerbyConnection extends DefaultDbConnection {
 
   DerbyConnection(Connection connection, List<DbType> dbTypes, long cacheQueryTemplateSize) {
-    super(connection, dbTypes, cacheQueryTemplateSize);
+    this(connection, dbTypes, cacheQueryTemplateSize, getNotResolvedDbConnectionTracingMetadata());
+  }
+
+  DerbyConnection(Connection connection, List<DbType> dbTypes, long cacheQueryTemplateSize,
+                  DbConnectionTracingMetadata dbConnectionTracingMetadata) {
+    super(connection, dbTypes, cacheQueryTemplateSize, dbConnectionTracingMetadata);
   }
 
   // We are disabling content streaming for Derby because of a incompatibility between the connector logic and the

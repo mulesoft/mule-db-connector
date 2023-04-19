@@ -13,6 +13,7 @@ import static org.mule.db.commons.internal.domain.connection.DbConnectionProvide
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.generic.GenericConnectionProvider;
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
+import org.mule.extension.db.internal.domain.connection.datasource.ConnectionBasedDbConnectionTracingMetadata;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
@@ -38,10 +39,13 @@ public class DbGenericConnectionProvider extends GenericConnectionProvider {
 
   @Override
   protected DbConnection createDbConnection(Connection connection) throws Exception {
+    ConnectionBasedDbConnectionTracingMetadata connectionTracingMetadata =
+        new ConnectionBasedDbConnectionTracingMetadata(connection);
     if (isOracle(connection)) {
-      return new OracleDbConnection(connection, resolveCustomTypes(), resolvedDbTypesCache, super.getCacheQueryTemplateSize());
+      return new OracleDbConnection(connection, resolveCustomTypes(), resolvedDbTypesCache, super.getCacheQueryTemplateSize(),
+                                    connectionTracingMetadata);
     } else {
-      return super.createDbConnection(connection);
+      return super.createDbConnection(connection, connectionTracingMetadata);
     }
   }
 

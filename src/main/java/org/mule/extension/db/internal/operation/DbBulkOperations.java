@@ -8,6 +8,7 @@ package org.mule.extension.db.internal.operation;
 
 import org.mule.db.commons.AbstractDbConnector;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
+import org.mule.db.commons.internal.domain.connection.DbConnectionTracingMetadata;
 import org.mule.db.commons.internal.domain.metadata.DbInputMetadataResolver;
 import org.mule.db.commons.internal.operation.BulkOperations;
 import org.mule.db.commons.internal.operation.OperationErrorTypeProvider;
@@ -25,13 +26,19 @@ import org.mule.runtime.extension.api.runtime.streaming.StreamingHelper;
 import org.mule.extension.db.api.param.BulkQueryDefinition;
 import org.mule.extension.db.api.param.BulkScript;
 import org.mule.extension.db.api.param.QuerySettings;
+import org.mule.sdk.api.runtime.parameter.CorrelationInfo;
+import org.mule.sdk.compatibility.api.utils.ForwardCompatibilityHelper;
 
+import javax.inject.Inject;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import static org.mule.db.commons.internal.domain.query.QueryType.DELETE;
+import static org.mule.db.commons.internal.domain.query.QueryType.UPDATE;
 import static org.mule.db.commons.internal.operation.BaseDbOperations.QUERY_GROUP;
 import static org.mule.db.commons.internal.operation.BaseDbOperations.QUERY_SETTINGS;
+import static org.mule.extension.db.internal.operation.tracing.TracingUtils.setAttributesForDbClientOperation;
 import static org.mule.extension.db.internal.util.MigrationUtils.mapBulkQueryDefinition;
 import static org.mule.extension.db.internal.util.MigrationUtils.mapBulkScript;
 import static org.mule.extension.db.internal.util.MigrationUtils.mapQuerySettings;
@@ -46,6 +53,9 @@ import static org.mule.extension.db.internal.util.MigrationUtils.mapQuerySetting
 public class DbBulkOperations implements Initialisable {
 
   private BulkOperations bulkOperations;
+
+  @Inject
+  private java.util.Optional<ForwardCompatibilityHelper> forwardCompatibilityHelper;
 
   @Override
   public void initialise() throws InitialisationException {
@@ -70,8 +80,15 @@ public class DbBulkOperations implements Initialisable {
                           @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
                           @Config AbstractDbConnector connector,
                           @Connection DbConnection connection,
+                          CorrelationInfo correlationInfo,
                           StreamingHelper streamingHelper)
       throws SQLException {
+    forwardCompatibilityHelper.ifPresent(fwh -> {
+      DbConnectionTracingMetadata dbConnectionTracingMetadata = connection.getDbConnectionTracingMetadata();
+      setAttributesForDbClientOperation(dbConnectionTracingMetadata,
+                                        fwh.getDistributedTraceContextManager(correlationInfo),
+                                        query.getSql());
+    });
     return bulkOperations.bulkInsert(bulkInputParameters, mapBulkQueryDefinition(query), connector, connection, streamingHelper);
   }
 
@@ -94,8 +111,16 @@ public class DbBulkOperations implements Initialisable {
                           @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
                           @Config AbstractDbConnector connector,
                           @Connection DbConnection connection,
+                          CorrelationInfo correlationInfo,
                           StreamingHelper streamingHelper)
       throws SQLException {
+    forwardCompatibilityHelper.ifPresent(fwh -> {
+      DbConnectionTracingMetadata dbConnectionTracingMetadata = connection.getDbConnectionTracingMetadata();
+      setAttributesForDbClientOperation(dbConnectionTracingMetadata,
+                                        UPDATE.name() + " " + dbConnectionTracingMetadata.getDbSystem(),
+                                        fwh.getDistributedTraceContextManager(correlationInfo),
+                                        query.getSql());
+    });
     return bulkOperations.bulkUpdate(bulkInputParameters, mapBulkQueryDefinition(query), connector, connection, streamingHelper);
   }
 
@@ -117,8 +142,16 @@ public class DbBulkOperations implements Initialisable {
                           @ParameterGroup(name = QUERY_GROUP) BulkQueryDefinition query,
                           @Config AbstractDbConnector connector,
                           @Connection DbConnection connection,
+                          CorrelationInfo correlationInfo,
                           StreamingHelper streamingHelper)
       throws SQLException {
+    forwardCompatibilityHelper.ifPresent(fwh -> {
+      DbConnectionTracingMetadata dbConnectionTracingMetadata = connection.getDbConnectionTracingMetadata();
+      setAttributesForDbClientOperation(dbConnectionTracingMetadata,
+                                        DELETE.name() + " " + dbConnectionTracingMetadata.getDbSystem(),
+                                        fwh.getDistributedTraceContextManager(correlationInfo),
+                                        query.getSql());
+    });
     return bulkOperations.bulkDelete(bulkInputParameters, mapBulkQueryDefinition(query), connector, connection, streamingHelper);
   }
 
@@ -135,8 +168,16 @@ public class DbBulkOperations implements Initialisable {
    */
   public int[] executeScript(@ParameterGroup(name = QUERY_GROUP) BulkScript script,
                              @ParameterGroup(name = QUERY_SETTINGS) QuerySettings settings,
-                             @Connection DbConnection connection)
+                             @Connection DbConnection connection,
+                             CorrelationInfo correlationInfo)
       throws SQLException {
+    forwardCompatibilityHelper.ifPresent(fwh -> {
+      DbConnectionTracingMetadata dbConnectionTracingMetadata = connection.getDbConnectionTracingMetadata();
+      setAttributesForDbClientOperation(dbConnectionTracingMetadata,
+                                        dbConnectionTracingMetadata.getDbSystem(),
+                                        fwh.getDistributedTraceContextManager(correlationInfo),
+                                        "<script>");
+    });
     return bulkOperations.executeScript(mapBulkScript(script), mapQuerySettings(settings), connection);
   }
 

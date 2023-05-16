@@ -23,6 +23,8 @@ import javax.sql.DataSource;
 import org.mule.db.commons.api.exception.connection.DbError;
 import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
 import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
+import org.mule.db.commons.internal.domain.connection.DbConnectionTracingMetadata;
+import org.mule.extension.db.internal.domain.connection.mysql.tracing.MySqlConnectionTracingMetadata;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
@@ -72,4 +74,8 @@ public class MySqlConnectionProvider extends DbConnectionProvider {
     return empty();
   }
 
+  @Override
+  protected DbConnectionTracingMetadata getDbConnectionTracingMetadata() {
+    return new MySqlConnectionTracingMetadata(mySqlParameters);
+  }
 }

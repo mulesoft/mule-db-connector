@@ -12,6 +12,7 @@ import static org.mule.db.commons.internal.domain.connection.DbConnectionProvide
 
 import javax.sql.DataSource;
 
+import org.mule.db.commons.internal.domain.connection.DbConnectionTracingMetadata;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.datasource.DataSourceReferenceConnectionProvider;
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
@@ -41,11 +42,12 @@ public class DbDataSourceReferenceConnectionProvider extends DataSourceReference
 
   @Override
   protected DbConnection createDbConnection(Connection connection) throws Exception {
+    DbConnectionTracingMetadata dbConnectionTracingMetadata = new ConnectionBasedDbConnectionTracingMetadata(connection);
     if (isOracle(connection)) {
       return new OracleDbConnection(connection, super.resolveCustomTypes(), resolvedDbTypesCache,
-                                    super.getCacheQueryTemplateSize());
+                                    super.getCacheQueryTemplateSize(), dbConnectionTracingMetadata);
     } else {
-      return super.createDbConnection(connection);
+      return super.createDbConnection(connection, dbConnectionTracingMetadata);
     }
   }
 

@@ -27,6 +27,7 @@ import org.mule.db.commons.api.exception.connection.DbError;
 import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
+import org.mule.extension.db.internal.domain.connection.derby.tracing.DerbyDbConnectionTracingMetadata;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
@@ -64,7 +65,8 @@ public class DerbyConnectionProvider extends DbConnectionProvider {
 
   @Override
   protected DbConnection createDbConnection(Connection connection) throws Exception {
-    return new DerbyConnection(connection, resolveCustomTypes(), super.getCacheQueryTemplateSize());
+    return new DerbyConnection(connection, resolveCustomTypes(), super.getCacheQueryTemplateSize(),
+                               new DerbyDbConnectionTracingMetadata(derbyParameters));
   }
 
   @Override

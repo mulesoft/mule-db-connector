@@ -10,6 +10,7 @@ package org.mule.extension.db.internal.domain.connection.oracle;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.mule.db.commons.internal.domain.connection.DbConnectionTracingMetadata.getNotResolvedDbConnectionTracingMetadata;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
 
@@ -26,6 +27,7 @@ import org.mule.extension.db.internal.domain.connection.oracle.types.OracleOpaqu
 import org.mule.extension.db.internal.domain.connection.oracle.types.OracleSQLXMLType;
 import org.mule.extension.db.internal.domain.connection.oracle.types.OracleSYSXMLType;
 import org.mule.extension.db.internal.domain.connection.oracle.types.OracleXMLType;
+import org.mule.db.commons.internal.domain.connection.DbConnectionTracingMetadata;
 
 import java.sql.Array;
 import java.sql.Connection;
@@ -77,10 +79,16 @@ public class OracleDbConnection extends DefaultDbConnection {
 
   private final Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache;
 
-
   public OracleDbConnection(Connection jdbcConnection, List<DbType> customDataTypes,
                             Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache, long cacheQueryTemplateSize) {
-    super(jdbcConnection, customDataTypes, cacheQueryTemplateSize);
+    this(jdbcConnection, customDataTypes, resolvedDbTypesCache, cacheQueryTemplateSize,
+         getNotResolvedDbConnectionTracingMetadata());
+  }
+
+  public OracleDbConnection(Connection jdbcConnection, List<DbType> customDataTypes,
+                            Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache, long cacheQueryTemplateSize,
+                            DbConnectionTracingMetadata dbConnectionTracingMetadata) {
+    super(jdbcConnection, customDataTypes, cacheQueryTemplateSize, dbConnectionTracingMetadata);
     this.resolvedDbTypesCache = resolvedDbTypesCache;
   }
 

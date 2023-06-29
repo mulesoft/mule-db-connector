@@ -7,6 +7,7 @@
 
 package org.mule.extension.db.internal;
 
+import static com.github.benmanes.caffeine.cache.Caffeine.newBuilder;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,6 +38,7 @@ import org.junit.Test;
 public class OracleCreateArrayTestCase extends AbstractDbFunctionTestCase {
 
   private static final String QUERY_ALL_COLL_TYPES = "SELECT * FROM SYS.ALL_COLL_TYPES WHERE TYPE_NAME = ?";
+  private static final long CACHE_MAXIMUM_SIZE = 100;
 
   @Test
   public void createsDbArrayResolvingBlobWithOracleConnectionUsingSimpleName() throws Exception {
@@ -126,7 +128,8 @@ public class OracleCreateArrayTestCase extends AbstractDbFunctionTestCase {
     when(resultSet.getInt(ATTR_NO_PARAM)).thenReturn(1);
     when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(dataTypeName);
 
-    OracleDbConnection oracleConnection = new OracleDbConnection(delegate, new ArrayList<>(), new ConcurrentHashMap<>(), 100);
+    OracleDbConnection oracleConnection = new OracleDbConnection(delegate, new ArrayList<>(), new ConcurrentHashMap<>(),
+                                                                 newBuilder().maximumSize(CACHE_MAXIMUM_SIZE).build());
 
     oracleConnection.createArray(udtName, values);
 

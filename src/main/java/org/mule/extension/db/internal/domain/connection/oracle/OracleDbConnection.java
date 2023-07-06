@@ -7,15 +7,14 @@
 
 package org.mule.extension.db.internal.domain.connection.oracle;
 
-import static java.util.Optional.empty;
-import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import oracle.jdbc.OracleConnection;
-import oracle.jdbc.OracleTypes;
+import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
 import org.mule.db.commons.internal.domain.connection.type.resolver.ArrayTypeResolver;
 import org.mule.db.commons.internal.domain.connection.type.resolver.StructAndArrayTypeResolver;
@@ -47,6 +46,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import oracle.jdbc.OracleConnection;
+import oracle.jdbc.OracleTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

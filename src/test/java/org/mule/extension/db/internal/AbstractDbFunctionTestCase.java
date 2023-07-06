@@ -9,6 +9,7 @@ package org.mule.extension.db.internal;
 import static com.github.benmanes.caffeine.cache.Caffeine.newBuilder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 

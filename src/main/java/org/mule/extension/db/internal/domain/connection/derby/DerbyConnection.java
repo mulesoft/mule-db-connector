@@ -6,13 +6,14 @@
  */
 package org.mule.extension.db.internal.domain.connection.derby;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
 import org.mule.db.commons.internal.domain.query.QueryTemplate;
 import org.mule.db.commons.internal.domain.type.DbType;
 
 import java.sql.Connection;
 import java.util.List;
+
+import com.github.benmanes.caffeine.cache.Cache;
 
 /**
  * {@link DefaultDbConnection} implementation for Derby databases

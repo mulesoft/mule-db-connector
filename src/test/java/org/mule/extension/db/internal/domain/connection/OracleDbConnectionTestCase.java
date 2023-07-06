@@ -7,13 +7,21 @@
 
 package org.mule.extension.db.internal.domain.connection;
 
-import oracle.jdbc.OracleConnection;
-import org.junit.Test;
-import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
+import static org.mule.db.commons.internal.domain.connection.type.resolver.ArrayTypeResolver.QUERY_ALL_COLL_TYPES;
+import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.ATTR_TYPE_NAME_PARAM;
+
+import static com.github.benmanes.caffeine.cache.Caffeine.newBuilder;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
+import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,16 +30,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.github.benmanes.caffeine.cache.Caffeine.newBuilder;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.ATTR_TYPE_NAME_PARAM;
-import static org.mule.db.commons.internal.domain.connection.type.resolver.ArrayTypeResolver.QUERY_ALL_COLL_TYPES;
+import oracle.jdbc.OracleConnection;
+import org.junit.Test;
 
 public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
 

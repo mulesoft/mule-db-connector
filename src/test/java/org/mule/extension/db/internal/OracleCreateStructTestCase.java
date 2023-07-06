@@ -7,24 +7,25 @@
 
 package org.mule.extension.db.internal;
 
+import static org.mule.db.commons.api.param.JdbcType.BLOB;
+import static org.mule.db.commons.api.param.JdbcType.CLOB;
+import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
+import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
+
 import static com.github.benmanes.caffeine.cache.Caffeine.newBuilder;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mule.db.commons.api.param.JdbcType.BLOB;
-import static org.mule.db.commons.api.param.JdbcType.CLOB;
-import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
-import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
 
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
 
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;

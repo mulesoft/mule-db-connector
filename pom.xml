@@ -30,7 +30,7 @@
         <hamcrest.version>2.2</hamcrest.version>
         <xmlunit.version>1.6</xmlunit.version>
         <javax.transaction.version>1.3</javax.transaction.version>
-        <xaPoolVersion>1.5.0</xaPoolVersion>
+        <xaPoolVersion>1.5.0-osgi</xaPoolVersion>
         <cglibVersion>3.3.0</cglibVersion>
         <muleDbClientVersion>1.6.3</muleDbClientVersion>
         <muleExtensionsShadeVersion>1.0.4</muleExtensionsShadeVersion>

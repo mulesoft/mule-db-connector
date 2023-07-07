@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <munit:config name="stored-procedure-blob-output-oracle-test-case.xml" minMuleVersion="4.1.6"/>
+    <munit:before-test name="createStoreProcedureBlob">
+        <db:execute-ddl config-ref="oracleDbPoolingConfig" >
+            <db:sql ><![CDATA[CREATE OR REPLACE PROCEDURE myProcBlobOut(myParam OUT BLOB) AS
+  aBlob NUMBER;
+BEGIN
+  SELECT to_number('1') into aBlob FROM dual;
+  myParam := utl_raw.cast_to_raw(aBlob);
+END;]]></db:sql>
+        </db:execute-ddl>
+    </munit:before-test>
+
+    <munit:test name="getBlobResultFromStoredProcedurePackage" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+        <munit:execution>
+             <db:stored-procedure config-ref="dbConfigWithPooling">
+                 <db:sql><![CDATA[call myProcBlobOut(:blobdata)]]></db:sql>
+                 <db:output-parameters>
+                     <db:output-parameter key="blobdata" type="BLOB" />
+                 </db:output-parameters>
+             </db:stored-procedure>
+        </munit:execution>
+    </munit:test>
+
+    <munit:after-suite name="deleteStoreProcedureBlob">
+        <db:execute-script config-ref="oracleDbPoolingConfig">
+            <db:sql ><![CDATA[drop procedure myProcBlobOut]]></db:sql>
+        </db:execute-script>
+    </munit:after-suite>
+
+</mule>

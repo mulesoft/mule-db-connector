@@ -7,10 +7,13 @@
 package org.mule.extension.db.internal.domain.connection.derby;
 
 import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
+import org.mule.db.commons.internal.domain.query.QueryTemplate;
 import org.mule.db.commons.internal.domain.type.DbType;
 
 import java.sql.Connection;
 import java.util.List;
+
+import com.github.benmanes.caffeine.cache.Cache;
 
 /**
  * {@link DefaultDbConnection} implementation for Derby databases
@@ -19,8 +22,8 @@ import java.util.List;
  */
 public class DerbyConnection extends DefaultDbConnection {
 
-  DerbyConnection(Connection connection, List<DbType> dbTypes, long cacheQueryTemplateSize) {
-    super(connection, dbTypes, cacheQueryTemplateSize);
+  DerbyConnection(Connection connection, List<DbType> dbTypes, Cache<String, QueryTemplate> cachedTemplates) {
+    super(connection, dbTypes, cachedTemplates);
   }
 
   // We are disabling content streaming for Derby because of a incompatibility between the connector logic and the

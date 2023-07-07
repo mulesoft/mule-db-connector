@@ -7,17 +7,18 @@
 
 package org.mule.extension.db.internal.domain.connection.oracle;
 
-import static java.util.Optional.empty;
-import static java.util.Optional.ofNullable;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
 
-import oracle.jdbc.OracleConnection;
-import oracle.jdbc.OracleTypes;
+import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
 import org.mule.db.commons.internal.domain.connection.type.resolver.ArrayTypeResolver;
 import org.mule.db.commons.internal.domain.connection.type.resolver.StructAndArrayTypeResolver;
+import org.mule.db.commons.internal.domain.query.QueryTemplate;
 import org.mule.db.commons.internal.domain.type.ArrayResolvedDbType;
 import org.mule.db.commons.internal.domain.type.DbType;
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
@@ -45,6 +46,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import oracle.jdbc.OracleConnection;
+import oracle.jdbc.OracleTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,8 +83,9 @@ public class OracleDbConnection extends DefaultDbConnection {
 
 
   public OracleDbConnection(Connection jdbcConnection, List<DbType> customDataTypes,
-                            Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache, long cacheQueryTemplateSize) {
-    super(jdbcConnection, customDataTypes, cacheQueryTemplateSize);
+                            Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache,
+                            Cache<String, QueryTemplate> cachedTemplates) {
+    super(jdbcConnection, customDataTypes, cachedTemplates);
     this.resolvedDbTypesCache = resolvedDbTypesCache;
   }
 

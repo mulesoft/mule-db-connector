@@ -64,7 +64,7 @@ public class DerbyConnectionProvider extends DbConnectionProvider {
 
   @Override
   protected DbConnection createDbConnection(Connection connection) throws Exception {
-    return new DerbyConnection(connection, resolveCustomTypes(), super.getCacheQueryTemplateSize());
+    return new DerbyConnection(connection, resolveCustomTypes(), super.cachedTemplates);
   }
 
   @Override

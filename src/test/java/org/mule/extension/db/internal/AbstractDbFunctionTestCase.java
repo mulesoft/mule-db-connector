@@ -6,10 +6,8 @@
  */
 package org.mule.extension.db.internal;
 
-import static com.github.benmanes.caffeine.cache.Caffeine.newBuilder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 
@@ -37,7 +35,6 @@ public class AbstractDbFunctionTestCase extends AbstractMuleTestCase {
 
   private static final int DATA_TYPE_INDEX = 5;
   private static final int ATTR_TYPE_NAME_INDEX = 6;
-  private static final long CACHE_MAXIMUM_SIZE = 100;
 
   @Rule
   public ExpectedException expectedException = ExpectedException.none();
@@ -52,7 +49,7 @@ public class AbstractDbFunctionTestCase extends AbstractMuleTestCase {
     when(resultSet.getString(ATTR_TYPE_NAME_INDEX)).thenReturn(dataTypeName);
     when(metadata.getAttributes("catalog", null, TYPE_NAME, null)).thenReturn(resultSet);
 
-    return new DefaultDbConnection(delegate, new ArrayList<>(), newBuilder().maximumSize(CACHE_MAXIMUM_SIZE).build());
+    return new DefaultDbConnection(delegate, new ArrayList<>(), 1000);
   }
 
 }

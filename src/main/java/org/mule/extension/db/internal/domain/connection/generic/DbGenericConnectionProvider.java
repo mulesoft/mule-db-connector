@@ -39,7 +39,7 @@ public class DbGenericConnectionProvider extends GenericConnectionProvider {
   @Override
   protected DbConnection createDbConnection(Connection connection) throws Exception {
     if (isOracle(connection)) {
-      return new OracleDbConnection(connection, resolveCustomTypes(), resolvedDbTypesCache, cachedTemplates);
+      return new OracleDbConnection(connection, resolveCustomTypes(), resolvedDbTypesCache, super.getCacheQueryTemplateSize());
     } else {
       return super.createDbConnection(connection);
     }

@@ -7,21 +7,13 @@
 
 package org.mule.extension.db.internal.domain.connection;
 
-import static org.mule.db.commons.internal.domain.connection.type.resolver.ArrayTypeResolver.QUERY_ALL_COLL_TYPES;
-import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.ATTR_TYPE_NAME_PARAM;
-
-import static com.github.benmanes.caffeine.cache.Caffeine.newBuilder;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import org.mule.db.commons.internal.domain.type.ResolvedDbType;
+import oracle.jdbc.OracleConnection;
+import org.junit.Test;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection;
+import org.mule.db.commons.internal.domain.type.ResolvedDbType;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,12 +22,18 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import oracle.jdbc.OracleConnection;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.ATTR_TYPE_NAME_PARAM;
+import static org.mule.db.commons.internal.domain.connection.type.resolver.ArrayTypeResolver.QUERY_ALL_COLL_TYPES;
 
 public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
 
-  private static final long CACHE_MAXIMUM_SIZE = 100;
   private final String TYPE_NAME = "TYPE_NAME";
   private final String OTHER_TYPE_NAME = "OTHER_TYPE";
 
@@ -82,8 +80,7 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     when(resultSet.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
     when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(USER_TYPE_DBNAME);
 
-    OracleDbConnection cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache,
-                                                    newBuilder().maximumSize(CACHE_MAXIMUM_SIZE).build());
+    OracleDbConnection cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache, 1000);
     cnx.createArray(USER_TYPE_NAME, params);
     assertThat(dbTypeCache.containsKey(USER_TYPE_NAME), is(true));
     assertThat(dbTypeCache.get(USER_TYPE_NAME).get(0).getName(), is(USER_TYPE_DBNAME));
@@ -101,8 +98,7 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     when(resultSet.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
     when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(USER_TYPE_DBNAME);
 
-    cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache,
-                                 newBuilder().maximumSize(CACHE_MAXIMUM_SIZE).build());
+    cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache, 100);
     cnx.createArray(USER_TYPE_NAME, params);
 
     assertThat(dbTypeCache.containsKey(USER_TYPE_NAME), is(true));
@@ -123,8 +119,7 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     when(resultSet.next()).thenReturn(true).thenReturn(false).thenReturn(true).thenReturn(false);
     when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(USER_TYPE_DBNAME_B);
 
-    cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache,
-                                 newBuilder().maximumSize(CACHE_MAXIMUM_SIZE).build());
+    cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache, 100);
     cnx.createArray(USER_TYPE_NAME_B, params);
 
     assertThat(dbTypeCache.containsKey(USER_TYPE_NAME_B), is(true));
@@ -145,8 +140,7 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     when(resultSet.next()).thenReturn(false);
 
     Map<String, Map<Integer, ResolvedDbType>> dbTypeCache = new ConcurrentHashMap<>();
-    OracleDbConnection cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache,
-                                                    newBuilder().maximumSize(CACHE_MAXIMUM_SIZE * 10).build());
+    OracleDbConnection cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache, 1000);
 
     cnx.getTables();
 

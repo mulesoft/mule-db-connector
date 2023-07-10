@@ -8,16 +8,13 @@ package org.mule.extension.db.internal.domain.connection.sqlserver;
 
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
-import org.mule.db.commons.internal.domain.query.QueryTemplate;
-import org.mule.db.commons.internal.domain.type.DbType;
 import org.mule.extension.db.internal.domain.connection.sqlserver.types.SqlServerBinaryDbType;
 import org.mule.extension.db.internal.domain.connection.sqlserver.types.SqlServerVarBinaryDbType;
+import org.mule.db.commons.internal.domain.type.DbType;
 
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.github.benmanes.caffeine.cache.Cache;
 
 /**
  * {@link DbConnection} implementation for SQL Server which configures out of the box custom
@@ -26,8 +23,8 @@ import com.github.benmanes.caffeine.cache.Cache;
  */
 public class SqlServerConnection extends DefaultDbConnection {
 
-  SqlServerConnection(Connection jdbcConnection, List<DbType> customDataTypes, Cache<String, QueryTemplate> cachedTemplates) {
-    super(jdbcConnection, customDataTypes, cachedTemplates);
+  SqlServerConnection(Connection jdbcConnection, List<DbType> customDataTypes, long cacheQueryTemplateSize) {
+    super(jdbcConnection, customDataTypes, cacheQueryTemplateSize);
   }
 
   /**

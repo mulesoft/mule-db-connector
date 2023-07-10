@@ -56,7 +56,7 @@ public class SqlServerConnectionProvider extends DbConnectionProvider {
 
   @Override
   protected DbConnection createDbConnection(Connection connection) throws Exception {
-    return new SqlServerConnection(connection, super.resolveCustomTypes(), super.cachedTemplates);
+    return new SqlServerConnection(connection, super.resolveCustomTypes(), super.getCacheQueryTemplateSize());
   }
 
   @Override

@@ -79,7 +79,7 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
   @Override
   protected DbConnection createDbConnection(Connection connection) throws Exception {
     return new OracleDbConnection(connection, super.resolveCustomTypes(), resolvedDbTypesCache,
-                                  super.getCacheQueryTemplateSize());
+                                  super.cachedTemplates);
   }
 
   @Override

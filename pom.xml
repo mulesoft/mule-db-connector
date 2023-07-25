@@ -532,7 +532,7 @@
                             <debug>false</debug>
                             <streamLogs>true</streamLogs>
                             <noLog>true</noLog>
-                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                            <cloneProjectsTo>${project.build.directory}/test/it</cloneProjectsTo>
                             <pomIncludes>
                                 <pomInclude>*/pom.xml</pomInclude>
                             </pomIncludes>
@@ -712,7 +712,7 @@
                             <debug>false</debug>
                             <streamLogs>true</streamLogs>
                             <noLog>true</noLog>
-                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                            <cloneProjectsTo>${project.build.directory}/test/it</cloneProjectsTo>
                             <skipInvocation>${skipTita}</skipInvocation>
                             <pomIncludes>
                                 <pomInclude>*/pom.xml</pomInclude>

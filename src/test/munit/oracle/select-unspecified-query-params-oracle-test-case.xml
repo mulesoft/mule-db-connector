@@ -63,7 +63,7 @@
                 <db:sql>SELECT COL1, COL2 FROM UNSPECIFIED_TYPE_TEST
 order by COL1
 offset :offset rows fetch next :limit rows only</db:sql>
-                <db:input-parameters>#[{ 'offset': 0, 'limit': 3}]></db:input-parameters>
+                <db:input-parameters><![CDATA[#[{ 'offset': 0, 'limit': 3}]]]></db:input-parameters>
             </db:select>
         </munit:execution>
 

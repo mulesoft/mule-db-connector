@@ -39,20 +39,22 @@
             <db:execute-script config-ref="${config}">
                 <db:sql>DROP TABLE UNSPECIFIED_TYPE_TEST</db:sql>
             </db:execute-script>
+            <db:execute-ddl config-ref="${config}">
+                <db:sql>CREATE TABLE UNSPECIFIED_TYPE_TEST(COL1 number, COL2 varchar)</db:sql>
+            </db:execute-ddl>
+            <db:execute-script config-ref="${config}">
+                <db:sql><![CDATA[
+                    INSERT INTO UNSPECIFIED_TYPE_TEST VALUES (1, 'varchar value is here');
+                    INSERT INTO UNSPECIFIED_TYPE_TEST VALUES (2, 'varchar value is here');
+                    INSERT INTO UNSPECIFIED_TYPE_TEST VALUES (3, 'varchar value is here');
+                    INSERT INTO UNSPECIFIED_TYPE_TEST VALUES (4, 'varchar value is here');
+                ]]></db:sql>
+            </db:execute-script>
             <error-handler>
                 <on-error-continue enableNotifications="true" logException="false">
                 </on-error-continue>
             </error-handler>
         </try>
-        <db:execute-ddl config-ref="${config}">
-            <db:sql>CREATE TABLE UNSPECIFIED_TYPE_TEST(COL1 number, COL2 varchar)</db:sql>
-        </db:execute-ddl>
-        <db:execute-script config-ref="${config}">
-            <db:sql>INSERT INTO UNSPECIFIED_TYPE_TEST VALUES (1, 'varchar value is here')</db:sql>
-            <db:sql>INSERT INTO UNSPECIFIED_TYPE_TEST VALUES (2, 'varchar value is here')</db:sql>
-            <db:sql>INSERT INTO UNSPECIFIED_TYPE_TEST VALUES (3, 'varchar value is here')</db:sql>
-            <db:sql>INSERT INTO UNSPECIFIED_TYPE_TEST VALUES (4, 'varchar value is here')</db:sql>
-        </db:execute-script>
     </munit:before-test>
 
     <munit:test name="whenSelectOperationIsExecutedWithInputParametersUnspecified_ThenShouldWorksFine" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">

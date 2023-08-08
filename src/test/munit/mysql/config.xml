@@ -14,4 +14,25 @@
         </db:my-sql-connection>
     </db:config>
 
+    <db:config name="metadata-db-mysql-config">
+        <db:my-sql-connection host="0.0.0.0" port="${mysql.db.port}"
+                              user="root" password="password" database="xe">
+            <db:pooling-profile/>
+        </db:my-sql-connection>
+    </db:config>
+
+    <db:config name="invalid-password-db-mysql-config">
+        <db:my-sql-connection host="0.0.0.0" port="${mysql.db.port}"
+                              user="root" password="invalidpassword" database="xe">
+            <db:pooling-profile/>
+        </db:my-sql-connection>
+    </db:config>
+
+    <db:config name="postgresql-config">
+        <db:my-sql-connection host="0.0.0.0" port="${postgresql.db.port}"
+                              user="root" password="password" database="xe">
+            <db:pooling-profile/>
+        </db:my-sql-connection>
+    </db:config>
+
 </mule>

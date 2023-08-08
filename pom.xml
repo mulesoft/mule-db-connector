@@ -62,6 +62,8 @@
         <spring-context-version>5.3.2</spring-context-version>
         <spring-core-version>5.3.2</spring-core-version>
         <mule-spring-module-version>1.3.7</mule-spring-module-version>
+
+        <mule.vm.version>2.0.0</mule.vm.version>
     </properties>
 
     <dependencies>
@@ -266,12 +268,12 @@
                             <include>org.mule.connectors:mule-db-client</include>
                         </includes>
                     </artifactSet>
-                    <relocations>
-                        <relocation>
-                            <pattern>org.mule.db.commons</pattern>
-                            <shadedPattern>org.mule.db.commons.shaded</shadedPattern>
-                        </relocation>
-                    </relocations>
+<!--                    <relocations>-->
+<!--                        <relocation>-->
+<!--                            <pattern>org.mule.db.commons</pattern>-->
+<!--                            <shadedPattern>org.mule.db.commons.shaded</shadedPattern>-->
+<!--                        </relocation>-->
+<!--                    </relocations>-->
                 </configuration>
             </plugin>
         </plugins>
@@ -311,6 +313,7 @@
                                         <portName>oracle.db.mtls.port</portName>
                                         <portName>oracle.db.mtls.port2</portName>
                                         <portName>mysql.db.port</portName>
+                                        <portName>postgresql.db.port</portName>
                                     </portNames>
                                 </configuration>
                             </execution>
@@ -445,9 +448,7 @@
                                 </sharedLibrary>
                             </sharedLibraries>
                             <argLines>
-                                <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco.exec
-                                </argLine>
+                                <argLine>-javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec</argLine>
                             </argLines>
                         </configuration>
                         <executions>
@@ -581,7 +582,7 @@
                             <images>
                                 <image>
                                     <name>mysql:latest</name>
-                                    <alias>mysql-container</alias>
+                                    <alias>mysql-${mysql.db.port}</alias>
                                     <run>
                                         <containerNamePattern>%n-%i-%t</containerNamePattern>
                                         <env>
@@ -654,7 +655,6 @@
                                 <mysql.db.port>${mysql.db.port}</mysql.db.port>
                                 <mssql.db.port>${mssql.db.port}</mssql.db.port>
                             </systemPropertyVariables>
-                            <munitTest>mysql/.*-test-case.xml</munitTest>
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
@@ -670,7 +670,7 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco.exec
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec
                                 </argLine>
                             </argLines>
                         </configuration>
@@ -702,6 +702,12 @@
                                 <version>${mtf-tools.version}</version>
                                 <classifier>mule-plugin</classifier>
                             </dependency>
+                            <dependency>
+                                <groupId>org.mule.connectors</groupId>
+                                <artifactId>mule-vm-connector</artifactId>
+                                <version>${mule.vm.version}</version>
+                                <classifier>mule-plugin</classifier>
+                            </dependency>
                         </dependencies>
                     </plugin>
                     <plugin>
@@ -721,6 +727,191 @@
                                 <maven.settings.local>${settingsFile}</maven.settings.local>
                                 <mysql.db.port>${mysql.db.port}</mysql.db.port>
                                 <mysql>${mysql}</mysql>
+                            </properties>
+                            <goals>
+                                <goal>clean</goal>
+                                <goal>generate-sources</goal>
+                                <goal>test</goal>
+                            </goals>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>tita-tests</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <inherited>false</inherited>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <activation>
+                <property>
+                    <name>postgresql</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <id>postgresql</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <version>${docker.maven.plugin.version}</version>
+                        <configuration>
+                            <images>
+                                <image>
+                                    <name>postgres:latest</name>
+                                    <alias>postgresql-${postgresql.db.port}</alias>
+                                    <run>
+                                        <containerNamePattern>%n-%i-%t</containerNamePattern>
+                                        <env>
+                                            <POSTGRES_PASSWORD>password</POSTGRES_PASSWORD>
+                                            <POSTGRES_DB>xe</POSTGRES_DB>
+                                        </env>
+                                        <ports>
+                                            <port>${postgresql.db.port}:5433</port>
+                                        </ports>
+                                        <ulimits>
+                                            <ulimit>
+                                                <name>nofile</name>
+                                                <hard>10240</hard>
+                                                <soft>10240</soft>
+                                            </ulimit>
+                                        </ulimits>
+                                        <log>
+                                            <enabled>true</enabled>
+                                        </log>
+                                        <wait>
+                                            <log>database system is ready to accept connections</log>
+                                            <time>500000</time>
+                                        </wait>
+                                    </run>
+                                </image>
+                            </images>
+                            <verbose>true</verbose>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.slf4j</groupId>
+                                <artifactId>slf4j-api</artifactId>
+                                <version>2.0.6</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.slf4j</groupId>
+                                <artifactId>jcl-over-slf4j</artifactId>
+                                <version>2.0.6</version>
+                            </dependency>
+                        </dependencies>
+                        <executions>
+                            <execution>
+                                <id>start</id>
+                                <phase>test-compile</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                    <goal>start</goal>
+                                </goals>
+                                <configuration>
+                                    <showLogs>true</showLogs>
+                                    <logStdout>true</logStdout>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>stop</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.mulesoft.munit</groupId>
+                        <artifactId>munit-extensions-maven-plugin</artifactId>
+                        <version>${munit.extensions.maven.plugin.version}</version>
+                        <configuration>
+                            <munitFailIfNoTests>false</munitFailIfNoTests>
+                            <systemPropertyVariables>
+                                <postgresql.db.port>${postgresql.db.port}</postgresql.db.port>
+                                <mysql.db.port>${mysql.db.port}</mysql.db.port>
+                                <mssql.db.port>${mssql.db.port}</mssql.db.port>
+                            </systemPropertyVariables>
+                            <runtimeConfiguration>
+                                <discoverRuntimes>
+                                    <product>EE</product>
+                                    <minMuleVersion>4.1.1</minMuleVersion>
+                                    <includeSnapshots>false</includeSnapshots>
+                                </discoverRuntimes>
+                            </runtimeConfiguration>
+                            <sharedLibraries>
+                                <sharedLibrary>
+                                    <groupId>org.postgresql</groupId>
+                                    <artifactId>postgresql</artifactId>
+                                </sharedLibrary>
+                            </sharedLibraries>
+                            <argLines>
+                                <argLine>
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec
+                                </argLine>
+                            </argLines>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <!-- MUnit Dependencies -->
+                            <dependency>
+                                <groupId>com.mulesoft.munit</groupId>
+                                <artifactId>munit-runner</artifactId>
+                                <version>${munit.version}</version>
+                                <classifier>mule-plugin</classifier>
+                            </dependency>
+                            <dependency>
+                                <groupId>com.mulesoft.munit</groupId>
+                                <artifactId>munit-tools</artifactId>
+                                <version>${munit.version}</version>
+                                <classifier>mule-plugin</classifier>
+                            </dependency>
+                            <dependency>
+                                <groupId>com.mulesoft.munit</groupId>
+                                <artifactId>mtf-tools</artifactId>
+                                <version>${mtf-tools.version}</version>
+                                <classifier>mule-plugin</classifier>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.mule.connectors</groupId>
+                                <artifactId>mule-vm-connector</artifactId>
+                                <version>${mule.vm.version}</version>
+                                <classifier>mule-plugin</classifier>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <configuration>
+                            <debug>false</debug>
+                            <streamLogs>true</streamLogs>
+                            <noLog>true</noLog>
+                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                            <skipInvocation>${skipTita}</skipInvocation>
+                            <pomIncludes>
+                                <pomInclude>*/pom.xml</pomInclude>
+                            </pomIncludes>
+                            <properties>
+                                <maven.settings.local>${settingsFile}</maven.settings.local>
+                                <postgresql.db.port>${postgresql.db.port}</postgresql.db.port>
                             </properties>
                             <goals>
                                 <goal>clean</goal>

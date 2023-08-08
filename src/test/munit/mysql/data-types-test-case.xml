@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+		http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
+
+    <munit:config name="bulk-update-mysql-test-case.xml" minMuleVersion="4.1.6">
+    </munit:config>
+
+    <munit:before-suite name="createDataTypesTable">
+        <db:execute-ddl config-ref="dbConfigMySQL">
+            <db:sql>
+                <![CDATA[
+CREATE TABLE data_types_table (
+  col_bit BIT(1),
+  col_blob BLOB,
+  col_char CHAR(10),
+  col_clob TEXT,
+  col_date DATE,
+  col_real FLOAT,
+  col_time TIME,
+  col_float FLOAT,
+  col_nchar NCHAR(20),
+  col_nclob LONGTEXT,
+  col_other VARCHAR(50),
+  col_rowid BIGINT AUTO_INCREMENT PRIMARY KEY,
+  col_bigint BIGINT,
+  col_binary BINARY(50),
+  col_double DOUBLE,
+  col_boolean TINYINT(1),
+  col_decimal DECIMAL(10, 2),
+  col_integer INT,
+  col_numeric NUMERIC(8, 4),
+  col_tinyint TINYINT,
+  col_unknown VARCHAR(50),
+  col_varchar VARCHAR(255),
+  col_datalink VARCHAR(100),
+  col_distinct VARCHAR(50),
+  col_nvarchar NVARCHAR(50),
+  col_smallint SMALLINT,
+  col_timestamp TIMESTAMP,
+  col_varbinary VARBINARY(100),
+  col_java_object BLOB,
+  col_longvarchar LONGTEXT,
+  col_longnvarchar LONGTEXT,
+  col_longvarbinary LONGBLOB
+);
+]]>
+            </db:sql>
+        </db:execute-ddl>
+    </munit:before-suite>
+
+    <munit:test name="testDataTypes">
+        <munit:execution>
+            <set-payload value='#[%dw 2.0
+            output application/json
+            ---
+            [{name: "Mars", position: 0}, {name: "Venus", position: 1}, {name: "Earth", position: 2}]]'
+            />
+            <db:insert config-ref="dbConfigMySQL">
+                <db:sql>
+                    <![CDATA[
+INSERT INTO data_types_table (
+col_clob,
+col_time,
+col_double,
+col_tinyint,
+col_date,
+col_integer,
+col_nchar,
+col_binary,
+col_real,
+col_bit,
+col_blob,
+col_timestamp,
+col_longnvarchar,
+col_varbinary,
+col_longvarchar,
+col_rowid,
+col_datalink,
+col_char,
+col_distinct,
+col_longvarbinary,
+col_varchar,
+col_smallint,
+col_numeric,
+col_decimal,
+col_unknown,
+col_java_object,
+col_nvarchar,
+col_nclob,
+col_other,
+col_bigint,
+col_boolean,
+col_float
+)
+VALUES (
+:col_clob,
+:col_time,
+:col_double,
+:col_tinyint,
+:col_date,
+:col_integer,
+:col_nchar,
+:col_binary,
+:col_real,
+:col_bit,
+:col_blob,
+:col_timestamp,
+:col_longnvarchar,
+:col_varbinary,
+:col_longvarchar,
+:col_rowid,
+:col_datalink,
+:col_char,
+:col_distinct,
+:col_longvarbinary,
+:col_varchar,
+:col_smallint,
+:col_numeric,
+:col_decimal,
+:col_unknown,
+:col_java_object,
+:col_nvarchar,
+:col_nclob,
+:col_other,
+:col_bigint,
+:col_boolean,
+:col_float
+);
+]]>
+                </db:sql>
+                <db:parameter-types>
+                    <db:parameter-type key="col_clob" type="CLOB"/>
+                    <db:parameter-type key="col_time" type="TIME"/>
+                    <db:parameter-type key="col_double" type="DOUBLE"/>
+                    <db:parameter-type key="col_tinyint" type="TINYINT"/>
+                    <db:parameter-type key="col_date" type="DATE"/>
+                    <db:parameter-type key="col_integer" type="INTEGER"/>
+                    <db:parameter-type key="col_nchar" type="NCHAR"/>
+                    <db:parameter-type key="col_binary" type="BINARY"/>
+                    <db:parameter-type key="col_real" type="REAL"/>
+                    <db:parameter-type key="col_bit" type="BIT"/>
+                    <db:parameter-type key="col_blob" type="BLOB"/>
+                    <db:parameter-type key="col_timestamp" type="TIMESTAMP"/>
+                    <db:parameter-type key="col_longnvarchar" type="LONGNVARCHAR"/>
+                    <db:parameter-type key="col_varbinary" type="VARBINARY"/>
+                    <db:parameter-type key="col_longvarchar" type="LONGVARCHAR"/>
+                    <db:parameter-type key="col_rowid" type="ROWID"/>
+                    <db:parameter-type key="col_datalink" type="DATALINK"/>
+                    <db:parameter-type key="col_char" type="CHAR"/>
+                    <db:parameter-type key="col_distinct" type="DISTINCT"/>
+                    <db:parameter-type key="col_longvarbinary" type="LONGVARBINARY"/>
+                    <db:parameter-type key="col_varchar" type="VARCHAR"/>
+                    <db:parameter-type key="col_smallint" type="SMALLINT"/>
+                    <db:parameter-type key="col_numeric" type="NUMERIC"/>
+                    <db:parameter-type key="col_decimal" type="DECIMAL"/>
+                    <db:parameter-type key="col_unknown" type="UNKNOWN"/>
+                    <db:parameter-type key="col_java_object" type="JAVA_OBJECT"/>
+                    <db:parameter-type key="col_nvarchar" type="NVARCHAR"/>
+                    <db:parameter-type key="col_nclob" type="NCLOB"/>
+                    <db:parameter-type key="col_other" type="OTHER"/>
+                    <db:parameter-type key="col_bigint" type="BIGINT"/>
+                    <db:parameter-type key="col_boolean" type="BOOLEAN"/>
+                    <db:parameter-type key="col_float" type="FLOAT"/>
+                </db:parameter-types>
+                <db:input-parameters>
+                    <![CDATA[#[
+                {
+  'col_clob': "This is a CLOB value",
+  'col_time': |1970-01-01T12:34:56|,
+  'col_double': 3.141592653589793,
+  'col_tinyint': 127,
+  'col_date': |2023-07-26T00:00:00|,
+  'col_integer': 42,
+  'col_nchar': "NCharValue",
+  'col_binary': "ASNFZ4mrze8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" as Binary {base: "64"},
+  'col_real': 3.140000104904175,
+  'col_bit': true,
+  'col_blob': "VGhpcyBpcyBhIEJMT0IgdmFsdWU=" as Binary {base: "64"},
+  'col_timestamp': |2023-07-27T01:22:22| as LocalDateTime {class: "java.sql.Timestamp"},
+  'col_longnvarchar': "This is a LONGNVARCHAR value",
+  'col_varbinary': "/ty6mHZUMhA=" as Binary {base: "64"},
+  'col_longvarchar': "This is a LONGVARCHAR value",
+  'col_rowid': 1,
+  'col_datalink': "datalinkValue",
+  'col_char': "SampleChar",
+  'col_distinct': "DistinctValue",
+  'col_longvarbinary': "ABEiM0RVZneImaq7zN3u/w==" as Binary {base: "64"},
+  'col_varchar': "SampleVarchar",
+  'col_smallint': 456,
+  'col_numeric': 123.4567,
+  'col_decimal': 123.45,
+  'col_unknown': "UnknownValue",
+  'col_java_object': "SmF2YU9iamVjdFZhbHVl" as Binary {base: "64"},
+  'col_nvarchar': "NVarCharValue",
+  'col_nclob': "This is an NCLOB value",
+  'col_other': "OtherValue",
+  'col_bigint': 1234567890,
+  'col_boolean': true,
+  'col_float': 3.141590118408203,
+  }
+  ]]]></db:input-parameters>
+            </db:insert>
+        </munit:execution>
+        <munit:validation>
+            <db:select config-ref="dbConfigMySQL">
+                <db:sql>SELECT * FROM data_types_table</db:sql>
+            </db:select>
+            <munit-tools:assert-equals actual="#[payload[0]]" expected='#[
+                {
+  col_clob: "This is a CLOB value",
+  col_time: |1970-01-01T12:34:56|,
+  col_double: 3.141592653589793,
+  col_tinyint: 127,
+  col_date: |2023-07-26T00:00:00|,
+  col_integer: 42,
+  col_nchar: "NCharValue",
+  col_binary: "ASNFZ4mrze8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" as Binary {base: "64"},
+  col_real: 3.140000104904175,
+  col_bit: true,
+  col_blob: "VGhpcyBpcyBhIEJMT0IgdmFsdWU=" as Binary {base: "64"},
+  col_timestamp: |2023-07-27T01:22:22| as LocalDateTime {class: "java.sql.Timestamp"},
+  col_longnvarchar: "This is a LONGNVARCHAR value",
+  col_varbinary: "/ty6mHZUMhA=" as Binary {base: "64"},
+  col_longvarchar: "This is a LONGVARCHAR value",
+  col_rowid: 1,
+  col_datalink: "datalinkValue",
+  col_char: "SampleChar",
+  col_distinct: "DistinctValue",
+  col_longvarbinary: "ABEiM0RVZneImaq7zN3u/w==" as Binary {base: "64"},
+  col_varchar: "SampleVarchar",
+  col_smallint: 456,
+  col_numeric: 123.4567,
+  col_decimal: 123.45,
+  col_unknown: "UnknownValue",
+  col_java_object: "SmF2YU9iamVjdFZhbHVl" as Binary {base: "64"},
+  col_nvarchar: "NVarCharValue",
+  col_nclob: "This is an NCLOB value",
+  col_other: "OtherValue",
+  col_bigint: 1234567890,
+  col_boolean: true,
+  col_float: 3.141590118408203,
+  }
+  ]'/>
+        </munit:validation>
+    </munit:test>
+
+</mule>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+		http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
+
+    <munit:config name="bulk-update-mysql-test-case.xml" minMuleVersion="4.1.6">
+    </munit:config>
+
+    <munit:before-suite name="createAlienTable">
+        <db:execute-ddl config-ref="dbConfigMySQL">
+            <db:sql>
+                <![CDATA[CREATE TABLE IF NOT EXISTS PLANET(ID INTEGER NOT NULL AUTO_INCREMENT,POSITION INTEGER,NAME VARCHAR(255), PICTURE BLOB, DESCRIPTION LONGTEXT, PRIMARY KEY (ID))]]>
+            </db:sql>
+        </db:execute-ddl>
+    </munit:before-suite>
+
+    <munit:test name="bulkUpdate">
+        <munit:execution>
+            <set-payload value='#[%dw 2.0
+            output application/json
+            ---
+            [{name: "Mars", position: 0}, {name: "Venus", position: 1}, {name: "Earth", position: 2}]]'
+            />
+            <db:bulk-insert config-ref="dbConfigMySQL">
+                <db:sql>
+                    <![CDATA[INSERT INTO PLANET(POSITION, NAME) VALUES (:position, :name)]]>
+                </db:sql>
+            </db:bulk-insert>
+
+
+            <!--Values venus, mars, earth as list of objects-->
+            <set-payload value='#[%dw 2.0
+            output application/json
+            ---
+            [{name: "Mars"}, {name: "Venus"}, {name: "Earth"}]]'
+            />
+            <db:bulk-update config-ref="dbConfigMySQL">
+                <db:sql>update PLANET set NAME='Mercury' where NAME= :name</db:sql>
+            </db:bulk-update>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[payload]" expected="#[[1, 1, 1]]"/>
+        </munit:validation>
+    </munit:test>
+
+
+    <!--    <munit:test name="bulkUpdateWithOverriddenType">-->
+    <!--    </munit:test>-->
+    <!--    <munit:test name="updateBulkAfterSelect">-->
+    <!--    </munit:test>-->
+    <!--    <munit:test name="updateBulkAfterSelectThrowsError">-->
+    <!--    </munit:test>-->
+
+    <!--    <flow name="bulkUpdate">-->
+    <!--        <db:bulk-update config-ref="dbConfigMySQL">-->
+    <!--            <db:sql>update PLANET set NAME='Mercury' where NAME= :name</db:sql>-->
+    <!--        </db:bulk-update>-->
+    <!--    </flow>-->
+
+    <!--    <flow name="bulkUpdateWithOverriddenType">-->
+    <!--        <db:bulk-update config-ref="dbConfigMySQL">-->
+    <!--            <db:sql>update PLANET set NAME='Mercury' where NAME= :name</db:sql>-->
+    <!--            <db:parameter-types>-->
+    <!--                <db:parameter-type key="name" type="VARCHAR"/>-->
+    <!--            </db:parameter-types>-->
+    <!--        </db:bulk-update>-->
+    <!--    </flow>-->
+
+    <!--    <flow name="updateBulkAfterSelect">-->
+    <!--        <db:select config-ref="dbConfigMySQL" target="select">-->
+    <!--            <db:sql>select * from PLANET</db:sql>-->
+    <!--        </db:select>-->
+
+    <!--        <db:bulk-update config-ref="dbConfigMySQL">-->
+    <!--            <db:sql>update PLANET set NAME='Mercury' where NAME= :name</db:sql>-->
+    <!--        </db:bulk-update>-->
+    <!--    </flow>-->
+
+    <!--    <flow name="updateBulkAfterSelectThrowsError">-->
+    <!--        <db:bulk-update config-ref="dbConfigMySQL">-->
+    <!--            <db:sql>update PLANET set ID=:id where NAME='Venus'</db:sql>-->
+    <!--        </db:bulk-update>-->
+    <!--    </flow>-->
+
+</mule>

@@ -27,12 +27,4 @@
             <db:pooling-profile/>
         </db:my-sql-connection>
     </db:config>
-
-    <db:config name="postgresql-config">
-        <db:my-sql-connection host="0.0.0.0" port="${postgresql.db.port}"
-                              user="root" password="password" database="xe">
-            <db:pooling-profile/>
-        </db:my-sql-connection>
-    </db:config>
-
 </mule>

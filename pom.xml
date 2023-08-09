@@ -40,6 +40,7 @@
         <mySqlVersion>8.0.30</mySqlVersion>
         <mssqlVersion>7.0.0.jre8</mssqlVersion>
         <oracle.driver.version>21.7.0.0</oracle.driver.version>
+        <postgresql.version>42.6.0</postgresql.version>
 
         <docker.maven.plugin.version>0.40.2</docker.maven.plugin.version>
         <maven-replacer-plugin.version>1.5.3</maven-replacer-plugin.version>
@@ -202,6 +203,12 @@
             <version>${oracle.driver.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -314,6 +321,7 @@
                                         <portName>oracle.db.mtls.port2</portName>
                                         <portName>mysql.db.port</portName>
                                         <portName>postgresql.db.port</portName>
+                                        <portName>mssql.db.port</portName>
                                     </portNames>
                                 </configuration>
                             </execution>
@@ -771,11 +779,12 @@
                                     <run>
                                         <containerNamePattern>%n-%i-%t</containerNamePattern>
                                         <env>
-                                            <POSTGRES_PASSWORD>password</POSTGRES_PASSWORD>
-                                            <POSTGRES_DB>xe</POSTGRES_DB>
+                                            <POSTGRES_USER>myuser</POSTGRES_USER>
+                                            <POSTGRES_PASSWORD>mypassword</POSTGRES_PASSWORD>
+                                            <POSTGRES_DB>mydatabase</POSTGRES_DB>
                                         </env>
                                         <ports>
-                                            <port>${postgresql.db.port}:5433</port>
+                                            <port>${postgresql.db.port}:5432</port>
                                         </ports>
                                         <ulimits>
                                             <ulimit>
@@ -838,8 +847,6 @@
                             <munitFailIfNoTests>false</munitFailIfNoTests>
                             <systemPropertyVariables>
                                 <postgresql.db.port>${postgresql.db.port}</postgresql.db.port>
-                                <mysql.db.port>${mysql.db.port}</mysql.db.port>
-                                <mssql.db.port>${mssql.db.port}</mssql.db.port>
                             </systemPropertyVariables>
                             <runtimeConfiguration>
                                 <discoverRuntimes>
@@ -1105,6 +1112,104 @@
                                 <goals>
                                     <goal>stop</goal>
                                 </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.mulesoft.munit</groupId>
+                        <artifactId>munit-extensions-maven-plugin</artifactId>
+                        <version>${munit.extensions.maven.plugin.version}</version>
+                        <configuration>
+                            <munitFailIfNoTests>false</munitFailIfNoTests>
+                            <systemPropertyVariables>
+                                <mssql.db.port>${mssql.db.port}</mssql.db.port>
+                            </systemPropertyVariables>
+                            <runtimeConfiguration>
+                                <discoverRuntimes>
+                                    <product>EE</product>
+                                    <minMuleVersion>4.1.1</minMuleVersion>
+                                    <includeSnapshots>false</includeSnapshots>
+                                </discoverRuntimes>
+                            </runtimeConfiguration>
+                            <sharedLibraries>
+                                <sharedLibrary>
+                                    <groupId>com.microsoft.sqlserver</groupId>
+                                    <artifactId>mssql-jdbc</artifactId>
+                                </sharedLibrary>
+                            </sharedLibraries>
+                            <argLines>
+                                <argLine>
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec
+                                </argLine>
+                            </argLines>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <!-- MUnit Dependencies -->
+                            <dependency>
+                                <groupId>com.mulesoft.munit</groupId>
+                                <artifactId>munit-runner</artifactId>
+                                <version>${munit.version}</version>
+                                <classifier>mule-plugin</classifier>
+                            </dependency>
+                            <dependency>
+                                <groupId>com.mulesoft.munit</groupId>
+                                <artifactId>munit-tools</artifactId>
+                                <version>${munit.version}</version>
+                                <classifier>mule-plugin</classifier>
+                            </dependency>
+                            <dependency>
+                                <groupId>com.mulesoft.munit</groupId>
+                                <artifactId>mtf-tools</artifactId>
+                                <version>${mtf-tools.version}</version>
+                                <classifier>mule-plugin</classifier>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.mule.connectors</groupId>
+                                <artifactId>mule-vm-connector</artifactId>
+                                <version>${mule.vm.version}</version>
+                                <classifier>mule-plugin</classifier>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <configuration>
+                            <debug>false</debug>
+                            <streamLogs>true</streamLogs>
+                            <noLog>true</noLog>
+                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                            <skipInvocation>${skipTita}</skipInvocation>
+                            <pomIncludes>
+                                <pomInclude>*/pom.xml</pomInclude>
+                            </pomIncludes>
+                            <properties>
+                                <maven.settings.local>${settingsFile}</maven.settings.local>
+                                <postgresql.db.port>${postgresql.db.port}</postgresql.db.port>
+                            </properties>
+                            <goals>
+                                <goal>clean</goal>
+                                <goal>generate-sources</goal>
+                                <goal>test</goal>
+                            </goals>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>tita-tests</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <inherited>false</inherited>
                             </execution>
                         </executions>
                     </plugin>

@@ -52,43 +52,4 @@
         </munit:validation>
     </munit:test>
 
-
-    <!--    <munit:test name="bulkUpdateWithOverriddenType">-->
-    <!--    </munit:test>-->
-    <!--    <munit:test name="updateBulkAfterSelect">-->
-    <!--    </munit:test>-->
-    <!--    <munit:test name="updateBulkAfterSelectThrowsError">-->
-    <!--    </munit:test>-->
-
-    <!--    <flow name="bulkUpdate">-->
-    <!--        <db:bulk-update config-ref="dbConfigMySQL">-->
-    <!--            <db:sql>update PLANET set NAME='Mercury' where NAME= :name</db:sql>-->
-    <!--        </db:bulk-update>-->
-    <!--    </flow>-->
-
-    <!--    <flow name="bulkUpdateWithOverriddenType">-->
-    <!--        <db:bulk-update config-ref="dbConfigMySQL">-->
-    <!--            <db:sql>update PLANET set NAME='Mercury' where NAME= :name</db:sql>-->
-    <!--            <db:parameter-types>-->
-    <!--                <db:parameter-type key="name" type="VARCHAR"/>-->
-    <!--            </db:parameter-types>-->
-    <!--        </db:bulk-update>-->
-    <!--    </flow>-->
-
-    <!--    <flow name="updateBulkAfterSelect">-->
-    <!--        <db:select config-ref="dbConfigMySQL" target="select">-->
-    <!--            <db:sql>select * from PLANET</db:sql>-->
-    <!--        </db:select>-->
-
-    <!--        <db:bulk-update config-ref="dbConfigMySQL">-->
-    <!--            <db:sql>update PLANET set NAME='Mercury' where NAME= :name</db:sql>-->
-    <!--        </db:bulk-update>-->
-    <!--    </flow>-->
-
-    <!--    <flow name="updateBulkAfterSelectThrowsError">-->
-    <!--        <db:bulk-update config-ref="dbConfigMySQL">-->
-    <!--            <db:sql>update PLANET set ID=:id where NAME='Venus'</db:sql>-->
-    <!--        </db:bulk-update>-->
-    <!--    </flow>-->
-
 </mule>

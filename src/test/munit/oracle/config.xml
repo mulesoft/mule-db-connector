@@ -14,6 +14,12 @@
         </db:oracle-connection>
     </db:config>
 
+    <db:config name="oracleDbMetadataConfig">
+        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" serviceName="XEPDB1" user="system" password="oracle">
+            <db:pooling-profile/>
+        </db:oracle-connection>
+    </db:config>
+
     <db:config name="oracleDbConfigWithoutPoolingProfile">
         <db:oracle-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('oracle')]" serviceName="XEPDB1" user="system" password="oracle">
         </db:oracle-connection>

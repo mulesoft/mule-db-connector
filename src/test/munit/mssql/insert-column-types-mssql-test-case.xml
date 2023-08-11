@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+		http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
+
+    <munit:config name="table-key-provider-mssql-test-case.xml" minMuleVersion="4.1.6"/>
+    <munit:before-suite name="createATableForListenerTest">
+        <db:execute-ddl config-ref="mssql-config">
+            <db:sql>
+                <![CDATA[CREATE TABLE PLANET (
+  ID INT NOT NULL IDENTITY(1,1),
+  POSITION INT,
+  NAME VARCHAR(255),
+  LOGO VARBINARY(MAX),
+  FLAG BINARY(10),
+  PRIMARY KEY (ID)
+);]]>
+            </db:sql>
+        </db:execute-ddl>
+    </munit:before-suite>
+
+    <munit:test name="select-with-column-types">
+        <munit:execution>
+            <db:insert config-ref="mssql-config">
+                <db:sql><![CDATA[INSERT INTO PLANET(LOGO, FLAG) VALUES (:logo, :flag)]]></db:sql>
+                <db:parameter-types >
+                    <db:parameter-type key="logo" type="VARBINARY" />
+                    <db:parameter-type key="flag" type="BINARY" />
+                </db:parameter-types>
+                <db:input-parameters ><![CDATA[#[{logo: "logo" as Binary, flag: "flag" as Binary}]]]></db:input-parameters>
+
+            </db:insert>
+        </munit:execution>
+        <munit:validation>
+            <db:select config-ref="mssql-config">
+                <db:sql><![CDATA[SELECT logo, flag FROM PLANET WHERE logo = :logo AND flag = :flag;]]></db:sql>
+                <db:parameter-types >
+                    <db:parameter-type key="logo" type="VARBINARY" />
+                    <db:parameter-type key="flag" type="BINARY" />
+                </db:parameter-types>
+                <db:input-parameters ><![CDATA[#[{logo: "logo" as Binary, flag: "flag" as Binary}]]]></db:input-parameters>
+
+            </db:select>
+            <munit-tools:assert-equals actual="#[payload]" expected="#[[{&#10;	flag: 'ZmxhZwAAAAAAAA==' as Binary {&#10;		base: '64'&#10;	},&#10;	logo: 'bG9nbw==' as Binary {&#10;		base: '64'&#10;	}&#10;}]]"/>
+        </munit:validation>
+    </munit:test>
+
+</mule>

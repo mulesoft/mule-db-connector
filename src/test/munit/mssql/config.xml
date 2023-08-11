@@ -43,5 +43,18 @@
         />
     </db:config>
 
+    <db:config name="mssql-column-types-config">
+        <db:mssql-connection host="localhost"
+                             port="${mssql.db.port}"
+                             user="sa"
+                             password="yourStrong(!)Password"
+                             instanceName="MSSQLSERVER"
+                             databaseName="master">
+            <db:column-types >
+                <db:column-type id="-2" typeName="binary" />
+                <db:column-type id="-3" typeName="varbinary" />
+            </db:column-types>
+        </db:mssql-connection>
+    </db:config>
 
 </mule>

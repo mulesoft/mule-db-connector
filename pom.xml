@@ -275,12 +275,12 @@
                             <include>org.mule.connectors:mule-db-client</include>
                         </includes>
                     </artifactSet>
-<!--                    <relocations>-->
-<!--                        <relocation>-->
-<!--                            <pattern>org.mule.db.commons</pattern>-->
-<!--                            <shadedPattern>org.mule.db.commons.shaded</shadedPattern>-->
-<!--                        </relocation>-->
-<!--                    </relocations>-->
+                    <relocations>
+                        <relocation>
+                            <pattern>org.mule.db.commons</pattern>
+                            <shadedPattern>org.mule.db.commons.shaded</shadedPattern>
+                        </relocation>
+                    </relocations>
                 </configuration>
             </plugin>
         </plugins>
@@ -457,8 +457,9 @@
                                 </sharedLibrary>
                             </sharedLibraries>
                             <argLines>
-                                <argLine>-javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec</argLine>
-                            </argLines>
+                                <argLine>
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco.exec
+                                </argLine>                            </argLines>
                         </configuration>
                         <executions>
                             <execution>
@@ -664,6 +665,7 @@
                                 <mysql.db.port>${mysql.db.port}</mysql.db.port>
                                 <mssql.db.port>${mssql.db.port}</mssql.db.port>
                             </systemPropertyVariables>
+                            <munitTest>mysql/.*-test-case.xml</munitTest>
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
@@ -849,6 +851,7 @@
                             <systemPropertyVariables>
                                 <postgresql.db.port>${postgresql.db.port}</postgresql.db.port>
                             </systemPropertyVariables>
+                            <munitTest>postgresql/.*-test-case.xml</munitTest>
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
@@ -1034,6 +1037,7 @@
                             <systemPropertyVariables>
                                 <derby.db.port>${derby.db.port}</derby.db.port>
                             </systemPropertyVariables>
+                            <munitTest>derby/.*-test-case.xml</munitTest>
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
@@ -1311,6 +1315,7 @@
                             <systemPropertyVariables>
                                 <mssql.db.port>${mssql.db.port}</mssql.db.port>
                             </systemPropertyVariables>
+                            <munitTest>mssql/.*-test-case.xml</munitTest>
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>

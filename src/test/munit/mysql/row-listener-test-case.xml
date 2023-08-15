@@ -14,7 +14,7 @@
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 		http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd
 http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
-    <munit:config name="row-listener-test-case.xml"/>
+    <munit:config name="row-listener-test-case.xml" minMuleVersion="4.4.0"/>
 
     <vm:config name="VM_Config">
         <vm:queues>

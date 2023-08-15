@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-        http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+    <munit:config name="derby-config" minMuleVersion="4.4.0"/>
 
     <db:config name="derby-config">
-        <db:derby-connection >
-            <db:connection-properties >
-                <db:connection-property key="driverName" value="org.apache.derby.jdbc.ClientDriver" />
-                <db:connection-property key="url" value="jdbc:derby://localhost:1527/mydatabase;create=true" />
+        <db:derby-connection>
+            <db:connection-properties>
+                <db:connection-property key="driverName" value="org.apache.derby.jdbc.ClientDriver"/>
+                <db:connection-property key="url" value="jdbc:derby://localhost:1527/mydatabase;create=true"/>
             </db:connection-properties>
         </db:derby-connection>
     </db:config>

@@ -12,7 +12,12 @@
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 		http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
 
-    <munit:config name="table-key-provider-oracle-test-case.xml" minMuleVersion="4.1.6"/>
+    <munit:config name="table-key-provider-oracle-test-case.xml" minMuleVersion="4.4.0"/>
+    <db:config name="oracleDbMetadataConfig">
+        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" serviceName="XEPDB1" user="system" password="oracle">
+            <db:pooling-profile/>
+        </db:oracle-connection>
+    </db:config>
     <munit:before-suite name="createATableForListenerTest">
         <db:execute-ddl config-ref="oracleDbMetadataConfig">
             <db:sql>

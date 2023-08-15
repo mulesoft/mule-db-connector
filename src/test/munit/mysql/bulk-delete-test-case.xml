@@ -12,10 +12,10 @@
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 		http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
 
-    <munit:config name="bulk-update-mysql-test-case.xml" minMuleVersion="4.1.6">
+    <munit:config name="bulk-delete-mysql-test-case.xml" minMuleVersion="4.1.6">
     </munit:config>
 
-    <munit:before-suite name="createAlienTable">
+    <munit:before-suite name="createAlienTable-bulk-delete-before-suite">
         <db:execute-ddl config-ref="dbConfigMySQL">
             <db:sql>
                 <![CDATA[CREATE TABLE IF NOT EXISTS PLANET(ID INTEGER NOT NULL AUTO_INCREMENT,POSITION INTEGER,NAME VARCHAR(255), PICTURE BLOB, DESCRIPTION LONGTEXT, PRIMARY KEY (ID))]]>

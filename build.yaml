@@ -4,3 +4,9 @@ additionalTestConfigs:
     mavenAdditionalArgs: "-Dpostgresql"
   derby:
     mavenAdditionalArgs: "-Dderby"
+  mysql:
+    mavenAdditionalArgs: "-Dmysql"
+  mssql:
+    mavenAdditionalArgs: "-Dmssql"
+  oracle:
+    mavenAdditionalArgs: "-Doracle"

@@ -6,8 +6,6 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
         http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
-    <munit:config name="derby-config" minMuleVersion="4.4.0"/>
-
     <db:config name="derby-config">
         <db:derby-connection>
             <db:connection-properties>

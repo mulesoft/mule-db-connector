@@ -1387,7 +1387,7 @@
                             </pomIncludes>
                             <properties>
                                 <maven.settings.local>${settingsFile}</maven.settings.local>
-                                <postgresql.db.port>${mssql.db.port}</postgresql.db.port>
+                                <mssql.db.port>${mssql.db.port}</mssql.db.port>
                             </properties>
                             <goals>
                                 <goal>clean</goal>

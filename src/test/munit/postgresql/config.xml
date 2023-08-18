@@ -8,8 +8,6 @@
         http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
 
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
-
-    <munit:config name="connection-postgres-test-case.xml"/>
     <db:config name="postgres-config">
         <db:generic-connection url="jdbc:postgresql://localhost:${postgresql.db.port}/mydatabase" user="myuser"
                                password="mypassword" driverClassName="org.postgresql.Driver"/>

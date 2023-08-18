@@ -12,8 +12,7 @@
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 		http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
 
-    <munit:config name="data-types-test-case.xml" minMuleVersion="4.1.6">
-    </munit:config>
+    <munit:config name="data-types-test-case.xml"/>
 
     <munit:before-suite name="createDataTypesTable">
         <db:execute-ddl config-ref="dbConfigMySQL">

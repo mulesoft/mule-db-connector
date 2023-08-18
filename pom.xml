@@ -422,7 +422,7 @@
                                 <oracle.db.mtls.port>${oracle.db.mtls.port}</oracle.db.mtls.port>
                                 <oracle.db.mtls.port2>${oracle.db.mtls.port2}</oracle.db.mtls.port2>
                             </systemPropertyVariables>
-                            <munitTest>oracle/.*oracle-test-case.xml</munitTest>
+                            <munitTest>oracle/.*.xml</munitTest>
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
@@ -665,7 +665,7 @@
                                 <mysql.db.port>${mysql.db.port}</mysql.db.port>
                                 <mssql.db.port>${mssql.db.port}</mssql.db.port>
                             </systemPropertyVariables>
-                            <munitTest>mysql/.*-test-case.xml</munitTest>
+                            <munitTest>mysql/.*.xml</munitTest>
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
@@ -737,6 +737,7 @@
                             <properties>
                                 <maven.settings.local>${settingsFile}</maven.settings.local>
                                 <mysql.db.port>${mysql.db.port}</mysql.db.port>
+                                <mssql.db.port>${mssql.db.port}</mssql.db.port>
                                 <mysql>${mysql}</mysql>
                             </properties>
                             <goals>
@@ -851,7 +852,7 @@
                             <systemPropertyVariables>
                                 <postgresql.db.port>${postgresql.db.port}</postgresql.db.port>
                             </systemPropertyVariables>
-                            <munitTest>postgresql/.*-test-case.xml</munitTest>
+                            <munitTest>postgresql/.*.xml</munitTest>
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
@@ -1037,7 +1038,7 @@
                             <systemPropertyVariables>
                                 <derby.db.port>${derby.db.port}</derby.db.port>
                             </systemPropertyVariables>
-                            <munitTest>derby/.*-test-case.xml</munitTest>
+                            <munitTest>derby/.*.xml</munitTest>
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
@@ -1315,7 +1316,7 @@
                             <systemPropertyVariables>
                                 <mssql.db.port>${mssql.db.port}</mssql.db.port>
                             </systemPropertyVariables>
-                            <munitTest>mssql/.*-test-case.xml</munitTest>
+                            <munitTest>mssql/.*.xml</munitTest>
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
@@ -1386,7 +1387,7 @@
                             </pomIncludes>
                             <properties>
                                 <maven.settings.local>${settingsFile}</maven.settings.local>
-                                <postgresql.db.port>${postgresql.db.port}</postgresql.db.port>
+                                <postgresql.db.port>${mssql.db.port}</postgresql.db.port>
                             </properties>
                             <goals>
                                 <goal>clean</goal>

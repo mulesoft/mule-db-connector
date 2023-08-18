@@ -5,14 +5,10 @@
       xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
       xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
       xmlns:db="http://www.mulesoft.org/schema/mule/db"
-
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
         http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
 		http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd
-
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
-
-
     <munit:config name="connection-mssql-test-case.xml" minMuleVersion="4.4.0">
         <munit:parameterizations>
             <munit:parameterization name="mssql-config">
@@ -41,48 +37,6 @@
             </munit:parameterization>
         </munit:parameterizations>
     </munit:config>
-
-    <db:config name="mssql-config-invalid-host">
-        <db:mssql-connection host="invalid-host"
-                             port="${mssql.db.port}"
-                             user="sa"
-                             password="yourStrong(!)Password"
-                             instanceName="MSSQLSERVER"
-                             databaseName="master"
-        />
-    </db:config>
-    <db:config name="mssql-config-invalid-password">
-        <db:mssql-connection host="localhost"
-                             port="${mssql.db.port}"
-                             user="sa"
-                             password="invalid-password"
-                             instanceName="MSSQLSERVER"
-                             databaseName="master"
-        />
-    </db:config>
-    <db:config name="mssql-config-invalid-database-name">
-        <db:mssql-connection host="localhost"
-                             port="${mssql.db.port}"
-                             user="sa"
-                             password="yourStrong(!)Password"
-                             instanceName="MSSQLSERVER"
-                             databaseName="invalid-database-name"
-        />
-    </db:config>
-
-    <db:config name="mssql-column-types-config">
-        <db:mssql-connection host="localhost"
-                             port="${mssql.db.port}"
-                             user="sa"
-                             password="yourStrong(!)Password"
-                             instanceName="MSSQLSERVER"
-                             databaseName="master">
-            <db:column-types>
-                <db:column-type id="-2" typeName="binary"/>
-                <db:column-type id="-3" typeName="varbinary"/>
-            </db:column-types>
-        </db:mssql-connection>
-    </db:config>
 
     <munit:test name="connection-test" expectedErrorType="${expectedErrorType}">
         <munit:execution>

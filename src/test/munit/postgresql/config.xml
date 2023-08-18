@@ -9,9 +9,9 @@
 
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
-    <munit:config name="connection-postgres-test-case.xml" minMuleVersion="4.4.0"/>
+    <munit:config name="connection-postgres-test-case.xml"/>
     <db:config name="postgres-config">
-        <db:generic-connection url="jdbc:postgresql://localhost:${postgresql.db.port}/mydatabase" user="myuser" password="mypassword" driverClassName="org.postgresql.Driver"/>
+        <db:generic-connection url="jdbc:postgresql://localhost:${postgresql.db.port}/mydatabase" user="myuser"
+                               password="mypassword" driverClassName="org.postgresql.Driver"/>
     </db:config>
-
 </mule>

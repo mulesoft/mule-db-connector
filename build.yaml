@@ -2,8 +2,6 @@ projectType: extension
 additionalTestConfigs:
   postgresql:
     mavenAdditionalArgs: "-Dpostgresql"
-  derby:
-    mavenAdditionalArgs: "-Dderby"
   mysql:
     mavenAdditionalArgs: "-Dmysql"
   mssql:

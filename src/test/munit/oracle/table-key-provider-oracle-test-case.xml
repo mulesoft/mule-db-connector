@@ -20,12 +20,16 @@
     </db:config>
     <munit:before-suite name="createATableForListenerTest">
         <db:execute-ddl config-ref="oracleDbMetadataConfig">
-            <db:sql>
-                <![CDATA[CREATE TABLE IF NOT EXISTS PLANET(ID INTEGER NOT NULL AUTO_INCREMENT,POSITION INTEGER,NAME VARCHAR(255), PICTURE BLOB, DESCRIPTION LONGTEXT, PRIMARY KEY (ID))]]>
-            </db:sql>
+            <db:sql><![CDATA[CREATE TABLE planet (field1 varchar2(3), field2 number(2), field3 varchar2(60))]]></db:sql>
         </db:execute-ddl>
     </munit:before-suite>
-    
+    <munit:after-suite name="DropTableForListenerTest">
+        <db:execute-ddl config-ref="oracleDbMetadataConfig">
+            <db:sql>
+                <![CDATA[DROP TABLE planet]]>
+            </db:sql>
+        </db:execute-ddl>
+    </munit:after-suite>
     <mtf:tooling-test name="table-key-provider-oracle-test-case">
         <mtf:get-metadata-keys>
             <db:listener config-ref="oracleDbMetadataConfig"/>

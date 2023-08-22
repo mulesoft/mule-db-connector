@@ -16,7 +16,7 @@
     <munit:before-suite name="createATableForListenerTest">
         <db:execute-ddl config-ref="mssql-config">
             <db:sql>
-                <![CDATA[CREATE TABLE PLANET (
+                <![CDATA[CREATE TABLE IF NOT EXISTS PLANET (
   ID INT NOT NULL IDENTITY(1,1),
   POSITION INT,
   NAME VARCHAR(255),

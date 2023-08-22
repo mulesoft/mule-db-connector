@@ -14,9 +14,17 @@
 
     <munit:config name="insert-column-types-mssql-test-case.xml" minMuleVersion="4.1.6"/>
     <munit:before-suite name="createATableForListenerTest">
-        <db:execute-ddl config-ref="mssql-config">
-            <db:sql>
-                <![CDATA[CREATE TABLE IF NOT EXISTS PLANET (
+        <try>
+            <db:execute-ddl config-ref="mssql-config">
+                <db:sql>
+                    <![CDATA[DROP TABLE PLANET]]>
+                </db:sql>
+            </db:execute-ddl>
+            <error-handler>
+                <on-error-continue>
+                    <db:execute-ddl config-ref="mssql-config">
+                        <db:sql>
+                            <![CDATA[CREATE TABLE PLANET (
   ID INT NOT NULL IDENTITY(1,1),
   POSITION INT,
   NAME VARCHAR(255),
@@ -24,9 +32,19 @@
   FLAG BINARY(10),
   PRIMARY KEY (ID)
 );]]>
+                        </db:sql>
+                    </db:execute-ddl>
+                </on-error-continue>
+            </error-handler>
+        </try>
+    </munit:before-suite>
+    <munit:after-suite name="deleteTable">
+        <db:execute-ddl config-ref="mssql-config">
+            <db:sql>
+                <![CDATA[DROP TABLE PLANET]]>
             </db:sql>
         </db:execute-ddl>
-    </munit:before-suite>
+    </munit:after-suite>
 
     <munit:test name="select-with-column-types">
         <munit:execution>

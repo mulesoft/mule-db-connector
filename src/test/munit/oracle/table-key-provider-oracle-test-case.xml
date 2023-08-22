@@ -19,9 +19,20 @@
         </db:oracle-connection>
     </db:config>
     <munit:before-suite name="createATableForListenerTest">
-        <db:execute-ddl config-ref="oracleDbMetadataConfig">
-            <db:sql><![CDATA[CREATE TABLE planet (field1 varchar2(3), field2 number(2), field3 varchar2(60))]]></db:sql>
-        </db:execute-ddl>
+        <try>
+            <db:execute-ddl config-ref="oracleDbMetadataConfig">
+                <db:sql>
+                    <![CDATA[DROP TABLE planet]]>
+                </db:sql>
+            </db:execute-ddl>
+            <error-handler>
+                <on-error-continue>
+                    <db:execute-ddl config-ref="oracleDbMetadataConfig">
+                        <db:sql><![CDATA[CREATE TABLE planet (field1 varchar2(3), field2 number(2), field3 varchar2(60))]]></db:sql>
+                    </db:execute-ddl>
+                </on-error-continue>
+            </error-handler>
+        </try>
     </munit:before-suite>
     <munit:after-suite name="DropTableForListenerTest">
         <db:execute-ddl config-ref="oracleDbMetadataConfig">

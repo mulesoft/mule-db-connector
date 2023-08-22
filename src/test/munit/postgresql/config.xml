@@ -9,7 +9,7 @@
 
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
     <db:config name="postgres-config">
-        <db:generic-connection url="jdbc:postgresql://localhost:${postgresql.db.port}/mydatabase" user="myuser"
+        <db:generic-connection url="#[java!org::mule::extension::db::DbMunitUtils::getPostgresqlConnectionString('localhost', 'mydatabase')]" user="myuser"
                                password="mypassword" driverClassName="org.postgresql.Driver"/>
     </db:config>
 </mule>

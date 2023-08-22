@@ -12,7 +12,7 @@
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 		http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
 
-    <munit:config name="data-types-test-case.xml"/>
+    <munit:config name="data-types-test-case.xml" minMuleVersion="4.4.0"/>
 
     <munit:before-suite name="createDataTypesTable">
         <db:execute-ddl config-ref="dbConfigMySQL">
@@ -32,7 +32,7 @@ CREATE TABLE data_types_table (
   col_other VARCHAR(50),
   col_rowid BIGINT AUTO_INCREMENT PRIMARY KEY,
   col_bigint BIGINT,
-  col_binary BINARY(50),
+  col_binary BINARY(10),
   col_double DOUBLE,
   col_boolean TINYINT(1),
   col_decimal DECIMAL(10, 2),
@@ -181,7 +181,7 @@ VALUES (
   'col_date': |2023-07-26T00:00:00|,
   'col_integer': 42,
   'col_nchar': "NCharValue",
-  'col_binary': "ASNFZ4mrze8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" as Binary {base: "64"},
+  'col_binary': "YQ==" as Binary {base: "64"},
   'col_real': 3.140000104904175,
   'col_bit': true,
   'col_blob': "VGhpcyBpcyBhIEJMT0IgdmFsdWU=" as Binary {base: "64"},
@@ -223,7 +223,7 @@ VALUES (
   col_date: |2023-07-26T00:00:00|,
   col_integer: 42,
   col_nchar: "NCharValue",
-  col_binary: "ASNFZ4mrze8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=" as Binary {base: "64"},
+  col_binary: "YQAAAAAAAAAAAA==" as Binary {base: "64"},
   col_real: 3.140000104904175,
   col_bit: true,
   col_blob: "VGhpcyBpcyBhIEJMT0IgdmFsdWU=" as Binary {base: "64"},

@@ -5,12 +5,10 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
       xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
-      xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
         http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
         http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
-		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
-		http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
+		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
     <munit:config name="insert-column-types-mssql-test-case.xml" minMuleVersion="4.1.6"/>
     <munit:before-suite name="createATableForListenerTest">
@@ -21,10 +19,12 @@
                 </db:sql>
             </db:execute-ddl>
             <error-handler>
-                <on-error-continue>
-                    <db:execute-ddl config-ref="mssql-config">
-                        <db:sql>
-                            <![CDATA[CREATE TABLE PLANET (
+                <on-error-continue/>
+            </error-handler>
+        </try>
+        <db:execute-ddl config-ref="mssql-config">
+            <db:sql>
+                <![CDATA[CREATE TABLE PLANET (
   ID INT NOT NULL IDENTITY(1,1),
   POSITION INT,
   NAME VARCHAR(255),
@@ -32,18 +32,20 @@
   FLAG BINARY(10),
   PRIMARY KEY (ID)
 );]]>
-                        </db:sql>
-                    </db:execute-ddl>
-                </on-error-continue>
-            </error-handler>
-        </try>
-    </munit:before-suite>
-    <munit:after-suite name="deleteTable">
-        <db:execute-ddl config-ref="mssql-config">
-            <db:sql>
-                <![CDATA[DROP TABLE PLANET]]>
             </db:sql>
         </db:execute-ddl>
+    </munit:before-suite>
+    <munit:after-suite name="deleteTable">
+        <try>
+            <db:execute-ddl config-ref="mssql-config">
+                <db:sql>
+                    <![CDATA[DROP TABLE PLANET]]>
+                </db:sql>
+            </db:execute-ddl>
+            <error-handler>
+                <on-error-continue/>
+            </error-handler>
+        </try>
     </munit:after-suite>
 
     <munit:test name="select-with-column-types">
@@ -55,7 +57,6 @@
                     <db:parameter-type key="flag" type="BINARY" />
                 </db:parameter-types>
                 <db:input-parameters ><![CDATA[#[{logo: "logo" as Binary, flag: "flag" as Binary}]]]></db:input-parameters>
-
             </db:insert>
         </munit:execution>
         <munit:validation>

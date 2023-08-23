@@ -20,8 +20,7 @@
             </db:sql>
         </db:execute-ddl>
     </munit:before-suite>
-    
-    <mtf:tooling-test name="table-key-provider-mysql-test-case">
+    <mtf:tooling-test name="row-listener-output-provider-test-case">
         <mtf:get-output-metadata>
             <db:listener config-ref="metadata-db-mysql-config" table="PLANET"/>
         </mtf:get-output-metadata>

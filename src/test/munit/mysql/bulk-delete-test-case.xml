@@ -46,7 +46,18 @@
             </db:bulk-delete>
         </munit:execution>
         <munit:validation>
-            <munit-tools:assert-equals actual="#[payload]" expected="#[[1, 1, 1]]"/>
+            <set-payload value='#[%dw 2.0
+            output application/json
+            ---
+            [{name: "Mars"}, {name: "Venus"}, {name: "Earth"}]]'
+            />
+            <db:select config-ref="dbConfigMySQL">
+                <db:sql ><![CDATA[SELECT * FROM PLANET WHERE name = "Mars" OR name = "Venus" OR name = "Earth";]]></db:sql>
+                <db:input-parameters>
+                    #[{'name' : "Mars"}]
+                </db:input-parameters>
+            </db:select>
+            <munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[0]"/>
         </munit:validation>
     </munit:test>
 

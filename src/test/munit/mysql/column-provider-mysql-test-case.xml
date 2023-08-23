@@ -12,17 +12,21 @@
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 		http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
 
-    <munit:config name="column-provider-oracle-test-case.xml" minMuleVersion="4.4.0"/>
+    <munit:config name="column-provider-mysql-test-case.xml" minMuleVersion="4.4.0"/>
 
-    <munit:before-suite name="createATableForListenerTest">
+    <munit:before-suite name="columnProviderBeforeSuite">
         <db:execute-ddl config-ref="dbConfigMySQL">
             <db:sql>
                 <![CDATA[CREATE TABLE IF NOT EXISTS PLANET(ID INTEGER NOT NULL AUTO_INCREMENT,POSITION INTEGER,NAME VARCHAR(255), PICTURE BLOB, DESCRIPTION LONGTEXT, PRIMARY KEY (ID))]]>
             </db:sql>
         </db:execute-ddl>
     </munit:before-suite>
-
-    <munit:after-suite name="dropStuff">
+    <munit:after-suite name="columnProviderAfterSuite">
+        <db:execute-ddl config-ref="dbConfigMySQL">
+            <db:sql>
+                <![CDATA[DROP TABLE PLANET;]]>
+            </db:sql>
+        </db:execute-ddl>
     </munit:after-suite>
 
     <mtf:tooling-test name="columnValueProviderTestCase">

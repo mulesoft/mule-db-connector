@@ -10,16 +10,23 @@
         http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
-    <munit:config name="bulk-delete-mysql-test-case.xml" minMuleVersion="4.1.6">
+    <munit:config name="bulk-delete-test-case.xml" minMuleVersion="4.1.6">
     </munit:config>
 
-    <munit:before-suite name="createAlienTable-bulk-delete-before-suite">
+    <munit:before-suite name="bulkDeleteBeforeSuite">
         <db:execute-ddl config-ref="dbConfigMySQL">
             <db:sql>
                 <![CDATA[CREATE TABLE IF NOT EXISTS PLANET(ID INTEGER NOT NULL AUTO_INCREMENT,POSITION INTEGER,NAME VARCHAR(255), PICTURE BLOB, DESCRIPTION LONGTEXT, PRIMARY KEY (ID))]]>
             </db:sql>
         </db:execute-ddl>
     </munit:before-suite>
+    <munit:after-suite name="bulkDeleteAfterSuite">
+        <db:execute-ddl config-ref="dbConfigMySQL">
+            <db:sql>
+                <![CDATA[DROP TABLE PLANET;]]>
+            </db:sql>
+        </db:execute-ddl>
+    </munit:after-suite>
 
     <munit:test name="bulkDelete">
         <munit:execution>

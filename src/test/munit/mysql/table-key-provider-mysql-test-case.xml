@@ -13,14 +13,21 @@
 		http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
 
     <munit:config name="table-key-provider-mysql-test-case.xml" minMuleVersion="4.4.0"/>
-    <munit:before-suite name="createATableForListenerTest">
+    <munit:before-suite name="tableKeyProviderBeforeSuite">
         <db:execute-ddl config-ref="metadata-db-mysql-config">
             <db:sql>
                 <![CDATA[CREATE TABLE IF NOT EXISTS PLANET(ID INTEGER NOT NULL AUTO_INCREMENT,POSITION INTEGER,NAME VARCHAR(255), PICTURE BLOB, DESCRIPTION LONGTEXT, PRIMARY KEY (ID))]]>
             </db:sql>
         </db:execute-ddl>
     </munit:before-suite>
-    
+    <munit:after-suite name="tableKeyProviderAfterSuite">
+        <db:execute-ddl config-ref="metadata-db-mysql-config">
+            <db:sql>
+                <![CDATA[DROP TABLE PLANET;]]>
+            </db:sql>
+        </db:execute-ddl>
+    </munit:after-suite>
+
     <mtf:tooling-test name="table-key-provider-mysql-test-case">
         <mtf:get-metadata-keys>
             <db:listener config-ref="metadata-db-mysql-config"/>

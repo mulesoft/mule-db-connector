@@ -24,13 +24,18 @@ http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/cu
             <vm:queue queueName="rowListenerQueueWithoutWatermark" queueType="PERSISTENT"/>
         </vm:queues>
     </vm:config>
-    <munit:before-test name="SetUpRowListenerTestCase" description="Create car2 table with 3 rows">
+    <munit:before-test name="beforeTestRowListenerTestCase">
         <db:execute-ddl config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED">
             <db:sql>
                 <![CDATA[CREATE TABLE IF NOT EXISTS PLANET_LISTENER(ID INTEGER NOT NULL AUTO_INCREMENT,POSITION INTEGER,NAME VARCHAR(255), PICTURE BLOB, DESCRIPTION LONGTEXT, PRIMARY KEY (ID))]]>
             </db:sql>
         </db:execute-ddl>
     </munit:before-test>
+    <munit:after-test name="afterTestRowListenerTestCase">
+        <db:execute-ddl config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED">
+            <db:sql><![CDATA[DROP TABLE IF EXISTS PLANET_LISTENER]]></db:sql>
+        </db:execute-ddl>
+    </munit:after-test>
 
     <flow name="OnNewRowWithIntegerWatermarkTestCaseFlow">
         <db:listener config-ref="dbConfigMySQL"
@@ -76,10 +81,4 @@ payload must [
             </munit-tools:assert>
         </munit:validation>
     </munit:test>
-
-    <munit:after-test name="afterTestOnNewRowTestCase" description="Delete car2 table">
-        <db:execute-ddl config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED">
-            <db:sql><![CDATA[DROP TABLE IF EXISTS car2]]></db:sql>
-        </db:execute-ddl>
-    </munit:after-test>
 </mule>

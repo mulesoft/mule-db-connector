@@ -26,6 +26,11 @@ public class DbMunitUtils {
     return availableProperties.containsKey(port) ? availableProperties.getProperty(port) : DEFAULT_PORT;
   }
 
+  public static String getPostgresqlConnectionString(String host, String database) {
+    String port = getDbPort("postgresql");
+    return String.format("jdbc:postgresql://%s:%s/%s", host, port, database);
+  }
+
   public static String getSecureDbPort(String dbName) {
     Properties availableProperties = System.getProperties();
     String port = String.format("%s.db.mtls.port", dbName);

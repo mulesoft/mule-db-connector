@@ -4,10 +4,9 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns="http://www.mulesoft.org/schema/mule/core"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-
         http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
-    <db:config name="dbConfigMySQL">
-        <db:my-sql-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('mysql')]"
+    <db:config name="metadata-db-mysql-config">
+        <db:my-sql-connection host="0.0.0.0" port="${mysql.db.port}"
                               user="root" password="password" database="xe">
             <db:pooling-profile/>
         </db:my-sql-connection>

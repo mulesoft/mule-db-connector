@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+
+    <munit:config name="bulk-delete-test-case.xml" minMuleVersion="4.1.6">
+    </munit:config>
+
+    <munit:before-suite name="bulkDeleteBeforeSuite">
+        <db:execute-ddl config-ref="dbConfigMySQL">
+            <db:sql>
+                <![CDATA[CREATE TABLE IF NOT EXISTS PLANET(ID INTEGER NOT NULL AUTO_INCREMENT,POSITION INTEGER,NAME VARCHAR(255), PICTURE BLOB, DESCRIPTION LONGTEXT, PRIMARY KEY (ID))]]>
+            </db:sql>
+        </db:execute-ddl>
+    </munit:before-suite>
+    <munit:after-suite name="bulkDeleteAfterSuite">
+        <db:execute-ddl config-ref="dbConfigMySQL">
+            <db:sql>
+                <![CDATA[DROP TABLE PLANET;]]>
+            </db:sql>
+        </db:execute-ddl>
+    </munit:after-suite>
+
+    <munit:test name="bulkDelete">
+        <munit:execution>
+            <set-payload value='#[%dw 2.0
+            output application/json
+            ---
+            [{name: "Mars", position: 0}, {name: "Venus", position: 1}, {name: "Earth", position: 2}]]'
+            />
+            <db:bulk-insert config-ref="dbConfigMySQL">
+                <db:sql>
+                    <![CDATA[INSERT INTO PLANET(POSITION, NAME) VALUES (:position, :name)]]>
+                </db:sql>
+            </db:bulk-insert>
+
+
+            <!--Values venus, mars, earth as list of objects-->
+            <set-payload value='#[%dw 2.0
+            output application/json
+            ---
+            [{name: "Mars"}, {name: "Venus"}, {name: "Earth"}]]'
+            />
+            <db:bulk-delete config-ref="dbConfigMySQL">
+                <db:sql>DELETE FROM PLANET WHERE name = :name</db:sql>
+            </db:bulk-delete>
+        </munit:execution>
+        <munit:validation>
+            <set-payload value='#[%dw 2.0
+            output application/json
+            ---
+            [{name: "Mars"}, {name: "Venus"}, {name: "Earth"}]]'
+            />
+            <db:select config-ref="dbConfigMySQL">
+                <db:sql ><![CDATA[SELECT * FROM PLANET WHERE name = "Mars" OR name = "Venus" OR name = "Earth";]]></db:sql>
+                <db:input-parameters>
+                    #[{'name' : "Mars"}]
+                </db:input-parameters>
+            </db:select>
+            <munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[0]"/>
+        </munit:validation>
+    </munit:test>
+
+</mule>

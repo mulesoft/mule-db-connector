@@ -54,6 +54,13 @@ CREATE TABLE data_types_table (
             </db:sql>
         </db:execute-ddl>
     </munit:before-suite>
+    <munit:after-suite name="dropDataTypesTable">
+        <db:execute-ddl config-ref="dbConfigMySQL">
+            <db:sql>
+                <![CDATA[DROP TABLE data_types_table;]]>
+            </db:sql>
+        </db:execute-ddl>
+    </munit:after-suite>
 
     <munit:test name="testDataTypes">
         <munit:execution>

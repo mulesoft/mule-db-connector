@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+    <munit:config name="row-listener-test-case.xml" minMuleVersion="4.4.0"/>
+
+    <vm:config name="VM_Config">
+        <vm:queues>
+            <vm:queue queueName="rowListenerQueueNumber" queueType="PERSISTENT"/>
+            <vm:queue queueName="rowListenerQueueTimestamp" queueType="PERSISTENT"/>
+            <vm:queue queueName="rowListenerQueueTimeout" queueType="PERSISTENT"/>
+            <vm:queue queueName="rowListenerQueueWithoutIdColumn" queueType="PERSISTENT"/>
+            <vm:queue queueName="rowListenerQueueWithoutWatermark" queueType="PERSISTENT"/>
+        </vm:queues>
+    </vm:config>
+    <munit:before-test name="beforeTestRowListenerTestCase">
+        <db:execute-ddl config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED">
+            <db:sql>
+                <![CDATA[CREATE TABLE IF NOT EXISTS PLANET_LISTENER(ID INTEGER NOT NULL AUTO_INCREMENT,POSITION INTEGER,NAME VARCHAR(255), PICTURE BLOB, DESCRIPTION LONGTEXT, PRIMARY KEY (ID))]]>
+            </db:sql>
+        </db:execute-ddl>
+    </munit:before-test>
+    <munit:after-test name="afterTestRowListenerTestCase">
+        <db:execute-ddl config-ref="dbConfigMySQL" transactionalAction="NOT_SUPPORTED">
+            <db:sql><![CDATA[DROP TABLE IF EXISTS PLANET_LISTENER]]></db:sql>
+        </db:execute-ddl>
+    </munit:after-test>
+
+    <flow name="OnNewRowWithIntegerWatermarkTestCaseFlow">
+        <db:listener config-ref="dbConfigMySQL"
+                     watermarkColumn="id" idColumn="id" table="PLANET_LISTENER">
+            <scheduling-strategy>
+                <fixed-frequency frequency="100"/>
+            </scheduling-strategy>
+        </db:listener>
+        <vm:publish-consume config-ref="VM_Config"
+                            queueName="rowListenerQueueNumber"/>
+    </flow>
+    <munit:test name="whenThereAreNewIntegerWatermarks_thenAllRowsAreReturned" description="MUnit Test">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="OnNewRowWithIntegerWatermarkTestCaseFlow"/>
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <set-payload value='#[%dw 2.0
+            output application/json
+            ---
+            [{name: "Mars", position: 0}]]'
+            />
+            <db:bulk-insert config-ref="dbConfigMySQL">
+                <db:sql>
+                    <![CDATA[INSERT INTO PLANET_LISTENER(POSITION, NAME) VALUES (:position, :name)]]>
+                </db:sql>
+            </db:bulk-insert>
+        </munit:behavior>
+        <munit:execution>
+            <until-successful maxRetries="5"
+                              millisBetweenRetries="50">
+                <vm:consume config-ref="VM_Config"
+                            queueName="rowListenerQueueNumber" timeoutUnit="MILLISECONDS" timeout="200"/>
+            </until-successful>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert>
+                <munit-tools:that><![CDATA[#[import * from dw::test::Asserts
+ ---
+payload must [
+	$."name" must equalTo("Mars"),
+	$."position" must equalTo(0),
+]]]]></munit-tools:that>
+            </munit-tools:assert>
+        </munit:validation>
+    </munit:test>
+</mule>

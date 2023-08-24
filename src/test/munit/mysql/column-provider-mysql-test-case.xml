@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+		http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
+
+    <munit:config name="column-provider-mysql-test-case.xml" minMuleVersion="4.4.0"/>
+
+    <munit:before-suite name="columnProviderBeforeSuite">
+        <db:execute-ddl config-ref="dbConfigMySQL">
+            <db:sql>
+                <![CDATA[CREATE TABLE IF NOT EXISTS PLANET(ID INTEGER NOT NULL AUTO_INCREMENT,POSITION INTEGER,NAME VARCHAR(255), PICTURE BLOB, DESCRIPTION LONGTEXT, PRIMARY KEY (ID))]]>
+            </db:sql>
+        </db:execute-ddl>
+    </munit:before-suite>
+    <munit:after-suite name="columnProviderAfterSuite">
+        <db:execute-ddl config-ref="dbConfigMySQL">
+            <db:sql>
+                <![CDATA[DROP TABLE PLANET;]]>
+            </db:sql>
+        </db:execute-ddl>
+    </munit:after-suite>
+
+    <mtf:tooling-test name="columnValueProviderTestCase">
+        <mtf:get-values parameter="idColumn">
+            <db:listener config-ref="dbConfigMySQL" table="PLANET"/>
+        </mtf:get-values>
+        <mtf:validation>
+            <munit-tools:assert-equals actual="#[payload.'ID'.id]" expected="ID"/>
+            <munit-tools:assert-equals actual="#[payload.'POSITION'.id]" expected="POSITION"/>
+        </mtf:validation>
+    </mtf:tooling-test>
+
+</mule>

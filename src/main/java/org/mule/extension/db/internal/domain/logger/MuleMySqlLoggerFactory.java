@@ -11,12 +11,6 @@ import org.mule.runtime.api.exception.MuleRuntimeException;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import static java.util.Collections.synchronizedMap;
 
 import static net.bytebuddy.implementation.MethodDelegation.to;
 import static net.bytebuddy.matcher.ElementMatchers.isDeclaredBy;
@@ -24,25 +18,19 @@ import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.DynamicType;
-import net.bytebuddy.implementation.bind.annotation.AllArguments;
-import net.bytebuddy.implementation.bind.annotation.Empty;
-import net.bytebuddy.implementation.bind.annotation.Origin;
-import net.bytebuddy.implementation.bind.annotation.RuntimeType;
-import net.bytebuddy.implementation.bind.annotation.SuperMethod;
-import net.bytebuddy.implementation.bind.annotation.This;
 
 /**
  * Factory class that creates proxy instances of {@link MuleMySqlLogger} with the provided
  * delegated logger and class loader.
  */
-public class MuleMySqlLoggerEnhancerFactory {
+public class MuleMySqlLoggerFactory {
 
   public static final String MYSQL_DRIVER_CLASS = "com.mysql.jdbc.Driver";
   public static final String NEW_MYSQL_DRIVER_CLASS = "com.mysql.cj.jdbc.Driver";
   private ClassLoader classLoader;
   private MuleMySqlLogger delegatedLogger;
 
-  public MuleMySqlLoggerEnhancerFactory(ClassLoader classLoader, MuleMySqlLogger delegatedLogger) {
+  public MuleMySqlLoggerFactory(ClassLoader classLoader, MuleMySqlLogger delegatedLogger) {
     this.classLoader = classLoader;
     this.delegatedLogger = delegatedLogger;
   }

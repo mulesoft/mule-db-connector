@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  mysql-container:
+    image: mysql:latest
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: xe
+    ports:
+      - "3306:11234"
+    ulimits:
+      nofile:
+        soft: 10240
+        hard: 10240

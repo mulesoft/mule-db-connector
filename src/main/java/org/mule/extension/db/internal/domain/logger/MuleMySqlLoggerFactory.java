@@ -12,12 +12,13 @@ import org.mule.runtime.api.exception.MuleRuntimeException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
-import static net.bytebuddy.implementation.MethodDelegation.to;
-import static net.bytebuddy.matcher.ElementMatchers.isDeclaredBy;
-import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
-
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.DynamicType;
+
+import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
+
+import static net.bytebuddy.implementation.MethodDelegation.to;
+import static net.bytebuddy.matcher.ElementMatchers.isDeclaredBy;
 
 /**
  * Factory class that creates proxy instances of {@link MuleMySqlLogger} with the provided

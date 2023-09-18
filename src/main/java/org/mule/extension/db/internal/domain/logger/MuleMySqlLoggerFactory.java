@@ -61,11 +61,8 @@ public class MuleMySqlLoggerFactory {
           .getLoaded()
           .getConstructor(String.class)
           .newInstance("MySql");
-    } catch (InstantiationException |
-             IllegalAccessException |
-             InvocationTargetException |
-             NoSuchMethodException |
-             IOException e) {
+    } catch (
+        InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | IOException e) {
       throw new MuleRuntimeException(createStaticMessage("Could not create instance of " + getClass().getName()), e);
     }
   }
@@ -78,7 +75,7 @@ public class MuleMySqlLoggerFactory {
         return classLoader.loadClass("com.mysql.jdbc.log.Log");
       } catch (ClassNotFoundException ex) {
         throw new IllegalArgumentException("Neither class, com.mysql.cj.log.Log or com.mysql.jdbc.log.Log, were found. " +
-                                               "An unsupported driver was provided.", ex);
+            "An unsupported driver was provided.", ex);
       }
     }
   }

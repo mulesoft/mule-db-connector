@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.dynamic.DynamicType;
 
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
@@ -58,7 +59,7 @@ public class MuleMySqlLoggerFactory {
 
     try (DynamicType.Unloaded<? extends MuleMySqlLogger> dynamicType = typeDefinition
         .make()) {
-      return dynamicType.load(this.classLoader)
+      return dynamicType.load(this.classLoader, new ClassLoadingStrategy.ForBootstrapInjection(null, null))
           .getLoaded()
           .getConstructor(String.class)
           .newInstance("MySql");

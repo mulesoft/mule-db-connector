@@ -6,11 +6,13 @@
  */
 package org.mule.extension.db.internal.domain.logger;
 
+import net.bytebuddy.dynamic.loading.ClassInjector;
 import org.mule.extension.db.api.logger.MuleMySqlLogger;
 import org.mule.runtime.api.exception.MuleRuntimeException;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
@@ -59,14 +61,36 @@ public class MuleMySqlLoggerFactory {
 
     try (DynamicType.Unloaded<? extends MuleMySqlLogger> dynamicType = typeDefinition
         .make()) {
-      return dynamicType.load(this.classLoader, new ClassLoadingStrategy.ForBootstrapInjection(null, null))
+      return dynamicType.load(this.classLoader, getClassLoadingStrategy())
           .getLoaded()
           .getConstructor(String.class)
           .newInstance("MySql");
     } catch (
-        InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | IOException e) {
+        InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException | IOException
+        | ClassNotFoundException e) {
       throw new MuleRuntimeException(createStaticMessage("Could not create instance of " + getClass().getName()), e);
     }
+  }
+
+  private ClassLoadingStrategy<? super ClassLoader> getClassLoadingStrategy()
+      throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    ClassLoadingStrategy<ClassLoader> strategy;
+    if (ClassInjector.UsingLookup.isAvailable()) {
+      // Java 9 and above
+      Class<?> methodHandles = Class.forName("java.lang.invoke.MethodHandles");
+      Object lookup = methodHandles.getMethod("lookup").invoke(null);
+      Method privateLookupIn = methodHandles.getMethod("privateLookupIn",
+                                                       Class.class,
+                                                       Class.forName("java.lang.invoke.MethodHandles$Lookup"));
+      Object privateLookup = privateLookupIn.invoke(null, MuleMySqlLogger.class, lookup);
+      strategy = ClassLoadingStrategy.UsingLookup.of(privateLookup);
+    } else if (ClassInjector.UsingReflection.isAvailable()) {
+      // Java 8
+      strategy = ClassLoadingStrategy.Default.INJECTION;
+    } else {
+      throw new IllegalStateException("No code generation strategy available");
+    }
+    return strategy;
   }
 
   private Class<?> getAvailableMySqlLogInterface() {

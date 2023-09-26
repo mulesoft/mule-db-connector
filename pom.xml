@@ -213,6 +213,17 @@
             <version>${postgresql.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>2.3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.3.8</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -715,11 +726,6 @@
                                     <artifactId>mysql-connector-java</artifactId>
                                 </sharedLibrary>
                             </sharedLibraries>
-                            <argLines>
-                                <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec
-                                </argLine>
-                            </argLines>
                         </configuration>
                         <executions>
                             <execution>

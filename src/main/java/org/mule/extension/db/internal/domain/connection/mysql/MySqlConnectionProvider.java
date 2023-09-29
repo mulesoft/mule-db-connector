@@ -12,7 +12,7 @@ import static org.mule.db.commons.api.exception.connection.DbError.INVALID_CREDE
 import static org.mule.db.commons.api.exception.connection.DbError.INVALID_DATABASE;
 import static org.mule.db.commons.internal.domain.connection.DbConnectionProvider.DRIVER_FILE_NAME_PATTERN;
 import static org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionProvider.MYSQL_GAV;
-import static org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerEnhancerFactory.MYSQL_DRIVER_CLASS;
+import static org.mule.extension.db.internal.domain.logger.MuleMySqlLoggerFactory.MYSQL_DRIVER_CLASS;
 import static org.mule.extension.db.internal.util.MigrationUtils.mapDataSourceConfig;
 import static org.mule.runtime.api.meta.ExternalLibraryType.JAR;
 import static org.mule.runtime.extension.api.annotation.param.ParameterGroup.CONNECTION;

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+
+    <munit:config name="row-listener-set-max-rows.xml" minMuleVersion="4.1.6"/>
+    <munit:before-suite name="createAPhonesTableForTest">
+        <try>
+            <db:execute-ddl config-ref="oracleDbConfig">
+                <db:sql>
+                    <![CDATA[DROP TABLE PHONES]]>
+                </db:sql>
+            </db:execute-ddl>
+            <error-handler>
+                <on-error-continue/>
+            </error-handler>
+        </try>
+        <db:execute-ddl config-ref="oracleDbConfig">
+            <db:sql>
+                <![CDATA[CREATE TABLE PHONES(ID NUMBER NOT NULL, NAME VARCHAR2(20) NULL, PRICE NUMBER NOT NULL,CONSTRAINT phones_pk PRIMARY KEY (ID))]]>
+            </db:sql>
+        </db:execute-ddl>
+    </munit:before-suite>
+    <munit:after-suite name="deletePhonesTable">
+        <try>
+            <db:execute-ddl config-ref="oracleDbConfig">
+                <db:sql>
+                    <![CDATA[DROP TABLE PHONES]]>
+                </db:sql>
+            </db:execute-ddl>
+            <error-handler>
+                <on-error-continue/>
+            </error-handler>
+        </try>
+    </munit:after-suite>
+    <flow name="ListenerPhones_Flow" initialState="started" maxConcurrency="1">
+        <db:listener doc:name="On Table Row" config-ref="oracleDbConfig" table="PHONES" watermarkColumn="ID" idColumn="ID" maxRows="2" fetchSize="10">
+            <scheduling-strategy >
+                <fixed-frequency frequency="10" timeUnit="SECONDS"/>
+            </scheduling-strategy>
+        </db:listener>
+        <munit-tools:retrieve doc:name="Retrieve" key="countRows" target="currentRows"/>
+        <munit-tools:store doc:name="Store" key="countRows">
+            <munit-tools:value ><![CDATA[#[vars.currentRows ++ [payload.id]]]]></munit-tools:value>
+        </munit-tools:store>
+    </flow>
+    <munit:test name="Listener_WithMaxRowsEnable" >
+        <munit:enable-flow-sources >
+            <munit:enable-flow-source value="ListenerPhones_Flow"/>
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <munit-tools:store doc:name="Store" key="countRows">
+                <munit-tools:value><![CDATA[#[[]]]]></munit-tools:value>
+            </munit-tools:store>
+            <db:insert doc:name="Insert phones" config-ref="oracleDbConfig">
+                <db:sql><![CDATA[INSERT INTO PHONES(ID,NAME,PRICE) VALUES (1,'S20',100)]]></db:sql>
+            </db:insert>
+            <db:insert doc:name="Insert phones" config-ref="oracleDbConfig">
+                <db:sql><![CDATA[INSERT INTO PHONES(ID,NAME,PRICE) VALUES (2,'S21',200)]]></db:sql>
+            </db:insert>
+            <db:insert doc:name="Insert phones" config-ref="oracleDbConfig">
+                <db:sql><![CDATA[INSERT INTO PHONES(ID,NAME,PRICE) VALUES (3,'S22',300)]]></db:sql>
+            </db:insert>
+            <db:insert doc:name="Insert phones" config-ref="oracleDbConfig">
+                <db:sql><![CDATA[INSERT INTO PHONES(ID,NAME,PRICE) VALUES (4,'S23',400)]]></db:sql>
+            </db:insert>
+        </munit:behavior>
+        <munit:execution>
+            <munit-tools:sleep time="15" doc:name="Wait Processing rows" timeUnit="SECONDS"/>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:retrieve doc:name="Obtain total count" target="totalCount" key="countRows" />
+            <munit-tools:assert-equals doc:name="Assert equals" actual="#[sizeOf(vars.totalCount)]" expected="#[2]"/>
+        </munit:validation>
+    </munit:test>
+</mule>

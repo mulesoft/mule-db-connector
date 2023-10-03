@@ -1,5 +1,5 @@
 /*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
+ * Copyright 2023 Salesforce, Inc. All rights reserved.
  * The software in this package is published under the terms of the CPAL v1.0
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
@@ -196,6 +196,9 @@ public class RowListener extends PollingSource<Map<String, Object>, Void> {
       QueryStatementFactory statementFactory = new QueryStatementFactory();
       statementFactory.setFetchSize(settings.getFetchSize() != null ? settings.getFetchSize() : DEFAULT_FETCH_SIZE);
       statementFactory.setQueryTimeout(new Long(settings.getQueryTimeoutUnit().toSeconds(settings.getQueryTimeout())).intValue());
+      if (settings.getMaxRows() != null) {
+        statementFactory.setMaxRows(settings.getMaxRows());
+      }
 
       ResultSetHandler resultSetHandler =
           new ListResultSetHandler(new NonStreamingInsensitiveMapRowHandler(connection, Charset.forName(encoding)));

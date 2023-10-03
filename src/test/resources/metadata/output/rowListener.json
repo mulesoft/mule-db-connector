@@ -1,0 +1,47 @@
+{
+  "format": "java",
+  "type": "Object",
+  "fields": [
+    {
+      "key": {
+        "name": "ID",
+        "required": "true"
+      },
+      "model": {
+        "type": "Number"
+      }
+    },
+    {
+      "key": {
+        "name": "POSITION"
+      },
+      "model": {
+        "type": "Number"
+      }
+    },
+    {
+      "key": {
+        "name": "NAME"
+      },
+      "model": {
+        "type": "String"
+      }
+    },
+    {
+      "key": {
+        "name": "PICTURE"
+      },
+      "model": {
+        "type": "Binary"
+      }
+    },
+    {
+      "key": {
+        "name": "DESCRIPTION"
+      },
+      "model": {
+        "type": "Any"
+      }
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+		http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
+
+    <munit:config name="table-key-provider-oracle-test-case.xml" minMuleVersion="4.4.0"/>
+    <db:config name="oracleDbMetadataConfig">
+        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" serviceName="XEPDB1" user="system" password="oracle">
+            <db:pooling-profile/>
+        </db:oracle-connection>
+    </db:config>
+    <munit:before-suite name="createATableForListenerTest">
+        <try>
+            <db:execute-ddl config-ref="oracleDbMetadataConfig">
+                <db:sql>
+                    <![CDATA[DROP TABLE planet]]>
+                </db:sql>
+            </db:execute-ddl>
+            <error-handler>
+                <on-error-continue/>
+            </error-handler>
+        </try>
+        <db:execute-ddl config-ref="oracleDbMetadataConfig">
+            <db:sql><![CDATA[CREATE TABLE planet (field1 varchar2(3), field2 number(2), field3 varchar2(60))]]></db:sql>
+        </db:execute-ddl>
+    </munit:before-suite>
+    <munit:after-suite name="DropTableForListenerTest">
+        <db:execute-ddl config-ref="oracleDbMetadataConfig">
+            <db:sql>
+                <![CDATA[DROP TABLE planet]]>
+            </db:sql>
+        </db:execute-ddl>
+    </munit:after-suite>
+    <mtf:tooling-test name="table-key-provider-oracle-test-case">
+        <mtf:get-metadata-keys>
+            <db:listener config-ref="oracleDbMetadataConfig"/>
+        </mtf:get-metadata-keys>
+        <mtf:validation>
+            <munit-tools:assert-equals actual="#[payload.PLANET.id]" expected="PLANET"/>
+        </mtf:validation>
+    </mtf:tooling-test>
+
+</mule>

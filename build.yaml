@@ -1,1 +1,10 @@
 projectType: extension
+additionalTestConfigs:
+  postgresql:
+    mavenAdditionalArgs: "-Dpostgresql"
+  mysql:
+    mavenAdditionalArgs: "-Dmysql"
+  mssql:
+    mavenAdditionalArgs: "-Dmssql"
+  oracle:
+    mavenAdditionalArgs: "-Doracle"

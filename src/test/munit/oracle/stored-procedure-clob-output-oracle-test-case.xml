@@ -118,8 +118,8 @@ END;]]></db:sql>
         <munit:validation>
             <munit-tools:assert-equals actual="#[sizeOf(payload.CUSTOM_TYPE_PARAM)]" expected="#[3]" />
             <munit-tools:assert-equals actual="#[payload.CUSTOM_TYPE_PARAM[0][0]]" expected="#[1]" />
-            <munit-tools:assert-equals actual="#[payload.CUSTOM_TYPE_PARAM[0][1]]" expected="#[2]" />
-            <munit-tools:assert-equals actual="#[payload.CUSTOM_TYPE_PARAM[0][2]]" expected="#[3]" />
+            <munit-tools:assert-equals actual="#[payload.CUSTOM_TYPE_PARAM[1][0]]" expected="#[2]" />
+            <munit-tools:assert-equals actual="#[payload.CUSTOM_TYPE_PARAM[2][0]]" expected="#[3]" />
         </munit:validation>
     </munit:test>
 

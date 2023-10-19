@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <munit:config name="stored-procedure-hardcode-parameter.xml" minMuleVersion="4.1.6"/>
+    <munit:before-suite name="before-suite-stored-procedure">
+        <db:execute-ddl config-ref="oracleDbPoolingConfig">
+            <db:sql><![CDATA[CREATE OR REPLACE PROCEDURE sp_multi_param(
+    num1 IN NUMBER,
+    num2 IN NUMBER,
+    param1 IN VARCHAR2,
+    num3 IN NUMBER,
+    param3 IN VARCHAR2,
+    param4 IN VARCHAR2
+) AS
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('num1: ' || num1);
+    DBMS_OUTPUT.PUT_LINE('num2: ' || num2);
+    DBMS_OUTPUT.PUT_LINE('param1: ' || param1);
+    DBMS_OUTPUT.PUT_LINE('num3: ' || num3);
+    DBMS_OUTPUT.PUT_LINE('param3: ' || param3);
+    DBMS_OUTPUT.PUT_LINE('param4: ' || param4);
+END;]]></db:sql>
+        </db:execute-ddl>
+    </munit:before-suite>
+
+    <munit:test name="W-13873501-when-stored-procedure-with-param"
+                ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+        <munit:execution>
+            <db:stored-procedure config-ref="oracleDbPoolingConfig">
+                <db:sql><![CDATA[{call sp_multi_param(:num1, :num1, 'paramhard', :num1, :param3, :param4 )}]]></db:sql>
+                <db:input-parameters><![CDATA[#[{
+	num1: 2,
+	param3: 'AMAR'
+}]]]></db:input-parameters>
+                <db:output-parameters>
+                    <db:output-parameter key="param4" type="VARCHAR"/>
+                </db:output-parameters>
+            </db:stored-procedure>
+        </munit:execution>
+    </munit:test>
+
+    <munit:after-suite name="delete-suite-stored-procedure">
+        <db:execute-script config-ref="oracleDbPoolingConfig">
+            <db:sql><![CDATA[drop procedure sp_multi_param;]]></db:sql>
+        </db:execute-script>
+    </munit:after-suite>
+</mule>

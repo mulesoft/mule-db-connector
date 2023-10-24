@@ -42,13 +42,8 @@
 
 
             <!--Values venus, mars, earth as list of objects-->
-            <set-payload value='#[%dw 2.0
-            output application/json
-            ---
-            [{name: "Mars"}, {name: "Venus"}, {name: "Earth"}]]'
-            />
             <db:bulk-update config-ref="dbConfigMySQL">
-                <db:sql>update PLANET set NAME='Mercury' where NAME= :name</db:sql>
+                <db:sql>update PLANET set NAME='Mercury' where NAME in ('Mars', 'Venus', 'Earth') </db:sql>
             </db:bulk-update>
         </munit:execution>
         <munit:validation>

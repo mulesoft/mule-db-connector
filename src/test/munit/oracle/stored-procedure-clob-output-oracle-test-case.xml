@@ -5,9 +5,10 @@
       xmlns:db="http://www.mulesoft.org/schema/mule/db"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
         http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
-
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
         http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
         http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 
@@ -23,6 +24,19 @@ END;]]></db:sql>
         <db:execute-ddl config-ref="dbConfigWithPooling" >
             <db:sql ><![CDATA[CREATE OR REPLACE PACKAGE magicPackageVersionThree AS
                     PROCEDURE getClob(result OUT sys_refcursor);
+                    TYPE NESTED_TYPE_RECORD IS RECORD(NESTED_TEXT VARCHAR(50));
+                    TYPE NESTED_CUSTOM_TYPE IS TABLE OF NESTED_TYPE_RECORD INDEX BY BINARY_INTEGER;
+                    TYPE CUSTOM_RECORD_TYPE IS RECORD(
+                        NUMBER_PARAM NUMBER,
+                        TEXT_PARAM VARCHAR(50),
+                        NESTED_PARAM NESTED_TYPE_RECORD
+                    );
+                        TYPE CUSTOM_TYPE IS TABLE OF CUSTOM_RECORD_TYPE INDEX BY BINARY_INTEGER;
+                        PROCEDURE procedure_with_in_out_param (
+                            CUSTOM_TYPE_PARAM IN OUT  CUSTOM_TYPE,
+                            BINARY_INTEGER_PARAM IN BINARY_INTEGER,
+                            BINARY_INTEGER_OUTPUT OUT NUMBER
+                        );
                    END magicPackageVersionThree;]]></db:sql>
         </db:execute-ddl>
         <db:execute-ddl config-ref="dbConfigWithPooling" >
@@ -32,7 +46,25 @@ END;]]></db:sql>
                            Open result for
                                select to_clob(1) from dual;
                        END getClob;
-                   END magicPackageVersionThree;]]></db:sql>
+                   PROCEDURE procedure_with_in_out_param (
+                        CUSTOM_TYPE_PARAM IN OUT CUSTOM_TYPE,
+                        BINARY_INTEGER_PARAM IN BINARY_INTEGER,
+                        BINARY_INTEGER_OUTPUT OUT NUMBER
+                   ) AS
+                      BEGIN
+                          CUSTOM_TYPE_PARAM(2).NUMBER_PARAM := CUSTOM_TYPE_PARAM(0).NUMBER_PARAM;
+                          CUSTOM_TYPE_PARAM(0).NUMBER_PARAM := 1;
+                          CUSTOM_TYPE_PARAM(1).NUMBER_PARAM := 2;
+
+                          CUSTOM_TYPE_PARAM(1).TEXT_PARAM := 'Text2';
+                          CUSTOM_TYPE_PARAM(2).TEXT_PARAM := 'Text3';
+
+                          CUSTOM_TYPE_PARAM(1).NESTED_PARAM.NESTED_TEXT := 'nested text 2';
+                          CUSTOM_TYPE_PARAM(2).NESTED_PARAM.NESTED_TEXT := 'nested text 3';
+
+                          BINARY_INTEGER_OUTPUT := BINARY_INTEGER_PARAM;
+                      END procedure_with_in_out_param;
+           END magicPackageVersionThree;]]></db:sql>
         </db:execute-ddl>
     </munit:before-suite>
     <munit:test name="whenHavingOutClobConnectionNotLeaked" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
@@ -66,6 +98,67 @@ END;]]></db:sql>
                 </ee:message>
             </ee:transform>
         </munit:execution>
+    </munit:test>
+
+    <munit:test name="customInOutParameter" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+        <munit:execution>
+            <ee:transform>
+                <ee:message >
+                    <ee:set-payload ><![CDATA[ %dw 2.0
+                        output application/java
+                        ---
+                       CUSTOM_TYPE_PARAM: [ {
+                            NUMBER_PARAM: 3,
+                            TEXT_PARAM: 'Text1',
+                            NESTED_PARAM: {
+                                NESTED_TEXT: 'Nested text 1'
+                            }
+                        }
+                     ]
+                ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+            <ee:transform>
+                <ee:message >
+                    <ee:set-payload ><![CDATA[%dw 2.0
+                output application/java
+                fun subOrderStruct(rec) = (
+                    Db::prepareStruct("MAGICPACKAGEVERSIONTHREE.CUSTOM_RECORD_TYPE", [
+                    rec."NUMBER_PARAM" as Number,
+                    rec."TEXT_PARAM" as String
+                    ]))
+
+                fun subOrderMap(tab) = (
+                  tab map ((item,index)-> subOrderStruct(item)))
+                 ---
+                Db::prepareArray( "MAGICPACKAGEVERSIONTHREE.CUSTOM_TYPE",subOrderMap(payload.CUSTOM_TYPE_PARAM default [{}]))
+        ]]></ee:set-payload>
+                </ee:message>
+            </ee:transform>
+            <db:stored-procedure config-ref="oracleDbPoolingConfig">
+                <db:sql><![CDATA[{ call magicPackageVersionThree.procedure_with_in_out_param(:CUSTOM_TYPE_PARAM, :BINARY_INTEGER_PARAM,:BINARY_INTEGER_OUTPUT)]]></db:sql>
+                <db:input-parameters ><![CDATA[#[{ BINARY_INTEGER_PARAM:123}]]]></db:input-parameters>
+                <db:in-out-parameters >
+                    <db:in-out-parameter key="CUSTOM_TYPE_PARAM" value="#[payload]" />
+                </db:in-out-parameters>
+                <db:output-parameters>
+                    <db:output-parameter key="BINARY_INTEGER_OUTPUT" type="NUMERIC" />
+                </db:output-parameters>
+            </db:stored-procedure>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[sizeOf(payload.CUSTOM_TYPE_PARAM)]" expected="#[3]" />
+            <munit-tools:assert-equals actual="#[payload.CUSTOM_TYPE_PARAM[0][0]]" expected="#[1]" />
+            <munit-tools:assert-equals actual="#[payload.CUSTOM_TYPE_PARAM[0][1]]" expected="Text1" />
+            <munit-tools:assert-equals actual="#[payload.CUSTOM_TYPE_PARAM[0][2]]" expected="#[null]" />
+            <munit-tools:assert-equals actual="#[payload.CUSTOM_TYPE_PARAM[1][0]]" expected="#[2]" />
+            <munit-tools:assert-equals actual="#[payload.CUSTOM_TYPE_PARAM[1][1]]" expected="Text2" />
+            <munit-tools:assert-equals actual="#[payload.CUSTOM_TYPE_PARAM[1][2][0]]" expected="nested text 2" />
+            <munit-tools:assert-equals actual="#[payload.CUSTOM_TYPE_PARAM[2][0]]" expected="#[3]" />
+            <munit-tools:assert-equals actual="#[payload.CUSTOM_TYPE_PARAM[2][1]]" expected="Text3" />
+            <munit-tools:assert-equals actual="#[payload.CUSTOM_TYPE_PARAM[2][2][0]]" expected="nested text 3" />
+            <munit-tools:assert-equals actual="#[payload.BINARY_INTEGER_OUTPUT]" expected="#[123]" />
+        </munit:validation>
     </munit:test>
 
     <munit:test name="getCursorResultFromStoredProcedurePackage" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">

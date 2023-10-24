@@ -59,7 +59,10 @@
 
     <db:config name="oracleDbPoolingConfig">
         <db:oracle-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('oracle')]" serviceName="XEPDB1" user="system" password="oracle">
-            <db:pooling-profile maxPoolSize="1" minPoolSize="1"/>
+            <db:pooling-profile maxPoolSize="1" minPoolSize="1" />
+            <db:column-types >
+                <db:column-type id="2003" typeName="MAGICPACKAGEVERSIONTHREE.CUSTOM_TYPE" />
+            </db:column-types>
         </db:oracle-connection>
     </db:config>
 

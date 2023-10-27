@@ -19,11 +19,14 @@
                 <![CDATA[CREATE TABLE IF NOT EXISTS PLANET(ID INTEGER NOT NULL AUTO_INCREMENT,POSITION INTEGER,NAME VARCHAR(255), PICTURE BLOB, DESCRIPTION LONGTEXT, PRIMARY KEY (ID))]]>
             </db:sql>
         </db:execute-ddl>
+        <db:delete config-ref="dbConfigMySQL">
+            <db:sql ><![CDATA[DELETE FROM PLANET]]></db:sql>
+        </db:delete>
     </munit:before-suite>
     <munit:after-suite name="bulkDeleteAfterSuite">
         <db:execute-ddl config-ref="dbConfigMySQL">
             <db:sql>
-                <![CDATA[DROP TABLE PLANET;]]>
+                <![CDATA[DROP TABLE PLANET]]>
             </db:sql>
         </db:execute-ddl>
     </munit:after-suite>

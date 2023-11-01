@@ -41,12 +41,21 @@ public class BulkScript {
   @DisplayName("Script Path")
   private String file;
 
+  public BulkScript(){}
 
   public String getSql() {
     return sql;
   }
 
+  public void setSql(String sql) {
+    this.sql = sql;
+  }
+
+
   public String getFile() {
     return file;
+  }
+  public void setFile(String file) {
+    this.file = file;
   }
 }

@@ -124,14 +124,26 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
   @Summary("Additional properties used to configure pooling profile.")
   private Map<String, Object> additionalProperties = emptyMap();
 
+  public DbPoolingProfile() { //Default constructor
+  }
+
   @Override
   public int getMaxPoolSize() {
     return maxPoolSize;
   }
 
+  public void setMaxPoolSize(int maxPoolSize) {
+    this.maxPoolSize = maxPoolSize;
+  }
+
+
   @Override
   public int getMinPoolSize() {
     return minPoolSize;
+  }
+
+  public void setMinPoolSize(int minPoolSize) {
+    this.minPoolSize = minPoolSize;
   }
 
   @Override
@@ -139,9 +151,17 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
     return acquireIncrement;
   }
 
+  public void setAcquireIncrement(int acquireIncrement) {
+    this.acquireIncrement = acquireIncrement;
+  }
+
   @Override
   public int getPreparedStatementCacheSize() {
     return preparedStatementCacheSize;
+  }
+
+  public void setPreparedStatementCacheSize(int preparedStatementCacheSize) {
+    this.preparedStatementCacheSize = preparedStatementCacheSize;
   }
 
   @Override
@@ -149,9 +169,17 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
     return maxWait;
   }
 
+  public void setMaxWait(int maxWait) {
+    this.maxWait = maxWait;
+  }
+
   @Override
   public TimeUnit getMaxWaitUnit() {
     return maxWaitUnit;
+  }
+
+  public void setMaxWaitUnit(TimeUnit maxWaitUnit) {
+    this.maxWaitUnit = maxWaitUnit;
   }
 
   @Override
@@ -163,18 +191,34 @@ public class DbPoolingProfile implements DatabasePoolingProfile {
     return maxIdleTime;
   }
 
+  public void setMaxIdleTime(int maxIdleTime) {
+    this.maxIdleTime = maxIdleTime;
+  }
+
 
   public int getMaxStatements() {
     return maxStatements;
+  }
+
+  public void setMaxStatements(int maxStatements) {
+    this.maxStatements = maxStatements;
   }
 
   public boolean getTestConnectionOnCheckout() {
     return testConnectionOnCheckout;
   }
 
+  public void setTestConnectionOnCheckout(boolean testConnectionOnCheckout) {
+    this.testConnectionOnCheckout = testConnectionOnCheckout;
+  }
+
 
   public Map<String, Object> getAdditionalProperties() {
     return additionalProperties;
+  }
+
+  public void setAdditionalProperties(Map<String, Object> additionalProperties) {
+    this.additionalProperties = additionalProperties;
   }
 
   @Override

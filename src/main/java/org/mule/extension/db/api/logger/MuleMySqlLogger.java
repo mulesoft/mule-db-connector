@@ -28,8 +28,7 @@ public class MuleMySqlLogger {
   }
 
 
-  public MuleMySqlLogger() {
-  }
+  public MuleMySqlLogger() {}
 
   /**
    * {@inheritDoc}

@@ -56,8 +56,7 @@ public class QuerySettings {
   @Placement(tab = ADVANCED_TAB)
   private Integer maxRows;
 
-  public QuerySettings() {
-  }
+  public QuerySettings() {}
 
   public void copyInto(QuerySettings other) {
     other.queryTimeout = queryTimeout;

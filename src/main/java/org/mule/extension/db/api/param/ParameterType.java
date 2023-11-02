@@ -58,6 +58,7 @@ public class ParameterType {
   public TypeClassifier getTypeClassifier() {
     return typeClassifier;
   }
+
   public void setTypeClassifier(TypeClassifier typeClassifier) {
     this.typeClassifier = typeClassifier;
   }

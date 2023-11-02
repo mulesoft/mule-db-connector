@@ -42,7 +42,7 @@ public class StatementResult {
     this.generatedKeys = generatedKeys != null ? unmodifiableMap(new HashMap<>(generatedKeys)) : emptyMap();
   }
 
-  public StatementResult(){
+  public StatementResult() {
     affectedRows = 0;
     generatedKeys = null;
   }

@@ -42,7 +42,7 @@ public class TypeClassifier {
   @Expression(NOT_SUPPORTED)
   private String customType;
 
-  public TypeClassifier(){}
+  public TypeClassifier() {}
 
   /**
    * @return The configured type as a {@link DbType} or {@code null} if none supplied

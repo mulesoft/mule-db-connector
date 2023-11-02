@@ -41,7 +41,7 @@ public class BulkScript {
   @DisplayName("Script Path")
   private String file;
 
-  public BulkScript(){}
+  public BulkScript() {}
 
   public String getSql() {
     return sql;
@@ -55,6 +55,7 @@ public class BulkScript {
   public String getFile() {
     return file;
   }
+
   public void setFile(String file) {
     this.file = file;
   }

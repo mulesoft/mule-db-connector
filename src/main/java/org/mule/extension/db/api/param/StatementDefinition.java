@@ -80,6 +80,11 @@ public abstract class StatementDefinition<T extends StatementDefinition> extends
     return parameterTypes;
   }
 
+  public void setParameterTypes(List<ParameterType> parameterTypes) {
+    this.parameterTypes = parameterTypes;
+  }
+
+
   public String getSql() {
     return sql;
   }

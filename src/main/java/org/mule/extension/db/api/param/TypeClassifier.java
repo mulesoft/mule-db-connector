@@ -42,6 +42,8 @@ public class TypeClassifier {
   @Expression(NOT_SUPPORTED)
   private String customType;
 
+  public TypeClassifier() {}
+
   /**
    * @return The configured type as a {@link DbType} or {@code null} if none supplied
    */
@@ -62,10 +64,19 @@ public class TypeClassifier {
     return this.customType;
   }
 
+  public void setCustomType(String customType) {
+    this.customType = customType;
+  }
+
+
   /**
    * @return the Jdbc Type
    */
   public JdbcType getJdbcType() {
     return this.type;
+  }
+
+  public void setJdbcType(JdbcType type) {
+    this.type = type;
   }
 }

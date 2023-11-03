@@ -47,11 +47,19 @@ public class ParameterType {
     return key;
   }
 
+  public void setKey(String key) {
+    this.key = key;
+  }
+
   public DbType getDbType() {
     return typeClassifier.getDbType();
   }
 
   public TypeClassifier getTypeClassifier() {
     return typeClassifier;
+  }
+
+  public void setTypeClassifier(TypeClassifier typeClassifier) {
+    this.typeClassifier = typeClassifier;
   }
 }

@@ -27,6 +27,9 @@ public class MuleMySqlLogger {
     this.name = name;
   }
 
+
+  public MuleMySqlLogger() {}
+
   /**
    * {@inheritDoc}
    */
@@ -151,5 +154,13 @@ public class MuleMySqlLogger {
    */
   public void logWarn(Object msg, Throwable e) {
     LOGGER.warn(msg.toString(), e);
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 }

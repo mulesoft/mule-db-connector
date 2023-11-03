@@ -56,6 +56,8 @@ public class QuerySettings {
   @Placement(tab = ADVANCED_TAB)
   private Integer maxRows;
 
+  public QuerySettings() {}
+
   public void copyInto(QuerySettings other) {
     other.queryTimeout = queryTimeout;
     other.queryTimeoutUnit = queryTimeoutUnit;
@@ -67,16 +69,34 @@ public class QuerySettings {
     return queryTimeout;
   }
 
+  public void setQueryTimeout(int queryTimeout) {
+    this.queryTimeout = queryTimeout;
+  }
+
   public TimeUnit getQueryTimeoutUnit() {
     return queryTimeoutUnit;
   }
+
+  public void setQueryTimeoutUnit(TimeUnit queryTimeoutUnit) {
+    this.queryTimeoutUnit = queryTimeoutUnit;
+  }
+
 
   public Integer getFetchSize() {
     return fetchSize;
   }
 
+  public void setFetchSize(Integer fetchSize) {
+    this.fetchSize = fetchSize;
+  }
+
+
   public Integer getMaxRows() {
     return maxRows;
+  }
+
+  public void setMaxRows(Integer maxRows) {
+    this.maxRows = maxRows;
   }
 
 }

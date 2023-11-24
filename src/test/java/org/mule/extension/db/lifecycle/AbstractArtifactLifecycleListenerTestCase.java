@@ -15,8 +15,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.slf4j.LoggerFactory.getLogger;
 
-import org.mule.extension.db.internal.lifecycle.MySqlArtifactLifecycleListener;
 import org.mule.extension.db.util.CollectableReference;
+import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.io.IOException;
 import java.net.URL;
@@ -31,27 +31,34 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
   protected final Logger LOGGER = getLogger(this.getClass());
   protected String groupId;
   protected String artifactId;
-  protected String version;
+  protected String artifactVersion;
   protected URL libraryUrl;
 
   // Parameterized
-  protected AbstractArtifactLifecycleListenerTestCase(String groupId, String artifactId, String version) {
-    LOGGER.info("Parameters: {0}, {1}, {2}", groupId, artifactId, version);
+  protected AbstractArtifactLifecycleListenerTestCase(String groupId, String artifactId, String artifactVersion) {
+    LOGGER.info("Parameters: {0}, {1}, {2}", groupId, artifactId, artifactVersion);
     this.groupId = groupId;
     this.artifactId = artifactId;
-    this.version = version;
+    this.artifactVersion = artifactVersion;
     this.libraryUrl = getDependencyFromMaven(this.groupId,
                                              this.artifactId,
-                                             this.version);
+                                             this.artifactVersion);
   }
+
+  abstract ArtifactLifecycleListener getArtifactLifecycleListener();
 
   abstract void generateTargetLeak(ClassLoader classLoader);
 
   abstract String getPackagePrefix();
 
-  abstract Boolean shouldCheckLibraryRelease();
+  abstract Boolean enableLibraryReleaseChecking();
 
-  abstract Boolean shouldCheckThreadsRelease();
+  abstract Boolean enableThreadsReleaseChecking();
+
+  abstract void assertThreadsAreDisposed();
+
+  abstract void assertThreadsAreNotDisposed();
+
 
   @Test
   public void whenLibraryIsInAppThenClassLoadersAreNotLeakedAfterDisposal() throws Exception {
@@ -79,7 +86,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
 
   @Test
   public void whenLibraryIsInDomainThenThreadsAreNotDisposedWhenAppIsDisposed() throws Exception {
-    if (shouldCheckThreadsRelease()) {
+    if (enableThreadsReleaseChecking()) {
       try (TestClassLoadersHierarchy classLoadersHierarchy = getBaseClassLoaderHierarchyBuilder()
           .withUrlsInDomain(new URL[] {this.libraryUrl})
           .build()) {
@@ -90,11 +97,9 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     }
   }
 
-  abstract void assertThreadsAreNotDisposed();
-
   @Test
   public void whenLibraryIsInAppThenThreadsAreDisposedWhenAppIsDisposed() throws Exception {
-    if (shouldCheckThreadsRelease()) {
+    if (enableThreadsReleaseChecking()) {
       try (TestClassLoadersHierarchy classLoadersHierarchy = getBaseClassLoaderHierarchyBuilder()
           .withUrlsInDomain(new URL[] {this.libraryUrl})
           .build()) {
@@ -104,23 +109,21 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     }
   }
 
-  abstract void assertThreadsAreDisposed();
-
   private TestClassLoadersHierarchy.Builder getBaseClassLoaderHierarchyBuilder() {
     return TestClassLoadersHierarchy.getBuilder()
-        .withArtifactLifecycleListener(new MySqlArtifactLifecycleListener())
+        .withArtifactLifecycleListener(getArtifactLifecycleListener())
         .excludingClassNamesFromRoot(this::isClassFromLibrary);
   }
 
   private void assertClassLoadersAreNotLeakedAfterDisposal(BiFunction<TestClassLoadersHierarchy.Builder, URL[], TestClassLoadersHierarchy.Builder> driverConfigurer,
-                                                           Function<TestClassLoadersHierarchy, ClassLoader> connectionClassLoaderProvider)
+                                                           Function<TestClassLoadersHierarchy, ClassLoader> executionClassLoaderProvider)
       throws Exception {
-    if (shouldCheckLibraryRelease()) {
+    if (enableLibraryReleaseChecking()) {
       TestClassLoadersHierarchy.Builder builder = getBaseClassLoaderHierarchyBuilder();
       builder = driverConfigurer.apply(builder, new URL[] {this.libraryUrl});
 
       try (TestClassLoadersHierarchy classLoadersHierarchy = builder.build()) {
-        generateTargetLeak(connectionClassLoaderProvider.apply(classLoadersHierarchy));
+        generateTargetLeak(executionClassLoaderProvider.apply(classLoadersHierarchy));
         disposeAppAndAssertRelease(classLoadersHierarchy);
         disposeDomainAndAssertRelease(classLoadersHierarchy);
       }

@@ -31,13 +31,16 @@ public class DerbyArtifactLifecycleListener implements ArtifactLifecycleListener
     deregisterJdbcDrivers(artifactDisposalContext);
   }
 
-  private void deregisterJdbcDrivers(ArtifactDisposalContext artifactDisposalContext) {
+  private void deregisterJdbcDrivers(ArtifactDisposalContext disposalContext) {
     Enumeration<Driver> drivers = getDrivers();
     while (drivers.hasMoreElements()) {
       Driver driver = drivers.nextElement();
       // Only unregister drivers that were loaded by the classloader that called this releaser.
-      if (isDriverLoadedByThisClassLoader(artifactDisposalContext, driver)) {
-        doDeregisterDriver(artifactDisposalContext, driver);
+      //if (isDriverLoadedByThisClassLoader(artifactDisposalContext, driver)) {
+      ClassLoader cls = driver.getClass().getClassLoader();
+      if (disposalContext.isArtifactOwnedClassLoader(cls) ||
+          disposalContext.isExtensionOwnedClassLoader(cls)) {
+        doDeregisterDriver(disposalContext, driver);
       } else {
         if (LOGGER.isDebugEnabled()) {
           LOGGER

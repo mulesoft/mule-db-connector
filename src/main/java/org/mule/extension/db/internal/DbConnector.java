@@ -21,6 +21,7 @@ import org.mule.extension.db.internal.domain.connection.generic.DbGenericConnect
 import org.mule.extension.db.internal.domain.connection.mysql.MySqlConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.sqlserver.SqlServerConnectionProvider;
+import org.mule.extension.db.internal.lifecycle.DbCompositeLifecycleListener;
 import org.mule.extension.db.internal.operation.DbBulkOperations;
 import org.mule.extension.db.internal.operation.DbDdlOperations;
 import org.mule.extension.db.internal.operation.DbDmlOperations;
@@ -34,6 +35,7 @@ import org.mule.runtime.extension.api.annotation.Sources;
 import org.mule.runtime.extension.api.annotation.connectivity.ConnectionProviders;
 import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
 import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
+import org.mule.sdk.api.annotation.OnArtifactLifecycle;
 
 /**
  * The Anypoint Database Connector allows you to connect to relational databases through the JDBC API.
@@ -53,6 +55,7 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
 @Export(
     classes = {QueryDefinition.class, StoredProcedureCall.class, BulkQueryDefinition.class, ConnectionCreationException.class,
         LoggerApiPackage.class})
+@OnArtifactLifecycle(DbCompositeLifecycleListener.class)
 public class DbConnector extends AbstractDbConnector {
 
 }

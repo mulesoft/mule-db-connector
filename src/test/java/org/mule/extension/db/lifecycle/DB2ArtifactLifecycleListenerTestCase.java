@@ -6,8 +6,8 @@
  */
 package org.mule.extension.db.lifecycle;
 
+import org.mule.extension.db.internal.lifecycle.DB2ArtifactLifecycleListener;
 import org.mule.extension.db.internal.lifecycle.DerbyArtifactLifecycleListener;
-import org.mule.extension.db.internal.lifecycle.OracleArtifactLifecycleListener;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.util.Arrays;
@@ -17,20 +17,20 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
-public class OracleArtifactLifecycleListenerTestCase extends AbstractArtifactLifecycleListenerTestCase {
+public class DB2ArtifactLifecycleListenerTestCase extends AbstractArtifactLifecycleListenerTestCase {
 
-  public OracleArtifactLifecycleListenerTestCase(String groupId, String artifactId, String version) {
+  public DB2ArtifactLifecycleListenerTestCase(String groupId, String artifactId, String version) {
     super(groupId, artifactId, version);
   }
 
   @Parameterized.Parameters
   public static Collection<Object[]> parameters() {
-    return Arrays.asList(new Object[][] {{"com.oracle.database.jdbc", "ojdbc8", "23.2.0.0"}});
+    return Arrays.asList(new Object[][] {{"com.ibm.db2.jcc", "db2jcc", "db2jcc4"}});
   }
 
   @Override
   ArtifactLifecycleListener getArtifactLifecycleListener() {
-    return new OracleArtifactLifecycleListener();
+    return new DB2ArtifactLifecycleListener();
   }
 
   @Override
@@ -40,7 +40,7 @@ public class OracleArtifactLifecycleListenerTestCase extends AbstractArtifactLif
 
   @Override
   String getPackagePrefix() {
-    return "com.oracle";
+    return "com.ibm.db2";
   }
 
   @Override

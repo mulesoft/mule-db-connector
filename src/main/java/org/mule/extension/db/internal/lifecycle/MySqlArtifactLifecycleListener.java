@@ -19,7 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Driver;
 import java.util.Arrays;
-import java.util.Enumeration;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,67 +30,37 @@ import org.slf4j.Logger;
 public class MySqlArtifactLifecycleListener implements ArtifactLifecycleListener {
 
   private static final Logger LOGGER = getLogger(MySqlArtifactLifecycleListener.class);
-  public static final List<String> CONNECTION_CLEANUP_THREAD_KNOWN_CLASS_ADDRESES =
+  private static final List<String> CONNECTION_CLEANUP_THREAD_KNOWN_CLASS_ADDRESES =
       Arrays.asList("com.mysql.jdbc.AbandonedConnectionCleanupThread", "com.mysql.cj.jdbc.AbandonedConnectionCleanupThread");
 
   @Override
   public void onArtifactDisposal(ArtifactDisposalContext artifactDisposalContext) {
-    LOGGER.debug("Running onArtifactDisposal method on {}", getClass().getName());
-    deregisterJdbcDrivers(artifactDisposalContext);
-    shutdownMySqlAbandonedConnectionCleanupThread(artifactDisposalContext);
-    if (getJavaVersion() <= 11.0F) {
-      // codigo no compatible con java 17
-    } else {
-      LOGGER
-          .warn("Some methods of the DB connector resource release could not be executed due to JAVA 17 restrictions. If any driver or library cannot be properly cleaned when undeploying or restarting the application, it could result in an Out of Memory error. Please verify that you are using the latest compatible version of your jdbc driver, and the memory behavior on redeploys. ");
-    }
+    LOGGER.debug("Running onArtifactDisposal method on MySqlArtifactLifecycleListener");
+    deregisterMySqlDrivers(artifactDisposalContext);
   }
 
-  private void deregisterJdbcDrivers(ArtifactDisposalContext artifactDisposalContext) {
-    Enumeration<Driver> drivers = getDrivers();
-    while (drivers.hasMoreElements()) {
-      Driver driver = drivers.nextElement();
-      // Only unregister drivers that were loaded by the classloader that called this releaser.
-      if (isDriverLoadedByThisClassLoader(artifactDisposalContext, driver)) {
-        doDeregisterDriver(artifactDisposalContext, driver);
-      } else {
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER
-              .debug(format("Skipping deregister driver %s. It wasn't loaded by the classloader of the artifact being released.",
-                            driver.getClass()));
-        }
-      }
-    }
-  }
-
-  private boolean isDriverLoadedByThisClassLoader(ArtifactDisposalContext artifactDisposalContext, Driver driver) {
-    ClassLoader driverClassLoader = driver.getClass().getClassLoader();
-    while (driverClassLoader != null) {
-      // It has to be the same reference not equals to
-      if (driverClassLoader == artifactDisposalContext.getExtensionClassLoader()) {
-        return true;
-      }
-      driverClassLoader = driverClassLoader.getParent();
-    }
-    return false;
-  }
-
-  private void doDeregisterDriver(ArtifactDisposalContext artifactDisposalContext, Driver driver) {
-    try {
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Deregistering driver: {}", driver.getClass());
-      }
-      if (isMySqlDriver(driver)) {
-        deregisterDriver(driver);
-        shutdownMySqlAbandonedConnectionCleanupThread(artifactDisposalContext);
-      }
-    } catch (Exception e) {
-      LOGGER.warn(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
-    }
+  private void deregisterMySqlDrivers(ArtifactDisposalContext disposalContext) {
+    Collections.list(getDrivers())
+        .stream()
+        .filter(d -> disposalContext.isArtifactOwnedClassLoader(d.getClass().getClassLoader()) ||
+            disposalContext.isExtensionOwnedClassLoader(d.getClass().getClassLoader()))
+        .filter(this::isMySqlDriver)
+        .forEach(driver -> {
+          try {
+            if (LOGGER.isDebugEnabled()) {
+              LOGGER.debug("Deregistering driver: {}", driver.getClass());
+            }
+            deregisterDriver(driver);
+            shutdownMySqlAbandonedConnectionCleanupThread(disposalContext);
+          } catch (Exception e) {
+            LOGGER.warn(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
+          }
+        });
   }
 
   private boolean isMySqlDriver(Driver driver) {
-    return isDriver(driver, "com.mysql.jdbc.Driver") || isDriver(driver, "com.mysql.cj.jdbc.Driver");
+    return isDriver(driver, "com.mysql.jdbc.Driver")
+        || isDriver(driver, "com.mysql.cj.jdbc.Driver");
   }
 
   private boolean isDriver(Driver driver, String expectedDriverClass) {
@@ -107,14 +77,14 @@ public class MySqlArtifactLifecycleListener implements ArtifactLifecycleListener
    */
   private void shutdownMySqlAbandonedConnectionCleanupThread(ArtifactDisposalContext artifactDisposalContext) {
     try {
-      Class<?> cleanupThreadsClass = findMySqlDriverClass(artifactDisposalContext);
+      Class<?> cleanupThreadsClass = findMySqlCleanUpClass(artifactDisposalContext);
       shutdownMySqlConnectionCleanupThreads(cleanupThreadsClass);
       // The cleanup threads are fired from a single-thread ThreadPoolExecutor, which is created inside a
       // lambda, which wraps the thread pool into a finalizable wrapper. This leads to retention in the
       // artifact classloaders when several redeployments are performed.
       cleanMySqlCleanupThreadsThreadFactory(cleanupThreadsClass);
-    } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException
-        | IllegalArgumentException | InvocationTargetException e) {
+    } catch (ClassNotFoundException | SecurityException | IllegalArgumentException
+        | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
       LOGGER.warn("Unable to shutdown MySql's AbandonedConnectionCleanupThread", e);
     }
   }
@@ -136,20 +106,28 @@ public class MySqlArtifactLifecycleListener implements ArtifactLifecycleListener
       Method checkedShutdown = cleanupThreadsClass.getMethod("checkedShutdown", null);
       checkedShutdown.invoke(null);
 
-      Field cleanupExecutorServiceField = cleanupThreadsClass
-          .getDeclaredField("cleanupThreadExcecutorService");
-      cleanupExecutorServiceField.setAccessible(true);
-      ExecutorService delegateCleanupExecutorService =
-          (ExecutorService) cleanupExecutorServiceField.get(cleanupThreadsClass);
+      if (getJavaVersion() <= 11.0F) {
+        /* According to this code (https://jar-download.com/artifacts/mysql/mysql-connector-java/5.1.49/source-code/com/mysql/jdbc/AbandonedConnectionCleanupThread.java),
+        calling the checkedShutdown method should be sufficient (the tests pass without this
+        part with versions 5 and 8).
+        I'll keep this code only to avoid memory leaks in versions older than 5
+        because I couldn't reproduce the situation in which this code is necessary.
+         */
+        Field cleanupExecutorServiceField = cleanupThreadsClass
+            .getDeclaredField("cleanupThreadExcecutorService");
+        cleanupExecutorServiceField.setAccessible(true);
+        ExecutorService delegateCleanupExecutorService =
+            (ExecutorService) cleanupExecutorServiceField.get(cleanupThreadsClass);
 
-      Field realExecutorServiceField = delegateCleanupExecutorService.getClass().getSuperclass().getDeclaredField("e");
-      realExecutorServiceField.setAccessible(true);
-      ThreadPoolExecutor realExecutorService =
-          (ThreadPoolExecutor) realExecutorServiceField.get(delegateCleanupExecutorService);
+        Field realExecutorServiceField = delegateCleanupExecutorService.getClass().getSuperclass().getDeclaredField("e");
+        realExecutorServiceField.setAccessible(true);
+        ThreadPoolExecutor realExecutorService =
+            (ThreadPoolExecutor) realExecutorServiceField.get(delegateCleanupExecutorService);
 
-      // Set cleanup thread executor service thread factory to one whose classloader is the system one
-      realExecutorService.setThreadFactory(Executors.defaultThreadFactory());
-    } catch (NoSuchFieldException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+        // Set cleanup thread executor service thread factory to one whose classloader is the system one
+        realExecutorService.setThreadFactory(Executors.defaultThreadFactory());
+      }
+    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
       LOGGER.warn("Error cleaning threadFactory from AbandonedConnectionCleanupThread executor service", e);
     }
   }
@@ -178,18 +156,19 @@ public class MySqlArtifactLifecycleListener implements ArtifactLifecycleListener
    *
    * @return The MySql driver AbandonedConnectionCleanupThread class object, if found.
    */
-  private Class<?> findMySqlDriverClass(ArtifactDisposalContext artifactDisposalContext) throws ClassNotFoundException {
+  private Class<?> findMySqlCleanUpClass(ArtifactDisposalContext artifactDisposalContext) throws ClassNotFoundException {
     for (String knownCleanupThreadClassAddress : CONNECTION_CLEANUP_THREAD_KNOWN_CLASS_ADDRESES) {
       try {
         return artifactDisposalContext.getArtifactClassLoader().loadClass(knownCleanupThreadClassAddress);
       } catch (ClassNotFoundException e) {
-        LOGGER.warn("No AbandonedConnectionCleanupThread registered with class address {}", knownCleanupThreadClassAddress);
+        if (LOGGER.isDebugEnabled()) {
+          LOGGER.debug("No AbandonedConnectionCleanupThread registered with class address {}", knownCleanupThreadClassAddress);
+        }
       }
     }
     throw new ClassNotFoundException("No MySql's AbandonedConnectionCleanupThread class was found");
   }
 
-  @Deprecated
   private static Float getJavaVersion() {
     String version = System.getProperty("java.version");
     if (version.startsWith("1.")) {
@@ -200,7 +179,6 @@ public class MySqlArtifactLifecycleListener implements ArtifactLifecycleListener
         version = version.substring(0, dot);
       }
     }
-    LOGGER.info("Java version {}", version);
     return Float.parseFloat(version);
   }
 }

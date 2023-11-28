@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Driver;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.regex.Pattern;
@@ -48,48 +49,25 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
     deregisterJdbcDrivers(artifactDisposalContext);
   }
 
-  private void deregisterJdbcDrivers(ArtifactDisposalContext artifactDisposalContext) {
-    Enumeration<Driver> drivers = getDrivers();
-    while (drivers.hasMoreElements()) {
-      Driver driver = drivers.nextElement();
-      // Only unregister drivers that were loaded by the classloader that called this releaser.
-      if (isDriverLoadedByThisClassLoader(artifactDisposalContext, driver)) {
-        doDeregisterDriver(artifactDisposalContext, driver);
-      } else {
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER
-              .debug(format("Skipping deregister driver %s. It wasn't loaded by the classloader of the artifact being released.",
-                            driver.getClass()));
-        }
-      }
-    }
-  }
-
-  private boolean isDriverLoadedByThisClassLoader(ArtifactDisposalContext artifactDisposalContext, Driver driver) {
-    ClassLoader driverClassLoader = driver.getClass().getClassLoader();
-    while (driverClassLoader != null) {
-      // It has to be the same reference not equals to
-      if (driverClassLoader == artifactDisposalContext.getExtensionClassLoader()) {
-        return true;
-      }
-      driverClassLoader = driverClassLoader.getParent();
-    }
-    return false;
-  }
-
-  private void doDeregisterDriver(ArtifactDisposalContext artifactDisposalContext, Driver driver) {
-    try {
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Deregistering driver: {}", driver.getClass());
-      }
-      deregisterDriver(driver);
-      if (isOracleDriver(driver)) {
-        deregisterOracleDiagnosabilityMBean(artifactDisposalContext);
-        disposeDriverTimerThreads(artifactDisposalContext);
-      }
-    } catch (Exception e) {
-      LOGGER.warn(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
-    }
+  private void deregisterJdbcDrivers(ArtifactDisposalContext disposalContext) {
+    Collections.list(getDrivers())
+        .stream()
+        .filter(d -> disposalContext.isArtifactOwnedClassLoader(d.getClass().getClassLoader()) ||
+            disposalContext.isExtensionOwnedClassLoader(d.getClass().getClassLoader()))
+        .filter(d -> isOracleDriver(d))
+        .forEach(driver -> {
+          try {
+            if (LOGGER.isDebugEnabled()) {
+              LOGGER.debug("Deregistering driver: {}", driver.getClass());
+            }
+            deregisterDriver(driver);
+            deregisterOracleDiagnosabilityMBean(disposalContext.getArtifactClassLoader());
+            deregisterOracleDiagnosabilityMBean(disposalContext.getArtifactClassLoader());
+            disposeDriverTimerThreads(disposalContext);
+          } catch (Exception e) {
+            LOGGER.warn(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
+          }
+        });
   }
 
   private boolean isOracleDriver(Driver driver) {
@@ -101,13 +79,11 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
     }
   }
 
-  private void deregisterOracleDiagnosabilityMBean(ArtifactDisposalContext artifactDisposalContext) {
-    ClassLoader cl = artifactDisposalContext.getArtifactClassLoader();
+  private void deregisterOracleDiagnosabilityMBean(ClassLoader cl) {
     MBeanServer mBeanServer = getPlatformMBeanServer();
     final Hashtable<String, String> keys = new Hashtable<>();
     keys.put("type", DIAGNOSABILITY_BEAN_NAME);
     keys.put("name", cl.getClass().getName() + "@" + toHexString(cl.hashCode()).toLowerCase());
-
     try {
       mBeanServer.unregisterMBean(new ObjectName("com.oracle.jdbc", keys));
     } catch (javax.management.InstanceNotFoundException e) {

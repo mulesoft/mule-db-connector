@@ -32,8 +32,8 @@ public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLife
   }
 
   @Override
-  ArtifactLifecycleListener getArtifactLifecycleListener() {
-    return new DerbyArtifactLifecycleListener();
+  Class<? extends ArtifactLifecycleListener> getArtifactLifecycleListenerClass() {
+    return DerbyArtifactLifecycleListener.class;
   }
 
   @Parameterized.Parameters

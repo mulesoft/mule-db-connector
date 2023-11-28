@@ -29,8 +29,8 @@ public class OracleArtifactLifecycleListenerTestCase extends AbstractArtifactLif
   }
 
   @Override
-  ArtifactLifecycleListener getArtifactLifecycleListener() {
-    return new OracleArtifactLifecycleListener();
+  Class<? extends ArtifactLifecycleListener> getArtifactLifecycleListenerClass() {
+    return OracleArtifactLifecycleListener.class;
   }
 
   @Override

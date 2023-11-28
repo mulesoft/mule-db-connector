@@ -10,7 +10,9 @@ package org.mule.extension.db.lifecycle;
 import static org.mule.extension.db.util.CollectableReference.collectedByGc;
 import static org.mule.extension.db.util.DependencyResolver.getDependencyFromMaven;
 import static org.mule.extension.db.util.Eventually.eventually;
+import static org.mule.runtime.core.api.util.ClassUtils.withContextClassLoader;
 
+import static java.lang.Thread.currentThread;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -45,7 +47,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
                                              this.artifactVersion);
   }
 
-  abstract ArtifactLifecycleListener getArtifactLifecycleListener();
+  abstract Class<? extends ArtifactLifecycleListener> getArtifactLifecycleListenerClass();
 
   abstract void generateTargetLeak(ClassLoader classLoader);
 
@@ -111,21 +113,32 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
 
   private TestClassLoadersHierarchy.Builder getBaseClassLoaderHierarchyBuilder() {
     return TestClassLoadersHierarchy.getBuilder()
-        .withArtifactLifecycleListener(getArtifactLifecycleListener())
+        .withArtifactLifecycleListener(getArtifactLifecycleListenerClass())
         .excludingClassNamesFromRoot(this::isClassFromLibrary);
   }
 
   private void assertClassLoadersAreNotLeakedAfterDisposal(BiFunction<TestClassLoadersHierarchy.Builder, URL[], TestClassLoadersHierarchy.Builder> driverConfigurer,
                                                            Function<TestClassLoadersHierarchy, ClassLoader> executionClassLoaderProvider)
       throws Exception {
+    ClassLoader originalTCCL = currentThread().getContextClassLoader();
     if (enableLibraryReleaseChecking()) {
       TestClassLoadersHierarchy.Builder builder = getBaseClassLoaderHierarchyBuilder();
       builder = driverConfigurer.apply(builder, new URL[] {this.libraryUrl});
 
       try (TestClassLoadersHierarchy classLoadersHierarchy = builder.build()) {
-        generateTargetLeak(executionClassLoaderProvider.apply(classLoadersHierarchy));
-        disposeAppAndAssertRelease(classLoadersHierarchy);
-        disposeDomainAndAssertRelease(classLoadersHierarchy);
+        ClassLoader target = executionClassLoaderProvider.apply(classLoadersHierarchy);
+        currentThread().setContextClassLoader(target);
+        withContextClassLoader(target, () -> {
+          try {
+            generateTargetLeak(target);
+            disposeAppAndAssertRelease(classLoadersHierarchy);
+            disposeDomainAndAssertRelease(classLoadersHierarchy);
+          } catch (IOException e) {
+            throw new RuntimeException(e);
+          }
+        });
+      } finally {
+        currentThread().setContextClassLoader(originalTCCL);
       }
     }
   }

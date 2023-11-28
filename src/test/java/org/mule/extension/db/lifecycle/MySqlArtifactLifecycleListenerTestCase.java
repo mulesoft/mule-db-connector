@@ -6,22 +6,30 @@
  */
 package org.mule.extension.db.lifecycle;
 
-import static java.lang.Thread.currentThread;
+import static java.lang.Thread.getAllStackTraces;
+import static java.util.stream.Collectors.toList;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.mule.extension.db.internal.lifecycle.MySqlArtifactLifecycleListener;
-import org.mule.extension.db.internal.lifecycle.OracleArtifactLifecycleListener;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.sql.Connection;
 import java.sql.Driver;
+import java.sql.DriverManager;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public class MySqlArtifactLifecycleListenerTestCase extends AbstractArtifactLifecycleListenerTestCase {
+
+  private static final String DRIVER_PACKAGE = "com.mysql";
+  private static final String DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
+  private static final String DRIVER_THREAD_NAME = "mysql-cj-abandoned-connection-cleanup";
 
   public MySqlArtifactLifecycleListenerTestCase(String groupId, String artifactId, String version) {
     super(groupId, artifactId, version);
@@ -33,30 +41,25 @@ public class MySqlArtifactLifecycleListenerTestCase extends AbstractArtifactLife
   }
 
   @Override
-  ArtifactLifecycleListener getArtifactLifecycleListener() {
-    return new MySqlArtifactLifecycleListener();
+  Class<? extends ArtifactLifecycleListener> getArtifactLifecycleListenerClass() {
+    return MySqlArtifactLifecycleListener.class;
   }
 
   @Override
   void generateTargetLeak(ClassLoader classLoader) {
-    ClassLoader originalTCCL = currentThread().getContextClassLoader();
-    currentThread().setContextClassLoader(classLoader);
     try {
-      Connection connection = null;
       Class<?> mySqlDriver = classLoader.loadClass("com.mysql.cj.jdbc.Driver");
       Driver driver = (Driver) mySqlDriver.newInstance();
-      // DriverManager.registerDriver(driver);
+      DriverManager.registerDriver(driver);
+      LOGGER.warn("Drivers encontrados 1: {}", Collections.list(DriverManager.getDrivers()).size());
     } catch (Exception e) {
       LOGGER.error(e.getMessage(), e);
-      // assertThat(DriverManager.getDrivers(), hasMySqlDriver());
-    } finally {
-      currentThread().setContextClassLoader(originalTCCL);
     }
   }
 
   @Override
   String getPackagePrefix() {
-    return "com.mysql";
+    return DRIVER_PACKAGE;
   }
 
   @Override
@@ -71,11 +74,20 @@ public class MySqlArtifactLifecycleListenerTestCase extends AbstractArtifactLife
 
   @Override
   void assertThreadsAreNotDisposed() {
-    return;
+    assertTrue("MySQL Store Daemon loaded by domain is not still present", isThreadDaemonPresent());
   }
 
   @Override
   void assertThreadsAreDisposed() {
-    return;
+    assertFalse("MySQL Store Daemon is still present", isThreadDaemonPresent());
+  }
+
+  protected boolean isThreadDaemonPresent() {
+    return getAllStackTraces().keySet().stream().map(Thread::getName).collect(toList()).stream()
+        .anyMatch(t -> t.equals(getDriverThreadName()));
+  }
+
+  public String getDriverThreadName() {
+    return DRIVER_THREAD_NAME;
   }
 }

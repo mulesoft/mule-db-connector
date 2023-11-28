@@ -7,12 +7,14 @@
 package org.mule.extension.db.lifecycle;
 
 import static java.lang.ClassLoader.getSystemClassLoader;
+import static java.util.Arrays.copyOf;
 
 import org.mule.sdk.api.artifact.lifecycle.ArtifactDisposalContext;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.function.Predicate;
@@ -43,7 +45,7 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
     private URL[] domainExtensionUrls = new URL[0];
     private URL[] appUrls = new URL[0];
     private URL[] appExtensionUrls = new URL[0];
-    private ArtifactLifecycleListener artifactLifecycleListener;
+    private Class<? extends ArtifactLifecycleListener> artifactLifecycleListenerClass;
 
     /**
      * Allows for excluding classes by name from the root {@link ClassLoader}.
@@ -106,8 +108,8 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
      *                                  simulated.
      * @return This instance, for chaining purposes.
      */
-    public Builder withArtifactLifecycleListener(ArtifactLifecycleListener artifactLifecycleListener) {
-      this.artifactLifecycleListener = artifactLifecycleListener;
+    public Builder withArtifactLifecycleListener(Class<? extends ArtifactLifecycleListener> artifactLifecycleListener) {
+      this.artifactLifecycleListenerClass = artifactLifecycleListener;
       return this;
     }
 
@@ -115,13 +117,29 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
      * @return The {@link TestClassLoadersHierarchy}.
      */
     public TestClassLoadersHierarchy build() {
+      if (artifactLifecycleListenerClass != null) {
+        // Adjust the root class filter so that the listener class is also excluded from the root ClassLoader
+        rootClassNameFilter = rootClassNameFilter.and(name -> !artifactLifecycleListenerClass.getName().equals(name));
+
+        // Adds the URL with the location of the listener class at the classpath to the extension ClassLoaders, so it can be
+        // found there (after having failed at the root ClassLoader)
+        URL listenerClassUrl = artifactLifecycleListenerClass.getProtectionDomain().getCodeSource().getLocation();
+        appExtensionUrls = appendUrlTo(appExtensionUrls, listenerClassUrl);
+        domainExtensionUrls = appendUrlTo(domainExtensionUrls, listenerClassUrl);
+      }
       ClassLoader domainClassLoader =
           new URLClassLoader(domainUrls, new FilteringClassLoader(getSystemClassLoader(), rootClassNameFilter));
       ClassLoader domainExtensionClassLoader = new URLClassLoader(domainExtensionUrls, domainClassLoader);
       ClassLoader appClassLoader = new URLClassLoader(appUrls, domainClassLoader);
       ClassLoader appExtensionClassLoader = new URLClassLoader(appExtensionUrls, appClassLoader);
       return new TestClassLoadersHierarchy(domainClassLoader, domainExtensionClassLoader, appClassLoader, appExtensionClassLoader,
-                                           artifactLifecycleListener);
+                                           artifactLifecycleListenerClass);
+    }
+
+    private URL[] appendUrlTo(URL[] urls, URL newUrl) {
+      urls = copyOf(urls, urls.length + 1);
+      urls[urls.length - 1] = newUrl;
+      return urls;
     }
   }
 
@@ -152,16 +170,21 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
   private ClassLoader domainExtensionClassLoader;
   private ClassLoader appClassLoader;
   private ClassLoader appExtensionClassLoader;
-  private final ArtifactLifecycleListener artifactLifecycleListener;
+  private ArtifactLifecycleListener appExtensionArtifactLifecycleListener;
+  private ArtifactLifecycleListener domainExtensionArtifactLifecycleListener;
 
-  private TestClassLoadersHierarchy(ClassLoader domainClassLoader, ClassLoader domainExtensionClassLoader,
+  private TestClassLoadersHierarchy(ClassLoader domainClassLoader,
+                                    ClassLoader domainExtensionClassLoader,
                                     ClassLoader appClassLoader,
-                                    ClassLoader appExtensionClassLoader, ArtifactLifecycleListener artifactLifecycleListener) {
+                                    ClassLoader appExtensionClassLoader,
+                                    Class<? extends ArtifactLifecycleListener> artifactLifecycleListenerClass) {
     this.domainClassLoader = domainClassLoader;
     this.domainExtensionClassLoader = domainExtensionClassLoader;
     this.appClassLoader = appClassLoader;
     this.appExtensionClassLoader = appExtensionClassLoader;
-    this.artifactLifecycleListener = artifactLifecycleListener;
+    if (artifactLifecycleListenerClass != null) {
+      createArtifactLifecycleListeners(artifactLifecycleListenerClass);
+    }
   }
 
   /**
@@ -200,13 +223,14 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
    */
   public void disposeApp() throws IOException {
     if (appClassLoader != null && appExtensionClassLoader != null) {
-      if (artifactLifecycleListener != null) {
-        artifactLifecycleListener.onArtifactDisposal(getDisposalContextForApp());
+      if (appExtensionArtifactLifecycleListener != null) {
+        appExtensionArtifactLifecycleListener.onArtifactDisposal(getDisposalContextForApp());
       }
       ((Closeable) appExtensionClassLoader).close();
       ((Closeable) appClassLoader).close();
       appExtensionClassLoader = null;
       appClassLoader = null;
+      appExtensionArtifactLifecycleListener = null;
     }
   }
 
@@ -218,13 +242,14 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
    */
   public void disposeDomain() throws IOException {
     if (domainClassLoader != null && domainExtensionClassLoader != null) {
-      if (artifactLifecycleListener != null) {
-        artifactLifecycleListener.onArtifactDisposal(getDisposalContextForDomain());
+      if (domainExtensionArtifactLifecycleListener != null) {
+        domainExtensionArtifactLifecycleListener.onArtifactDisposal(getDisposalContextForDomain());
       }
       ((Closeable) domainExtensionClassLoader).close();
       ((Closeable) domainClassLoader).close();
       domainExtensionClassLoader = null;
       domainClassLoader = null;
+      domainExtensionArtifactLifecycleListener = null;
     }
   }
 
@@ -240,5 +265,27 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
 
   private ArtifactDisposalContext getDisposalContextForDomain() {
     return new TestArtifactDisposalContext(getDomainClassLoader(), getDomainExtensionClassLoader());
+  }
+
+  private void createArtifactLifecycleListeners(Class<? extends ArtifactLifecycleListener> artifactLifecycleListenerClass) {
+    // Instantiates the listeners using the extension ClassLoaders to load the indicated class
+    try {
+      this.appExtensionArtifactLifecycleListener =
+          createArtifactLifecycleInstance(loadFromClassLoader(artifactLifecycleListenerClass, appExtensionClassLoader));
+      this.domainExtensionArtifactLifecycleListener =
+          createArtifactLifecycleInstance(loadFromClassLoader(artifactLifecycleListenerClass, domainExtensionClassLoader));
+    } catch (ReflectiveOperationException e) {
+      throw new RuntimeException("Unable to create ArtifactLifecycleListener instance", e);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T> Class<T> loadFromClassLoader(Class<T> originalClass, ClassLoader targetClassLoader) throws ClassNotFoundException {
+    return (Class<T>) targetClassLoader.loadClass(originalClass.getName());
+  }
+
+  private ArtifactLifecycleListener createArtifactLifecycleInstance(Class<? extends ArtifactLifecycleListener> artifactLifecycleListenerClass)
+      throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
+    return artifactLifecycleListenerClass.getConstructor().newInstance();
   }
 }

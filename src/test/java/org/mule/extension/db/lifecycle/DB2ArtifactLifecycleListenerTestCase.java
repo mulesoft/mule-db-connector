@@ -29,8 +29,8 @@ public class DB2ArtifactLifecycleListenerTestCase extends AbstractArtifactLifecy
   }
 
   @Override
-  ArtifactLifecycleListener getArtifactLifecycleListener() {
-    return new DB2ArtifactLifecycleListener();
+  Class<? extends ArtifactLifecycleListener> getArtifactLifecycleListenerClass() {
+    return DB2ArtifactLifecycleListener.class;
   }
 
   @Override

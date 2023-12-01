@@ -7,7 +7,6 @@
 package org.mule.extension.db.lifecycle;
 
 import org.mule.extension.db.internal.lifecycle.DB2ArtifactLifecycleListener;
-import org.mule.extension.db.internal.lifecycle.DerbyArtifactLifecycleListener;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.util.Arrays;
@@ -34,23 +33,18 @@ public class DB2ArtifactLifecycleListenerTestCase extends AbstractArtifactLifecy
   }
 
   @Override
-  void generateTargetLeak(ClassLoader classLoader) {
-
-  }
-
-  @Override
   String getPackagePrefix() {
     return "com.ibm.db2";
   }
 
   @Override
-  Boolean enableLibraryReleaseChecking() {
-    return true;
+  public String getDriverName() {
+    return null;
   }
 
   @Override
-  Boolean enableThreadsReleaseChecking() {
-    return true;
+  public String getDriverThreadName() {
+    return null;
   }
 
   @Override

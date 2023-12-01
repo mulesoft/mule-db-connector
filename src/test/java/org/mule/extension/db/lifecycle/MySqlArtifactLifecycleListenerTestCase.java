@@ -14,7 +14,6 @@ import static org.junit.Assert.assertTrue;
 import org.mule.extension.db.internal.lifecycle.MySqlArtifactLifecycleListener;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
-import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.Arrays;
@@ -45,13 +44,12 @@ public class MySqlArtifactLifecycleListenerTestCase extends AbstractArtifactLife
     return MySqlArtifactLifecycleListener.class;
   }
 
-  @Override
   void generateTargetLeak(ClassLoader classLoader) {
     try {
-      Class<?> mySqlDriver = classLoader.loadClass("com.mysql.cj.jdbc.Driver");
-      Driver driver = (Driver) mySqlDriver.newInstance();
+      Class<?> driverClass = classLoader.loadClass(DRIVER_NAME);
+      Driver driver = (Driver) driverClass.newInstance();
       DriverManager.registerDriver(driver);
-      LOGGER.warn("Drivers encontrados 1: {}", Collections.list(DriverManager.getDrivers()).size());
+      LOGGER.warn("Drivers found: {}", Collections.list(DriverManager.getDrivers()).size());
     } catch (Exception e) {
       LOGGER.error(e.getMessage(), e);
     }
@@ -63,13 +61,8 @@ public class MySqlArtifactLifecycleListenerTestCase extends AbstractArtifactLife
   }
 
   @Override
-  Boolean enableLibraryReleaseChecking() {
-    return true;
-  }
-
-  @Override
-  Boolean enableThreadsReleaseChecking() {
-    return true;
+  public String getDriverName() {
+    return DRIVER_NAME;
   }
 
   @Override

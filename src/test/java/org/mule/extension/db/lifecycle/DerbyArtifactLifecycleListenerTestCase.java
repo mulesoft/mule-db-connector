@@ -27,6 +27,14 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLifecycleListenerTestCase {
 
+  public static final String DRIVER_PACKAGE = "org.apache.derby.jdbc";
+  public static final String DRIVER_NAME = "org.apache.derby.jdbc.AutoloadedDriver";
+  public static final String DRIVER_THREAD_NAME = "derby.rawStoreDaemon";
+
+  public static final String RUNNABLE_CLASS = "org.mule.extension.db.lifecycle.DerbyRunnable";
+
+
+
   public DerbyArtifactLifecycleListenerTestCase(String groupId, String artifactId, String version) {
     super(groupId, artifactId, version);
   }
@@ -42,58 +50,23 @@ public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLife
   }
 
   @Override
-  void generateTargetLeak(ClassLoader classLoader) {
-    ClassLoader originalTCCL = currentThread().getContextClassLoader();
-    currentThread().setContextClassLoader(classLoader);
-    try {
-      Class<?> driverClass = classLoader.loadClass("org.apache.derby.jdbc.EmbeddedDriver");
-      Driver embeddedDriver = (Driver) driverClass.getDeclaredConstructor().newInstance();
-      DriverManager.registerDriver(embeddedDriver);
-
-      driverClass = classLoader.loadClass("org.apache.derby.jdbc.AutoloadedDriver");
-      Driver autoloadedDriver = (Driver) driverClass.getDeclaredConstructor().newInstance();
-      DriverManager.registerDriver(autoloadedDriver);
-
-      Class.forName("org.apache.derby.jdbc.AutoloadedDriver", true, classLoader);
-
-      String urlConnection = "jdbc:derby:myDB;create=true;user=me;password=mine";
-      Connection con = DriverManager.getConnection(urlConnection);
-
-      Statement statement = con.createStatement();
-      String sql = "SELECT 1 FROM (VALUES(1)) AS DummyTable";
-      statement.execute(sql);
-    } catch (SQLException e) {
-      LOGGER.error(e.getMessage(), e);
-      fail("Connection could not be established");
-    } catch (ClassNotFoundException e) {
-      LOGGER.error(e.getMessage(), e);
-      fail("Could not load the driver");
-    } catch (InvocationTargetException e) {
-      throw new RuntimeException(e);
-    } catch (InstantiationException e) {
-      throw new RuntimeException(e);
-    } catch (IllegalAccessException e) {
-      throw new RuntimeException(e);
-    } catch (NoSuchMethodException e) {
-      throw new RuntimeException(e);
-    } finally {
-      currentThread().setContextClassLoader(originalTCCL);
-    }
-  }
-
-  @Override
   String getPackagePrefix() {
-    return "org.apache.derby";
+    return DRIVER_PACKAGE;
   }
 
   @Override
-  Boolean enableLibraryReleaseChecking() {
-    return true;
+  public String getDriverName() {
+    return DRIVER_NAME;
   }
 
   @Override
-  Boolean enableThreadsReleaseChecking() {
-    return true;
+  public String getDriverThreadName() {
+    return DRIVER_THREAD_NAME;
+  }
+
+  @Override
+  public String getRunnableClass() {
+    return RUNNABLE_CLASS;
   }
 
   @Override

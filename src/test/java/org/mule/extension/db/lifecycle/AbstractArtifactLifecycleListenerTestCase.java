@@ -9,12 +9,15 @@ package org.mule.extension.db.lifecycle;
 
 import static org.mule.extension.db.util.CollectableReference.collectedByGc;
 import static org.mule.extension.db.util.DependencyResolver.getDependencyFromMaven;
-import static org.mule.extension.db.util.Eventually.eventually;
 import static org.mule.runtime.core.api.util.ClassUtils.withContextClassLoader;
 
-import static java.lang.Thread.currentThread;
+import static java.lang.Thread.getAllStackTraces;
+import static java.util.stream.Collectors.toList;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.hamcrest.core.IsNot.not;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.extension.db.util.CollectableReference;
@@ -22,9 +25,20 @@ import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import com.sun.org.apache.bcel.internal.generic.NEW;
+import org.hamcrest.Matcher;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 
@@ -35,6 +49,8 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
   protected String artifactId;
   protected String artifactVersion;
   protected URL libraryUrl;
+
+
 
   // Parameterized
   protected AbstractArtifactLifecycleListenerTestCase(String groupId, String artifactId, String artifactVersion) {
@@ -49,65 +65,160 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
 
   abstract Class<? extends ArtifactLifecycleListener> getArtifactLifecycleListenerClass();
 
-  abstract void generateTargetLeak(ClassLoader classLoader);
-
   abstract String getPackagePrefix();
 
-  abstract Boolean enableLibraryReleaseChecking();
+  abstract String getDriverName();
 
-  abstract Boolean enableThreadsReleaseChecking();
+  abstract String getDriverThreadName();
+
+  protected Boolean enableLibraryReleaseChecking() {
+    return true;
+  }
+
+  protected Boolean enableThreadsReleaseChecking() {
+    return true;
+  }
+
+  protected String getRunnableClass() {
+    return null;
+  }
 
   abstract void assertThreadsAreDisposed();
 
   abstract void assertThreadsAreNotDisposed();
 
-
+  /* ClassLoader Tests */
   @Test
   public void whenLibraryIsInAppThenClassLoadersAreNotLeakedAfterDisposal() throws Exception {
+    Assume.assumeTrue(enableLibraryReleaseChecking());
     assertClassLoadersAreNotLeakedAfterDisposal(TestClassLoadersHierarchy.Builder::withUrlsInApp,
                                                 TestClassLoadersHierarchy::getAppExtensionClassLoader);
   }
 
   @Test
   public void whenLibraryIsInAppExtensionThenClassLoadersAreNotLeakedAfterDisposal() throws Exception {
+    Assume.assumeTrue(enableLibraryReleaseChecking());
     assertClassLoadersAreNotLeakedAfterDisposal(TestClassLoadersHierarchy.Builder::withUrlsInAppExtension,
                                                 TestClassLoadersHierarchy::getAppExtensionClassLoader);
   }
 
   @Test
   public void whenLibraryIsInDomainThenClassLoadersAreNotLeakedAfterDisposal() throws Exception {
+    Assume.assumeTrue(enableLibraryReleaseChecking());
     assertClassLoadersAreNotLeakedAfterDisposal(TestClassLoadersHierarchy.Builder::withUrlsInDomain,
                                                 TestClassLoadersHierarchy::getDomainExtensionClassLoader);
   }
 
   @Test
   public void whenLibraryIsInDomainExtensionThenClassLoadersAreNotLeakedAfterDisposal() throws Exception {
+    Assume.assumeTrue(enableLibraryReleaseChecking());
     assertClassLoadersAreNotLeakedAfterDisposal(TestClassLoadersHierarchy.Builder::withUrlsInDomainExtension,
                                                 TestClassLoadersHierarchy::getDomainExtensionClassLoader);
   }
 
+  /* Thread Tests */
   @Test
-  public void whenLibraryIsInDomainThenThreadsAreNotDisposedWhenAppIsDisposed() throws Exception {
-    if (enableThreadsReleaseChecking()) {
-      try (TestClassLoadersHierarchy classLoadersHierarchy = getBaseClassLoaderHierarchyBuilder()
-          .withUrlsInDomain(new URL[] {this.libraryUrl})
-          .build()) {
-        classLoadersHierarchy.disposeApp();
-        // When the app is disposed the thread is still active because it belongs to the domain
-        assertThreadsAreNotDisposed();
-      }
-    }
+  public void whenDriverIsInAppThenThreadsAreNotLeakedAfterDisposal() throws Exception {
+    Assume.assumeTrue(enableThreadsReleaseChecking());
+    assertThreadsNamesAfterAppDisposal(TestClassLoadersHierarchy.Builder::withUrlsInApp,
+                                       TestClassLoadersHierarchy::getAppExtensionClassLoader,
+                                       not(hasReadCheckTimer()));
   }
 
   @Test
-  public void whenLibraryIsInAppThenThreadsAreDisposedWhenAppIsDisposed() throws Exception {
-    if (enableThreadsReleaseChecking()) {
-      try (TestClassLoadersHierarchy classLoadersHierarchy = getBaseClassLoaderHierarchyBuilder()
-          .withUrlsInDomain(new URL[] {this.libraryUrl})
-          .build()) {
-        classLoadersHierarchy.disposeApp();
-        assertThreadsAreDisposed();
-      }
+  public void whenDriverIsInAppExtensionThenThreadsAreNotLeakedAfterDisposal() throws Exception {
+    Assume.assumeTrue(enableThreadsReleaseChecking());
+    assertThreadsNamesAfterAppDisposal(TestClassLoadersHierarchy.Builder::withUrlsInAppExtension,
+                                       TestClassLoadersHierarchy::getAppExtensionClassLoader,
+                                       not(hasReadCheckTimer()));
+  }
+
+  @Test
+  public void whenDriverIsInDomainThenThreadsAreNotDisposedWhenAppIsDisposed() throws Exception {
+    Assume.assumeTrue(enableThreadsReleaseChecking());
+    assertThreadsNamesAfterAppDisposal(TestClassLoadersHierarchy.Builder::withUrlsInDomain,
+                                       TestClassLoadersHierarchy::getDomainExtensionClassLoader,
+                                       hasReadCheckTimer());
+  }
+
+  @Test
+  public void whenDriverIsInDomainExtensionThenThreadsAreNotDisposedWhenAppIsDisposed() throws Exception {
+    Assume.assumeTrue(enableThreadsReleaseChecking());
+    assertThreadsNamesAfterAppDisposal(TestClassLoadersHierarchy.Builder::withUrlsInDomainExtension,
+                                       TestClassLoadersHierarchy::getDomainExtensionClassLoader,
+                                       hasReadCheckTimer());
+  }
+
+  private Matcher<Iterable<? super String>> hasReadCheckTimer() {
+    return hasItem(getDriverThreadName());
+  }
+
+  private boolean isClassFromLibrary(String className) {
+    return className.startsWith(getPackagePrefix());
+  }
+
+  private static Throwable getRootCause(Throwable t) {
+    while (t.getCause() != null) {
+      t = t.getCause();
+    }
+    return t;
+  }
+
+  private void assertClassLoadersAreNotLeakedAfterDisposal(BiFunction<TestClassLoadersHierarchy.Builder, URL[], TestClassLoadersHierarchy.Builder> driverConfigurer,
+                                                           Function<TestClassLoadersHierarchy, ClassLoader> executionClassLoaderProvider)
+      throws Exception {
+    TestClassLoadersHierarchy.Builder builder = getBaseClassLoaderHierarchyBuilder();
+    builder = driverConfigurer.apply(builder, new URL[] {this.libraryUrl});
+    try (TestClassLoadersHierarchy classLoadersHierarchy = builder.build()) {
+      ClassLoader target = executionClassLoaderProvider.apply(classLoadersHierarchy);
+      withContextClassLoader(target, () -> {
+        try {
+          try {
+            Class<?> driverClass = target.loadClass(getDriverName());
+            driverClass.newInstance();
+            if (getRunnableClass() != null) {
+              Class<?> runnableClass = target.loadClass(getRunnableClass());
+              Object runnable = runnableClass.newInstance();
+              if (runnable instanceof Runnable) {
+                ((Runnable) runnable).run();
+              }
+            }
+          } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+          }
+          disposeAppAndAssertRelease(classLoadersHierarchy);
+          disposeDomainAndAssertRelease(classLoadersHierarchy);
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
+      });
+    }
+  }
+
+  private void assertThreadsNamesAfterAppDisposal(BiFunction<TestClassLoadersHierarchy.Builder, URL[], TestClassLoadersHierarchy.Builder> driverConfigurer,
+                                                  Function<TestClassLoadersHierarchy, ClassLoader> executionClassLoaderProvider,
+                                                  Matcher<Iterable<? super String>> threadNamesMatcher)
+      throws Exception {
+    TestClassLoadersHierarchy.Builder builder = getBaseClassLoaderHierarchyBuilder();
+    builder = driverConfigurer.apply(builder, new URL[] {this.libraryUrl});
+    try (TestClassLoadersHierarchy classLoadersHierarchy = builder.build()) {
+      ClassLoader target = executionClassLoaderProvider.apply(classLoadersHierarchy);
+      withContextClassLoader(target, () -> {
+        try {
+          if (getRunnableClass() != null) {
+            Class<?> runnableClass = target.loadClass(getRunnableClass());
+            Object runnable = runnableClass.newInstance();
+            if (runnable instanceof Runnable) {
+              ((Runnable) runnable).run();
+            }
+          }
+          classLoadersHierarchy.disposeApp();
+        } catch (IOException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+          LOGGER.error(e.getMessage(), e);
+          Assert.fail(e.getMessage());
+        }
+        assertThat(getCurrentThreadNames(), threadNamesMatcher);
+      });
     }
   }
 
@@ -117,30 +228,8 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
         .excludingClassNamesFromRoot(this::isClassFromLibrary);
   }
 
-  private void assertClassLoadersAreNotLeakedAfterDisposal(BiFunction<TestClassLoadersHierarchy.Builder, URL[], TestClassLoadersHierarchy.Builder> driverConfigurer,
-                                                           Function<TestClassLoadersHierarchy, ClassLoader> executionClassLoaderProvider)
-      throws Exception {
-    ClassLoader originalTCCL = currentThread().getContextClassLoader();
-    if (enableLibraryReleaseChecking()) {
-      TestClassLoadersHierarchy.Builder builder = getBaseClassLoaderHierarchyBuilder();
-      builder = driverConfigurer.apply(builder, new URL[] {this.libraryUrl});
-
-      try (TestClassLoadersHierarchy classLoadersHierarchy = builder.build()) {
-        ClassLoader target = executionClassLoaderProvider.apply(classLoadersHierarchy);
-        currentThread().setContextClassLoader(target);
-        withContextClassLoader(target, () -> {
-          try {
-            generateTargetLeak(target);
-            disposeAppAndAssertRelease(classLoadersHierarchy);
-            disposeDomainAndAssertRelease(classLoadersHierarchy);
-          } catch (IOException e) {
-            throw new RuntimeException(e);
-          }
-        });
-      } finally {
-        currentThread().setContextClassLoader(originalTCCL);
-      }
-    }
+  private static List<String> getCurrentThreadNames() {
+    return getAllStackTraces().keySet().stream().map(Thread::getName).collect(toList());
   }
 
   private void disposeAppAndAssertRelease(TestClassLoadersHierarchy classLoadersHierarchy) throws IOException {
@@ -149,8 +238,8 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     CollectableReference<ClassLoader> extensionClassLoader =
         new CollectableReference<>(classLoadersHierarchy.getAppExtensionClassLoader());
     classLoadersHierarchy.disposeApp();
-    assertThat(extensionClassLoader, is(eventually(collectedByGc())));
-    assertThat(appClassLoader, is(eventually(collectedByGc())));
+    await().until(() -> extensionClassLoader, is(collectedByGc()));
+    await().until(() -> appClassLoader, is(collectedByGc()));
   }
 
   private void disposeDomainAndAssertRelease(TestClassLoadersHierarchy classLoadersHierarchy) throws IOException {
@@ -159,11 +248,32 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     CollectableReference<ClassLoader> domainExtensionClassLoader =
         new CollectableReference<>(classLoadersHierarchy.getDomainExtensionClassLoader());
     classLoadersHierarchy.disposeDomain();
-    assertThat(domainExtensionClassLoader, is(eventually(collectedByGc())));
-    assertThat(domainClassLoader, is(eventually(collectedByGc())));
+    await().until(() -> domainExtensionClassLoader, is(collectedByGc()));
+    await().until(() -> domainClassLoader, is(collectedByGc()));
   }
 
-  private boolean isClassFromLibrary(String className) {
-    return className.startsWith(getPackagePrefix());
+  private List<Driver> driversRegistered;
+
+  @Before
+  public void unregisterDrivers() {
+    driversRegistered = Collections.list(DriverManager.getDrivers());
+    Collections.list(DriverManager.getDrivers()).forEach(driver -> {
+      try {
+        DriverManager.deregisterDriver(driver);
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
+    });
+  }
+
+  @After
+  public void unregisterDriversAgain() {
+    driversRegistered.forEach(driver -> {
+      try {
+        DriverManager.registerDriver(driver);
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
+    });
   }
 }

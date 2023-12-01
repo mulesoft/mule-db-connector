@@ -30,3 +30,4 @@ hostkey.ser
 *.h2.db
 *.factorypath
 dependency-reduced-pom.xml
+myDB/

@@ -28,10 +28,10 @@ public class DbCompositeLifecycleListener implements ArtifactLifecycleListener {
   private final List<ArtifactLifecycleListener> delegates = new ArrayList<>();
 
   public DbCompositeLifecycleListener() {
-    delegates.add(new DB2ArtifactLifecycleListener());
     delegates.add(new DerbyArtifactLifecycleListener());
-    delegates.add(new MySqlArtifactLifecycleListener());
     delegates.add(new OracleArtifactLifecycleListener());
+    delegates.add(new MySqlArtifactLifecycleListener());
+    delegates.add(new DB2ArtifactLifecycleListener());
   }
 
   @Override

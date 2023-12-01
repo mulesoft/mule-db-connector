@@ -6,18 +6,22 @@
  */
 package org.mule.extension.db.lifecycle;
 
-import org.mule.extension.db.internal.lifecycle.DerbyArtifactLifecycleListener;
 import org.mule.extension.db.internal.lifecycle.OracleArtifactLifecycleListener;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public class OracleArtifactLifecycleListenerTestCase extends AbstractArtifactLifecycleListenerTestCase {
+
+  public static final String DRIVER_PACKAGE = "oracle.jdbc";
+  public static final String DRIVER_NAME = "oracle.jdbc.OracleDriver";
+  public static final String DRIVER_TIMER_THREAD = "oracle.jdbc.diagnostics.Diagnostic.CLOCK";
 
   public OracleArtifactLifecycleListenerTestCase(String groupId, String artifactId, String version) {
     super(groupId, artifactId, version);
@@ -25,7 +29,8 @@ public class OracleArtifactLifecycleListenerTestCase extends AbstractArtifactLif
 
   @Parameterized.Parameters
   public static Collection<Object[]> parameters() {
-    return Arrays.asList(new Object[][] {{"com.oracle.database.jdbc", "ojdbc8", "23.2.0.0"}});
+    return Arrays.asList(new Object[][] {
+        {"com.oracle.database.jdbc", "ojdbc8", "23.2.0.0"}});
   }
 
   @Override
@@ -34,23 +39,18 @@ public class OracleArtifactLifecycleListenerTestCase extends AbstractArtifactLif
   }
 
   @Override
-  void generateTargetLeak(ClassLoader classLoader) {
-
-  }
-
-  @Override
   String getPackagePrefix() {
-    return "com.oracle";
+    return DRIVER_PACKAGE;
   }
 
   @Override
-  Boolean enableLibraryReleaseChecking() {
-    return true;
+  public String getDriverName() {
+    return DRIVER_NAME;
   }
 
   @Override
-  Boolean enableThreadsReleaseChecking() {
-    return true;
+  public String getDriverThreadName() {
+    return DRIVER_TIMER_THREAD;
   }
 
   @Override
@@ -60,6 +60,17 @@ public class OracleArtifactLifecycleListenerTestCase extends AbstractArtifactLif
 
   @Override
   void assertThreadsAreDisposed() {
-    return;
+    Thread[] threads = new Thread[java.lang.Thread.currentThread().getThreadGroup().activeCount()];
+    try {
+      Thread.enumerate(threads);
+    } catch (Throwable t) {
+      return;
+    }
+    for (java.lang.Thread thread : threads) {
+      if (thread.getName().startsWith(DRIVER_TIMER_THREAD)
+          && Thread.currentThread().getContextClassLoader().equals(thread.getClass().getClassLoader())) {
+        Assert.fail(String.format("The thread {} is still present", thread.getName()));
+      }
+    }
   }
 }

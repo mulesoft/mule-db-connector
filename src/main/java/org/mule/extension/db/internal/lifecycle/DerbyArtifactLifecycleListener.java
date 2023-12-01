@@ -25,6 +25,8 @@ import org.slf4j.Logger;
 public class DerbyArtifactLifecycleListener implements ArtifactLifecycleListener {
 
   private static final Logger LOGGER = getLogger(DerbyArtifactLifecycleListener.class);
+  private static final String DRIVER_PACKAGE = "org.apache.derby.jdbc";
+  private static final String DRIVER_NAME = "org.apache.derby.jdbc.AutoloadedDriver";
 
   @Override
   public void onArtifactDisposal(ArtifactDisposalContext artifactDisposalContext) {
@@ -37,7 +39,7 @@ public class DerbyArtifactLifecycleListener implements ArtifactLifecycleListener
         .stream()
         .filter(d -> disposalContext.isArtifactOwnedClassLoader(d.getClass().getClassLoader()) ||
             disposalContext.isExtensionOwnedClassLoader(d.getClass().getClassLoader()))
-        .filter(d -> d.getClass().getName().startsWith("org.apache.derby.jdbc"))
+        .filter(d -> d.getClass().getName().startsWith(DRIVER_PACKAGE))
         .forEach(driver -> {
           try {
             deregisterDriver(driver);
@@ -55,7 +57,7 @@ public class DerbyArtifactLifecycleListener implements ArtifactLifecycleListener
 
   private boolean isDerbyEmbeddedDriver(Driver driver) {
     // This is the dummy driver which is registered with the DriverManager and which is autoloaded by JDBC4
-    return isDriver(driver, "org.apache.derby.jdbc.AutoloadedDriver");
+    return isDriver(driver, DRIVER_NAME);
   }
 
   private boolean isDriver(Driver driver, String expectedDriverClass) {

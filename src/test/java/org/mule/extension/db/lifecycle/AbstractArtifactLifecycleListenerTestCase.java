@@ -28,8 +28,10 @@ import java.net.URL;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -154,7 +156,8 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
   }
 
   private boolean isClassFromLibrary(String className) {
-    return className.startsWith(getPackagePrefix());
+    return className.startsWith(getPackagePrefix())
+            || className.startsWith(this.getClass().getPackage().getName());
   }
 
   private static Throwable getRootCause(Throwable t) {
@@ -168,7 +171,11 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
                                                            Function<TestClassLoadersHierarchy, ClassLoader> executionClassLoaderProvider)
       throws Exception {
     TestClassLoadersHierarchy.Builder builder = getBaseClassLoaderHierarchyBuilder();
-    builder = driverConfigurer.apply(builder, new URL[] {this.libraryUrl});
+    List<URL> additionalLibraries = new ArrayList<>();
+    additionalLibraries.add(this.libraryUrl);
+    Optional.ofNullable(getRunnableClass())
+            .ifPresent(c -> additionalLibraries.add(getClass().getResource(c + ".class")));
+    builder = driverConfigurer.apply(builder, additionalLibraries.toArray(new URL[0]));
     try (TestClassLoadersHierarchy classLoadersHierarchy = builder.build()) {
       ClassLoader target = executionClassLoaderProvider.apply(classLoadersHierarchy);
       withContextClassLoader(target, () -> {
@@ -200,7 +207,11 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
                                                   Matcher<Iterable<? super String>> threadNamesMatcher)
       throws Exception {
     TestClassLoadersHierarchy.Builder builder = getBaseClassLoaderHierarchyBuilder();
-    builder = driverConfigurer.apply(builder, new URL[] {this.libraryUrl});
+    List<URL> additionalLibraries = new ArrayList<>();
+    additionalLibraries.add(this.libraryUrl);
+    Optional.ofNullable(getRunnableClass())
+            .ifPresent(c -> additionalLibraries.add(getClass().getResource('/' + c.replace('.', '/') + ".class")));
+    builder = driverConfigurer.apply(builder, additionalLibraries.toArray(new URL[0]));
     try (TestClassLoadersHierarchy classLoadersHierarchy = builder.build()) {
       ClassLoader target = executionClassLoaderProvider.apply(classLoadersHierarchy);
       withContextClassLoader(target, () -> {

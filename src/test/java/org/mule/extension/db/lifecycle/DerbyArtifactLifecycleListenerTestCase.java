@@ -6,18 +6,9 @@
  */
 package org.mule.extension.db.lifecycle;
 
-import static java.lang.Thread.currentThread;
-import static org.junit.Assert.fail;
-
 import org.mule.extension.db.internal.lifecycle.DerbyArtifactLifecycleListener;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
-import java.lang.reflect.InvocationTargetException;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -28,12 +19,8 @@ import org.junit.runners.Parameterized;
 public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLifecycleListenerTestCase {
 
   public static final String DRIVER_PACKAGE = "org.apache.derby.jdbc";
-  public static final String DRIVER_NAME = "org.apache.derby.jdbc.AutoloadedDriver";
+  public static final String DRIVER_NAME = "org.apache.derby.jdbc.EmbeddedDriver";
   public static final String DRIVER_THREAD_NAME = "derby.rawStoreDaemon";
-
-  public static final String RUNNABLE_CLASS = "org.mule.extension.db.lifecycle.DerbyRunnable";
-
-
 
   public DerbyArtifactLifecycleListenerTestCase(String groupId, String artifactId, String version) {
     super(groupId, artifactId, version);
@@ -65,8 +52,8 @@ public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLife
   }
 
   @Override
-  public String getRunnableClass() {
-    return RUNNABLE_CLASS;
+  public Class getLeakTriggererClass() {
+    return DerbyLeakTriggerer.class;
   }
 
   @Override

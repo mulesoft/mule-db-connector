@@ -6,7 +6,6 @@
  */
 package org.mule.extension.db.internal.lifecycle;
 
-import static java.lang.Boolean.getBoolean;
 import static java.lang.Integer.toHexString;
 import static java.lang.String.format;
 import static java.lang.management.ManagementFactory.getPlatformMBeanServer;
@@ -20,7 +19,6 @@ import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 import java.sql.Driver;
 import java.util.Collections;
 import java.util.Hashtable;
-import java.util.regex.Pattern;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 

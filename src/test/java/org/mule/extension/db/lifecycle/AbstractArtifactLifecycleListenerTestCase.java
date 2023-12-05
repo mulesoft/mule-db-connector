@@ -35,7 +35,6 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Assert;
@@ -81,7 +80,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     return true;
   }
 
-  protected String getRunnableClass() {
+  protected Class getLeakTriggererClass() {
     return null;
   }
 
@@ -91,28 +90,28 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
 
   /* ClassLoader Tests */
   @Test
-  public void whenLibraryIsInAppThenClassLoadersAreNotLeakedAfterDisposal() throws Exception {
+  public void whenDriverIsInAppThenClassLoadersAreNotLeakedAfterDisposal() throws Exception {
     Assume.assumeTrue(enableLibraryReleaseChecking());
     assertClassLoadersAreNotLeakedAfterDisposal(TestClassLoadersHierarchy.Builder::withUrlsInApp,
                                                 TestClassLoadersHierarchy::getAppExtensionClassLoader);
   }
 
   @Test
-  public void whenLibraryIsInAppExtensionThenClassLoadersAreNotLeakedAfterDisposal() throws Exception {
+  public void whenDriverIsInAppExtensionThenClassLoadersAreNotLeakedAfterDisposal() throws Exception {
     Assume.assumeTrue(enableLibraryReleaseChecking());
     assertClassLoadersAreNotLeakedAfterDisposal(TestClassLoadersHierarchy.Builder::withUrlsInAppExtension,
                                                 TestClassLoadersHierarchy::getAppExtensionClassLoader);
   }
 
   @Test
-  public void whenLibraryIsInDomainThenClassLoadersAreNotLeakedAfterDisposal() throws Exception {
+  public void whenDriverIsInDomainThenClassLoadersAreNotLeakedAfterDisposal() throws Exception {
     Assume.assumeTrue(enableLibraryReleaseChecking());
     assertClassLoadersAreNotLeakedAfterDisposal(TestClassLoadersHierarchy.Builder::withUrlsInDomain,
                                                 TestClassLoadersHierarchy::getDomainExtensionClassLoader);
   }
 
   @Test
-  public void whenLibraryIsInDomainExtensionThenClassLoadersAreNotLeakedAfterDisposal() throws Exception {
+  public void whenDriverIsInDomainExtensionThenClassLoadersAreNotLeakedAfterDisposal() throws Exception {
     Assume.assumeTrue(enableLibraryReleaseChecking());
     assertClassLoadersAreNotLeakedAfterDisposal(TestClassLoadersHierarchy.Builder::withUrlsInDomainExtension,
                                                 TestClassLoadersHierarchy::getDomainExtensionClassLoader);
@@ -173,18 +172,16 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     TestClassLoadersHierarchy.Builder builder = getBaseClassLoaderHierarchyBuilder();
     List<URL> additionalLibraries = new ArrayList<>();
     additionalLibraries.add(this.libraryUrl);
-    Optional.ofNullable(getRunnableClass())
-            .ifPresent(c -> additionalLibraries.add(getClass().getResource(c + ".class")));
+    Optional.ofNullable(getLeakTriggererClass())
+              .ifPresent(c -> additionalLibraries.add(c.getProtectionDomain().getCodeSource().getLocation()));
     builder = driverConfigurer.apply(builder, additionalLibraries.toArray(new URL[0]));
     try (TestClassLoadersHierarchy classLoadersHierarchy = builder.build()) {
       ClassLoader target = executionClassLoaderProvider.apply(classLoadersHierarchy);
       withContextClassLoader(target, () -> {
         try {
           try {
-            Class<?> driverClass = target.loadClass(getDriverName());
-            driverClass.newInstance();
-            if (getRunnableClass() != null) {
-              Class<?> runnableClass = target.loadClass(getRunnableClass());
+            if (getLeakTriggererClass() != null) {
+              Class<?> runnableClass = target.loadClass(getLeakTriggererClass().getName());
               Object runnable = runnableClass.newInstance();
               if (runnable instanceof Runnable) {
                 ((Runnable) runnable).run();
@@ -209,15 +206,15 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     TestClassLoadersHierarchy.Builder builder = getBaseClassLoaderHierarchyBuilder();
     List<URL> additionalLibraries = new ArrayList<>();
     additionalLibraries.add(this.libraryUrl);
-    Optional.ofNullable(getRunnableClass())
-            .ifPresent(c -> additionalLibraries.add(getClass().getResource('/' + c.replace('.', '/') + ".class")));
+    Optional.ofNullable(getLeakTriggererClass())
+            .ifPresent(c -> additionalLibraries.add(c.getProtectionDomain().getCodeSource().getLocation()));
     builder = driverConfigurer.apply(builder, additionalLibraries.toArray(new URL[0]));
     try (TestClassLoadersHierarchy classLoadersHierarchy = builder.build()) {
       ClassLoader target = executionClassLoaderProvider.apply(classLoadersHierarchy);
       withContextClassLoader(target, () -> {
         try {
-          if (getRunnableClass() != null) {
-            Class<?> runnableClass = target.loadClass(getRunnableClass());
+          if (getLeakTriggererClass() != null) {
+            Class<?> runnableClass = target.loadClass(getLeakTriggererClass().getName());
             Object runnable = runnableClass.newInstance();
             if (runnable instanceof Runnable) {
               ((Runnable) runnable).run();
@@ -263,6 +260,9 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     await().until(() -> domainClassLoader, is(collectedByGc()));
   }
 
+
+/*  */
+
   private List<Driver> driversRegistered;
 
   @Before
@@ -286,5 +286,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
         throw new RuntimeException(e);
       }
     });
+
   }
+
 }

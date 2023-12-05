@@ -6,16 +6,12 @@
  */
 package org.mule.extension.db.internal.lifecycle;
 
-import static java.lang.Boolean.getBoolean;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.sdk.api.artifact.lifecycle.ArtifactDisposalContext;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;

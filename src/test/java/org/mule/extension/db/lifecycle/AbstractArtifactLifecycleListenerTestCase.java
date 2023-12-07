@@ -314,7 +314,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
 
   /*
   private List<Driver> driversRegistered;
-
+  
   @Before
   public void unregisterDrivers() {
     driversRegistered = Collections.list(DriverManager.getDrivers());
@@ -326,7 +326,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
       throw new RuntimeException(e);
     }
   }
-
+  
   @After
   public void unregisterDriversAgain() {
     driversRegistered.forEach(driver -> {
@@ -336,7 +336,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
         throw new RuntimeException(e);
       }
     });
-
+  
   }
-*/
+  */
 }

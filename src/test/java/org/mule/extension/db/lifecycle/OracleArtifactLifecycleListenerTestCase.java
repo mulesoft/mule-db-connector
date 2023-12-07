@@ -80,15 +80,15 @@ public class OracleArtifactLifecycleListenerTestCase extends AbstractArtifactLif
 
   @Test
   public void testOracleDriver() {
-//    try {
-//      Class<?> driverClass =
-//          Thread.currentThread().getContextClassLoader().loadClass(DRIVER_NAME);
-//      Driver oracle = (Driver) driverClass.getDeclaredConstructor().newInstance();
-//      DriverManager.registerDriver(oracle);
-//    } catch (ReflectiveOperationException | SQLException e) {
-//      LOGGER.error(e.getMessage(), e);
-//      fail("Could not load the driver");
-//    }
+    //    try {
+    //      Class<?> driverClass =
+    //          Thread.currentThread().getContextClassLoader().loadClass(DRIVER_NAME);
+    //      Driver oracle = (Driver) driverClass.getDeclaredConstructor().newInstance();
+    //      DriverManager.registerDriver(oracle);
+    //    } catch (ReflectiveOperationException | SQLException e) {
+    //      LOGGER.error(e.getMessage(), e);
+    //      fail("Could not load the driver");
+    //    }
     leakTriggerer();
     try {
       OracleArtifactLifecycleListener.class.newInstance().onArtifactDisposal(artifactDisposal);

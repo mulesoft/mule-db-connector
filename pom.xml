@@ -1054,8 +1054,11 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>adito/derby:latest</name>
+                                    <name>fabric8:derby-mtf</name>
                                     <alias>derby-${derby.db.port}</alias>
+                                    <build>
+                                        <contextDir>${project.basedir}/src/docker/derby</contextDir>
+                                    </build>
                                     <run>
                                         <containerNamePattern>%n-%i-%t</containerNamePattern>
                                         <env>

@@ -18,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Driver;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.slf4j.Logger;
@@ -26,7 +27,7 @@ public class DerbyArtifactLifecycleListener implements ArtifactLifecycleListener
 
   private static final Logger LOGGER = getLogger(DerbyArtifactLifecycleListener.class);
   private static final String DRIVER_PACKAGE = "org.apache.derby.jdbc";
-  private static final String DRIVER_NAME = "org.apache.derby.jdbc.AutoloadedDriver";
+  private static final String[] DRIVER_NAMES = {"org.apache.derby.jdbc.EmbeddedDriver", "org.apache.derby.jdbc.AutoloadedDriver"};
 
   @Override
   public void onArtifactDisposal(ArtifactDisposalContext artifactDisposalContext) {
@@ -57,7 +58,7 @@ public class DerbyArtifactLifecycleListener implements ArtifactLifecycleListener
 
   private boolean isDerbyEmbeddedDriver(Driver driver) {
     // This is the dummy driver which is registered with the DriverManager and which is autoloaded by JDBC4
-    return isDriver(driver, DRIVER_NAME);
+    return Arrays.stream(DRIVER_NAMES).anyMatch(name -> name.equals(driver.getClass().getName()));
   }
 
   private boolean isDriver(Driver driver, String expectedDriverClass) {

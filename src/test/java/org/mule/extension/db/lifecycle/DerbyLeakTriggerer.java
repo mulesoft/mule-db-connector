@@ -1,3 +1,9 @@
+/*
+ * Copyright 2023 Salesforce, Inc. All rights reserved.
+ * The software in this package is published under the terms of the CPAL v1.0
+ * license, a copy of which has been included with this distribution in the
+ * LICENSE.txt file.
+ */
 package org.mule.extension.db.lifecycle;
 
 import static org.junit.Assert.fail;
@@ -23,8 +29,6 @@ public class DerbyLeakTriggerer implements Runnable {
       Driver embeddedDriver = (Driver) driverClass.getDeclaredConstructor().newInstance();
       DriverManager.registerDriver(embeddedDriver);
       String urlConnection = "jdbc:derby:myDB;create=true;user=me;password=mine";
-
-
       try (Connection con = DriverManager.getConnection(urlConnection)) {
         try (Statement statement = con.createStatement()) {
           String sql = "SELECT 1 FROM (VALUES(1)) AS DummyTable";
@@ -34,15 +38,6 @@ public class DerbyLeakTriggerer implements Runnable {
         LOGGER.error("Connection could not be established: {}", e.getMessage(), e);
         fail("Connection could not be established");
       }
-
-
-//      Connection con = DriverManager.getConnection(urlConnection);
-//      Statement statement = con.createStatement();
-//      String sql = "SELECT 1 FROM (VALUES(1)) AS DummyTable";
-//      statement.execute(sql);
-//    } catch (SQLException e) {
-//      LOGGER.error(e.getMessage(), e);
-//      fail("Connection could not be established");
     } catch (ReflectiveOperationException | SQLException e) {
       LOGGER.error(e.getMessage(), e);
       fail("Could not load the driver");

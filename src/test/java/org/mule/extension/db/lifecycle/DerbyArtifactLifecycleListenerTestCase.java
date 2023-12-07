@@ -6,12 +6,23 @@
  */
 package org.mule.extension.db.lifecycle;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.junit.Assert.fail;
+import static org.hamcrest.core.IsNot.not;
+
 import org.mule.extension.db.internal.lifecycle.DerbyArtifactLifecycleListener;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -19,7 +30,7 @@ import org.junit.runners.Parameterized;
 public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLifecycleListenerTestCase {
 
   public static final String DRIVER_PACKAGE = "org.apache.derby.jdbc";
-  public static final String DRIVER_NAME = "org.apache.derby.jdbc.EmbeddedDriver";
+  public static final String DRIVER_NAME = "org.apache.derby.jdbc.AutoloadedDriver";
   public static final String DRIVER_THREAD_NAME = "derby.rawStoreDaemon";
 
   public DerbyArtifactLifecycleListenerTestCase(String groupId, String artifactId, String version) {
@@ -58,11 +69,47 @@ public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLife
 
   @Override
   void assertThreadsAreNotDisposed() {
-    return;
+    assertThat(getCurrentThreadNames(), hasReadDriverThread());
   }
 
   @Override
   void assertThreadsAreDisposed() {
-    return;
+    assertThat(getCurrentThreadNames(), not(hasReadDriverThread()));
   }
+
+  @Test
+  public void testAutoloadedDriver() {
+    try {
+      Class<?> driverClass =
+          Thread.currentThread().getContextClassLoader().loadClass(DRIVER_NAME);
+      Driver embeddedDriver = (Driver) driverClass.getDeclaredConstructor().newInstance();
+      DriverManager.registerDriver(embeddedDriver);
+    } catch (ReflectiveOperationException | SQLException e) {
+      LOGGER.error(e.getMessage(), e);
+      fail("Could not load the driver");
+    }
+    leakTriggerer();
+    try {
+      DerbyArtifactLifecycleListener.class.newInstance().onArtifactDisposal(artifactDisposal);
+      assertThreadsAreDisposed();
+    } catch (InstantiationException e) {
+      throw new RuntimeException(e);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void leakTriggerer() {
+    String urlConnection = "jdbc:derby:myDB;create=true;user=me;password=mine";
+    try (Connection con = DriverManager.getConnection(urlConnection)) {
+      try (Statement statement = con.createStatement()) {
+        String sql = "SELECT 1 FROM (VALUES(1)) AS DummyTable";
+        statement.execute(sql);
+      }
+    } catch (SQLException e) {
+      LOGGER.error("Connection could not be established: {}", e.getMessage(), e);
+      fail("Connection could not be established");
+    }
+  }
+
 }

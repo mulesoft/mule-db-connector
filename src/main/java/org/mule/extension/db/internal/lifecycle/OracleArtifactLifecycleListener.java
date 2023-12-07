@@ -100,10 +100,11 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
       return;
     }
     for (java.lang.Thread thread : threads) {
-      if (thread.getClass().getName().equals("java.util.TimerThread")
+      if (thread.getName().equals("oracle.jdbc.diagnostics.Diagnostic.CLOCK")
           && (disposalContext.isExtensionOwnedThread(thread)
               || disposalContext.isArtifactOwnedThread(thread))) {
-        //thread.stop();
+        thread.interrupt();
+        thread.stop();
       }
     }
   }

@@ -26,9 +26,9 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class MySqlArtifactLifecycleListenerTestCase extends AbstractArtifactLifecycleListenerTestCase {
 
-  private static final String DRIVER_PACKAGE = "com.mysql";
-  private static final String DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
-  private static final String DRIVER_THREAD_NAME = "mysql-cj-abandoned-connection-cleanup";
+  public static final String DRIVER_PACKAGE = "com.mysql";
+  public static final String DRIVER_NAME = "com.mysql.cj.jdbc.Driver";
+  public static final String DRIVER_THREAD_NAME = "mysql-cj-abandoned-connection-cleanup";
 
   public MySqlArtifactLifecycleListenerTestCase(String groupId, String artifactId, String version) {
     super(groupId, artifactId, version);
@@ -42,17 +42,6 @@ public class MySqlArtifactLifecycleListenerTestCase extends AbstractArtifactLife
   @Override
   Class<? extends ArtifactLifecycleListener> getArtifactLifecycleListenerClass() {
     return MySqlArtifactLifecycleListener.class;
-  }
-
-  void generateTargetLeak(ClassLoader classLoader) {
-    try {
-      Class<?> driverClass = classLoader.loadClass(DRIVER_NAME);
-      Driver driver = (Driver) driverClass.newInstance();
-      DriverManager.registerDriver(driver);
-      LOGGER.warn("Drivers found: {}", Collections.list(DriverManager.getDrivers()).size());
-    } catch (Exception e) {
-      LOGGER.error(e.getMessage(), e);
-    }
   }
 
   @Override
@@ -82,5 +71,10 @@ public class MySqlArtifactLifecycleListenerTestCase extends AbstractArtifactLife
 
   public String getDriverThreadName() {
     return DRIVER_THREAD_NAME;
+  }
+
+  @Override
+  protected Class getLeakTriggererClass() {
+    return MySqlLeakTriggerer.class;
   }
 }

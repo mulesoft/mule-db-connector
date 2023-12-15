@@ -7,6 +7,7 @@
 package org.mule.extension.db.internal.lifecycle;
 
 import static java.lang.String.format;
+import static java.beans.Introspector.flushCaches;
 import static java.sql.DriverManager.deregisterDriver;
 import static java.sql.DriverManager.getDrivers;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -17,6 +18,7 @@ import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 
@@ -51,5 +53,9 @@ public class DbCompositeLifecycleListener implements ArtifactLifecycleListener {
             LOGGER.warn(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
           }
         });
+    // TODO Analizar si corresponden estas limpiezas
+    flushCaches();
+    ResourceBundle.clearCache(artifactDisposalContext.getArtifactClassLoader());
+    ResourceBundle.clearCache(artifactDisposalContext.getExtensionClassLoader());
   }
 }

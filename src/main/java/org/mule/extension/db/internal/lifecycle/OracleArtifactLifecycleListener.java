@@ -16,9 +16,11 @@ import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactDisposalContext;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
+import java.lang.reflect.Field;
 import java.sql.Driver;
 import java.util.Collections;
 import java.util.Hashtable;
+import java.util.Timer;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -51,7 +53,7 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
             deregisterOracleDiagnosabilityMBean(disposalContext.getArtifactClassLoader());
             deregisterOracleDiagnosabilityMBean(disposalContext.getExtensionClassLoader());
             checkingVersionsWithLeaksKnownSolvedInNewerVersions(driver);
-            checkingTimerThreads(disposalContext);
+            cancelTimerThreads(disposalContext);
           } catch (Exception e) {
             LOGGER.warn(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
           }
@@ -71,6 +73,8 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
     MBeanServer mBeanServer = getPlatformMBeanServer();
     final Hashtable<String, String> keys = new Hashtable<>();
     keys.put("type", DIAGNOSABILITY_BEAN_NAME);
+    // In this MBean we have been fortunate that the oracle people have concatenated the hashCode of the classloader
+    // in the bean name so it is easily identifiable to avoid deleting other MBeans.
     keys.put("name", cl.getClass().getName() + "@" + toHexString(cl.hashCode()).toLowerCase());
     try {
       mBeanServer.unregisterMBean(new ObjectName("com.oracle.jdbc", keys));
@@ -92,20 +96,18 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
     }
   }
 
-  private void checkingTimerThreads(ArtifactDisposalContext disposalContext) {
-    Thread[] threads = new Thread[java.lang.Thread.currentThread().getThreadGroup().activeCount()];
+  private void cancelTimerThreads(ArtifactDisposalContext disposalContext) {
     try {
-      Thread.enumerate(threads);
-    } catch (Throwable t) {
-      return;
-    }
-    for (java.lang.Thread thread : threads) {
-      if (thread.getName().equals("oracle.jdbc.diagnostics.Diagnostic.CLOCK")
-          && (disposalContext.isExtensionOwnedThread(thread)
-              || disposalContext.isArtifactOwnedThread(thread))) {
-        thread.interrupt();
-        thread.stop();
-      }
+      Class<?> diagnosticClass = Class.forName("oracle.jdbc.diagnostics.Diagnostic");
+      Field clockField = diagnosticClass.getDeclaredField("CLOCK");
+      Boolean accessibility = clockField.isAccessible();
+      clockField.setAccessible(true);
+      Timer clockValue = (Timer) clockField.get(null);
+      clockValue.cancel();
+      clockField.setAccessible(accessibility);
+    } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
+      e.printStackTrace();
     }
   }
+
 }

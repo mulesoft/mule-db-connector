@@ -228,10 +228,10 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
       }
       ((Closeable) appExtensionClassLoader).close();
       ((Closeable) appClassLoader).close();
-      appExtensionClassLoader = null;
-      appClassLoader = null;
-      appExtensionArtifactLifecycleListener = null;
     }
+    appExtensionClassLoader = null;
+    appClassLoader = null;
+    appExtensionArtifactLifecycleListener = null;
   }
 
   /**
@@ -247,10 +247,10 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
       }
       ((Closeable) domainExtensionClassLoader).close();
       ((Closeable) domainClassLoader).close();
-      domainExtensionClassLoader = null;
-      domainClassLoader = null;
-      domainExtensionArtifactLifecycleListener = null;
     }
+    domainExtensionClassLoader = null;
+    domainClassLoader = null;
+    domainExtensionArtifactLifecycleListener = null;
   }
 
   @Override

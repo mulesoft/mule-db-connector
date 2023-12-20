@@ -15,12 +15,13 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.mule.sdk.api.artifact.lifecycle.ArtifactDisposalContext;
+import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 import org.slf4j.Logger;
 
 public class DerbyLeakTriggerer implements Runnable {
 
   private static final Logger LOGGER = getLogger(DerbyLeakTriggerer.class);
-
   @Override
   public void run() {
     try {

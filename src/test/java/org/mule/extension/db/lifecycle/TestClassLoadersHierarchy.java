@@ -128,13 +128,12 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
         domainExtensionUrls = appendUrlTo(domainExtensionUrls, listenerClassUrl);
       }
       ClassLoader domainClassLoader =
-          new URLClassLoader(domainUrls, new FilteringClassLoader(getSystemClassLoader(), rootClassNameFilter));
+              new URLClassLoader(domainUrls);
       ClassLoader domainExtensionClassLoader = new URLClassLoader(domainExtensionUrls, domainClassLoader);
       ClassLoader appClassLoader = new URLClassLoader(appUrls, domainClassLoader);
       ClassLoader appExtensionClassLoader = new URLClassLoader(appExtensionUrls, appClassLoader);
       return new TestClassLoadersHierarchy(domainClassLoader, domainExtensionClassLoader, appClassLoader, appExtensionClassLoader,
-                                           artifactLifecycleListenerClass);
-    }
+              artifactLifecycleListenerClass);    }
 
     private URL[] appendUrlTo(URL[] urls, URL newUrl) {
       urls = copyOf(urls, urls.length + 1);
@@ -143,11 +142,11 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
     }
   }
 
-  private static class FilteringClassLoader extends ClassLoader {
+  public static class FilteringClassLoader extends ClassLoader {
 
     private final Predicate<String> classNameFilter;
 
-    private FilteringClassLoader(ClassLoader parent, Predicate<String> classNameFilter) {
+    public FilteringClassLoader(ClassLoader parent, Predicate<String> classNameFilter) {
       super(parent);
       this.classNameFilter = classNameFilter;
     }
@@ -232,6 +231,7 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
     appExtensionClassLoader = null;
     appClassLoader = null;
     appExtensionArtifactLifecycleListener = null;
+    Runtime.getRuntime().gc();
   }
 
   /**
@@ -251,6 +251,7 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
     domainExtensionClassLoader = null;
     domainClassLoader = null;
     domainExtensionArtifactLifecycleListener = null;
+    Runtime.getRuntime().gc();
   }
 
   @Override

@@ -7,6 +7,8 @@
 package org.mule.extension.db.lifecycle;
 
 
+import static java.lang.ClassLoader.getSystemClassLoader;
+import static java.util.Arrays.copyOf;
 import static org.mule.extension.db.util.CollectableReference.collectedByGc;
 import static org.mule.extension.db.util.DependencyResolver.getDependencyFromMaven;
 import static org.mule.runtime.core.api.util.ClassUtils.withContextClassLoader;
@@ -21,17 +23,21 @@ import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsNot.not;
 import static org.slf4j.LoggerFactory.getLogger;
 
+import org.mule.extension.db.internal.lifecycle.DerbyArtifactLifecycleListener;
 import org.mule.extension.db.util.CollectableReference;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.hamcrest.Matcher;
 import org.junit.Assert;
@@ -81,6 +87,62 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
   abstract void assertThreadsAreDisposed();
 
   abstract void assertThreadsAreNotDisposed();
+
+//  private URL[] appendUrlTo(URL[] urls, URL newUrl) {
+//    urls = copyOf(urls, urls.length + 1);
+//    urls[urls.length - 1] = newUrl;
+//    return urls;
+//  }
+//  @Test
+//  public void whenDriverIsInAppExtensionThenClassLoadersAreNotLeakedAfterDisposal() throws Exception {
+//    Assume.assumeTrue(enableLibraryReleaseChecking());
+//
+//    List<URL> additionalLibraries = new ArrayList<>();
+//    additionalLibraries.add(this.libraryUrl);
+//
+//    Optional.ofNullable(getLeakTriggererClass())
+//            .ifPresent(c -> additionalLibraries.add(c.getProtectionDomain().getCodeSource().getLocation()));
+//    Predicate<String> rootFilter = this::isClassFromLibrary;
+//    rootFilter = rootFilter.negate();
+//    rootFilter = rootFilter.and(name -> !DerbyArtifactLifecycleListener.class.getName().equals(name));
+//    URL[] domainExtensionUrls = new URL[0];
+//    URL[] appExtensionUrls = new URL[0];
+//    URL[] appUrls = new URL[0];
+//    URL[] domainUrls = new URL[0];
+//    URL listenerClassUrl = DerbyArtifactLifecycleListener.class.getProtectionDomain().getCodeSource().getLocation();
+//    appExtensionUrls = appendUrlTo(appExtensionUrls, listenerClassUrl);
+//    domainExtensionUrls = appendUrlTo(domainExtensionUrls, listenerClassUrl);
+//
+////    ClassLoader domainClassLoader =
+////            new URLClassLoader(additionalLibraries.toArray(new URL[0]), new TestClassLoadersHierarchy.FilteringClassLoader(getSystemClassLoader(), rootFilter));
+//    ClassLoader appClassLoader = new URLClassLoader(appUrls);
+//    ClassLoader appExtensionClassLoader = new URLClassLoader(appExtensionUrls, appClassLoader);
+//    ArtifactLifecycleListener listener = DerbyArtifactLifecycleListener.class.getConstructor().newInstance();
+////      withContextClassLoader(appExtensionClassLoader, () -> {
+//        try {
+//          if (getLeakTriggererClass() != null) {
+//            Class<?> runnableClass = appExtensionClassLoader.loadClass(getLeakTriggererClass().getName());
+//            Object runnable = runnableClass.newInstance();
+//            ((Runnable)runnable).run();
+//          }
+//        } catch (Exception e) {
+//          LOGGER.error(e.getMessage(), e);
+//        }
+////      });
+//      listener.onArtifactDisposal(new TestArtifactDisposalContext(appClassLoader,appExtensionClassLoader ));
+//      CollectableReference<ClassLoader> CollctableAppClassLoader =
+//            new CollectableReference<>(appClassLoader);
+//       CollectableReference<ClassLoader> CollectableAppExtensionClassLoader =
+//            new CollectableReference<>(appExtensionClassLoader);
+//      ((Closeable) appExtensionClassLoader).close();
+//      appExtensionClassLoader=null;
+//      ((Closeable) appClassLoader).close();
+//      appClassLoader = null;
+//      Runtime.getRuntime().gc();
+//      await().until(() -> CollectableAppExtensionClassLoader, is(collectedByGc()));
+//      await().until(() -> CollctableAppClassLoader, is(collectedByGc()));
+//
+//  }
 
   /* ClassLoader Tests */
   @Test
@@ -199,11 +261,10 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
         .ifPresent(c -> additionalLibraries.add(c.getProtectionDomain().getCodeSource().getLocation()));
     builder = driverConfigurer.apply(builder, additionalLibraries.toArray(new URL[0]));
     try (TestClassLoadersHierarchy classLoadersHierarchy = builder.build()) {
-      ClassLoader target = executionClassLoaderProvider.apply(classLoadersHierarchy);
-      withContextClassLoader(target, () -> {
+      withContextClassLoader(executionClassLoaderProvider.apply(classLoadersHierarchy), () -> {
         try {
           if (getLeakTriggererClass() != null) {
-            Class<?> runnableClass = target.loadClass(getLeakTriggererClass().getName());
+            Class<?> runnableClass = currentThread().getContextClassLoader().loadClass(getLeakTriggererClass().getName());
             Object runnable = runnableClass.newInstance();
             if (runnable instanceof Runnable) {
               ((Runnable) runnable).run();
@@ -214,8 +275,8 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
           LOGGER.error(e.getMessage(), e);
           Assert.fail(e.getMessage());
         }
-        assertThat(getCurrentThreadNames(), threadNamesMatcher);
       });
+      assertThat(getCurrentThreadNames(), threadNamesMatcher);
     }
   }
 

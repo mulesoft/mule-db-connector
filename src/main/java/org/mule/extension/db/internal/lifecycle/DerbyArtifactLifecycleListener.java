@@ -20,6 +20,8 @@ import java.sql.Driver;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 
@@ -36,13 +38,14 @@ public class DerbyArtifactLifecycleListener implements ArtifactLifecycleListener
   }
 
   private void deregisterDerbyDrivers(ArtifactDisposalContext disposalContext) {
-    Collections.list(getDrivers())
+    List<java.sql.Driver> drivers = Collections.list(getDrivers())
         .stream()
         .filter(d -> disposalContext.isArtifactOwnedClassLoader(d.getClass().getClassLoader()) ||
             disposalContext.isExtensionOwnedClassLoader(d.getClass().getClassLoader()))
-        .filter(d -> d.getClass().getName().startsWith(DRIVER_PACKAGE))
-        .forEach(driver -> {
+        .filter(d -> d.getClass().getName().startsWith(DRIVER_PACKAGE)).collect(Collectors.toList());
+        for(java.sql.Driver driver:drivers)  {
           try {
+            driver.getClass().getClassLoader();
             deregisterDriver(driver);
             if (LOGGER.isDebugEnabled()) {
               LOGGER.debug("Deregistering driver: {}", driver.getClass());
@@ -53,7 +56,7 @@ public class DerbyArtifactLifecycleListener implements ArtifactLifecycleListener
           } catch (Exception e) {
             LOGGER.warn(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
           }
-        });
+        }
   }
 
   private boolean isDerbyEmbeddedDriver(Driver driver) {

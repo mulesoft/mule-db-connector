@@ -25,7 +25,6 @@ import org.hamcrest.TypeSafeMatcher;
  *
  * {
  *   CollectableReference<String> collectableReference = new CollectableReference<>(new String("Hello world"));
- *   System.out.println(collectableReference.get());
  *   assertThat(collectableReference, is(eventually(collectedByGc())));
  * }
  * }</pre>
@@ -34,28 +33,11 @@ import org.hamcrest.TypeSafeMatcher;
  */
 public class CollectableReference<T> extends PhantomReference<T> {
 
-  private T strongReference;
   private final String strongReferenceAsString;
 
   public CollectableReference(T referent) {
     super(referent, new ReferenceQueue<>());
-    strongReference = referent;
     strongReferenceAsString = referent.toString();
-  }
-
-  /**
-   * @return the referent.
-   */
-  @Override
-  public T get() {
-    return strongReference;
-  }
-
-  /**
-   * Drops the strong reference.
-   */
-  private void dereference() {
-    strongReference = null;
   }
 
   public static <T> Matcher<CollectableReference<T>> collectedByGc() {
@@ -78,11 +60,8 @@ public class CollectableReference<T> extends PhantomReference<T> {
 
     @Override
     protected boolean matchesSafely(CollectableReference<T> reference) {
-      if (reference.get() != null) {
-        referencedAsString = reference.get().toString();
-      }
+      referencedAsString = reference.strongReferenceAsString;
 
-      reference.dereference();
       System.gc();
       return reference.isEnqueued();
     }
@@ -93,3 +72,4 @@ public class CollectableReference<T> extends PhantomReference<T> {
     }
   }
 }
+

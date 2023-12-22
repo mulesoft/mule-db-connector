@@ -6,6 +6,9 @@
  */
 package org.mule.extension.db.lifecycle;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsNot.not;
+
 import org.mule.extension.db.internal.lifecycle.DB2ArtifactLifecycleListener;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
@@ -17,6 +20,10 @@ import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public class DB2ArtifactLifecycleListenerTestCase extends AbstractArtifactLifecycleListenerTestCase {
+
+  public static final String DRIVER_PACKAGE = "com.ibm.db2";
+  public static final String DRIVER_NAME = "com.ibm.db2.jcc.DB2Driver";
+  public static final String DRIVER_THREAD_NAME = "Timer-";
 
   public DB2ArtifactLifecycleListenerTestCase(String groupId, String artifactId, String version) {
     super(groupId, artifactId, version);
@@ -34,26 +41,31 @@ public class DB2ArtifactLifecycleListenerTestCase extends AbstractArtifactLifecy
 
   @Override
   String getPackagePrefix() {
-    return "com.ibm.db2";
+    return DRIVER_PACKAGE;
   }
 
   @Override
   public String getDriverName() {
-    return null;
+    return DRIVER_NAME;
   }
 
   @Override
   public String getDriverThreadName() {
-    return null;
+    return DRIVER_THREAD_NAME;
+  }
+
+  @Override
+  protected Class getLeakTriggererClass() {
+    return DB2LeakTriggerer.class;
   }
 
   @Override
   void assertThreadsAreNotDisposed() {
-    return;
+    assertThat(getCurrentThreadNames(), hasReadDriverThread());
   }
 
   @Override
   void assertThreadsAreDisposed() {
-    return;
+    assertThat(getCurrentThreadNames(), not(hasReadDriverThread()));
   }
 }

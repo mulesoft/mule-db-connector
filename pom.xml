@@ -583,7 +583,7 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco.exec
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit-oracle.exec
                                 </argLine>                            </argLines>
                         </configuration>
                         <executions>
@@ -806,7 +806,7 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit-mysql.exec
                                 </argLine>
                             </argLines>
                         </configuration>
@@ -992,7 +992,7 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit-postgres.exec
                                 </argLine>
                             </argLines>
                         </configuration>
@@ -1178,7 +1178,7 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit-derby.exec
                                 </argLine>
                             </argLines>
                         </configuration>
@@ -1456,7 +1456,7 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit-sqlserver.exec
                                 </argLine>
                             </argLines>
                         </configuration>

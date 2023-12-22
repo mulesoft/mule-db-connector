@@ -9,6 +9,8 @@ package org.mule.extension.db.lifecycle;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactDisposalContext;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -46,12 +48,17 @@ public class TestArtifactDisposalContext implements ArtifactDisposalContext {
 
   @Override
   public Stream<Thread> getExtensionOwnedThreads() {
-    throw new UnsupportedOperationException();
+    return getThreadsByOwner(extensionClassLoader);
   }
 
   @Override
   public Stream<Thread> getArtifactOwnedThreads() {
-    throw new UnsupportedOperationException();
+    return getThreadsByOwner(artifactClassLoader);
+  }
+
+  private static Stream<Thread> getThreadsByOwner(ClassLoader targetClassLoader) {
+    return Thread.getAllStackTraces().keySet().stream()
+            .filter(thread -> thread.getClass().getClassLoader() == targetClassLoader);
   }
 
   @Override

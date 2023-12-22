@@ -6,12 +6,17 @@
  */
 package org.mule.extension.db.internal.lifecycle;
 
+import static java.lang.String.format;
+import static java.sql.DriverManager.deregisterDriver;
+import static java.sql.DriverManager.getDrivers;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.sdk.api.artifact.lifecycle.ArtifactDisposalContext;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.io.IOException;
+import java.sql.Driver;
+import java.util.Collections;
 import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
@@ -19,20 +24,46 @@ import org.slf4j.Logger;
 public class DB2ArtifactLifecycleListener implements ArtifactLifecycleListener {
 
   private static final Logger LOGGER = getLogger(DB2ArtifactLifecycleListener.class);
-
   public static final String DRIVER_TIMER_THREAD_CLASS_NAME = "TimerThread";
   public static final Pattern DRIVER_TIMER_THREAD_PATTERN = Pattern.compile("^Timer-\\d+");
 
   @Override
   public void onArtifactDisposal(ArtifactDisposalContext artifactDisposalContext) {
     LOGGER.debug("Running onArtifactDisposal method on {}", getClass().getName());
+    deregisterDB2Drivers(artifactDisposalContext);
 
-    //TODO INCOMPLETO
-    /*
-     * (W-12460123) When we have a DB2 driver in the application: Due to in this class getDrivers() method does not return any
+    /*(W-12460123) When we have a DB2 driver in the application: Due to in this class getDrivers() method does not return any
      * values when we had a DB2 driver, we found the TimerThread that it triggers for canceling it */
     if (detectDB2Uses(artifactDisposalContext)) {
       disposeDriverTimerThreads(artifactDisposalContext);
+    }
+  }
+
+  private void deregisterDB2Drivers(ArtifactDisposalContext disposalContext) {
+    Collections.list(getDrivers())
+      .stream()
+      .filter(d -> disposalContext.isArtifactOwnedClassLoader(d.getClass().getClassLoader()) ||
+              disposalContext.isExtensionOwnedClassLoader(d.getClass().getClassLoader()))
+      .filter(this::isDB2Driver)
+      .forEach(driver -> {
+        try {
+          if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Deregistering driver: {}", driver.getClass());
+          }
+          deregisterDriver(driver);
+          disposeDriverTimerThreads(disposalContext);
+        } catch (Exception e) {
+          LOGGER.warn(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
+        }
+      });
+  }
+
+  private boolean isDB2Driver(Driver driver) {
+    try {
+      return driver.getClass().getClassLoader().loadClass("com.ibm.db2.jcc.DB2Driver").isAssignableFrom(driver.getClass());
+    } catch (ClassNotFoundException e) {
+      // If the class is not found, there is no such driver.
+      return false;
     }
   }
 
@@ -68,6 +99,11 @@ public class DB2ArtifactLifecycleListener implements ArtifactLifecycleListener {
   }
 
   private void disposeTimerThread(Thread thread) {
+    // IntervalTimer.cleanup()
+    // Connection.cancelQueryTimer()
+
+
+
     try {
       //      clearReferencesStopTimerThread(thread);
       //      thread.interrupt();

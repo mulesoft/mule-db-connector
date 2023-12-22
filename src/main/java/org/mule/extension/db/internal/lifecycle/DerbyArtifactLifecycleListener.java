@@ -51,7 +51,7 @@ public class DerbyArtifactLifecycleListener implements ArtifactLifecycleListener
               leakPreventionForDerbyEmbeddedDriver(driver);
             }
           } catch (Exception e) {
-            LOGGER.warn(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
+            LOGGER.debug(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
           }
         });
   }
@@ -61,15 +61,6 @@ public class DerbyArtifactLifecycleListener implements ArtifactLifecycleListener
     return Arrays.stream(DRIVER_NAMES).anyMatch(name -> name.equals(driver.getClass().getName()));
   }
 
-  private boolean isDriver(Driver driver, String expectedDriverClass) {
-    try {
-      return driver.getClass().getClassLoader().loadClass(expectedDriverClass).isAssignableFrom(driver.getClass());
-    } catch (ClassNotFoundException e) {
-      // If the class is not found, there is no such driver.
-      return false;
-    }
-  }
-
   private void leakPreventionForDerbyEmbeddedDriver(Object driverObject) {
     try {
       if (hasDeclaredMethod(driverObject.getClass(), "connect", String.class, java.util.Properties.class)) {
@@ -77,15 +68,15 @@ public class DerbyArtifactLifecycleListener implements ArtifactLifecycleListener
         m.invoke(driverObject, "jdbc:derby:;shutdown=true", null);
       }
     } catch (NoSuchMethodException | IllegalAccessException e) {
-      //LOGGER.warn("Unable to shutdown Derby's embedded driver", e);
+      LOGGER.debug("Unable to shutdown Derby's embedded driver", e);
     } catch (InvocationTargetException e) {
       if (e.getCause() instanceof SQLException
           && ((SQLException) e.getCause()).getSQLState().equals("XJ015")) {
         // A successful shutdown always results in an SQLException to indicate that Derby has shut down and that
         // there is no other exception.
-        //LOGGER.debug("(XJ015): Derby system shutdown.");
+        LOGGER.debug("(XJ015): Derby system shutdown.");
       } else {
-        //LOGGER.warn("Unable to shutdown Derby's embedded driver", e);
+        LOGGER.debug("Unable to shutdown Derby's embedded driver on the DerbyArtifactLifecycleListener", e);
       }
     }
   }

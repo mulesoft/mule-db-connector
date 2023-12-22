@@ -9,9 +9,4 @@
         <db:generic-connection url="#[java!org::mule::extension::db::DbMunitUtils::getPostgresqlConnectionString('localhost', 'mydatabase')]" user="myuser"
                                password="mypassword" driverClassName="org.postgresql.Driver"/>
     </db:config>
-
-<!--    <spring:config files="_spring-config-postgres.xml" name="postgres-config-bean"/>-->
-<!--    <db:config name="postgres-config-data-source">-->
-<!--        <db:data-source-connection dataSourceRef="jdbcDataSourcePostgres" />-->
-<!--    </db:config>-->
 </mule>

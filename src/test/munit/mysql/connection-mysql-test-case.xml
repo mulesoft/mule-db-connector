@@ -25,15 +25,22 @@
                     <munit:parameter propertyName="expectedErrorType" value="DB:INVALID_CREDENTIALS"/>
                 </munit:parameters>
             </munit:parameterization>
+            <munit:parameterization name="invalid-database-db-mysql-config">
+                <munit:parameters>
+                    <munit:parameter propertyName="config" value="invalid-database-db-mysql-config"/>
+                    <munit:parameter propertyName="expectedErrorType" value="DB:INVALID_DATABASE"/>
+                </munit:parameters>
+            </munit:parameterization>
+            <munit:parameterization name="invalid-host-db-mysql-config">
+                <munit:parameters>
+                    <munit:parameter propertyName="config" value="invalid-host-db-mysql-config"/>
+                    <munit:parameter propertyName="expectedErrorType" value="DB:CANNOT_REACH"/>
+                </munit:parameters>
+            </munit:parameterization>
         </munit:parameterizations>
     </munit:config>
 
-    <db:config name="invalid-password-db-mysql-config">
-        <db:my-sql-connection host="0.0.0.0" port="${mysql.db.port}"
-                              user="root" password="invalidpassword" database="xe">
-            <db:pooling-profile/>
-        </db:my-sql-connection>
-    </db:config>
+
 
     <munit:test name="connection-test" expectedErrorType="${expectedErrorType}">
         <munit:execution>

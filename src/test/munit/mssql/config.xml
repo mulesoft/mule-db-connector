@@ -12,6 +12,19 @@
                              user="sa"
                              password="yourStrong(!)Password"
                              instanceName="MSSQLSERVER"
+                             databaseName="master">
+            <db:connection-properties >
+                <db:connection-property key="connectRetryInterval" value="5" />
+            </db:connection-properties>
+        </db:mssql-connection>
+    </db:config>
+
+    <db:config name="mssql-config-with-properties">
+        <db:mssql-connection host="localhost"
+                             port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('mssql')]"
+                             user="sa"
+                             password="yourStrong(!)Password"
+                             instanceName="MSSQLSERVER"
                              databaseName="master"
         />
     </db:config>

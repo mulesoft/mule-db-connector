@@ -9,6 +9,7 @@ package org.mule.extension.db.api.param;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import org.mule.db.commons.internal.domain.type.DbType;
 import org.mule.db.commons.internal.domain.type.DynamicDbType;
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.extension.api.annotation.param.ExclusiveOptionals;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -64,6 +65,7 @@ public class TypeClassifier {
     return this.customType;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setCustomType(String customType) {
     this.customType = customType;
   }
@@ -76,6 +78,7 @@ public class TypeClassifier {
     return this.type;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setJdbcType(JdbcType type) {
     this.type = type;
   }

@@ -68,7 +68,7 @@
         <mule-spring-module-version>1.3.7</mule-spring-module-version>
 
         <mule.vm.version>2.0.0</mule.vm.version>
-
+        <jacoco.version>0.8.10</jacoco.version>
         <mulesoftLicenseVersion>1.4.0</mulesoftLicenseVersion>
         <license.maven.plugin.version>4.2</license.maven.plugin.version>
         <licensePath>LICENSE_HEADER_CPAL.txt</licensePath>
@@ -348,32 +348,32 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.mule.runtime.plugins</groupId>
-                <artifactId>mule-extensions-shade-plugin</artifactId>
-                <version>${muleExtensionsShadeVersion}</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <artifactSet>
-                        <includes combine.children="append">
-                            <include>org.mule.connectors:mule-db-client</include>
-                        </includes>
-                    </artifactSet>
-                    <relocations>
-                        <relocation>
-                            <pattern>org.mule.db.commons</pattern>
-                            <shadedPattern>org.mule.db.commons.shaded</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.mule.runtime.plugins</groupId>-->
+<!--                <artifactId>mule-extensions-shade-plugin</artifactId>-->
+<!--                <version>${muleExtensionsShadeVersion}</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>shade</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                <configuration>-->
+<!--                    <artifactSet>-->
+<!--                        <includes combine.children="append">-->
+<!--                            <include>org.mule.connectors:mule-db-client</include>-->
+<!--                        </includes>-->
+<!--                    </artifactSet>-->
+<!--                    <relocations>-->
+<!--                        <relocation>-->
+<!--                            <pattern>org.mule.db.commons</pattern>-->
+<!--                            <shadedPattern>org.mule.db.commons.shaded</shadedPattern>-->
+<!--                        </relocation>-->
+<!--                    </relocations>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -549,8 +549,9 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco.exec
-                                </argLine>                            </argLines>
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-oracle.exec
+                                </argLine>
+                            </argLines>
                         </configuration>
                         <executions>
                             <execution>
@@ -682,7 +683,7 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>mysql:latest</name>
+                                    <name>mysql:5.6</name>
                                     <alias>mysql-${mysql.db.port}</alias>
                                     <run>
                                         <containerNamePattern>%n-%i-%t</containerNamePattern>
@@ -772,7 +773,7 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit-${project.activeProfiles[0].id}.exec
                                 </argLine>
                             </argLines>
                         </configuration>
@@ -952,13 +953,37 @@
                             </runtimeConfiguration>
                             <sharedLibraries>
                                 <sharedLibrary>
+                                    <groupId>org.apache.commons</groupId>
+                                    <artifactId>commons-dbcp2</artifactId>
+                                </sharedLibrary>
+                                <sharedLibrary>
                                     <groupId>org.postgresql</groupId>
                                     <artifactId>postgresql</artifactId>
+                                </sharedLibrary>
+                                <sharedLibrary>
+                                    <groupId>org.springframework</groupId>
+                                    <artifactId>spring-beans</artifactId>
+                                </sharedLibrary>
+                                <sharedLibrary>
+                                    <groupId>org.springframework.security</groupId>
+                                    <artifactId>spring-security-config</artifactId>
+                                </sharedLibrary>
+                                <sharedLibrary>
+                                    <groupId>org.springframework.security</groupId>
+                                    <artifactId>spring-security-core</artifactId>
+                                </sharedLibrary>
+                                <sharedLibrary>
+                                    <groupId>org.springframework</groupId>
+                                    <artifactId>spring-context</artifactId>
+                                </sharedLibrary>
+                                <sharedLibrary>
+                                    <groupId>org.springframework</groupId>
+                                    <artifactId>spring-core</artifactId>
                                 </sharedLibrary>
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-postgresql.exec
                                 </argLine>
                             </argLines>
                         </configuration>
@@ -991,10 +1016,46 @@
                                 <classifier>mule-plugin</classifier>
                             </dependency>
                             <dependency>
+                                <groupId>org.apache.commons</groupId>
+                                <artifactId>commons-dbcp2</artifactId>
+                                <version>2.9.0</version>
+                            </dependency>
+                            <dependency>
                                 <groupId>org.mule.connectors</groupId>
                                 <artifactId>mule-vm-connector</artifactId>
                                 <version>${mule.vm.version}</version>
                                 <classifier>mule-plugin</classifier>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.mule.modules</groupId>
+                                <artifactId>mule-spring-module</artifactId>
+                                <version>${mule-spring-module-version}</version>
+                                <classifier>mule-plugin</classifier>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.springframework</groupId>
+                                <artifactId>spring-beans</artifactId>
+                                <version>${spring-beans-version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.springframework.security</groupId>
+                                <artifactId>spring-security-config</artifactId>
+                                <version>${spring-security-config-version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.springframework.security</groupId>
+                                <artifactId>spring-security-core</artifactId>
+                                <version>${spring-security-core-version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.springframework</groupId>
+                                <artifactId>spring-context</artifactId>
+                                <version>${spring-context-version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.springframework</groupId>
+                                <artifactId>spring-core</artifactId>
+                                <version>${spring-core-version}</version>
                             </dependency>
                         </dependencies>
                     </plugin>
@@ -1054,7 +1115,7 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>fabric8:derby-mtf</name>
+                                    <name>fabric:derby-mtf</name>
                                     <alias>derby-${derby.db.port}</alias>
                                     <build>
                                         <contextDir>${project.basedir}/src/docker/derby</contextDir>
@@ -1079,10 +1140,7 @@
                                         <log>
                                             <enabled>true</enabled>
                                         </log>
-                                        <wait>
-                                            <log>database system is ready to accept connections</log>
-                                            <time>500000</time>
-                                        </wait>
+                                        <entryPoint>java -Dderby.stream.error.field=java.lang.System.out org.apache.derby.drda.NetworkServerControl start -h  0.0.0.0</entryPoint>
                                     </run>
                                 </image>
                             </images>
@@ -1147,7 +1205,7 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-derby.exec
                                 </argLine>
                             </argLines>
                         </configuration>
@@ -1224,8 +1282,6 @@
                 </plugins>
             </build>
         </profile>
-
-
         <profile>
             <activation>
                 <property>
@@ -1425,7 +1481,7 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-mssql.exec
                                 </argLine>
                             </argLines>
                         </configuration>

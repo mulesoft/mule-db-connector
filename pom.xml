@@ -773,7 +773,7 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit-${project.activeProfiles[0].id}.exec
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-mysql.exec
                                 </argLine>
                             </argLines>
                         </configuration>

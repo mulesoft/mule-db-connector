@@ -1107,7 +1107,6 @@
             <id>derby</id>
             <build>
                 <plugins>
-                    <!--TODO: find derby image that works-->
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
@@ -1115,7 +1114,7 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>fabric:derby-mtf</name>
+                                    <name>fabric-derby-mtf:derby-mtf</name>
                                     <alias>derby-${derby.db.port}</alias>
                                     <build>
                                         <contextDir>${project.basedir}/src/docker/derby</contextDir>

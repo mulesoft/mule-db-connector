@@ -7,34 +7,39 @@
       xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
         http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
-
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 		http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
 
-    <munit:config name="connection-mysql-test-case.xml" minMuleVersion="4.4.0">
+    <munit:config name="connection-oracle-test-case.xml" minMuleVersion="4.3.0">
         <munit:parameterizations>
-            <munit:parameterization name="dbConfigMySQL">
+            <munit:parameterization name="dbConfigOracle">
                 <munit:parameters>
-                    <munit:parameter propertyName="config" value="dbConfigMySQL"/>
+                    <munit:parameter propertyName="config" value="oracleDbConfig"/>
                     <munit:parameter propertyName="expectedErrorType" value=""/>
                 </munit:parameters>
             </munit:parameterization>
-            <munit:parameterization name="invalid-password-db-mysql-config">
+            <munit:parameterization name="genericDBOracleConfig">
                 <munit:parameters>
-                    <munit:parameter propertyName="config" value="invalid-password-db-mysql-config"/>
+                    <munit:parameter propertyName="config" value="oracleGenericConfig"/>
+                    <munit:parameter propertyName="expectedErrorType" value=""/>
+                </munit:parameters>
+            </munit:parameterization>
+            <munit:parameterization name="invalidPasswordOracleConfig">
+                <munit:parameters>
+                    <munit:parameter propertyName="config" value="oracleDbConfigInvalidPassword"/>
                     <munit:parameter propertyName="expectedErrorType" value="DB:INVALID_CREDENTIALS"/>
                 </munit:parameters>
             </munit:parameterization>
-            <munit:parameterization name="invalid-database-db-mysql-config">
+            <munit:parameterization name="invalidHostOracleConfig">
                 <munit:parameters>
-                    <munit:parameter propertyName="config" value="invalid-database-db-mysql-config"/>
-                    <munit:parameter propertyName="expectedErrorType" value="DB:INVALID_DATABASE"/>
+                    <munit:parameter propertyName="config" value="oracleDbConfigInvalidHost"/>
+                    <munit:parameter propertyName="expectedErrorType" value="DB:CANNOT_REACH"/>
                 </munit:parameters>
             </munit:parameterization>
-            <munit:parameterization name="invalid-host-db-mysql-config">
+            <munit:parameterization name="invalidDBOracleConfig">
                 <munit:parameters>
-                    <munit:parameter propertyName="config" value="invalid-host-db-mysql-config"/>
-                    <munit:parameter propertyName="expectedErrorType" value="DB:CANNOT_REACH"/>
+                    <munit:parameter propertyName="config" value="oracleDbConfigInvalidDB"/>
+                    <munit:parameter propertyName="expectedErrorType" value="DB:INVALID_DATABASE"/>
                 </munit:parameters>
             </munit:parameterization>
         </munit:parameterizations>

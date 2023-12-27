@@ -8,6 +8,8 @@ package org.mule.extension.db.api.param;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
+
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
@@ -19,6 +21,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @since 1.0
  */
+@ExcludeFromGeneratedCoverage
 public class QuerySettings {
 
   /**

@@ -8,6 +8,7 @@ package org.mule.extension.db.internal.domain.connection.datasource;
 
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 
@@ -21,6 +22,7 @@ import javax.sql.XADataSource;
  *  @deprecated since 1.10.1. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
 @Deprecated
+@ExcludeFromGeneratedCoverage
 public final class DbDataSourceConnectionSettings
     implements org.mule.db.commons.internal.domain.connection.datasource.DataSourceConnectionSettings {
 

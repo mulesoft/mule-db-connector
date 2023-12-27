@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.api.exception.connection;
 
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.extension.api.exception.ModuleException;
 
@@ -14,6 +15,7 @@ import org.mule.runtime.extension.api.exception.ModuleException;
  * @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
 @Deprecated
+@ExcludeFromGeneratedCoverage
 public class ConnectionCreationException extends ConnectionException {
 
   public ConnectionCreationException(String message) {

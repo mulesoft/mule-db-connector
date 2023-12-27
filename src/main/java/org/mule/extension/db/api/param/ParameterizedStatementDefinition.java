@@ -10,6 +10,7 @@ import static java.util.Collections.unmodifiableMap;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import org.mule.db.commons.internal.domain.metadata.DbInputMetadataResolver;
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.api.util.Reference;
 import org.mule.runtime.extension.api.annotation.metadata.TypeResolver;
 import org.mule.runtime.extension.api.annotation.param.Content;
@@ -56,6 +57,7 @@ public abstract class ParameterizedStatementDefinition<T extends ParameterizedSt
    * @param name the name of the searched parameter
    * @return an {@link Optional} {@link ParameterType}
    */
+  @ExcludeFromGeneratedCoverage
   public java.util.Optional<Reference<Object>> getInputParameter(String name) {
     return findParameter(getInputParameters(), name);
   }

@@ -7,6 +7,8 @@
 package org.mule.extension.db.api.exception.connection;
 
 import static org.mule.extension.db.api.exception.connection.DbError.BAD_SQL_SYNTAX;
+
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.extension.api.exception.ModuleException;
 
 /**
@@ -15,6 +17,7 @@ import org.mule.runtime.extension.api.exception.ModuleException;
  * @since 1.0
  */
 @Deprecated
+@ExcludeFromGeneratedCoverage
 public class BadSqlSyntaxException extends ModuleException {
 
   public BadSqlSyntaxException(String message) {

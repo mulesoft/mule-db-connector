@@ -15,6 +15,7 @@ package org.mule.extension.db.api.param;
 
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import org.mule.db.commons.internal.domain.type.DbType;
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.extension.api.annotation.Expression;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
@@ -24,6 +25,7 @@ import org.mule.runtime.extension.api.annotation.param.ParameterGroup;
  *
  * @since 1.0
  */
+@ExcludeFromGeneratedCoverage
 public class ParameterType {
 
   public ParameterType() {}

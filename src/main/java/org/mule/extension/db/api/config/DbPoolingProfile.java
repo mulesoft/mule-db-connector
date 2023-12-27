@@ -10,6 +10,7 @@ import static java.util.Collections.emptyMap;
 import static org.mule.runtime.api.meta.ExpressionSupport.NOT_SUPPORTED;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
 
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.api.config.DatabasePoolingProfile;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.Expression;
@@ -28,6 +29,7 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0
  */
 @Alias("pooling-profile")
+@ExcludeFromGeneratedCoverage
 public class DbPoolingProfile implements DatabasePoolingProfile {
 
   /**

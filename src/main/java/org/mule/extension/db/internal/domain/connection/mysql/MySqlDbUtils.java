@@ -6,6 +6,8 @@
  */
 package org.mule.extension.db.internal.domain.connection.mysql;
 
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
@@ -23,6 +25,7 @@ final class MySqlDbUtils {
     return addProperties(url, connectionProperties);
   }
 
+  @ExcludeFromGeneratedCoverage
   static String getEffectiveUrl(String url, Map<String, String> connectionProperties) {
     return addProperties(url, connectionProperties);
   }

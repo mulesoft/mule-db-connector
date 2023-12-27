@@ -8,6 +8,8 @@ package org.mule.extension.db.api.param;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.api.util.Reference;
 import org.mule.runtime.extension.api.annotation.dsl.xml.ParameterDsl;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
@@ -62,10 +64,12 @@ public class StoredProcedureCall extends ParameterizedStatementDefinition<Stored
     return copy;
   }
 
+  @ExcludeFromGeneratedCoverage
   public java.util.Optional<OutputParameter> getOutputParameter(String name) {
     return outputParameters.stream().filter(p -> p.getKey().equals(name)).findFirst();
   }
 
+  @ExcludeFromGeneratedCoverage
   public java.util.Optional<Reference<Object>> getInOutParameter(String name) {
     return findParameter(inOutParameters, name);
   }

@@ -8,3 +8,27 @@ additionalTestConfigs:
     mavenAdditionalArgs: "-Dmssql"
   oracle:
     mavenAdditionalArgs: "-Doracle"
+  postgresql_j11:
+    testJdkTool: OPEN-JDK11
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dpostgresql"
+  mysql_j11:
+    testJdkTool: OPEN-JDK11
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dmysql"
+  mssql_j11:
+    testJdkTool: OPEN-JDK11
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dmssql"
+  oracle_j11:
+    testJdkTool: OPEN-JDK11
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Doracle"
+  postgresql_j17:
+    testJdkTool: OPEN-JDK17
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dpostgresql"
+  mysql_j17:
+    testJdkTool: OPEN-JDK17
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dmysql"
+  mssql_j17:
+    testJdkTool: OPEN-JDK17
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dmssql"
+  oracle_j17:
+    testJdkTool: OPEN-JDK17
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Doracle"

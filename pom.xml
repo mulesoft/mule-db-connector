@@ -53,10 +53,10 @@
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
 
-        <munit.extensions.maven.plugin.version>1.1.3</munit.extensions.maven.plugin.version>
-        <munit.version>2.3.14</munit.version>
+        <munit.extensions.maven.plugin.version>1.2.0-rc3</munit.extensions.maven.plugin.version>
+        <munit.version>3.1.0-rc4</munit.version>
 
-        <mtf-tools.version>1.1.2</mtf-tools.version>
+        <mtf-tools.version>1.2.0-rc1</mtf-tools.version>
         <skipTests>false</skipTests>
         <skipTita>false</skipTita>
         <settingsFile>${java.io.tmpdir}/effective-settings.xml</settingsFile>
@@ -65,15 +65,17 @@
         <spring-security-core-version>5.4.2</spring-security-core-version>
         <spring-context-version>5.3.2</spring-context-version>
         <spring-core-version>5.3.2</spring-core-version>
-        <mule-spring-module-version>1.3.7</mule-spring-module-version>
+        <mule-spring-module-version>1.3.11</mule-spring-module-version>
 
-        <mule.vm.version>2.0.0</mule.vm.version>
+        <mule.vm.version>2.0.1</mule.vm.version>
         <jacoco.version>0.8.10</jacoco.version>
         <mulesoftLicenseVersion>1.4.0</mulesoftLicenseVersion>
         <license.maven.plugin.version>4.2</license.maven.plugin.version>
         <licensePath>LICENSE_HEADER_CPAL.txt</licensePath>
         <licenseYear>2023</licenseYear>
         <commons-dbcp2.version>2.9.0</commons-dbcp2.version>
+        <mtf.javaopts></mtf.javaopts>
+        <mule.sdk.api.version>0.7.0</mule.sdk.api.version>
     </properties>
 
     <dependencyManagement>
@@ -270,10 +272,31 @@
             <groupId>com.sun.istack</groupId>
             <artifactId>istack-commons-runtime</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.mule.sdk</groupId>
+            <artifactId>mule-sdk-api</artifactId>
+            <version>${mule.sdk.api.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jdeps-plugin</artifactId>
+                <version>3.1.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jdkinternals</goal> <!-- verify main classes -->
+                            <goal>test-jdkinternals</goal> <!-- verify test classes -->
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <failOnWarning>true</failOnWarning>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
@@ -519,7 +542,7 @@
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
-                                    <minMuleVersion>4.1.1</minMuleVersion>
+                                    <minMuleVersion>${minVersion}</minMuleVersion>
                                     <includeSnapshots>false</includeSnapshots>
                                 </discoverRuntimes>
                             </runtimeConfiguration>
@@ -554,6 +577,11 @@
                                     -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-oracle.exec
                                 </argLine>
                             </argLines>
+                            <environmentVariables>
+                                <!-- Toggles the JDK17 style flag -->
+                                <!-- ugly hack -->
+                                <_JAVA_OPTIONS>-XX:+PrintCommandLineFlags ${mtf.javaopts}</_JAVA_OPTIONS>
+                            </environmentVariables>
                         </configuration>
                         <executions>
                             <execution>
@@ -763,7 +791,7 @@
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
-                                    <minMuleVersion>4.1.1</minMuleVersion>
+                                    <minMuleVersion>${minVersion}</minMuleVersion>
                                     <includeSnapshots>false</includeSnapshots>
                                 </discoverRuntimes>
                             </runtimeConfiguration>
@@ -949,7 +977,7 @@
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
-                                    <minMuleVersion>4.1.1</minMuleVersion>
+                                    <minMuleVersion>${minVersion}</minMuleVersion>
                                     <includeSnapshots>false</includeSnapshots>
                                 </discoverRuntimes>
                             </runtimeConfiguration>
@@ -988,6 +1016,11 @@
                                     -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-postgresql.exec
                                 </argLine>
                             </argLines>
+                            <environmentVariables>
+                                <!-- Toggles the JDK17 style flag -->
+                                <!-- ugly hack -->
+                                <_JAVA_OPTIONS>-XX:+PrintCommandLineFlags ${mtf.javaopts}</_JAVA_OPTIONS>
+                            </environmentVariables>
                         </configuration>
                         <executions>
                             <execution>
@@ -1194,7 +1227,7 @@
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
-                                    <minMuleVersion>4.1.1</minMuleVersion>
+                                    <minMuleVersion>${minVersion}</minMuleVersion>
                                     <includeSnapshots>false</includeSnapshots>
                                 </discoverRuntimes>
                             </runtimeConfiguration>
@@ -1209,6 +1242,11 @@
                                     -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-derby.exec
                                 </argLine>
                             </argLines>
+                            <environmentVariables>
+                                <!-- Toggles the JDK17 style flag -->
+                                <!-- ugly hack -->
+                                <_JAVA_OPTIONS>-XX:+PrintCommandLineFlags ${mtf.javaopts}</_JAVA_OPTIONS>
+                            </environmentVariables>
                         </configuration>
                         <executions>
                             <execution>
@@ -1471,7 +1509,7 @@
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
-                                    <minMuleVersion>4.1.1</minMuleVersion>
+                                    <minMuleVersion>${minVersion}</minMuleVersion>
                                     <includeSnapshots>false</includeSnapshots>
                                 </discoverRuntimes>
                             </runtimeConfiguration>
@@ -1486,6 +1524,11 @@
                                     -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-mssql.exec
                                 </argLine>
                             </argLines>
+                            <environmentVariables>
+                                <!-- Toggles the JDK17 style flag -->
+                                <!-- ugly hack -->
+                                <_JAVA_OPTIONS>-XX:+PrintCommandLineFlags ${mtf.javaopts}</_JAVA_OPTIONS>
+                            </environmentVariables>
                         </configuration>
                         <executions>
                             <execution>

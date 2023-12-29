@@ -34,6 +34,11 @@ import org.mule.runtime.extension.api.annotation.Sources;
 import org.mule.runtime.extension.api.annotation.connectivity.ConnectionProviders;
 import org.mule.runtime.extension.api.annotation.dsl.xml.Xml;
 import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
+import org.mule.sdk.api.annotation.JavaVersionSupport;
+
+import static org.mule.sdk.api.meta.JavaVersion.JAVA_11;
+import static org.mule.sdk.api.meta.JavaVersion.JAVA_17;
+import static org.mule.sdk.api.meta.JavaVersion.JAVA_8;
 
 /**
  * The Anypoint Database Connector allows you to connect to relational databases through the JDBC API.
@@ -53,6 +58,7 @@ import org.mule.runtime.extension.api.annotation.error.ErrorTypes;
 @Export(
     classes = {QueryDefinition.class, StoredProcedureCall.class, BulkQueryDefinition.class, ConnectionCreationException.class,
         LoggerApiPackage.class})
+@JavaVersionSupport({JAVA_8, JAVA_11, JAVA_17})
 public class DbConnector extends AbstractDbConnector {
 
 }

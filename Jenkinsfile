@@ -1,1 +1,1 @@
-onpremBuild()
+runtimeBuild()

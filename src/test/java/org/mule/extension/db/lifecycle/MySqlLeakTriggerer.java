@@ -6,14 +6,13 @@
  */
 package org.mule.extension.db.lifecycle;
 
-import static org.junit.Assert.fail;
+import static java.lang.Thread.getAllStackTraces;
+import static org.awaitility.Awaitility.await;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.sql.Connection;
-import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Collections;
 
 import org.slf4j.Logger;
@@ -24,13 +23,19 @@ public class MySqlLeakTriggerer implements Runnable {
 
   @Override
   public void run() {
-    try {
-      Class<?> driverClass = Thread.currentThread().getContextClassLoader().loadClass(MySqlArtifactLifecycleListenerTestCase.DRIVER_NAME);
-      Driver driver = (Driver) driverClass.newInstance();
-      DriverManager.registerDriver(driver);
-      LOGGER.warn("Drivers found: {}", Collections.list(DriverManager.getDrivers()).size());
-    } catch (Exception e) {
-      LOGGER.error(e.getMessage(), e);
+    // To avoid race conditions, I wait for the driver to be available.
+    await().until(() -> Collections.list(DriverManager.getDrivers()).stream()
+        .anyMatch(driver -> driver.getClass().getName().contains("mysql")));
+    try (Connection con = DriverManager.getConnection("jdbc:mysql://hostname:3306/dummy?user=dummy&password=dummy")) {
+    } catch (SQLException e) {
+      LOGGER.error("Connection could not be established: {}", e.getMessage(), e);
+      await().until(() -> getAllStackTraces().keySet().stream()
+              .filter(thread -> thread.getName().startsWith("mysql-cj-abandoned-connection-cleanup"))
+              .anyMatch(thread ->
+                      thread.getContextClassLoader() == Thread.currentThread().getContextClassLoader().getParent()
+                      || thread.getContextClassLoader() == Thread.currentThread().getContextClassLoader()
+              )
+      );
     }
   }
 }

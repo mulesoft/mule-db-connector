@@ -159,7 +159,7 @@ public class MySqlArtifactLifecycleListener implements ArtifactLifecycleListener
   private Class<?> findMySqlCleanUpClass(ArtifactDisposalContext artifactDisposalContext) throws ClassNotFoundException {
     for (String knownCleanupThreadClassAddress : CONNECTION_CLEANUP_THREAD_KNOWN_CLASS_ADDRESES) {
       try {
-        return artifactDisposalContext.getArtifactClassLoader().loadClass(knownCleanupThreadClassAddress);
+        return Class.forName(knownCleanupThreadClassAddress, true, artifactDisposalContext.getExtensionClassLoader());
       } catch (ClassNotFoundException e) {
         if (LOGGER.isDebugEnabled()) {
           LOGGER.debug("No AbandonedConnectionCleanupThread registered with class address {}", knownCleanupThreadClassAddress);

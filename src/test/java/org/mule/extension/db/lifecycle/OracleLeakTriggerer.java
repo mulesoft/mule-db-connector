@@ -6,9 +6,11 @@
  */
 package org.mule.extension.db.lifecycle;
 
+import static java.lang.Thread.getAllStackTraces;
+import static org.awaitility.Awaitility.await;
 import static org.slf4j.LoggerFactory.getLogger;
 
-import java.sql.Driver;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collections;
@@ -22,14 +24,17 @@ public class OracleLeakTriggerer implements Runnable {
 
   @Override
   public void run() {
-    try {
-      Class<?> driverClass =
-              Thread.currentThread().getContextClassLoader().loadClass(OracleArtifactLifecycleListenerTestCase.DRIVER_NAME);
-      Driver oracle = (Driver) driverClass.getDeclaredConstructor().newInstance();
-      DriverManager.registerDriver(oracle);
-    } catch (ReflectiveOperationException | SQLException e) {
-      LOGGER.error(e.getMessage(), e);
-    }
+    // To avoid race conditions, I wait for the driver to be available.
+    await().until(() -> Collections.list(DriverManager.getDrivers()).stream()
+        .anyMatch(driver -> driver.getClass().getName().contains("oracle")));
+//    try (Connection con = DriverManager.getConnection("jdbc:oracle:thin:user/pass@localhost:1521/dummy")){
+//    } catch (SQLException e) {
+//      LOGGER.debug("The exception is the expected behavior. The Timer thread should have been launched. ");
+//    }
     Diagnostic diagnostic = Diagnostic.get("oracle.jdbc", 1000);
+    await().until(() -> getAllStackTraces().keySet().stream()
+        .filter(thread -> thread.getName().startsWith("oracle.jdbc.diagnostics.Diagnostic.CLOCK"))
+        .anyMatch(thread -> thread.getContextClassLoader() == Thread.currentThread().getContextClassLoader().getParent()
+            || thread.getContextClassLoader() == Thread.currentThread().getContextClassLoader()));
   }
 }

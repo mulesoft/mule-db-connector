@@ -56,16 +56,6 @@ public class OracleArtifactLifecycleListenerTestCase extends AbstractArtifactLif
   }
 
   @Override
-  void assertThreadsAreNotDisposed() {
-    assertThat(getCurrentThreadNames(), hasReadDriverThread());
-  }
-
-  @Override
-  void assertThreadsAreDisposed() {
-    assertThat(getCurrentThreadNames(), not(hasReadDriverThread()));
-  }
-
-  @Override
   protected Class getLeakTriggererClass() {
     return OracleLeakTriggerer.class;
   }

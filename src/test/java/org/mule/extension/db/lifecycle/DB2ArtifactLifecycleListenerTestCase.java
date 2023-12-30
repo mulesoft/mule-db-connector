@@ -7,6 +7,11 @@
 package org.mule.extension.db.lifecycle;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.IsNot.not;
 
 import org.mule.extension.db.internal.lifecycle.DB2ArtifactLifecycleListener;
@@ -15,6 +20,7 @@ import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.hamcrest.Matcher;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -59,13 +65,4 @@ public class DB2ArtifactLifecycleListenerTestCase extends AbstractArtifactLifecy
     return DB2LeakTriggerer.class;
   }
 
-  @Override
-  void assertThreadsAreNotDisposed() {
-    assertThat(getCurrentThreadNames(), hasReadDriverThread());
-  }
-
-  @Override
-  void assertThreadsAreDisposed() {
-    assertThat(getCurrentThreadNames(), not(hasReadDriverThread()));
-  }
 }

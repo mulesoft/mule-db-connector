@@ -50,10 +50,10 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
               LOGGER.debug("Deregistering driver: {}", driver.getClass());
             }
             deregisterDriver(driver);
-            deregisterOracleDiagnosabilityMBean(disposalContext.getArtifactClassLoader());
-            deregisterOracleDiagnosabilityMBean(disposalContext.getExtensionClassLoader());
             checkingVersionsWithLeaksKnownSolvedInNewerVersions(driver);
-            cancelTimerThreads(disposalContext);
+
+            cleanClassloader(disposalContext.getArtifactClassLoader());
+            cleanClassloader(disposalContext.getExtensionClassLoader());
           } catch (Exception e) {
             LOGGER.warn(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
           }
@@ -67,6 +67,20 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
       // If the class is not found, there is no such driver.
       return false;
     }
+  }
+
+  private void checkingVersionsWithLeaksKnownSolvedInNewerVersions(Driver driver) {
+    int major = driver.getMajorVersion();
+    int minor = driver.getMinorVersion();
+    if (major < 19 || (major == 19 && minor < 14)) {
+      LOGGER.warn("Oracle Driver version {}.{} has been detected, versions prior to 19.4 have a known issue " +
+          "whereby Thread Leaks are generated. Consider upgrading to a newer version of the driver.", major, minor);
+    }
+  }
+
+  private void cleanClassloader(ClassLoader classloader) {
+    deregisterOracleDiagnosabilityMBean(classloader);
+    cancelTimerThreads(classloader);
   }
 
   private void deregisterOracleDiagnosabilityMBean(ClassLoader cl) {
@@ -87,18 +101,9 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
     }
   }
 
-  private void checkingVersionsWithLeaksKnownSolvedInNewerVersions(Driver driver) {
-    int major = driver.getMajorVersion();
-    int minor = driver.getMinorVersion();
-    if (major < 19 || (major == 19 && minor < 14)) {
-      LOGGER.warn("Oracle Driver version {}.{} has been detected, versions prior to 19.4 have a known issue " +
-          "whereby Thread Leaks are generated. Consider upgrading to a newer version of the driver.", major, minor);
-    }
-  }
-
-  private void cancelTimerThreads(ArtifactDisposalContext disposalContext) {
+  private void cancelTimerThreads(ClassLoader classLoader) {
     try {
-      Class<?> diagnosticClass = Class.forName("oracle.jdbc.diagnostics.Diagnostic");
+      Class<?> diagnosticClass = Class.forName("oracle.jdbc.diagnostics.Diagnostic", true, classLoader);
       Field clockField = diagnosticClass.getDeclaredField("CLOCK");
       Boolean accessibility = clockField.isAccessible();
       clockField.setAccessible(true);
@@ -109,5 +114,4 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
       e.printStackTrace();
     }
   }
-
 }

@@ -8,18 +8,23 @@ package org.mule.extension.db.lifecycle;
 
 import static java.lang.Thread.getAllStackTraces;
 import static java.util.stream.Collectors.toList;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.mule.extension.db.internal.lifecycle.MySqlArtifactLifecycleListener;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
-import java.sql.Driver;
-import java.sql.DriverManager;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
+import org.hamcrest.Matcher;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -33,48 +38,38 @@ public class MySqlArtifactLifecycleListenerTestCase extends AbstractArtifactLife
   public MySqlArtifactLifecycleListenerTestCase(String groupId, String artifactId, String version) {
     super(groupId, artifactId, version);
   }
-
   @Parameterized.Parameters
   public static Collection<Object[]> parameters() {
     return Arrays.asList(new Object[][] {{"mysql", "mysql-connector-java", "8.0.30"}});
   }
-
   @Override
   Class<? extends ArtifactLifecycleListener> getArtifactLifecycleListenerClass() {
     return MySqlArtifactLifecycleListener.class;
   }
-
   @Override
   String getPackagePrefix() {
     return DRIVER_PACKAGE;
   }
-
   @Override
   public String getDriverName() {
     return DRIVER_NAME;
   }
-
-  @Override
-  void assertThreadsAreNotDisposed() {
-    assertTrue("MySQL Store Daemon loaded by domain is not still present", isThreadDaemonPresent());
-  }
-
-  @Override
-  void assertThreadsAreDisposed() {
-    assertFalse("MySQL Store Daemon is still present", isThreadDaemonPresent());
-  }
-
-  protected boolean isThreadDaemonPresent() {
-    return getAllStackTraces().keySet().stream().map(Thread::getName).collect(toList()).stream()
-        .anyMatch(t -> t.equals(getDriverThreadName()));
-  }
-
   public String getDriverThreadName() {
     return DRIVER_THREAD_NAME;
   }
-
   @Override
   protected Class getLeakTriggererClass() {
     return MySqlLeakTriggerer.class;
+  }
+
+  protected Matcher<Iterable<? super Thread>> hasDriverThreadMatcher(ClassLoader target, boolean negateMatcher) {
+    Matcher<Iterable<? super Thread>> matcher = hasItem(
+            allOf(
+              anyOf(  hasProperty("contextClassLoader", equalTo(target)),
+                      hasProperty("contextClassLoader", equalTo(target.getParent()))),
+              hasProperty("name", is(getDriverThreadName()))
+            )
+    );
+    return negateMatcher ? not(matcher) : matcher;
   }
 }

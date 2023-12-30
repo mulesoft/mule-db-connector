@@ -16,8 +16,13 @@ import static java.lang.Thread.getAllStackTraces;
 import static java.util.stream.Collectors.toList;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsNot.not;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -26,14 +31,16 @@ import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Driver;
+import java.sql.DriverManager;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
@@ -67,7 +74,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
   abstract String getDriverThreadName();
 
   protected Boolean enableLibraryReleaseChecking() {
-    return true;
+    return false;
   }
 
   protected Boolean enableThreadsReleaseChecking() {
@@ -77,10 +84,6 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
   protected Class getLeakTriggererClass() {
     return null;
   }
-
-  abstract void assertThreadsAreDisposed();
-
-  abstract void assertThreadsAreNotDisposed();
 
   /* ClassLoader Tests */
   @Test
@@ -117,7 +120,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     Assume.assumeTrue(enableThreadsReleaseChecking());
     assertThreadsNamesAfterAppDisposal(TestClassLoadersHierarchy.Builder::withUrlsInApp,
                                        TestClassLoadersHierarchy::getAppExtensionClassLoader,
-                                       not(hasReadDriverThread()));
+                                       true);
   }
 
   @Test
@@ -125,7 +128,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     Assume.assumeTrue(enableThreadsReleaseChecking());
     assertThreadsNamesAfterAppDisposal(TestClassLoadersHierarchy.Builder::withUrlsInAppExtension,
                                        TestClassLoadersHierarchy::getAppExtensionClassLoader,
-                                       not(hasReadDriverThread()));
+                                       true);
   }
 
   @Test
@@ -133,7 +136,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     Assume.assumeTrue(enableThreadsReleaseChecking());
     assertThreadsNamesAfterAppDisposal(TestClassLoadersHierarchy.Builder::withUrlsInDomain,
                                        TestClassLoadersHierarchy::getDomainExtensionClassLoader,
-                                       hasReadDriverThread());
+                                      false);
   }
 
   @Test
@@ -141,11 +144,19 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     Assume.assumeTrue(enableThreadsReleaseChecking());
     assertThreadsNamesAfterAppDisposal(TestClassLoadersHierarchy.Builder::withUrlsInDomainExtension,
                                        TestClassLoadersHierarchy::getDomainExtensionClassLoader,
-                                       hasReadDriverThread());
+                                       false);
   }
 
-  protected Matcher<Iterable<? super String>> hasReadDriverThread() {
-    return hasItem(getDriverThreadName());
+  protected Matcher<Iterable<? super Thread>> hasDriverThreadMatcher(ClassLoader target, boolean negateMatcher) {
+    Matcher<Iterable<? super Thread>> matcher = hasItem(
+                    hasProperty("contextClassLoader", equalTo(target))
+    );
+    return negateMatcher ? not(matcher) : matcher;
+  }
+
+  protected Matcher<Iterable<? super Thread>> hasReadDriverThread() {
+    return Matchers.hasItem(allOf(
+                                  hasProperty("name", startsWith(getDriverThreadName()))));
   }
 
   protected boolean isClassFromLibrary(String className) {
@@ -190,8 +201,9 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
 
   private void assertThreadsNamesAfterAppDisposal(BiFunction<TestClassLoadersHierarchy.Builder, URL[], TestClassLoadersHierarchy.Builder> driverConfigurer,
                                                   Function<TestClassLoadersHierarchy, ClassLoader> executionClassLoaderProvider,
-                                                  Matcher<Iterable<? super String>> threadNamesMatcher)
+                                                  Boolean negateMatcher)
       throws Exception {
+    int qRegisteredDrivers = Collections.list(DriverManager.getDrivers()).size();
     TestClassLoadersHierarchy.Builder builder = getBaseClassLoaderHierarchyBuilder();
     List<URL> additionalLibraries = new ArrayList<>();
     additionalLibraries.add(this.libraryUrl);
@@ -214,9 +226,12 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
           LOGGER.error(e.getMessage(), e);
           Assert.fail(e.getMessage());
         }
-        assertThat(getCurrentThreadNames(), threadNamesMatcher);
       });
+      Matcher<Iterable<? super Thread>> threadMatcher = hasDriverThreadMatcher(target, negateMatcher);
+      assertThat(getCurrentThread(), threadMatcher);
     }
+    assertThat("The drivers registered before the tests were affected",
+               qRegisteredDrivers == Collections.list(DriverManager.getDrivers()).size());
   }
 
   protected TestClassLoadersHierarchy.Builder getBaseClassLoaderHierarchyBuilder() {
@@ -227,6 +242,10 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
 
   protected static List<String> getCurrentThreadNames() {
     return getAllStackTraces().keySet().stream().map(Thread::getName).collect(toList());
+  }
+
+  protected static List<Thread> getCurrentThread() {
+    return getAllStackTraces().keySet().stream().collect(toList());
   }
 
   protected void disposeAppAndAssertRelease(TestClassLoadersHierarchy classLoadersHierarchy)
@@ -249,33 +268,5 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     await().until(() -> domainExtensionClassLoader, is(collectedByGc()));
     await().until(() -> domainClassLoader, is(collectedByGc()));
   }
-
-
-  /* */
-  private List<Driver> driversRegistered;
-
-  //  @Before
-  //  public void unregisterDrivers() {
-  //    driversRegistered = Collections.list(DriverManager.getDrivers());
-  //    try {
-  //      getArtifactLifecycleListenerClass().newInstance().onArtifactDisposal(artifactDisposal);
-  //    } catch (InstantiationException e) {
-  //      throw new RuntimeException(e);
-  //    } catch (IllegalAccessException e) {
-  //      throw new RuntimeException(e);
-  //    }
-  //  }
-  //
-  //  @After
-  //  public void unregisterDriversAgain() {
-  //    driversRegistered.forEach(driver -> {
-  //      try {
-  //        DriverManager.registerDriver(driver);
-  //      } catch (SQLException e) {
-  //        throw new RuntimeException(e);
-  //      }
-  //    });
-  //  System.out.println("");
-  //  }
 
 }

@@ -63,7 +63,14 @@ public class CollectableReference<T> extends PhantomReference<T> {
       referencedAsString = reference.strongReferenceAsString;
 
       System.gc();
+      System.out.println("System.gc();");
+      try {
+        Thread.sleep(30000);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
       return reference.isEnqueued();
+
     }
 
     @Override

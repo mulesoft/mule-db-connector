@@ -6,9 +6,11 @@
  */
 package org.mule.extension.db.lifecycle;
 
+import static java.lang.Thread.getAllStackTraces;
+import static org.awaitility.Awaitility.await;
 import static org.slf4j.LoggerFactory.getLogger;
 
-import java.sql.Driver;
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Collections;
 
@@ -20,13 +22,16 @@ public class DB2LeakTriggerer implements Runnable {
 
   @Override
   public void run() {
-    try {
-      Class<?> driverClass = Thread.currentThread().getContextClassLoader().loadClass(DB2ArtifactLifecycleListenerTestCase.DRIVER_NAME);
-      Driver driver = (Driver) driverClass.newInstance();
-      DriverManager.registerDriver(driver);
-      LOGGER.warn("Drivers found: {}", Collections.list(DriverManager.getDrivers()).size());
-    } catch (Exception e) {
-      LOGGER.error(e.getMessage(), e);
-    }
+      // To avoid race conditions, I wait for the driver to be available.
+      await().until(() -> Collections.list(DriverManager.getDrivers()).stream()
+          .anyMatch(driver -> driver.getClass().getName().contains("db2")));
+      try (Connection con = DriverManager.getConnection("jdbc:db2://localhost:50000/dummy:user=usuario;password=password;")){
+      } catch (Exception e) {
+        LOGGER.debug("The exception is the expected behavior. The Timer thread should have been launched. ");
+        await().until(() -> getAllStackTraces().keySet().stream()
+          .filter(thread -> thread.getName().startsWith("Timer-"))
+          .anyMatch(thread -> thread.getContextClassLoader() == Thread.currentThread().getContextClassLoader().getParent()
+              || thread.getContextClassLoader() == Thread.currentThread().getContextClassLoader()));
+      }
   }
 }

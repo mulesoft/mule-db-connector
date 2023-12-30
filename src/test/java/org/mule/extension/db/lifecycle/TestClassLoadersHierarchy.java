@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLStreamHandlerFactory;
 import java.util.function.Predicate;
 
 /**
@@ -128,10 +129,10 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
         domainExtensionUrls = appendUrlTo(domainExtensionUrls, listenerClassUrl);
       }
       ClassLoader domainClassLoader =
-          new URLClassLoader(domainUrls, new FilteringClassLoader(getSystemClassLoader(), rootClassNameFilter));
-      ClassLoader domainExtensionClassLoader = new URLClassLoader(domainExtensionUrls, domainClassLoader);
-      ClassLoader appClassLoader = new URLClassLoader(appUrls, domainClassLoader);
-      ClassLoader appExtensionClassLoader = new URLClassLoader(appExtensionUrls, appClassLoader);
+          new DomainClassloader(domainUrls, new FilteringClassLoader(getSystemClassLoader(), rootClassNameFilter));
+      ClassLoader domainExtensionClassLoader = new DomainExtensionClassLoader(domainExtensionUrls, domainClassLoader);
+      ClassLoader appClassLoader = new AppClassLoader(appUrls, domainClassLoader);
+      ClassLoader appExtensionClassLoader = new AppExtensionClassLoader(appExtensionUrls, appClassLoader);
       return new TestClassLoadersHierarchy(domainClassLoader, domainExtensionClassLoader, appClassLoader, appExtensionClassLoader,
                                            artifactLifecycleListenerClass);
     }
@@ -289,3 +290,33 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
     return artifactLifecycleListenerClass.getConstructor().newInstance();
   }
 }
+
+class DomainClassloader extends URLClassLoader{
+
+  public DomainClassloader(URL[] urls, ClassLoader parent) {
+    super(urls, parent);
+  }
+}
+
+class DomainExtensionClassLoader extends URLClassLoader{
+
+  public DomainExtensionClassLoader(URL[] urls, ClassLoader parent) {
+    super(urls, parent);
+  }
+}
+
+class AppClassLoader extends URLClassLoader{
+
+  public AppClassLoader(URL[] urls, ClassLoader parent) {
+    super(urls, parent);
+  }
+}
+
+class AppExtensionClassLoader extends URLClassLoader{
+
+  public AppExtensionClassLoader(URL[] urls, ClassLoader parent) {
+    super(urls, parent);
+  }
+}
+
+

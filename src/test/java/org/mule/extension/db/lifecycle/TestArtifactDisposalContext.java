@@ -9,8 +9,6 @@ package org.mule.extension.db.lifecycle;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactDisposalContext;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -58,7 +56,7 @@ public class TestArtifactDisposalContext implements ArtifactDisposalContext {
 
   private static Stream<Thread> getThreadsByOwner(ClassLoader targetClassLoader) {
     return Thread.getAllStackTraces().keySet().stream()
-            .filter(thread -> thread.getClass().getClassLoader() == targetClassLoader);
+        .filter(thread -> thread.getClass().getClassLoader() == targetClassLoader);
   }
 
   @Override

@@ -7,6 +7,11 @@
 package org.mule.extension.db.lifecycle;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNot.not;
 
 import org.mule.extension.db.internal.lifecycle.DerbyArtifactLifecycleListener;
@@ -15,6 +20,7 @@ import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.hamcrest.Matcher;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -59,14 +65,9 @@ public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLife
     return DerbyLeakTriggerer.class;
   }
 
-  @Override
-  void assertThreadsAreNotDisposed() {
-    assertThat(getCurrentThreadNames(), hasReadDriverThread());
+  protected Matcher<Iterable<? super Thread>> hasDriverThreadMatcher(ClassLoader target, boolean negateMatcher) {
+    Matcher<Iterable<? super Thread>> matcher =
+            hasItem(hasProperty("name", is(getDriverThreadName())));
+    return negateMatcher ? not(matcher) : matcher;
   }
-
-  @Override
-  void assertThreadsAreDisposed() {
-    assertThat(getCurrentThreadNames(), not(hasReadDriverThread()));
-  }
-
 }

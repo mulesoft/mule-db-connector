@@ -6,8 +6,7 @@
  */
 package org.mule.extension.db.lifecycle;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
@@ -28,7 +27,6 @@ import org.junit.runners.Parameterized;
 public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLifecycleListenerTestCase {
 
   public static final String DRIVER_PACKAGE = "org.apache.derby";
-  public static final String DRIVER_NAME = "org.apache.derby.jdbc.EmbeddedDriver";
   public static final String DRIVER_THREAD_NAME = "derby.rawStoreDaemon";
 
   public DerbyArtifactLifecycleListenerTestCase(String groupId, String artifactId, String version) {
@@ -51,11 +49,6 @@ public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLife
   }
 
   @Override
-  public String getDriverName() {
-    return DRIVER_NAME;
-  }
-
-  @Override
   public String getDriverThreadName() {
     return DRIVER_THREAD_NAME;
   }
@@ -67,7 +60,10 @@ public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLife
 
   protected Matcher<Iterable<? super Thread>> hasDriverThreadMatcher(ClassLoader target, boolean negateMatcher) {
     Matcher<Iterable<? super Thread>> matcher =
-            hasItem(hasProperty("name", is(getDriverThreadName())));
+        hasItem(
+                anyOf(
+                      hasProperty("name", is(getDriverThreadName())),
+                      hasProperty("contextClassLoader", equalTo(target))));
     return negateMatcher ? not(matcher) : matcher;
   }
 }

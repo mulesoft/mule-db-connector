@@ -53,7 +53,9 @@ public class MySqlArtifactLifecycleListener implements ArtifactLifecycleListener
             deregisterDriver(driver);
             shutdownMySqlAbandonedConnectionCleanupThread(disposalContext);
           } catch (Exception e) {
-            LOGGER.warn(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
+            if (LOGGER.isDebugEnabled()) {
+              LOGGER.debug(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
+            }
           }
         });
   }
@@ -85,7 +87,7 @@ public class MySqlArtifactLifecycleListener implements ArtifactLifecycleListener
       cleanMySqlCleanupThreadsThreadFactory(cleanupThreadsClass);
     } catch (ClassNotFoundException | SecurityException | IllegalArgumentException
         | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-      LOGGER.warn("Unable to shutdown MySql's AbandonedConnectionCleanupThread", e);
+      LOGGER.debug("Unable to shutdown MySql's AbandonedConnectionCleanupThread", e);
     }
   }
 
@@ -128,7 +130,7 @@ public class MySqlArtifactLifecycleListener implements ArtifactLifecycleListener
         realExecutorService.setThreadFactory(Executors.defaultThreadFactory());
       }
     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
-      LOGGER.warn("Error cleaning threadFactory from AbandonedConnectionCleanupThread executor service", e);
+      LOGGER.debug("Error cleaning threadFactory from AbandonedConnectionCleanupThread executor service", e);
     }
   }
 

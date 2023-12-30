@@ -33,18 +33,6 @@ public class DerbyLeakTriggerer implements Runnable {
       fail("Connection could not be established");
     }
     await().until(() -> getAllStackTraces().keySet().stream()
-            .anyMatch(thread -> thread.getName().startsWith("derby.rawStoreDaemon")));
-    /*
-      getAllStackTraces().keySet().stream().filter(thread -> thread.getContextClassLoader() == Thread.currentThread().getContextClassLoader()).map(thread -> thread.getClass().getName()).collect(Collectors.toList())
-
-      getAllStackTraces().keySet().stream().filter(thread -> thread.getClass().getClassLoader() == Thread.currentThread().getContextClassLoader()).map(thread -> thread.getClass().getName()).collect(Collectors.toList())
-
-      getAllStackTraces().keySet().stream().filter(thread -> thread.getContextClassLoader() == Thread.currentThread().getContextClassLoader())
-.collect(Collectors.toList())
-
-      0 = "java.util.TimerThread"
-      1 = "java.lang.Thread"
-* */
-
+        .anyMatch(thread -> thread.getName().startsWith("derby.rawStoreDaemon")));
   }
 }

@@ -6,7 +6,11 @@
  */
 package org.mule.extension.db.lifecycle;
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNot.not;
 
 import org.mule.extension.db.internal.lifecycle.OracleArtifactLifecycleListener;
@@ -15,6 +19,7 @@ import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.hamcrest.Matcher;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -22,7 +27,6 @@ import org.junit.runners.Parameterized;
 public class OracleArtifactLifecycleListenerTestCase extends AbstractArtifactLifecycleListenerTestCase {
 
   public static final String DRIVER_PACKAGE = "oracle.jdbc";
-  public static final String DRIVER_NAME = "oracle.jdbc.OracleDriver";
   public static final String DRIVER_TIMER_THREAD = "oracle.jdbc.diagnostics.Diagnostic.CLOCK";
 
   public OracleArtifactLifecycleListenerTestCase(String groupId, String artifactId, String version) {
@@ -46,11 +50,6 @@ public class OracleArtifactLifecycleListenerTestCase extends AbstractArtifactLif
   }
 
   @Override
-  public String getDriverName() {
-    return DRIVER_NAME;
-  }
-
-  @Override
   public String getDriverThreadName() {
     return DRIVER_TIMER_THREAD;
   }
@@ -58,5 +57,14 @@ public class OracleArtifactLifecycleListenerTestCase extends AbstractArtifactLif
   @Override
   protected Class getLeakTriggererClass() {
     return OracleLeakTriggerer.class;
+  }
+
+  protected Matcher<Iterable<? super Thread>> hasDriverThreadMatcher(ClassLoader target, boolean negateMatcher) {
+    Matcher<Iterable<? super Thread>> matcher =
+        hasItem(
+                anyOf(
+                      hasProperty("name", is(getDriverThreadName())),
+                      hasProperty("contextClassLoader", equalTo(target))));
+    return negateMatcher ? not(matcher) : matcher;
   }
 }

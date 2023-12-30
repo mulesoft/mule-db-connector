@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLStreamHandlerFactory;
 import java.util.function.Predicate;
 
 /**
@@ -291,28 +290,32 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
   }
 }
 
-class DomainClassloader extends URLClassLoader{
+
+class DomainClassloader extends URLClassLoader {
 
   public DomainClassloader(URL[] urls, ClassLoader parent) {
     super(urls, parent);
   }
 }
 
-class DomainExtensionClassLoader extends URLClassLoader{
+
+class DomainExtensionClassLoader extends URLClassLoader {
 
   public DomainExtensionClassLoader(URL[] urls, ClassLoader parent) {
     super(urls, parent);
   }
 }
 
-class AppClassLoader extends URLClassLoader{
+
+class AppClassLoader extends URLClassLoader {
 
   public AppClassLoader(URL[] urls, ClassLoader parent) {
     super(urls, parent);
   }
 }
 
-class AppExtensionClassLoader extends URLClassLoader{
+
+class AppExtensionClassLoader extends URLClassLoader {
 
   public AppExtensionClassLoader(URL[] urls, ClassLoader parent) {
     super(urls, parent);

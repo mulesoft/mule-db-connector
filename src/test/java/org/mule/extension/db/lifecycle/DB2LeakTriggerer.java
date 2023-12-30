@@ -22,16 +22,15 @@ public class DB2LeakTriggerer implements Runnable {
 
   @Override
   public void run() {
-      // To avoid race conditions, I wait for the driver to be available.
-      await().until(() -> Collections.list(DriverManager.getDrivers()).stream()
-          .anyMatch(driver -> driver.getClass().getName().contains("db2")));
-      try (Connection con = DriverManager.getConnection("jdbc:db2://localhost:50000/dummy:user=usuario;password=password;")){
-      } catch (Exception e) {
-        LOGGER.debug("The exception is the expected behavior. The Timer thread should have been launched. ");
-        await().until(() -> getAllStackTraces().keySet().stream()
+    // To avoid race conditions, I wait for the driver to be available.
+    await().until(() -> Collections.list(DriverManager.getDrivers()).stream()
+        .anyMatch(driver -> driver.getClass().getName().contains("db2")));
+    try (Connection con = DriverManager.getConnection("jdbc:db2://localhost:50000/dummy:user=usuario;password=password;")) {
+    } catch (Exception e) {
+      LOGGER.debug("The exception is the expected behavior. The Timer thread should have been launched. ");
+      await().until(() -> getAllStackTraces().keySet().stream()
           .filter(thread -> thread.getName().startsWith("Timer-"))
-          .anyMatch(thread -> thread.getContextClassLoader() == Thread.currentThread().getContextClassLoader().getParent()
-              || thread.getContextClassLoader() == Thread.currentThread().getContextClassLoader()));
-      }
+          .anyMatch(thread -> thread.getContextClassLoader() == Thread.currentThread().getContextClassLoader()));
+    }
   }
 }

@@ -51,11 +51,10 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
             }
             deregisterDriver(driver);
             checkingVersionsWithLeaksKnownSolvedInNewerVersions(driver);
-
             cleanClassloader(disposalContext.getArtifactClassLoader());
             cleanClassloader(disposalContext.getExtensionClassLoader());
           } catch (Exception e) {
-            LOGGER.warn(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
+            LOGGER.debug(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
           }
         });
   }
@@ -97,7 +96,7 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
         LOGGER.debug(format("No Oracle's '%s' MBean found.", DIAGNOSABILITY_BEAN_NAME));
       }
     } catch (Throwable e) {
-      LOGGER.warn("Unable to unregister Oracle's mbeans", e);
+      LOGGER.debug("Unable to unregister Oracle's mbeans", e);
     }
   }
 
@@ -111,7 +110,7 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
       clockValue.cancel();
       clockField.setAccessible(accessibility);
     } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
-      e.printStackTrace();
+      LOGGER.debug("Unable to cancel oracle.jdbc.diagnostics.Diagnostic.CLOCK Timer Thread", e);
     }
   }
 }

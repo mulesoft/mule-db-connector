@@ -19,7 +19,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
@@ -68,8 +67,6 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
   abstract Class<? extends ArtifactLifecycleListener> getArtifactLifecycleListenerClass();
 
   abstract String getPackagePrefix();
-
-  abstract String getDriverName();
 
   abstract String getDriverThreadName();
 
@@ -136,7 +133,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     Assume.assumeTrue(enableThreadsReleaseChecking());
     assertThreadsNamesAfterAppDisposal(TestClassLoadersHierarchy.Builder::withUrlsInDomain,
                                        TestClassLoadersHierarchy::getDomainExtensionClassLoader,
-                                      false);
+                                       false);
   }
 
   @Test
@@ -149,8 +146,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
 
   protected Matcher<Iterable<? super Thread>> hasDriverThreadMatcher(ClassLoader target, boolean negateMatcher) {
     Matcher<Iterable<? super Thread>> matcher = hasItem(
-                    hasProperty("contextClassLoader", equalTo(target))
-    );
+                                                        hasProperty("contextClassLoader", equalTo(target)));
     return negateMatcher ? not(matcher) : matcher;
   }
 

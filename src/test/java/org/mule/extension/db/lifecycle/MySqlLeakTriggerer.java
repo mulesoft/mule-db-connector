@@ -28,14 +28,13 @@ public class MySqlLeakTriggerer implements Runnable {
         .anyMatch(driver -> driver.getClass().getName().contains("mysql")));
     try (Connection con = DriverManager.getConnection("jdbc:mysql://hostname:3306/dummy?user=dummy&password=dummy")) {
     } catch (SQLException e) {
-      LOGGER.error("Connection could not be established: {}", e.getMessage(), e);
-      await().until(() -> getAllStackTraces().keySet().stream()
-              .filter(thread -> thread.getName().startsWith("mysql-cj-abandoned-connection-cleanup"))
-              .anyMatch(thread ->
-                      thread.getContextClassLoader() == Thread.currentThread().getContextClassLoader().getParent()
-                      || thread.getContextClassLoader() == Thread.currentThread().getContextClassLoader()
-              )
-      );
+      LOGGER.debug("Expected error: {}", e.getMessage());
     }
+    ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+    await().until(() -> getAllStackTraces().keySet().stream()
+        .filter(thread -> thread.getName().startsWith("mysql-cj-abandoned-connection-cleanup"))
+        .anyMatch(thread -> thread.getContextClassLoader() == currentClassLoader.getParent()
+            || thread.getContextClassLoader() == currentClassLoader));
+
   }
 }

@@ -6,20 +6,28 @@
  */
 package org.mule.extension.db.lifecycle;
 
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.equalTo;
+import static java.lang.Thread.getAllStackTraces;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isIn;
 import static org.hamcrest.core.IsNot.not;
 
 import org.mule.extension.db.internal.lifecycle.OracleArtifactLifecycleListener;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.hamcrest.Matcher;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -59,12 +67,27 @@ public class OracleArtifactLifecycleListenerTestCase extends AbstractArtifactLif
     return OracleLeakTriggerer.class;
   }
 
+  private List<Thread> previousThreads = new ArrayList<>();
+
+  @Before
+  public void getPreviousThreads() throws Exception {
+    previousThreads = getAllStackTraces().keySet().stream()
+        .filter(thread -> thread.getName().startsWith(getDriverThreadName())).collect(Collectors.toList());
+  }
+
   protected Matcher<Iterable<? super Thread>> hasDriverThreadMatcher(ClassLoader target, boolean negateMatcher) {
     Matcher<Iterable<? super Thread>> matcher =
         hasItem(
-                anyOf(
+                allOf(
                       hasProperty("name", is(getDriverThreadName())),
-                      hasProperty("contextClassLoader", equalTo(target))));
+                      not(isIn(previousThreads))));
     return negateMatcher ? not(matcher) : matcher;
+  }
+
+  @After
+  public void checkPreviousThreads() throws Exception {
+    assertThat(getAllStackTraces().keySet().stream()
+        .filter(thread -> thread.getName().startsWith(getDriverThreadName())).collect(Collectors.toList()),
+               containsInAnyOrder(previousThreads.toArray()));
   }
 }

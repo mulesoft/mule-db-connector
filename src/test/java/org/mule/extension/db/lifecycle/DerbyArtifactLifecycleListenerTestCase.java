@@ -10,9 +10,7 @@ import static java.lang.Thread.getAllStackTraces;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
@@ -23,22 +21,15 @@ import org.mule.extension.db.internal.lifecycle.DerbyArtifactLifecycleListener;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.hamcrest.Matcher;
 import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -59,15 +50,15 @@ public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLife
   public void addOtherDatabaseThreadInTheContext() throws Exception {
     DriverManager.getConnection("jdbc:derby:previousDB;create=true;user=me;password=mine");
     await().until(() -> getAllStackTraces().keySet().stream()
-        .anyMatch(thread -> thread.getName().startsWith("derby.rawStoreDaemon")));
+        .anyMatch(thread -> thread.getName().startsWith(getDriverThreadName())));
     previousThreads = getAllStackTraces().keySet().stream()
-        .filter(thread -> thread.getName().startsWith("derby.rawStoreDaemon")).collect(Collectors.toList());
+        .filter(thread -> thread.getName().startsWith(getDriverThreadName())).collect(Collectors.toList());
   }
 
   @After
   public void checkTheOtherDatabaseThreadInTheContext() throws Exception {
     assertThat(getAllStackTraces().keySet().stream()
-        .filter(thread -> thread.getName().startsWith("derby.rawStoreDaemon")).collect(Collectors.toList()),
+        .filter(thread -> thread.getName().startsWith(getDriverThreadName())).collect(Collectors.toList()),
                containsInAnyOrder(previousThreads.toArray()));
   }
 

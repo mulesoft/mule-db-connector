@@ -32,3 +32,4 @@ hostkey.ser
 dependency-reduced-pom.xml
 myDB/
 previousDB/
+J17_validation.sh

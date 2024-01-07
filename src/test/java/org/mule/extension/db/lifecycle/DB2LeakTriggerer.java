@@ -11,10 +11,8 @@ import static org.awaitility.Awaitility.await;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.sql.Connection;
-import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.Collections;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 

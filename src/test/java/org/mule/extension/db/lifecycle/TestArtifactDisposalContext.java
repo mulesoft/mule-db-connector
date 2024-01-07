@@ -55,8 +55,9 @@ public class TestArtifactDisposalContext implements ArtifactDisposalContext {
   }
 
   private static Stream<Thread> getThreadsByOwner(ClassLoader targetClassLoader) {
+    // LOOK
     return Thread.getAllStackTraces().keySet().stream()
-        .filter(thread -> thread.getClass().getClassLoader() == targetClassLoader);
+        .filter(thread -> thread.getContextClassLoader() == targetClassLoader);
   }
 
   @Override

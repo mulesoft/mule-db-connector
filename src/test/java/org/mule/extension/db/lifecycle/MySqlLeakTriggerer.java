@@ -23,9 +23,13 @@ public class MySqlLeakTriggerer implements Runnable {
 
   @Override
   public void run() {
+    ClassLoader threadClassloader = Thread.currentThread().getContextClassLoader();
+    ClassLoader parentClassloader = threadClassloader.getParent();
     // To avoid race conditions, I wait for the driver to be available.
     await().until(() -> Collections.list(DriverManager.getDrivers()).stream()
-        .anyMatch(driver -> driver.getClass().getName().contains("mysql")));
+        .filter(d -> d.getClass().getName().contains("mysql"))
+        .anyMatch(driver -> (driver.getClass().getClassLoader() == threadClassloader
+            || driver.getClass().getClassLoader() == parentClassloader)));
     try (Connection con = DriverManager.getConnection("jdbc:mysql://hostname:3306/dummy?user=dummy&password=dummy")) {
     } catch (SQLException e) {
       LOGGER.debug("Expected error: {}", e.getMessage());
@@ -33,8 +37,8 @@ public class MySqlLeakTriggerer implements Runnable {
     ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
     await().until(() -> getAllStackTraces().keySet().stream()
         .filter(thread -> thread.getName().startsWith("mysql-cj-abandoned-connection-cleanup"))
-        .anyMatch(thread -> thread.getContextClassLoader() == currentClassLoader.getParent()
-            || thread.getContextClassLoader() == currentClassLoader));
+        .anyMatch(thread -> thread.getContextClassLoader() == threadClassloader
+            || thread.getContextClassLoader() == parentClassloader));
 
   }
 }

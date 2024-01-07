@@ -19,6 +19,7 @@ import java.lang.reflect.Field;
 import java.sql.Driver;
 import java.util.Collections;
 import java.util.Timer;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 
@@ -33,8 +34,8 @@ public class DB2ArtifactLifecycleListener implements ArtifactLifecycleListener {
 
     /*(W-12460123) When we have a DB2 driver in the application: Due to in this class getDrivers() method does not return any
      * values when we had a DB2 driver, we found the TimerThread that it triggers for canceling it */
-    cancelTimerThreads(artifactDisposalContext.getArtifactClassLoader());
-    cancelTimerThreads(artifactDisposalContext.getExtensionClassLoader());
+    cancelTimerThreads(artifactDisposalContext.getExtensionOwnedThreads());
+    cancelTimerThreads(artifactDisposalContext.getExtensionOwnedThreads());
   }
 
   private void deregisterDB2Drivers(ArtifactDisposalContext disposalContext) {
@@ -63,22 +64,23 @@ public class DB2ArtifactLifecycleListener implements ArtifactLifecycleListener {
     }
   }
 
-  private void cancelTimerThreads(ClassLoader classLoader) {
-    LOGGER.debug("Timer threads founded: {}",
-                 getAllStackTraces().keySet().stream().map(Thread::getName).anyMatch(s -> s.startsWith("Timer-")));
-    try {
-      Class<?> diagnosticClass = Class.forName("com.ibm.db2.jcc.am.lg", true, classLoader);
-      if (classLoader == diagnosticClass.getClassLoader()) {
+  private void cancelTimerThreads(Stream<Thread> threadStream) {
+
+    threadStream.filter(thread -> thread.getName().startsWith("Timer-")).forEach(thread -> {
+      LOGGER.debug("Timer thread founded: {} - {}", thread.getName(), thread.getContextClassLoader());
+      try {
+        Class<?> diagnosticClass = Class.forName("com.ibm.db2.jcc.am.lg", true, thread.getContextClassLoader());
+
         Field clockField = diagnosticClass.getDeclaredField("a");
         Boolean accessibility = clockField.isAccessible();
         clockField.setAccessible(true);
         Timer clockValue = (Timer) clockField.get(null);
         clockValue.cancel();
-        LOGGER.debug("Cancelling DB2's Timer Threads on classloader: {}", classLoader.toString());
+        LOGGER.debug("Cancelling DB2's Timer Threads on classloader: {}", thread.getContextClassLoader().toString());
         clockField.setAccessible(accessibility);
+      } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
+        LOGGER.debug("Error attempting to cancel DB2's Timer Threads", e);
       }
-    } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
-      LOGGER.debug("Error attempting to cancel DB2's Timer Threads", e);
-    }
+    });
   }
 }

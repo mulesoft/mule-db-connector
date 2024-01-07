@@ -61,17 +61,11 @@ public class DerbyArtifactLifecycleListener implements ArtifactLifecycleListener
     return Arrays.stream(DRIVER_NAMES).anyMatch(name -> name.equals(driver.getClass().getName()));
   }
 
-  private void leakPreventionForDerbyEmbeddedDriver(Object driverObject) {
+  private void leakPreventionForDerbyEmbeddedDriver(Driver driverObject) {
     try {
-      if (hasDeclaredMethod(driverObject.getClass(), "connect", String.class, java.util.Properties.class)) {
-        Method m = driverObject.getClass().getDeclaredMethod("connect", String.class, java.util.Properties.class);
-        m.invoke(driverObject, "jdbc:derby:;shutdown=true", null);
-      }
-    } catch (NoSuchMethodException | IllegalAccessException e) {
-      LOGGER.debug("Unable to shutdown Derby's embedded driver", e);
-    } catch (InvocationTargetException e) {
-      if (e.getCause() instanceof SQLException
-          && ((SQLException) e.getCause()).getSQLState().equals("XJ015")) {
+      driverObject.connect("jdbc:derby:;shutdown=true", null);
+    } catch (SQLException e) {
+      if (e.getSQLState().equals("XJ015")) {
         // A successful shutdown always results in an SQLException to indicate that Derby has shut down and that
         // there is no other exception.
         LOGGER.debug("(XJ015): Derby system shutdown.");
@@ -79,6 +73,23 @@ public class DerbyArtifactLifecycleListener implements ArtifactLifecycleListener
         LOGGER.debug("Unable to shutdown Derby's embedded driver on the DerbyArtifactLifecycleListener", e);
       }
     }
+    //    try {
+    //      if (hasDeclaredMethod(driverObject.getClass(), "connect", String.class, java.util.Properties.class)) {
+    //        Method m = driverObject.getClass().getDeclaredMethod("connect", String.class, java.util.Properties.class);
+    //        m.invoke(driverObject, "jdbc:derby:;shutdown=true", null);
+    //      }
+    //    } catch (NoSuchMethodException | IllegalAccessException e) {
+    //      LOGGER.debug("Unable to shutdown Derby's embedded driver", e);
+    //    } catch (InvocationTargetException e) {
+    //      if (e.getCause() instanceof SQLException
+    //          && ((SQLException) e.getCause()).getSQLState().equals("XJ015")) {
+    //        // A successful shutdown always results in an SQLException to indicate that Derby has shut down and that
+    //        // there is no other exception.
+    //        LOGGER.debug("(XJ015): Derby system shutdown.");
+    //      } else {
+    //        LOGGER.debug("Unable to shutdown Derby's embedded driver on the DerbyArtifactLifecycleListener", e);
+    //      }
+    //    }
   }
 
   private boolean hasDeclaredMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {

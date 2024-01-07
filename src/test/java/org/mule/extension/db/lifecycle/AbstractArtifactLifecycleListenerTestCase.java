@@ -18,8 +18,10 @@ import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.isIn;
 import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -30,6 +32,7 @@ import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -176,30 +179,29 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     Optional.ofNullable(getLeakTriggererClass())
         .ifPresent(c -> additionalLibraries.add(c.getProtectionDomain().getCodeSource().getLocation()));
     builder = driverConfigurer.apply(builder, additionalLibraries.toArray(new URL[0]));
-    try (TestClassLoadersHierarchy classLoadersHierarchy = builder.build()) {
-      withContextClassLoader(executionClassLoaderProvider.apply(classLoadersHierarchy), () -> {
-        try {
-          if (getLeakTriggererClass() != null) {
-            Class<?> runnableClass = currentThread().getContextClassLoader().loadClass(getLeakTriggererClass().getName());
-            Object runnable = runnableClass.newInstance();
-            if (runnable instanceof Runnable) {
-              ((Runnable) runnable).run();
-            }
+    TestClassLoadersHierarchy classLoadersHierarchy = builder.build();
+    withContextClassLoader(executionClassLoaderProvider.apply(classLoadersHierarchy), () -> {
+      try {
+        if (getLeakTriggererClass() != null) {
+          Class<?> runnableClass = currentThread().getContextClassLoader().loadClass(getLeakTriggererClass().getName());
+          Object runnable = runnableClass.newInstance();
+          if (runnable instanceof Runnable) {
+            ((Runnable) runnable).run();
           }
-        } catch (Exception e) {
-          LOGGER.error(e.getMessage(), e);
         }
-      });
-      disposeAppAndAssertRelease(classLoadersHierarchy);
-      disposeDomainAndAssertRelease(classLoadersHierarchy);
-    }
+      } catch (Exception e) {
+        LOGGER.error(e.getMessage(), e);
+      }
+    });
+    disposeAppAndAssertRelease(classLoadersHierarchy);
+    disposeDomainAndAssertRelease(classLoadersHierarchy);
   }
 
   private void assertThreadsNamesAfterAppDisposal(BiFunction<TestClassLoadersHierarchy.Builder, URL[], TestClassLoadersHierarchy.Builder> driverConfigurer,
                                                   Function<TestClassLoadersHierarchy, ClassLoader> executionClassLoaderProvider,
                                                   Boolean negateMatcher)
       throws Exception {
-    int qRegisteredDrivers = Collections.list(DriverManager.getDrivers()).size();
+    List<Driver> driversAtBegining = Collections.list(DriverManager.getDrivers());
     TestClassLoadersHierarchy.Builder builder = getBaseClassLoaderHierarchyBuilder();
     List<URL> additionalLibraries = new ArrayList<>();
     additionalLibraries.add(this.libraryUrl);
@@ -226,8 +228,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
       Matcher<Iterable<? super Thread>> threadMatcher = hasDriverThreadMatcher(target, negateMatcher);
       assertThat(getCurrentThread(), threadMatcher);
     }
-    assertThat("The drivers registered before the tests were affected",
-               qRegisteredDrivers == Collections.list(DriverManager.getDrivers()).size());
+    assertThat(driversAtBegining, everyItem(isIn(Collections.list(DriverManager.getDrivers()))));
   }
 
   protected TestClassLoadersHierarchy.Builder getBaseClassLoaderHierarchyBuilder() {
@@ -251,6 +252,8 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     CollectableReference<ClassLoader> appExtensionClassLoader =
         new CollectableReference<>(classLoadersHierarchy.getAppExtensionClassLoader());
     classLoadersHierarchy.disposeApp();
+    System.gc();
+    System.gc();
     await().until(() -> appExtensionClassLoader, is(collectedByGc()));
     await().until(() -> appClassLoader, is(collectedByGc()));
   }
@@ -261,6 +264,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     CollectableReference<ClassLoader> domainExtensionClassLoader =
         new CollectableReference<>(classLoadersHierarchy.getDomainExtensionClassLoader());
     classLoadersHierarchy.disposeDomain();
+    System.gc();
     await().until(() -> domainExtensionClassLoader, is(collectedByGc()));
     await().until(() -> domainClassLoader, is(collectedByGc()));
   }

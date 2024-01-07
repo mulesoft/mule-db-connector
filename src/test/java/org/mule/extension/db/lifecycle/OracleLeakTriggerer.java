@@ -22,12 +22,17 @@ public class OracleLeakTriggerer implements Runnable {
 
   @Override
   public void run() {
+    ClassLoader threadClassloader = Thread.currentThread().getContextClassLoader();
+    ClassLoader parentClassloader = threadClassloader.getParent();
     // To avoid race conditions, I wait for the driver to be available.
     await().until(() -> Collections.list(DriverManager.getDrivers()).stream()
-        .anyMatch(driver -> driver.getClass().getName().contains("oracle")));
+        .filter(d -> d.getClass().getName().contains("oracle"))
+        .anyMatch(driver -> (driver.getClass().getClassLoader() == threadClassloader
+            || driver.getClass().getClassLoader() == parentClassloader)));
     Diagnostic.get("oracle.jdbc", 1000);
     await().until(() -> getAllStackTraces().keySet().stream()
         .filter(thread -> thread.getName().startsWith("oracle.jdbc.diagnostics.Diagnostic.CLOCK"))
-        .anyMatch(thread -> thread.getContextClassLoader() == Thread.currentThread().getContextClassLoader()));
+        .anyMatch(thread -> thread.getContextClassLoader() == threadClassloader
+            || thread.getContextClassLoader() == parentClassloader));
   }
 }

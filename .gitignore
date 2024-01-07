@@ -31,3 +31,4 @@ hostkey.ser
 *.factorypath
 dependency-reduced-pom.xml
 myDB/
+previousDB/

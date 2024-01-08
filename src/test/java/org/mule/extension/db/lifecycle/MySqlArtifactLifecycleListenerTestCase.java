@@ -67,11 +67,11 @@ public class MySqlArtifactLifecycleListenerTestCase extends AbstractArtifactLife
   @Before
   public void getPreviousThreads() throws Exception {
     await().until(() -> Collections.list(DriverManager.getDrivers()).stream()
-                    .anyMatch(d -> d.getClass().getName().contains("mysql")));
+        .anyMatch(d -> d.getClass().getName().contains("mysql")));
     await().until(() -> getAllStackTraces().keySet().stream()
-                    .anyMatch(thread -> thread.getName().startsWith("mysql-cj-abandoned-connection-cleanup")));
+        .anyMatch(thread -> thread.getName().startsWith("mysql-cj-abandoned-connection-cleanup")));
     previousThreads = getAllStackTraces().keySet().stream()
-            .filter(thread -> thread.getName().startsWith(getDriverThreadName())).collect(Collectors.toList());
+        .filter(thread -> thread.getName().startsWith(getDriverThreadName())).collect(Collectors.toList());
   }
 
   protected Matcher<Iterable<? super Thread>> hasDriverThreadMatcher(ClassLoader target, boolean negateMatcher) {

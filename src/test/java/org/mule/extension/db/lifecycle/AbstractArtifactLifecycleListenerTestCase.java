@@ -98,8 +98,8 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
   public void checkPreviousThreads() throws Exception {
     if (!previousThreads.isEmpty()) {
       assertThat(getAllStackTraces().keySet().stream()
-                      .filter(thread -> thread.getName().startsWith(getDriverThreadName())).collect(Collectors.toList()),
-              containsInAnyOrder(previousThreads.toArray()));
+          .filter(thread -> thread.getName().startsWith(getDriverThreadName())).collect(Collectors.toList()),
+                 containsInAnyOrder(previousThreads.toArray()));
     }
   }
 

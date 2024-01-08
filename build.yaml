@@ -1,10 +1,10 @@
 projectType: extension
 additionalTestConfigs:
   postgresql:
-    mavenAdditionalArgs: "-Dpostgresql"
+    mavenAdditionalArgs: "-Dpostgresql -DminVersion=4.3.0"
   mysql:
-    mavenAdditionalArgs: "-Dmysql"
+    mavenAdditionalArgs: "-Dmysql -DminVersion=4.3.0"
   mssql:
-    mavenAdditionalArgs: "-Dmssql"
+    mavenAdditionalArgs: "-Dmssql -DminVersion=4.3.0"
   oracle:
-    mavenAdditionalArgs: "-Doracle"
+    mavenAdditionalArgs: "-Doracle -DminVersion=4.3.0"

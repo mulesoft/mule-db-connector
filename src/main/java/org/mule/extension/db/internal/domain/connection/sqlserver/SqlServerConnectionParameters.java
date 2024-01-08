@@ -11,6 +11,7 @@ import static org.mule.runtime.extension.api.annotation.param.display.Placement.
 
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.extension.api.annotation.param.NullSafe;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
@@ -138,54 +139,67 @@ public class SqlServerConnectionParameters extends BaseDbConnectionParameters im
     return user;
   }
 
+  @ExcludeFromGeneratedCoverage
   public static String getSubProtocol() {
     return SUB_PROTOCOL;
   }
 
+  @ExcludeFromGeneratedCoverage
   public String getHost() {
     return host;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setHost(String host) {
     this.host = host;
   }
 
+  @ExcludeFromGeneratedCoverage
   public String getInstanceName() {
     return instanceName;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setInstanceName(String instanceName) {
     this.instanceName = instanceName;
   }
 
+  @ExcludeFromGeneratedCoverage
   public Integer getPort() {
     return port;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setPort(Integer port) {
     this.port = port;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setUser(String user) {
     this.user = user;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setPassword(String password) {
     this.password = password;
   }
 
+  @ExcludeFromGeneratedCoverage
   public String getDatabaseName() {
     return databaseName;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setDatabaseName(String databaseName) {
     this.databaseName = databaseName;
   }
 
+  @ExcludeFromGeneratedCoverage
   public Map<String, String> getConnectionProperties() {
     return connectionProperties;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setConnectionProperties(Map<String, String> connectionProperties) {
     this.connectionProperties = connectionProperties;
   }

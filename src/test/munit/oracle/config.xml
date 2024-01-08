@@ -14,6 +14,26 @@
         </db:oracle-connection>
     </db:config>
 
+    <db:config name="oracleDbConfigInvalidPassword">
+        <db:oracle-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('oracle')]" serviceName="XEPDB1" user="system" password="INVALID">
+        </db:oracle-connection>
+    </db:config>
+
+    <db:config name="oracleDbConfigInvalidHost">
+        <db:oracle-connection host="invalidHost" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('oracle')]" serviceName="XEPDB1" user="system" password="oracle">
+        </db:oracle-connection>
+    </db:config>
+
+    <db:config name="oracleDbConfigInvalidDB">
+        <db:oracle-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('oracle')]" serviceName="INVALID" user="system" password="oracle">
+        </db:oracle-connection>
+    </db:config>
+
+    <db:config name="oracleGenericConfig">
+        <db:generic-connection url="#[java!org::mule::extension::db::DbMunitUtils::getOracleConnectionString('localhost', 'XEPDB1')]" user="system"
+                               password="oracle" driverClassName="oracle.jdbc.driver.OracleDriver"/>
+    </db:config>
+
     <db:config name="oracleDbConfigWithoutPoolingProfile">
         <db:oracle-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('oracle')]" serviceName="XEPDB1" user="system" password="oracle">
         </db:oracle-connection>

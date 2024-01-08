@@ -9,6 +9,7 @@ package org.mule.extension.db.internal.domain.connection.generic;
 import org.mule.extension.db.internal.domain.connection.DataSourceConfig;
 import org.mule.db.commons.internal.domain.connection.generic.GenericConnectionProvider;
 import org.mule.extension.db.internal.domain.connection.BaseDbConnectionParameters;
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.ClassValue;
@@ -23,6 +24,7 @@ import org.mule.runtime.extension.api.annotation.param.display.Placement;
  *  @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
 @Deprecated
+@ExcludeFromGeneratedCoverage
 public class GenericConnectionParameters extends BaseDbConnectionParameters implements DataSourceConfig {
 
   /**

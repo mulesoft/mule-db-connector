@@ -30,6 +30,11 @@ public class DbMunitUtils {
     return String.format("jdbc:postgresql://%s:%s/%s", host, port, database);
   }
 
+  public static String getOracleConnectionString(String host, String service) {
+    String port = getDbPort("oracle");
+    return String.format("jdbc:oracle:thin:@//%s:%s/%s", host, port, service);
+  }
+
   public static String getSecureDbPort(String dbName) {
     Properties availableProperties = System.getProperties();
     String port = String.format("%s.db.mtls.port", dbName);

@@ -7,10 +7,13 @@
 package org.mule.extension.db.internal.domain.connection.oracle.util;
 
 import org.mule.db.commons.internal.util.CredentialsMaskUtils;
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
+
 import java.util.regex.Pattern;
 
 import static java.util.regex.Pattern.compile;
 
+@ExcludeFromGeneratedCoverage
 public class OracleCredentialsMaskUtils extends CredentialsMaskUtils {
 
   public static final Pattern ORACLE_USER = compile("jdbc:oracle:.*:(.*)/.*@");

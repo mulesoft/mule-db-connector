@@ -1,16 +1,42 @@
 projectType: extension
 additionalTestConfigs:
-  postgresql:
-    mavenAdditionalArgs: "-Dpostgresql -DminVersion=4.3.0"
-  mysql:
-    mavenAdditionalArgs: "-Dmysql -DminVersion=4.3.0"
-  mssql:
-    mavenAdditionalArgs: "-Dmssql -DminVersion=4.3.0"
-  oracle:
+  oracle_jdk8:
     mavenAdditionalArgs: "-Doracle -DminVersion=4.3.0"
-  jdk11:
+  postgresql_jdk8:
+    mavenAdditionalArgs: "-Dpostgresql -DminVersion=4.3.0"
+  mysql_jdk8:
+    mavenAdditionalArgs: "-Dmysql -DminVersion=4.3.0"
+  mssql_jdk8:
+    mavenAdditionalArgs: "-Dmssql -DminVersion=4.3.0"
+  derby_jdk8:
+    mavenAdditionalArgs: "-Dderby -DminVersion=4.3.0"
+  oracle_jdk11:
     testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: -Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Doracle
-  jdk17:
-      testJdkTool: OPEN-JDK17
-      mavenAdditionalArgs: -Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -DruntimeVersion=4.6.0-rc3 -Doracle
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Doracle"
+  postgresql_jdk11:
+    testJdkTool: OPEN-JDK11
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dpostgresql"
+  mysql_jdk11:
+    testJdkTool: OPEN-JDK11
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dmysql"
+  mssql_jdk11:
+    testJdkTool: OPEN-JDK11
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dmssql"
+  derby_jdk11:
+    testJdkTool: OPEN-JDK11
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dderby"
+  oracle_jdk17:
+    testJdkTool: OPEN-JDK17
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -DruntimeVersion=4.6.0-rc3 -Doracle"
+  postgresql_jdk17:
+    testJdkTool: OPEN-JDK17
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -DruntimeVersion=4.6.0-rc3 -Dpostgresql"
+  mysql_jdk17:
+    testJdkTool: OPEN-JDK17
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -DruntimeVersion=4.6.0-rc3 -Dmysql"
+  mssql_jdk17:
+    testJdkTool: OPEN-JDK17
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -DruntimeVersion=4.6.0-rc3 -Dmssql"
+  derby_jdk17:
+    testJdkTool: OPEN-JDK17
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -DruntimeVersion=4.6.0-rc3 -Dderby"

@@ -16,13 +16,12 @@ import static java.lang.Thread.getAllStackTraces;
 import static java.util.stream.Collectors.toList;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.isIn;
-import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -40,11 +39,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 
@@ -83,6 +84,21 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
 
   protected Class getLeakTriggererClass() {
     return null;
+  }
+
+  protected List<Thread> previousThreads = new ArrayList<>();
+
+  @Before
+  public void getPreviousThreads() throws Exception {
+    previousThreads = getAllStackTraces().keySet().stream()
+        .filter(thread -> thread.getName().startsWith(getDriverThreadName())).collect(Collectors.toList());
+  }
+
+  @After
+  public void checkPreviousThreads() throws Exception {
+    assertThat(getAllStackTraces().keySet().stream()
+        .filter(thread -> thread.getName().startsWith(getDriverThreadName())).collect(Collectors.toList()),
+               containsInAnyOrder(previousThreads.toArray()));
   }
 
   /* ClassLoader Tests */
@@ -153,21 +169,9 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     return negateMatcher ? not(matcher) : matcher;
   }
 
-  protected Matcher<Iterable<? super Thread>> hasReadDriverThread() {
-    return Matchers.hasItem(allOf(
-                                  hasProperty("name", startsWith(getDriverThreadName()))));
-  }
-
   protected boolean isClassFromLibrary(String className) {
     return className.startsWith(getPackagePrefix())
         || className.startsWith(this.getClass().getPackage().getName());
-  }
-
-  protected static Throwable getRootCause(Throwable t) {
-    while (t.getCause() != null) {
-      t = t.getCause();
-    }
-    return t;
   }
 
   private void assertClassLoadersAreNotLeakedAfterDisposal(BiFunction<TestClassLoadersHierarchy.Builder, URL[], TestClassLoadersHierarchy.Builder> driverConfigurer,

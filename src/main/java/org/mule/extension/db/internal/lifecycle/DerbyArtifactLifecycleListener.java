@@ -14,8 +14,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactDisposalContext;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.sql.Driver;
 import java.sql.SQLException;
 import java.util.Arrays;

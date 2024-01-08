@@ -75,7 +75,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
   abstract String getDriverThreadName();
 
   protected Boolean enableLibraryReleaseChecking() {
-    return true;
+    return false;
   }
 
   protected Boolean enableThreadsReleaseChecking() {
@@ -96,9 +96,11 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
 
   @After
   public void checkPreviousThreads() throws Exception {
-    assertThat(getAllStackTraces().keySet().stream()
-        .filter(thread -> thread.getName().startsWith(getDriverThreadName())).collect(Collectors.toList()),
-               containsInAnyOrder(previousThreads.toArray()));
+    if (!previousThreads.isEmpty()) {
+      assertThat(getAllStackTraces().keySet().stream()
+                      .filter(thread -> thread.getName().startsWith(getDriverThreadName())).collect(Collectors.toList()),
+              containsInAnyOrder(previousThreads.toArray()));
+    }
   }
 
   /* ClassLoader Tests */

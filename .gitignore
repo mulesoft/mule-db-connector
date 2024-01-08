@@ -32,4 +32,5 @@ hostkey.ser
 dependency-reduced-pom.xml
 myDB/
 previousDB/
+derbyLeakTriggererDB/
 J17_validation.sh

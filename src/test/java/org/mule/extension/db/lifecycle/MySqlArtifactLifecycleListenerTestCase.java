@@ -6,6 +6,8 @@
  */
 package org.mule.extension.db.lifecycle;
 
+import static java.lang.Thread.getAllStackTraces;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
@@ -17,10 +19,14 @@ import static org.hamcrest.core.IsNot.not;
 import org.mule.extension.db.internal.lifecycle.MySqlArtifactLifecycleListener;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
+import java.sql.DriverManager;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.stream.Collectors;
 
 import org.hamcrest.Matcher;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -56,6 +62,16 @@ public class MySqlArtifactLifecycleListenerTestCase extends AbstractArtifactLife
   @Override
   protected Class getLeakTriggererClass() {
     return MySqlLeakTriggerer.class;
+  }
+
+  @Before
+  public void getPreviousThreads() throws Exception {
+    await().until(() -> Collections.list(DriverManager.getDrivers()).stream()
+                    .anyMatch(d -> d.getClass().getName().contains("mysql")));
+    await().until(() -> getAllStackTraces().keySet().stream()
+                    .anyMatch(thread -> thread.getName().startsWith("mysql-cj-abandoned-connection-cleanup")));
+    previousThreads = getAllStackTraces().keySet().stream()
+            .filter(thread -> thread.getName().startsWith(getDriverThreadName())).collect(Collectors.toList());
   }
 
   protected Matcher<Iterable<? super Thread>> hasDriverThreadMatcher(ClassLoader target, boolean negateMatcher) {

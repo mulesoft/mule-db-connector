@@ -35,12 +35,11 @@ public class DerbyLeakTriggerer implements Runnable {
         .filter(d -> d.getClass().getName().contains("derby"))
         .anyMatch(driver -> (driver.getClass().getClassLoader() == threadClassloader
             || driver.getClass().getClassLoader() == parentClassloader)));
-    try (Connection con = DriverManager.getConnection("jdbc:derby:myDB;create=true;user=me;password=mine")) {
+    try (Connection con = DriverManager.getConnection("jdbc:derby:derbyLeakTriggererDB;create=true;user=me;password=mine")) {
     } catch (SQLException e) {
       LOGGER.error("Connection could not be established: {}", e.getMessage(), e);
       fail("Connection could not be established");
     }
-    // LOOK The thread has a null contextClassloader. How do we ensure that is the right thread?
     await().until(() -> getAllStackTraces().keySet().stream()
         .filter(thread -> thread.getName().startsWith("derby.rawStoreDaemon"))
         .anyMatch(thread -> !previousThreads.contains(thread)));

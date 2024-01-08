@@ -75,7 +75,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
   abstract String getDriverThreadName();
 
   protected Boolean enableLibraryReleaseChecking() {
-    return false;
+    return true;
   }
 
   protected Boolean enableThreadsReleaseChecking() {

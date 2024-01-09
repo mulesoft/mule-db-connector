@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -267,15 +266,16 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     await().until(() -> appClassLoader, is(collectedByGc()));
   }
 
-  protected void disposeDomainAndAssertRelease(TestClassLoadersHierarchy classLoadersHierarchy) throws IOException, InterruptedException {
+  protected void disposeDomainAndAssertRelease(TestClassLoadersHierarchy classLoadersHierarchy)
+      throws IOException, InterruptedException {
     LOGGER.debug("disposeDomainAndAssertRelease");
     CollectableReference<ClassLoader> domainClassLoader =
         new CollectableReference<>(classLoadersHierarchy.getDomainClassLoader());
     CollectableReference<ClassLoader> domainExtensionClassLoader =
         new CollectableReference<>(classLoadersHierarchy.getDomainExtensionClassLoader());
     classLoadersHierarchy.disposeDomain();
-      System.gc();
-      Thread.sleep(1000);
+    System.gc();
+    Thread.sleep(1000);
     await().until(() -> domainExtensionClassLoader, is(collectedByGc()));
     await().until(() -> domainClassLoader, is(collectedByGc()));
   }

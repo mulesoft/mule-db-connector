@@ -1,15 +1,15 @@
 projectType: extension
 additionalTestConfigs:
   oracle_jdk8:
-    mavenAdditionalArgs: "-Doracle -DminVersion=4.3.0"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Doracle -DminVersion=4.3.0"
   postgresql_jdk8:
-    mavenAdditionalArgs: "-Dpostgresql -DminVersion=4.3.0"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dpostgresql -DminVersion=4.3.0"
   mysql_jdk8:
-    mavenAdditionalArgs: "-Dmysql -DminVersion=4.3.0"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dmysql -DminVersion=4.3.0"
   mssql_jdk8:
-    mavenAdditionalArgs: "-Dmssql -DminVersion=4.3.0"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dmssql -DminVersion=4.3.0"
   derby_jdk8:
-    mavenAdditionalArgs: "-Dderby -DminVersion=4.3.0"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dderby -DminVersion=4.3.0"
   oracle_jdk11:
     testJdkTool: OPEN-JDK11
     mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Doracle"

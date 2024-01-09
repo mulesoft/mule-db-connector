@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.internal.lifecycle;
 
+import static java.beans.Introspector.flushCaches;
 import static java.lang.Integer.toHexString;
 import static java.lang.String.format;
 import static java.lang.management.ManagementFactory.getPlatformMBeanServer;
@@ -20,6 +21,7 @@ import java.lang.reflect.Field;
 import java.sql.Driver;
 import java.util.Collections;
 import java.util.Hashtable;
+import java.util.ResourceBundle;
 import java.util.Timer;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -36,6 +38,9 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
   public void onArtifactDisposal(ArtifactDisposalContext artifactDisposalContext) {
     LOGGER.debug("Running onArtifactDisposal method on {}", getClass().getName());
     deregisterJdbcDrivers(artifactDisposalContext);
+    flushCaches();
+    ResourceBundle.clearCache(artifactDisposalContext.getArtifactClassLoader());
+    ResourceBundle.clearCache(artifactDisposalContext.getExtensionClassLoader());
   }
 
   private void deregisterJdbcDrivers(ArtifactDisposalContext disposalContext) {

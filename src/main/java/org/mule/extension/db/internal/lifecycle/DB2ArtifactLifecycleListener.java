@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.internal.lifecycle;
 
+import static java.beans.Introspector.flushCaches;
 import static java.lang.String.format;
 import static java.sql.DriverManager.deregisterDriver;
 import static java.sql.DriverManager.getDrivers;
@@ -17,6 +18,7 @@ import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 import java.lang.reflect.Field;
 import java.sql.Driver;
 import java.util.Collections;
+import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.stream.Stream;
 
@@ -35,6 +37,9 @@ public class DB2ArtifactLifecycleListener implements ArtifactLifecycleListener {
      * values when we had a DB2 driver, we found the TimerThread that it triggers for canceling it */
     cancelTimerThreads(artifactDisposalContext.getExtensionOwnedThreads());
     cancelTimerThreads(artifactDisposalContext.getExtensionOwnedThreads());
+    flushCaches();
+    ResourceBundle.clearCache(artifactDisposalContext.getArtifactClassLoader());
+    ResourceBundle.clearCache(artifactDisposalContext.getExtensionClassLoader());
   }
 
   private void deregisterDB2Drivers(ArtifactDisposalContext disposalContext) {

@@ -104,12 +104,12 @@ public class TestClassLoadersHierarchy implements AutoCloseable {
     /**
      * Sets up an {@link ArtifactLifecycleListener} to be triggered when disposing the {@link ClassLoader}s conforming this
      * hierarchy.
-     * @param artifactLifecycleListener The {@link ArtifactLifecycleListener} to call whenever the disposal of an artifact is
+     * @param artifactLifecycleListenerClass The {@link ArtifactLifecycleListener} to call whenever the disposal of an artifact is
      *                                  simulated.
      * @return This instance, for chaining purposes.
      */
-    public Builder withArtifactLifecycleListener(Class<? extends ArtifactLifecycleListener> artifactLifecycleListener) {
-      this.artifactLifecycleListenerClass = artifactLifecycleListener;
+    public Builder withArtifactLifecycleListener(Class<? extends ArtifactLifecycleListener> artifactLifecycleListenerClass) {
+      this.artifactLifecycleListenerClass = artifactLifecycleListenerClass;
       return this;
     }
 

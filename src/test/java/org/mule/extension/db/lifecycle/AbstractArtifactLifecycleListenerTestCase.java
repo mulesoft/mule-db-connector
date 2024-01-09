@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -185,22 +186,23 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     Optional.ofNullable(getLeakTriggererClass())
         .ifPresent(c -> additionalLibraries.add(c.getProtectionDomain().getCodeSource().getLocation()));
     builder = driverConfigurer.apply(builder, additionalLibraries.toArray(new URL[0]));
-    TestClassLoadersHierarchy classLoadersHierarchy = builder.build();
-    withContextClassLoader(executionClassLoaderProvider.apply(classLoadersHierarchy), () -> {
-      try {
-        if (getLeakTriggererClass() != null) {
-          Class<?> runnableClass = currentThread().getContextClassLoader().loadClass(getLeakTriggererClass().getName());
-          Object runnable = runnableClass.newInstance();
-          if (runnable instanceof Runnable) {
-            ((Runnable) runnable).run();
+    try (TestClassLoadersHierarchy classLoadersHierarchy = builder.build()) {
+      withContextClassLoader(executionClassLoaderProvider.apply(classLoadersHierarchy), () -> {
+        try {
+          if (getLeakTriggererClass() != null) {
+            Class<?> runnableClass = currentThread().getContextClassLoader().loadClass(getLeakTriggererClass().getName());
+            Object runnable = runnableClass.newInstance();
+            if (runnable instanceof Runnable) {
+              ((Runnable) runnable).run();
+            }
           }
+        } catch (Exception e) {
+          LOGGER.error(e.getMessage(), e);
         }
-      } catch (Exception e) {
-        LOGGER.error(e.getMessage(), e);
-      }
-    });
-    disposeAppAndAssertRelease(classLoadersHierarchy);
-    disposeDomainAndAssertRelease(classLoadersHierarchy);
+      });
+      disposeAppAndAssertRelease(classLoadersHierarchy);
+      disposeDomainAndAssertRelease(classLoadersHierarchy);
+    }
   }
 
   private void assertThreadsNamesAfterAppDisposal(BiFunction<TestClassLoadersHierarchy.Builder, URL[], TestClassLoadersHierarchy.Builder> driverConfigurer,
@@ -253,24 +255,27 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
 
   protected void disposeAppAndAssertRelease(TestClassLoadersHierarchy classLoadersHierarchy)
       throws IOException, InterruptedException {
+    LOGGER.debug("disposeAppAndAssertRelease");
     CollectableReference<ClassLoader> appClassLoader =
         new CollectableReference<>(classLoadersHierarchy.getAppClassLoader());
     CollectableReference<ClassLoader> appExtensionClassLoader =
         new CollectableReference<>(classLoadersHierarchy.getAppExtensionClassLoader());
     classLoadersHierarchy.disposeApp();
     System.gc();
-    System.gc();
+    Thread.sleep(1000);
     await().until(() -> appExtensionClassLoader, is(collectedByGc()));
     await().until(() -> appClassLoader, is(collectedByGc()));
   }
 
-  protected void disposeDomainAndAssertRelease(TestClassLoadersHierarchy classLoadersHierarchy) throws IOException {
+  protected void disposeDomainAndAssertRelease(TestClassLoadersHierarchy classLoadersHierarchy) throws IOException, InterruptedException {
+    LOGGER.debug("disposeDomainAndAssertRelease");
     CollectableReference<ClassLoader> domainClassLoader =
         new CollectableReference<>(classLoadersHierarchy.getDomainClassLoader());
     CollectableReference<ClassLoader> domainExtensionClassLoader =
         new CollectableReference<>(classLoadersHierarchy.getDomainExtensionClassLoader());
     classLoadersHierarchy.disposeDomain();
-    System.gc();
+      System.gc();
+      Thread.sleep(1000);
     await().until(() -> domainExtensionClassLoader, is(collectedByGc()));
     await().until(() -> domainClassLoader, is(collectedByGc()));
   }

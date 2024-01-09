@@ -62,6 +62,11 @@ public class CollectableReference<T> extends PhantomReference<T> {
     protected boolean matchesSafely(CollectableReference<T> reference) {
       referencedAsString = reference.strongReferenceAsString;
       System.gc();
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
       return reference.isEnqueued();
 
     }

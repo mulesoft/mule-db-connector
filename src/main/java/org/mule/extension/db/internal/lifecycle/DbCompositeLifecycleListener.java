@@ -53,7 +53,6 @@ public class DbCompositeLifecycleListener implements ArtifactLifecycleListener {
             LOGGER.warn(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
           }
         });
-    // TODO Analizar si corresponden estas limpiezas
     flushCaches();
     ResourceBundle.clearCache(artifactDisposalContext.getArtifactClassLoader());
     ResourceBundle.clearCache(artifactDisposalContext.getExtensionClassLoader());

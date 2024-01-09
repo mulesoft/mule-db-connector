@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.internal.lifecycle;
 
+import static java.beans.Introspector.flushCaches;
 import static java.lang.String.format;
 import static java.sql.DriverManager.deregisterDriver;
 import static java.sql.DriverManager.getDrivers;
@@ -18,6 +19,7 @@ import java.sql.Driver;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 
@@ -31,6 +33,9 @@ public class DerbyArtifactLifecycleListener implements ArtifactLifecycleListener
   public void onArtifactDisposal(ArtifactDisposalContext artifactDisposalContext) {
     LOGGER.debug("Running onArtifactDisposal method on DerbyArtifactLifecycleListener");
     deregisterDerbyDrivers(artifactDisposalContext);
+    flushCaches();
+    ResourceBundle.clearCache(artifactDisposalContext.getArtifactClassLoader());
+    ResourceBundle.clearCache(artifactDisposalContext.getExtensionClassLoader());
   }
 
   private void deregisterDerbyDrivers(ArtifactDisposalContext disposalContext) {

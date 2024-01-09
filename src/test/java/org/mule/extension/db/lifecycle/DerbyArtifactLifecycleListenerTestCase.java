@@ -21,6 +21,7 @@ import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 import java.sql.DriverManager;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 import org.hamcrest.Matcher;
@@ -41,6 +42,8 @@ public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLife
   which should not be affected after the cleaning. As this connection is made with the driver loaded by SPI I cannot
   close it in the After Test because I would be unregistering a driver that may be required by another test suite. */
   public void getPreviousThreads() throws Exception {
+    await().until(() -> Collections.list(DriverManager.getDrivers()).stream()
+                    .anyMatch(d -> d.getClass().getName().contains("derby")));
     DriverManager.getConnection("jdbc:derby:previousDB;create=true;user=me;password=mine");
     await().until(() -> getAllStackTraces().keySet().stream()
         .anyMatch(thread -> thread.getName().startsWith(getDriverThreadName())));

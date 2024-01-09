@@ -43,7 +43,7 @@ public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLife
   close it in the After Test because I would be unregistering a driver that may be required by another test suite. */
   public void getPreviousThreads() throws Exception {
     await().until(() -> Collections.list(DriverManager.getDrivers()).stream()
-                    .anyMatch(d -> d.getClass().getName().contains("derby")));
+        .anyMatch(d -> d.getClass().getName().contains("derby")));
     DriverManager.getConnection("jdbc:derby:previousDB;create=true;user=me;password=mine");
     await().until(() -> getAllStackTraces().keySet().stream()
         .anyMatch(thread -> thread.getName().startsWith(getDriverThreadName())));

@@ -7,8 +7,7 @@ additionalTestConfigs:
   mysql_jdk8:
     mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dmysql -DminVersion=4.3.0"
   mssql_jdk8:
-    # TODO W-14783599 The mssql_jdk8 pipeline should work with -DminVersion=4.3.0 but there are some issues in 4.3.x and 4.5.x
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dmssql -DruntimeVersion=4.4.0 -DruntimeProduct=MULE_EE"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dmssql -DminVersion=4.3.0"
   derby_jdk8:
     mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dderby -DminVersion=4.3.0"
   oracle_jdk11:

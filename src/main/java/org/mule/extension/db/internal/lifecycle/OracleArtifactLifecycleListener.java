@@ -8,7 +8,6 @@ package org.mule.extension.db.internal.lifecycle;
 
 import static java.beans.Introspector.flushCaches;
 import static java.lang.Integer.toHexString;
-import static java.lang.String.format;
 import static java.lang.management.ManagementFactory.getPlatformMBeanServer;
 import static java.sql.DriverManager.deregisterDriver;
 import static java.sql.DriverManager.getDrivers;
@@ -125,8 +124,8 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
       l = l.getParent();
     Handler h = (l == null) ? null : l.getHandlers()[0];
     Formatter f = h.getFormatter();
-    if(disposalContext.getExtensionClassLoader().equals(f.getClass().getClassLoader())
-      || disposalContext.getArtifactClassLoader().equals(f.getClass().getClassLoader())) {
+    if (disposalContext.getExtensionClassLoader().equals(f.getClass().getClassLoader())
+        || disposalContext.getArtifactClassLoader().equals(f.getClass().getClassLoader())) {
       SimpleFormatter s = new SimpleFormatter();
       h.setFormatter(s);
     }

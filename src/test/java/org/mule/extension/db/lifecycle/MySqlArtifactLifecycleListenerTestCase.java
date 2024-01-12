@@ -42,8 +42,8 @@ public class MySqlArtifactLifecycleListenerTestCase extends AbstractArtifactLife
 
   @Parameterized.Parameters
   public static Collection<Object[]> parameters() {
-    return Arrays.asList(new Object[][] { {"com.mysql", "mysql-connector-j", "8.0.33"},
-                                          {"mysql", "mysql-connector-java", "8.0.30"}});
+    return Arrays.asList(new Object[][] {{"com.mysql", "mysql-connector-j", "8.0.33"},
+        {"mysql", "mysql-connector-java", "8.0.30"}});
   }
 
   @Override

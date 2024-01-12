@@ -54,7 +54,6 @@
 
         <munit.extensions.maven.plugin.version>1.2.0-rc3</munit.extensions.maven.plugin.version>
         <munit.version>3.1.0-rc4</munit.version>
-
         <mtf-tools.version>1.2.0-rc1</mtf-tools.version>
         <skipTests>false</skipTests>
         <skipTita>false</skipTita>
@@ -283,6 +282,11 @@
         <dependency>
             <groupId>com.sun.istack</groupId>
             <artifactId>istack-commons-runtime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.sdk</groupId>
+            <artifactId>mule-sdk-api</artifactId>
+            <version>${mule.sdk.api.version}</version>
         </dependency>
     </dependencies>
 

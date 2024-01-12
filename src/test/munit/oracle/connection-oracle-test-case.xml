@@ -43,8 +43,6 @@
         </munit:parameterizations>
     </munit:config>
 
-
-
     <munit:test name="connection-test" expectedErrorType="${expectedErrorType}">
         <munit:execution>
             <mtf:test-connectivity config-ref="${config}"/>

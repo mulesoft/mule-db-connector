@@ -52,15 +52,12 @@ public class MySqlArtifactLifecycleListener implements ArtifactLifecycleListener
         .filter(this::isMySqlDriver)
         .forEach(driver -> {
           try {
-            if (LOGGER.isDebugEnabled()) {
-              LOGGER.debug("Deregistering driver: {}", driver.getClass());
-            }
+            LOGGER.debug("Deregistering driver: MySQL Driver");
             deregisterDriver(driver);
             shutdownMySqlAbandonedConnectionCleanupThread(disposalContext);
           } catch (Exception e) {
-            if (LOGGER.isDebugEnabled()) {
-              LOGGER.debug(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
-            }
+            LOGGER
+                .warn("An error occurred while trying to unregister and clean up the MySql driver. It could cause memory leaks.");
           }
         });
   }
@@ -92,7 +89,7 @@ public class MySqlArtifactLifecycleListener implements ArtifactLifecycleListener
       cleanMySqlCleanupThreadsThreadFactory(cleanupThreadsClass);
     } catch (ClassNotFoundException | SecurityException | IllegalArgumentException
         | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-      LOGGER.debug("Unable to shutdown MySql's AbandonedConnectionCleanupThread", e);
+      LOGGER.debug("Failed an attempt to shutdown MySql's AbandonedConnectionCleanupThread");
     }
   }
 
@@ -134,8 +131,9 @@ public class MySqlArtifactLifecycleListener implements ArtifactLifecycleListener
         // Set cleanup thread executor service thread factory to one whose classloader is the system one
         realExecutorService.setThreadFactory(Executors.defaultThreadFactory());
       }
+      LOGGER.debug("MySql AbandonedConnectionCleanupThread shutdown.");
     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
-      LOGGER.debug("Error cleaning threadFactory from AbandonedConnectionCleanupThread executor service", e);
+      LOGGER.debug("Error cleaning threadFactory from AbandonedConnectionCleanupThread executor service");
     }
   }
 
@@ -168,9 +166,7 @@ public class MySqlArtifactLifecycleListener implements ArtifactLifecycleListener
       try {
         return Class.forName(knownCleanupThreadClassAddress, true, artifactDisposalContext.getExtensionClassLoader());
       } catch (ClassNotFoundException e) {
-        if (LOGGER.isDebugEnabled()) {
-          LOGGER.debug("No AbandonedConnectionCleanupThread registered with class address {}", knownCleanupThreadClassAddress);
-        }
+        LOGGER.debug("Trying to find an AbandonedConnectionCleanupThread registered");
       }
     }
     throw new ClassNotFoundException("No MySql's AbandonedConnectionCleanupThread class was found");

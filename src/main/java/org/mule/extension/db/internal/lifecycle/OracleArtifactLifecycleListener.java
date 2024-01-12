@@ -23,6 +23,9 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
 import java.util.Timer;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
+import java.util.logging.SimpleFormatter;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -36,7 +39,7 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
 
   @Override
   public void onArtifactDisposal(ArtifactDisposalContext artifactDisposalContext) {
-    LOGGER.debug("Running onArtifactDisposal method on {}", getClass().getName());
+    LOGGER.debug("Running onArtifactDisposal method on OracleArtifactLifecycleListener");
     deregisterJdbcDrivers(artifactDisposalContext);
     flushCaches();
     ResourceBundle.clearCache(artifactDisposalContext.getArtifactClassLoader());
@@ -51,15 +54,14 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
         .filter(d -> isOracleDriver(d))
         .forEach(driver -> {
           try {
-            if (LOGGER.isDebugEnabled()) {
-              LOGGER.debug("Deregistering driver: {}", driver.getClass());
-            }
+            LOGGER.debug("Deregistering Oracle's driver");
             deregisterDriver(driver);
+            removeOracleSimpleFormatter(disposalContext);
             checkingVersionsWithLeaksKnownSolvedInNewerVersions(driver);
             cleanClassloader(disposalContext.getArtifactClassLoader());
             cleanClassloader(disposalContext.getExtensionClassLoader());
           } catch (Exception e) {
-            LOGGER.debug(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
+            LOGGER.debug("Can not deregister Oracle's driver. This can cause a memory leak.");
           }
         });
   }
@@ -77,8 +79,8 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
     int major = driver.getMajorVersion();
     int minor = driver.getMinorVersion();
     if (major < 19 || (major == 19 && minor < 14)) {
-      LOGGER.warn("Oracle Driver version {}.{} has been detected, versions prior to 19.4 have a known issue " +
-          "whereby Thread Leaks are generated. Consider upgrading to a newer version of the driver.", major, minor);
+      LOGGER.warn("Oracle Driver prior to 19.4 have a known issue " +
+          "whereby Thread Leaks are generated. Consider upgrading to a newer version of the driver.");
     }
   }
 
@@ -97,11 +99,9 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
     try {
       mBeanServer.unregisterMBean(new ObjectName("com.oracle.jdbc", keys));
     } catch (javax.management.InstanceNotFoundException e) {
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug(format("No Oracle's '%s' MBean found.", DIAGNOSABILITY_BEAN_NAME));
-      }
+      LOGGER.debug("No Oracle's MBean found.");
     } catch (Throwable e) {
-      LOGGER.debug("Unable to unregister Oracle's mbeans", e);
+      LOGGER.debug("Unable to unregister Oracle's MBeans");
     }
   }
 
@@ -115,7 +115,20 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
       clockValue.cancel();
       clockField.setAccessible(accessibility);
     } catch (ClassNotFoundException | NoSuchFieldException | IllegalAccessException e) {
-      LOGGER.debug("Unable to cancel oracle.jdbc.diagnostics.Diagnostic.CLOCK Timer Thread", e);
+      LOGGER.debug("Unable to cancel oracle.jdbc.diagnostics.Diagnostic.CLOCK Timer Thread");
+    }
+  }
+
+  private void removeOracleSimpleFormatter(ArtifactDisposalContext disposalContext) {
+    java.util.logging.Logger l = java.util.logging.Logger.getLogger("test");
+    while (l != null && (l.getHandlers()).length == 0)
+      l = l.getParent();
+    Handler h = (l == null) ? null : l.getHandlers()[0];
+    Formatter f = h.getFormatter();
+    if(disposalContext.getExtensionClassLoader().equals(f.getClass().getClassLoader())
+      || disposalContext.getArtifactClassLoader().equals(f.getClass().getClassLoader())) {
+      SimpleFormatter s = new SimpleFormatter();
+      h.setFormatter(s);
     }
   }
 }

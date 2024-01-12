@@ -26,30 +26,24 @@ public class DB2LeakTriggerer implements Runnable {
   public void run() {
     ClassLoader threadClassloader = Thread.currentThread().getContextClassLoader();
     ClassLoader parentClassloader = threadClassloader.getParent();
-    // To avoid race conditions, I wait for the driver to be available.
+    // As we don't have the DB2's dependency in the pom, the SPI mechanism doesn't discover the driver automatically.
     try {
+      Class<?> driverClass = threadClassloader.loadClass(DRIVER_NAME);
+      driverClass.newInstance();
       await().until(() -> Collections.list(DriverManager.getDrivers()).stream()
-          .filter(driver -> driver.getClass().getName().contains("db2"))
+          .filter(d -> d.getClass().getName().contains("db2"))
           .anyMatch(driver -> (driver.getClass().getClassLoader() == threadClassloader
               || driver.getClass().getClassLoader() == parentClassloader)));
-    } catch (Exception e) {
-      try {
-        Class<?> driverClass = threadClassloader.loadClass(DRIVER_NAME);
-        driverClass.newInstance();
-        await().until(() -> Collections.list(DriverManager.getDrivers()).stream()
-            .filter(d -> d.getClass().getName().contains("db2"))
-            .anyMatch(driver -> (driver.getClass().getClassLoader() == threadClassloader
-                || driver.getClass().getClassLoader() == parentClassloader)));
-      } catch (Exception e2) {
-        LOGGER.error(e2.getMessage(), e2);
-      }
+    } catch (Exception e2) {
+      LOGGER.error(e2.getMessage(), e2);
     }
     try (Connection con = DriverManager.getConnection("jdbc:db2://localhost:50000/dummy:user=usuario;password=password;")) {
     } catch (Exception e) {
       LOGGER.debug("The exception is the expected behavior. The Timer thread should have been launched. ");
-      await().until(() -> getAllStackTraces().keySet().stream()
-          .filter(thread -> thread.getName().startsWith("Timer-"))
-          .anyMatch(thread -> thread.getContextClassLoader() == threadClassloader));
     }
+    await().until(() -> getAllStackTraces().keySet().stream()
+        .filter(thread -> thread.getName().startsWith("Timer-"))
+        .anyMatch(thread -> thread.getContextClassLoader() == threadClassloader
+            || thread.getContextClassLoader() == parentClassloader));
   }
 }

@@ -6,12 +6,21 @@
  */
 package org.mule.extension.db.lifecycle;
 
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.isIn;
+import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.core.IsNot.not;
+
 import org.mule.extension.db.internal.lifecycle.DB2ArtifactLifecycleListener;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.hamcrest.Matcher;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -49,5 +58,16 @@ public class DB2ArtifactLifecycleListenerTestCase extends AbstractArtifactLifecy
   protected Class getLeakTriggererClass() {
     return DB2LeakTriggerer.class;
   }
+
+  @Override
+  protected Matcher<Iterable<? super Thread>> hasDriverThreadMatcher(ClassLoader target, boolean negateMatcher) {
+    Matcher<Thread> isNotInPreviousThreads = not(isIn(previousThreads));
+    Matcher<Thread> nameStartsWithTimer = hasProperty("name", startsWith("Timer-"));
+    Matcher<Thread> classLoaderMatcher = hasProperty("contextClassLoader", equalTo(target));
+    Matcher<Iterable<? super Thread>> combinedMatcher =
+        hasItem(allOf(isNotInPreviousThreads, nameStartsWithTimer, classLoaderMatcher));
+    return negateMatcher ? not(combinedMatcher) : combinedMatcher;
+  }
+
 
 }

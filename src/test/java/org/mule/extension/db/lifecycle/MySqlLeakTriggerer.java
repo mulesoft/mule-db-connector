@@ -26,10 +26,18 @@ public class MySqlLeakTriggerer implements Runnable {
     ClassLoader threadClassloader = Thread.currentThread().getContextClassLoader();
     ClassLoader parentClassloader = threadClassloader.getParent();
     // To avoid race conditions, I wait for the driver to be available.
-    await().until(() -> Collections.list(DriverManager.getDrivers()).stream()
-        .filter(d -> d.getClass().getName().contains("mysql"))
-        .anyMatch(driver -> (driver.getClass().getClassLoader() == threadClassloader
-            || driver.getClass().getClassLoader() == parentClassloader)));
+    try {
+      await().until(() -> Collections.list(DriverManager.getDrivers()).stream()
+          .filter(d -> d.getClass().getName().contains("mysql"))
+          .anyMatch(driver -> (driver.getClass().getClassLoader() == threadClassloader
+              || driver.getClass().getClassLoader() == parentClassloader)));
+    } catch (Exception e) {
+      try {
+        Class<?> driverClass = threadClassloader.loadClass("com.mysql.jdbc");
+      } catch (ClassNotFoundException ex) {
+        throw new RuntimeException(ex);
+      }
+    }
     try (Connection con = DriverManager.getConnection("jdbc:mysql://hostname:3306/dummy?user=dummy&password=dummy")) {
     } catch (SQLException e) {
       LOGGER.debug("Expected error: {}", e.getMessage());

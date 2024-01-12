@@ -63,6 +63,7 @@ public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLife
   @Parameterized.Parameters
   public static Collection<Object[]> parameters() {
     return Arrays.asList(new Object[][] {{"org.apache.derby", "derby", "10.14.2.0"}});
+
   }
 
   @Override

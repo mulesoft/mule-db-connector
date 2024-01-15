@@ -13,11 +13,14 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isIn;
 import static org.hamcrest.core.IsNot.not;
 
+import org.mule.extension.db.internal.lifecycle.DB2ArtifactLifecycleListener;
+import org.mule.extension.db.internal.lifecycle.DbCompositeLifecycleListener;
 import org.mule.extension.db.internal.lifecycle.OracleArtifactLifecycleListener;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.hamcrest.Matcher;
 import org.junit.runner.RunWith;
@@ -41,7 +44,12 @@ public class OracleArtifactLifecycleListenerTestCase extends AbstractArtifactLif
 
   @Override
   Class<? extends ArtifactLifecycleListener> getArtifactLifecycleListenerClass() {
-    return OracleArtifactLifecycleListener.class;
+    return DbCompositeLifecycleListener.class;
+  }
+
+  @Override
+  List<Class<?>> getClassloaderExclusions() {
+    return null;
   }
 
   @Override

@@ -28,7 +28,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import org.slf4j.Logger;
 
-public class MySqlArtifactLifecycleListener implements ArtifactLifecycleListener {
+public class MySqlArtifactLifecycleListener extends AbstractDbArtifactLifecycleListener {
 
   private static final Logger LOGGER = getLogger(MySqlArtifactLifecycleListener.class);
   private static final List<String> CONNECTION_CLEANUP_THREAD_KNOWN_CLASS_ADDRESES =
@@ -38,17 +38,14 @@ public class MySqlArtifactLifecycleListener implements ArtifactLifecycleListener
   public void onArtifactDisposal(ArtifactDisposalContext artifactDisposalContext) {
     LOGGER.debug("Running onArtifactDisposal method on MySqlArtifactLifecycleListener");
     deregisterMySqlDrivers(artifactDisposalContext);
-    flushCaches();
-    ResourceBundle.clearCache(artifactDisposalContext.getArtifactClassLoader());
-    ResourceBundle.clearCache(artifactDisposalContext.getExtensionClassLoader());
   }
 
   private void deregisterMySqlDrivers(ArtifactDisposalContext disposalContext) {
     Collections.list(getDrivers())
         .stream()
+        .filter(this::isMySqlDriver)
         .filter(d -> disposalContext.isArtifactOwnedClassLoader(d.getClass().getClassLoader()) ||
             disposalContext.isExtensionOwnedClassLoader(d.getClass().getClassLoader()))
-        .filter(this::isMySqlDriver)
         .forEach(driver -> {
           try {
             LOGGER.debug("Deregistering driver: MySQL Driver");

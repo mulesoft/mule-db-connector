@@ -7,6 +7,7 @@
 package org.mule.extension.db.internal.lifecycle;
 
 import static java.beans.Introspector.flushCaches;
+import static java.lang.Boolean.getBoolean;
 import static java.lang.String.format;
 import static java.sql.DriverManager.deregisterDriver;
 import static java.sql.DriverManager.getDrivers;
@@ -22,9 +23,14 @@ import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 
-public class DbCompositeLifecycleListener implements ArtifactLifecycleListener {
+public class DbCompositeLifecycleListener extends AbstractDbArtifactLifecycleListener {
 
   private static final Logger LOGGER = getLogger(DbCompositeLifecycleListener.class);
+
+  private static final String AVOID_ARTIFACT_DISPOSERS_PROPERTY_NAME = "mule.db.connector.avoid.all.artifact.disposers";
+  private static final boolean AVOID_ARTIFACT_DISPOSERS =
+      getBoolean(AVOID_ARTIFACT_DISPOSERS_PROPERTY_NAME);
+
 
   private final List<ArtifactLifecycleListener> delegates = new ArrayList<>();
 
@@ -37,24 +43,26 @@ public class DbCompositeLifecycleListener implements ArtifactLifecycleListener {
 
   @Override
   public void onArtifactDisposal(ArtifactDisposalContext artifactDisposalContext) {
-    delegates.forEach(x -> x.onArtifactDisposal(artifactDisposalContext));
-    // Unregistration of all other drivers
-    Collections.list(getDrivers())
-        .stream()
-        .filter(d -> artifactDisposalContext.isArtifactOwnedClassLoader(d.getClass().getClassLoader()) ||
-            artifactDisposalContext.isExtensionOwnedClassLoader(d.getClass().getClassLoader()))
-        .forEach(driver -> {
-          try {
-            deregisterDriver(driver);
-            if (LOGGER.isDebugEnabled()) {
-              LOGGER.debug("Deregistering driver: {}", driver.getClass());
+    if (!AVOID_ARTIFACT_DISPOSERS) {
+      LOGGER.debug("Calling specific vendors' ArtifactLifecycleListener");
+      delegates.forEach(x -> x.onArtifactDisposal(artifactDisposalContext));
+      // Unregistration of all other drivers
+      LOGGER.debug("Unregistering other drivers");
+      Collections.list(getDrivers())
+          .stream()
+          .filter(d -> artifactDisposalContext.isArtifactOwnedClassLoader(d.getClass().getClassLoader()) ||
+              artifactDisposalContext.isExtensionOwnedClassLoader(d.getClass().getClassLoader()))
+          .forEach(driver -> {
+            try {
+              deregisterDriver(driver);
+            } catch (Exception e) {
+              LOGGER.warn("Can not deregister driver", e);
             }
-          } catch (Exception e) {
-            LOGGER.warn(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
-          }
-        });
-    flushCaches();
-    ResourceBundle.clearCache(artifactDisposalContext.getArtifactClassLoader());
-    ResourceBundle.clearCache(artifactDisposalContext.getExtensionClassLoader());
+          });
+      LOGGER.debug("Cleaning caches");
+      flushCaches();
+      ResourceBundle.clearCache(artifactDisposalContext.getArtifactClassLoader());
+      ResourceBundle.clearCache(artifactDisposalContext.getExtensionClassLoader());
+    }
   }
 }

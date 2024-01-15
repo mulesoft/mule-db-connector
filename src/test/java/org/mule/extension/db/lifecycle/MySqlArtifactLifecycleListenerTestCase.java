@@ -16,6 +16,7 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsNot.not;
 
+import org.mule.extension.db.internal.lifecycle.DbCompositeLifecycleListener;
 import org.mule.extension.db.internal.lifecycle.MySqlArtifactLifecycleListener;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
@@ -23,6 +24,7 @@ import java.sql.DriverManager;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.hamcrest.Matcher;
@@ -83,5 +85,10 @@ public class MySqlArtifactLifecycleListenerTestCase extends AbstractArtifactLife
                                                                                 equalTo(target.getParent()))),
                                                               hasProperty("name", is(getDriverThreadName()))));
     return negateMatcher ? not(matcher) : matcher;
+  }
+
+  @Override
+  List<Class<?>> getClassloaderExclusions() {
+    return null;
   }
 }

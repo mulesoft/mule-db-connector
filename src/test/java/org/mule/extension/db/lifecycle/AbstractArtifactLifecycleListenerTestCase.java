@@ -70,6 +70,8 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
 
   abstract Class<? extends ArtifactLifecycleListener> getArtifactLifecycleListenerClass();
 
+  abstract List<Class<?>> getClassloaderExclusions();
+
   abstract String getPackagePrefix();
 
   abstract String getDriverThreadName();
@@ -184,10 +186,19 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     additionalLibraries.add(this.libraryUrl);
     Optional.ofNullable(getLeakTriggererClass())
         .ifPresent(c -> additionalLibraries.add(c.getProtectionDomain().getCodeSource().getLocation()));
+    getClassloaderExclusions().stream()
+        .forEach(c -> additionalLibraries.add(c.getProtectionDomain().getCodeSource().getLocation()));
     builder = driverConfigurer.apply(builder, additionalLibraries.toArray(new URL[0]));
     try (TestClassLoadersHierarchy classLoadersHierarchy = builder.build()) {
       withContextClassLoader(executionClassLoaderProvider.apply(classLoadersHierarchy), () -> {
         try {
+          getClassloaderExclusions().stream().forEach(c -> {
+            try {
+              currentThread().getContextClassLoader().loadClass(c.getName());
+            } catch (ClassNotFoundException e) {
+              LOGGER.error(e.getMessage(), e);
+            }
+          });
           if (getLeakTriggererClass() != null) {
             Class<?> runnableClass = currentThread().getContextClassLoader().loadClass(getLeakTriggererClass().getName());
             Object runnable = runnableClass.newInstance();
@@ -214,6 +225,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
     additionalLibraries.add(this.libraryUrl);
     Optional.ofNullable(getLeakTriggererClass())
         .ifPresent(c -> additionalLibraries.add(c.getProtectionDomain().getCodeSource().getLocation()));
+    additionalLibraries.add(getArtifactLifecycleListenerClass().getProtectionDomain().getCodeSource().getLocation());
     builder = driverConfigurer.apply(builder, additionalLibraries.toArray(new URL[0]));
     try (TestClassLoadersHierarchy classLoadersHierarchy = builder.build()) {
       ClassLoader target = executionClassLoaderProvider.apply(classLoadersHierarchy);

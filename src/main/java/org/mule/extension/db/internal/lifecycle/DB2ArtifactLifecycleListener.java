@@ -6,10 +6,7 @@
  */
 package org.mule.extension.db.internal.lifecycle;
 
-import static java.beans.Introspector.flushCaches;
-import static java.lang.String.format;
-import static java.sql.DriverManager.deregisterDriver;
-import static java.sql.DriverManager.getDrivers;
+import static java.lang.Boolean.getBoolean;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.sdk.api.artifact.lifecycle.ArtifactDisposalContext;
@@ -17,50 +14,26 @@ import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.lang.reflect.Field;
 import java.sql.Driver;
-import java.util.Collections;
-import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 
-public class DB2ArtifactLifecycleListener implements ArtifactLifecycleListener {
+public class DB2ArtifactLifecycleListener extends AbstractDbArtifactLifecycleListener {
+
+  private static final String AVOID_DISPOSE_TIMER_THREADS_PROPERTY_NAME = "mule.db.connector.db2.avoid.cancel.timer.thread";
+  private static final boolean AVOID_DISPOSE_TIMER_THREADS =
+      getBoolean(AVOID_DISPOSE_TIMER_THREADS_PROPERTY_NAME);
 
   private static final Logger LOGGER = getLogger(DB2ArtifactLifecycleListener.class);
 
   @Override
   public void onArtifactDisposal(ArtifactDisposalContext artifactDisposalContext) {
-    LOGGER.debug("Running onArtifactDisposal method on {}", getClass().getName());
-    deregisterDB2Drivers(artifactDisposalContext);
-
-    /*(W-12460123) When we have a DB2 driver in the application: Due to in this class getDrivers() method does not return any
-     * values when we had a DB2 driver, we found the TimerThread that it triggers for canceling it */
-    cancelTimerThreads(artifactDisposalContext.getExtensionOwnedThreads());
-    cancelTimerThreads(artifactDisposalContext.getExtensionOwnedThreads());
-    flushCaches();
-    ResourceBundle.clearCache(artifactDisposalContext.getArtifactClassLoader());
-    ResourceBundle.clearCache(artifactDisposalContext.getExtensionClassLoader());
+    LOGGER.debug("Running onArtifactDisposal method on DB2ArtifactLifecycleListener");
+    deregisterDrivers(artifactDisposalContext);
   }
 
-  private void deregisterDB2Drivers(ArtifactDisposalContext disposalContext) {
-    Collections.list(getDrivers())
-        .stream()
-        .filter(d -> disposalContext.isArtifactOwnedClassLoader(d.getClass().getClassLoader()) ||
-            disposalContext.isExtensionOwnedClassLoader(d.getClass().getClassLoader()))
-        .filter(this::isDB2Driver)
-        .forEach(driver -> {
-          try {
-            if (LOGGER.isDebugEnabled()) {
-              LOGGER.debug("Deregistering driver: {}", driver.getClass());
-            }
-            deregisterDriver(driver);
-          } catch (Exception e) {
-            LOGGER.warn(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
-          }
-        });
-  }
-
-  private boolean isDB2Driver(Driver driver) {
+  public Boolean isDriver(Driver driver) {
     try {
       return driver.getClass().getClassLoader().loadClass("com.ibm.db2.jcc.DB2Driver").isAssignableFrom(driver.getClass());
     } catch (ClassNotFoundException e) {
@@ -68,13 +41,20 @@ public class DB2ArtifactLifecycleListener implements ArtifactLifecycleListener {
     }
   }
 
-  private void cancelTimerThreads(Stream<Thread> threadStream) {
+  public void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
+    if (!AVOID_DISPOSE_TIMER_THREADS) {
+      /*(W-12460123) When we have a DB2 driver in the application: Due to in this class getDrivers() method does not return any
+       * values when we had a DB2 driver, we found the TimerThread that it triggers for canceling it */
+      cancelTimerThreads(disposalContext.getExtensionOwnedThreads());
+      cancelTimerThreads(disposalContext.getExtensionOwnedThreads());
+    }
+  }
 
+  private void cancelTimerThreads(Stream<Thread> threadStream) {
     threadStream.filter(thread -> thread.getName().startsWith("Timer-")).forEach(thread -> {
       LOGGER.debug("Timer thread founded: {} - {}", thread.getName(), thread.getContextClassLoader());
       try {
         Class<?> diagnosticClass = Class.forName("com.ibm.db2.jcc.am.lg", true, thread.getContextClassLoader());
-
         Field clockField = diagnosticClass.getDeclaredField("a");
         Boolean accessibility = clockField.isAccessible();
         clockField.setAccessible(true);

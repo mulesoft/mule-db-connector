@@ -15,6 +15,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isIn;
 import static org.hamcrest.core.IsNot.not;
 
+import org.mule.extension.db.internal.lifecycle.DbCompositeLifecycleListener;
 import org.mule.extension.db.internal.lifecycle.DerbyArtifactLifecycleListener;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
@@ -22,6 +23,7 @@ import java.sql.DriverManager;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.hamcrest.Matcher;
@@ -57,7 +59,7 @@ public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLife
 
   @Override
   Class<? extends ArtifactLifecycleListener> getArtifactLifecycleListenerClass() {
-    return DerbyArtifactLifecycleListener.class;
+    return DbCompositeLifecycleListener.class;
   }
 
   @Parameterized.Parameters
@@ -88,5 +90,10 @@ public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLife
                       hasProperty("name", is(getDriverThreadName())),
                       not(isIn(previousThreads))));
     return negateMatcher ? not(matcher) : matcher;
+  }
+
+  @Override
+  List<Class<?>> getClassloaderExclusions() {
+    return null;
   }
 }

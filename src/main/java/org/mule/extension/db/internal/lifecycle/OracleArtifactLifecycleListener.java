@@ -30,7 +30,7 @@ import javax.management.ObjectName;
 
 import org.slf4j.Logger;
 
-public class OracleArtifactLifecycleListener implements ArtifactLifecycleListener {
+public class OracleArtifactLifecycleListener extends AbstractDbArtifactLifecycleListener {
 
   private static final Logger LOGGER = getLogger(OracleArtifactLifecycleListener.class);
 
@@ -40,17 +40,14 @@ public class OracleArtifactLifecycleListener implements ArtifactLifecycleListene
   public void onArtifactDisposal(ArtifactDisposalContext artifactDisposalContext) {
     LOGGER.debug("Running onArtifactDisposal method on OracleArtifactLifecycleListener");
     deregisterJdbcDrivers(artifactDisposalContext);
-    flushCaches();
-    ResourceBundle.clearCache(artifactDisposalContext.getArtifactClassLoader());
-    ResourceBundle.clearCache(artifactDisposalContext.getExtensionClassLoader());
   }
 
   private void deregisterJdbcDrivers(ArtifactDisposalContext disposalContext) {
     Collections.list(getDrivers())
         .stream()
+        .filter(d -> isOracleDriver(d))
         .filter(d -> disposalContext.isArtifactOwnedClassLoader(d.getClass().getClassLoader()) ||
             disposalContext.isExtensionOwnedClassLoader(d.getClass().getClassLoader()))
-        .filter(d -> isOracleDriver(d))
         .forEach(driver -> {
           try {
             LOGGER.debug("Deregistering Oracle's driver");

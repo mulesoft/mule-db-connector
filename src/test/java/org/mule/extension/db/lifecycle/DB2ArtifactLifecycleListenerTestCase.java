@@ -15,10 +15,16 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.IsNot.not;
 
 import org.mule.extension.db.internal.lifecycle.DB2ArtifactLifecycleListener;
+import org.mule.extension.db.internal.lifecycle.DbCompositeLifecycleListener;
+import org.mule.extension.db.internal.lifecycle.DerbyArtifactLifecycleListener;
+import org.mule.extension.db.internal.lifecycle.MySqlArtifactLifecycleListener;
+import org.mule.extension.db.internal.lifecycle.OracleArtifactLifecycleListener;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.hamcrest.Matcher;
 import org.junit.runner.RunWith;
@@ -42,6 +48,18 @@ public class DB2ArtifactLifecycleListenerTestCase extends AbstractArtifactLifecy
   @Override
   Class<? extends ArtifactLifecycleListener> getArtifactLifecycleListenerClass() {
     return DB2ArtifactLifecycleListener.class;
+  }
+
+
+  List<Class<?>> getClassloaderExclusions() {
+    List<Class<?>> exclusions = new ArrayList<>();
+    exclusions.add(DB2ArtifactLifecycleListener.class);
+    exclusions.add(DbCompositeLifecycleListener.class);
+    exclusions.add(AbstractArtifactLifecycleListenerTestCase.class);
+    exclusions.add(DerbyArtifactLifecycleListener.class);
+    exclusions.add(MySqlArtifactLifecycleListener.class);
+    exclusions.add(OracleArtifactLifecycleListener.class);
+    return exclusions;
   }
 
   @Override
@@ -68,6 +86,4 @@ public class DB2ArtifactLifecycleListenerTestCase extends AbstractArtifactLifecy
         hasItem(allOf(isNotInPreviousThreads, nameStartsWithTimer, classLoaderMatcher));
     return negateMatcher ? not(combinedMatcher) : combinedMatcher;
   }
-
-
 }

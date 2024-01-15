@@ -22,7 +22,7 @@
     <properties>
         <c3p0Version>0.9.5.5</c3p0Version>
         <commonsCollectionsVersion>3.2.2</commonsCollectionsVersion>
-        <commonsDbUtilsVersion>1.7</commonsDbUtilsVersion>
+        <commonsDbUtilsVersion>1.8.0</commonsDbUtilsVersion>
         <commonsIoVersion>2.13.0</commonsIoVersion>
         <mockito-core.version>4.7.0</mockito-core.version>
         <junit.version>4.13.2</junit.version>
@@ -44,7 +44,7 @@
         <oracle.driver.version>23.2.0.0</oracle.driver.version>
         <postgresql.version>42.6.0</postgresql.version>
 
-        <docker.maven.plugin.version>0.40.2</docker.maven.plugin.version>
+        <docker.maven.plugin.version>0.43.4</docker.maven.plugin.version>
         <maven-replacer-plugin.version>1.5.3</maven-replacer-plugin.version>
         <maven.help.plugin.version>3.3.0</maven.help.plugin.version>
 
@@ -58,11 +58,11 @@
         <skipTests>false</skipTests>
         <skipTita>false</skipTita>
         <settingsFile>${java.io.tmpdir}/effective-settings.xml</settingsFile>
-        <spring-beans-version>5.3.2</spring-beans-version>
-        <spring-security-config-version>5.4.2</spring-security-config-version>
-        <spring-security-core-version>5.4.2</spring-security-core-version>
-        <spring-context-version>5.3.2</spring-context-version>
-        <spring-core-version>5.3.2</spring-core-version>
+        <spring-security-config-version>5.5.7</spring-security-config-version>
+        <spring-security-core-version>5.5.7</spring-security-core-version>
+        <spring-beans-version>5.3.27</spring-beans-version>
+        <spring-context-version>5.3.27</spring-context-version>
+        <spring-core-version>5.3.27</spring-core-version>
         <mule-spring-module-version>1.3.11</mule-spring-module-version>
 
         <mule.vm.version>2.0.1</mule.vm.version>
@@ -1419,7 +1419,7 @@
                 <dependency>
                     <groupId>mysql</groupId>
                     <artifactId>mysql-connector-java</artifactId>
-                    <version>5.1.49</version>
+                    <version>8.0.28</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>

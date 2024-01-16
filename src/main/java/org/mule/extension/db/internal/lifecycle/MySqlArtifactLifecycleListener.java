@@ -7,6 +7,7 @@
 package org.mule.extension.db.internal.lifecycle;
 
 import static java.beans.Introspector.flushCaches;
+import static java.lang.Boolean.getBoolean;
 import static java.sql.DriverManager.deregisterDriver;
 import static java.sql.DriverManager.getDrivers;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -31,47 +32,54 @@ import org.slf4j.Logger;
 public class MySqlArtifactLifecycleListener implements ArtifactLifecycleListener {
 
   private static final Logger LOGGER = getLogger(MySqlArtifactLifecycleListener.class);
+  private static final String[] DRIVER_NAMES = {"com.mysql.jdbc.Driver", "com.mysql.cj.jdbc.Driver"};
+
   private static final List<String> CONNECTION_CLEANUP_THREAD_KNOWN_CLASS_ADDRESES =
       Arrays.asList("com.mysql.jdbc.AbandonedConnectionCleanupThread", "com.mysql.cj.jdbc.AbandonedConnectionCleanupThread");
+  private static final String AVOID_SHUTDOWN_CLEANUP_THREAD_PROPERTY_NAME =
+      "mule.db.connector.mysql.avoid.shutdown.cleanup.thread";
+  private static final boolean AVOID_SHUTDOWN_CLEANUP_THREAD =
+      getBoolean(AVOID_SHUTDOWN_CLEANUP_THREAD_PROPERTY_NAME);
 
   @Override
   public void onArtifactDisposal(ArtifactDisposalContext artifactDisposalContext) {
     LOGGER.debug("Running onArtifactDisposal method on MySqlArtifactLifecycleListener");
-    deregisterMySqlDrivers(artifactDisposalContext);
-    flushCaches();
-    ResourceBundle.clearCache(artifactDisposalContext.getArtifactClassLoader());
-    ResourceBundle.clearCache(artifactDisposalContext.getExtensionClassLoader());
+    deregisterDrivers(artifactDisposalContext);
   }
 
-  private void deregisterMySqlDrivers(ArtifactDisposalContext disposalContext) {
+  // TODO: W-14821871 Move this to a common class
+  private void deregisterDrivers(ArtifactDisposalContext disposalContext) {
     Collections.list(getDrivers())
         .stream()
         .filter(d -> disposalContext.isArtifactOwnedClassLoader(d.getClass().getClassLoader()) ||
             disposalContext.isExtensionOwnedClassLoader(d.getClass().getClassLoader()))
-        .filter(this::isMySqlDriver)
+        .filter(this::isDriver)
         .forEach(driver -> {
           try {
-            LOGGER.debug("Deregistering driver: MySQL Driver");
             deregisterDriver(driver);
-            shutdownMySqlAbandonedConnectionCleanupThread(disposalContext);
+            additionalCleaning(disposalContext, driver);
           } catch (Exception e) {
-            LOGGER
-                .warn("An error occurred while trying to unregister and clean up the MySql driver. It could cause memory leaks.");
+            LOGGER.warn("Can not deregister driver. This can cause a memory leak.", e);
           }
         });
+    cleanCaches(disposalContext);
   }
 
-  private boolean isMySqlDriver(Driver driver) {
-    return isDriver(driver, "com.mysql.jdbc.Driver")
-        || isDriver(driver, "com.mysql.cj.jdbc.Driver");
+  // TODO: W-14821871 Move this to a common class
+  private boolean isDriver(Driver driver) {
+    return Arrays.stream(DRIVER_NAMES).anyMatch(name -> name.equals(driver.getClass().getName()));
   }
 
-  private boolean isDriver(Driver driver, String expectedDriverClass) {
-    try {
-      return driver.getClass().getClassLoader().loadClass(expectedDriverClass).isAssignableFrom(driver.getClass());
-    } catch (ClassNotFoundException e) {
-      // If the class is not found, there is no such driver.
-      return false;
+  // TODO: W-14821871 Move this to a common class
+  private void cleanCaches(ArtifactDisposalContext disposalContext) {
+    flushCaches();
+    ResourceBundle.clearCache(disposalContext.getArtifactClassLoader());
+    ResourceBundle.clearCache(disposalContext.getExtensionClassLoader());
+  }
+
+  private void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
+    if (!AVOID_SHUTDOWN_CLEANUP_THREAD) {
+      shutdownMySqlAbandonedConnectionCleanupThread(disposalContext);
     }
   }
 

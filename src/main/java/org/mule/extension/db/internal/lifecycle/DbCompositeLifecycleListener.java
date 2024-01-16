@@ -7,7 +7,7 @@
 package org.mule.extension.db.internal.lifecycle;
 
 import static java.beans.Introspector.flushCaches;
-import static java.lang.String.format;
+import static java.lang.Boolean.getBoolean;
 import static java.sql.DriverManager.deregisterDriver;
 import static java.sql.DriverManager.getDrivers;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -15,6 +15,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactDisposalContext;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
+import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +26,9 @@ import org.slf4j.Logger;
 public class DbCompositeLifecycleListener implements ArtifactLifecycleListener {
 
   private static final Logger LOGGER = getLogger(DbCompositeLifecycleListener.class);
+  private static final String AVOID_ARTIFACT_DISPOSERS_PROPERTY_NAME = "mule.db.connector.avoid.all.artifact.disposers";
+  private static final boolean AVOID_ARTIFACT_DISPOSERS =
+      getBoolean(AVOID_ARTIFACT_DISPOSERS_PROPERTY_NAME);
 
   private final List<ArtifactLifecycleListener> delegates = new ArrayList<>();
 
@@ -36,25 +40,44 @@ public class DbCompositeLifecycleListener implements ArtifactLifecycleListener {
   }
 
   @Override
-  public void onArtifactDisposal(ArtifactDisposalContext artifactDisposalContext) {
-    delegates.forEach(x -> x.onArtifactDisposal(artifactDisposalContext));
-    // Unregistration of all other drivers
+  public void onArtifactDisposal(ArtifactDisposalContext disposalContext) {
+    if (!AVOID_ARTIFACT_DISPOSERS) {
+      delegates.forEach(x -> x.onArtifactDisposal(disposalContext));
+      // Unregistration of all other drivers
+      deregisterDrivers(disposalContext);
+    }
+  }
+
+  // TODO: W-14821871 Move this to a common class
+  private void deregisterDrivers(ArtifactDisposalContext disposalContext) {
     Collections.list(getDrivers())
         .stream()
-        .filter(d -> artifactDisposalContext.isArtifactOwnedClassLoader(d.getClass().getClassLoader()) ||
-            artifactDisposalContext.isExtensionOwnedClassLoader(d.getClass().getClassLoader()))
+        .filter(d -> disposalContext.isArtifactOwnedClassLoader(d.getClass().getClassLoader()) ||
+            disposalContext.isExtensionOwnedClassLoader(d.getClass().getClassLoader()))
+        .filter(this::isDriver)
         .forEach(driver -> {
           try {
             deregisterDriver(driver);
-            if (LOGGER.isDebugEnabled()) {
-              LOGGER.debug("Deregistering driver: {}", driver.getClass());
-            }
+            additionalCleaning(disposalContext, driver);
           } catch (Exception e) {
-            LOGGER.warn(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
+            LOGGER.warn("Can not deregister driver. This can cause a memory leak.", e);
           }
         });
+    cleanCaches(disposalContext);
+  }
+
+  // TODO: W-14821871 Move this to a common class
+  private void cleanCaches(ArtifactDisposalContext disposalContext) {
     flushCaches();
-    ResourceBundle.clearCache(artifactDisposalContext.getArtifactClassLoader());
-    ResourceBundle.clearCache(artifactDisposalContext.getExtensionClassLoader());
+    ResourceBundle.clearCache(disposalContext.getArtifactClassLoader());
+    ResourceBundle.clearCache(disposalContext.getExtensionClassLoader());
+  }
+
+  protected boolean isDriver(Driver driver) {
+    return Driver.class.isInstance(driver);
+  }
+
+  protected void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
+    return;
   }
 }

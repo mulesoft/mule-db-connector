@@ -7,6 +7,7 @@
 package org.mule.extension.db.internal.lifecycle;
 
 import static java.beans.Introspector.flushCaches;
+import static java.lang.Boolean.getBoolean;
 import static java.lang.Integer.toHexString;
 import static java.lang.management.ManagementFactory.getPlatformMBeanServer;
 import static java.sql.DriverManager.deregisterDriver;
@@ -18,6 +19,7 @@ import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.lang.reflect.Field;
 import java.sql.Driver;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
@@ -33,44 +35,64 @@ import org.slf4j.Logger;
 public class OracleArtifactLifecycleListener implements ArtifactLifecycleListener {
 
   private static final Logger LOGGER = getLogger(OracleArtifactLifecycleListener.class);
+  private static final String[] DRIVER_NAMES = {"oracle.jdbc.OracleDriver"};
 
   public static final String DIAGNOSABILITY_BEAN_NAME = "diagnosability";
+  /*This property was used in the resource releasers that were on the runtime side.*/
+  private static final String AVOID_DISPOSE_TIMER_THREADS_PROPERTY_NAME = "mule.db.connector.oracle.avoid.dispose.threads";
+  private static final boolean AVOID_DISPOSE_TIMER_THREADS =
+      getBoolean(AVOID_DISPOSE_TIMER_THREADS_PROPERTY_NAME);
+
+  private static final String AVOID_REMOVE_LOGGER_FORMATTER_PROPERTY_NAME =
+      "mule.db.connector.oracle.avoid.remove.logger.formatter";
+  private static final boolean AVOID_REMOVE_LOGGER_FORMATTER =
+      getBoolean(AVOID_REMOVE_LOGGER_FORMATTER_PROPERTY_NAME);
+
 
   @Override
   public void onArtifactDisposal(ArtifactDisposalContext artifactDisposalContext) {
     LOGGER.debug("Running onArtifactDisposal method on OracleArtifactLifecycleListener");
-    deregisterJdbcDrivers(artifactDisposalContext);
-    flushCaches();
-    ResourceBundle.clearCache(artifactDisposalContext.getArtifactClassLoader());
-    ResourceBundle.clearCache(artifactDisposalContext.getExtensionClassLoader());
+    deregisterDrivers(artifactDisposalContext);
   }
 
-  private void deregisterJdbcDrivers(ArtifactDisposalContext disposalContext) {
+  // TODO: W-14821871 Move this to a common class
+  private void deregisterDrivers(ArtifactDisposalContext disposalContext) {
     Collections.list(getDrivers())
         .stream()
         .filter(d -> disposalContext.isArtifactOwnedClassLoader(d.getClass().getClassLoader()) ||
             disposalContext.isExtensionOwnedClassLoader(d.getClass().getClassLoader()))
-        .filter(d -> isOracleDriver(d))
+        .filter(this::isDriver)
         .forEach(driver -> {
           try {
-            LOGGER.debug("Deregistering Oracle's driver");
             deregisterDriver(driver);
-            removeOracleSimpleFormatter(disposalContext);
-            checkingVersionsWithLeaksKnownSolvedInNewerVersions(driver);
-            cleanClassloader(disposalContext.getArtifactClassLoader());
-            cleanClassloader(disposalContext.getExtensionClassLoader());
+            additionalCleaning(disposalContext, driver);
           } catch (Exception e) {
-            LOGGER.debug("Can not deregister Oracle's driver. This can cause a memory leak.");
+            LOGGER.warn("Can not deregister driver. This can cause a memory leak.", e);
           }
         });
+    cleanCaches(disposalContext);
   }
 
-  private boolean isOracleDriver(Driver driver) {
-    try {
-      return driver.getClass().getClassLoader().loadClass("oracle.jdbc.OracleDriver").isAssignableFrom(driver.getClass());
-    } catch (ClassNotFoundException e) {
-      // If the class is not found, there is no such driver.
-      return false;
+  // TODO: W-14821871 Move this to a common class
+  private boolean isDriver(Driver driver) {
+    return Arrays.stream(DRIVER_NAMES).anyMatch(name -> name.equals(driver.getClass().getName()));
+  }
+
+  // TODO: W-14821871 Move this to a common class
+  private void cleanCaches(ArtifactDisposalContext disposalContext) {
+    flushCaches();
+    ResourceBundle.clearCache(disposalContext.getArtifactClassLoader());
+    ResourceBundle.clearCache(disposalContext.getExtensionClassLoader());
+  }
+
+  private void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
+    checkingVersionsWithLeaksKnownSolvedInNewerVersions(driver);
+    if (!AVOID_REMOVE_LOGGER_FORMATTER) {
+      removeOracleSimpleFormatter(disposalContext);
+    }
+    if (!AVOID_DISPOSE_TIMER_THREADS) {
+      cleanClassloader(disposalContext.getArtifactClassLoader());
+      cleanClassloader(disposalContext.getExtensionClassLoader());
     }
   }
 

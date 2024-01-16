@@ -7,7 +7,7 @@
 package org.mule.extension.db.internal.lifecycle;
 
 import static java.beans.Introspector.flushCaches;
-import static java.lang.String.format;
+import static java.lang.Boolean.getBoolean;
 import static java.sql.DriverManager.deregisterDriver;
 import static java.sql.DriverManager.getDrivers;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -28,40 +28,51 @@ public class DerbyArtifactLifecycleListener implements ArtifactLifecycleListener
   private static final Logger LOGGER = getLogger(DerbyArtifactLifecycleListener.class);
   private static final String DRIVER_PACKAGE = "org.apache.derby.jdbc";
   private static final String[] DRIVER_NAMES = {"org.apache.derby.jdbc.EmbeddedDriver", "org.apache.derby.jdbc.AutoloadedDriver"};
+  private static final String AVOID_SHUTDOWN_CONNECTION_PROPERTY_NAME = "mule.db.connector.derby.avoid.shutdown.connection";
+  private static final boolean AVOID_SHUTDOWN_CONNECTION =
+      getBoolean(AVOID_SHUTDOWN_CONNECTION_PROPERTY_NAME);
 
   @Override
   public void onArtifactDisposal(ArtifactDisposalContext artifactDisposalContext) {
     LOGGER.debug("Running onArtifactDisposal method on DerbyArtifactLifecycleListener");
-    deregisterDerbyDrivers(artifactDisposalContext);
-    flushCaches();
-    ResourceBundle.clearCache(artifactDisposalContext.getArtifactClassLoader());
-    ResourceBundle.clearCache(artifactDisposalContext.getExtensionClassLoader());
+    deregisterDrivers(artifactDisposalContext);
   }
 
-  private void deregisterDerbyDrivers(ArtifactDisposalContext disposalContext) {
+  // TODO: W-14821871 Move this to a common class
+  private void deregisterDrivers(ArtifactDisposalContext disposalContext) {
     Collections.list(getDrivers())
         .stream()
         .filter(d -> disposalContext.isArtifactOwnedClassLoader(d.getClass().getClassLoader()) ||
             disposalContext.isExtensionOwnedClassLoader(d.getClass().getClassLoader()))
-        .filter(d -> d.getClass().getName().startsWith(DRIVER_PACKAGE))
+        .filter(this::isDriver)
         .forEach(driver -> {
           try {
             deregisterDriver(driver);
-            if (LOGGER.isDebugEnabled()) {
-              LOGGER.debug("Deregistering driver: {}", driver.getClass());
-            }
-            if (isDerbyEmbeddedDriver(driver)) {
-              leakPreventionForDerbyEmbeddedDriver(driver);
-            }
+            additionalCleaning(disposalContext, driver);
           } catch (Exception e) {
-            LOGGER.debug(format("Can not deregister driver %s. This can cause a memory leak.", driver.getClass()), e);
+            LOGGER.warn("Can not deregister driver. This can cause a memory leak.", e);
           }
         });
+    cleanCaches(disposalContext);
   }
 
-  private boolean isDerbyEmbeddedDriver(Driver driver) {
+  // TODO: W-14821871 Move this to a common class
+  private boolean isDriver(Driver driver) {
     // This is the dummy driver which is registered with the DriverManager and which is autoloaded by JDBC4
     return Arrays.stream(DRIVER_NAMES).anyMatch(name -> name.equals(driver.getClass().getName()));
+  }
+
+  // TODO: W-14821871 Move this to a common class
+  private void cleanCaches(ArtifactDisposalContext disposalContext) {
+    flushCaches();
+    ResourceBundle.clearCache(disposalContext.getArtifactClassLoader());
+    ResourceBundle.clearCache(disposalContext.getExtensionClassLoader());
+  }
+
+  private void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
+    if (isDriver(driver) && !AVOID_SHUTDOWN_CONNECTION) {
+      leakPreventionForDerbyEmbeddedDriver(driver);
+    }
   }
 
   private void leakPreventionForDerbyEmbeddedDriver(Driver driverObject) {
@@ -75,31 +86,6 @@ public class DerbyArtifactLifecycleListener implements ArtifactLifecycleListener
       } else {
         LOGGER.debug("Unable to shutdown Derby's embedded driver on the DerbyArtifactLifecycleListener", e);
       }
-    }
-    //    try {
-    //      if (hasDeclaredMethod(driverObject.getClass(), "connect", String.class, java.util.Properties.class)) {
-    //        Method m = driverObject.getClass().getDeclaredMethod("connect", String.class, java.util.Properties.class);
-    //        m.invoke(driverObject, "jdbc:derby:;shutdown=true", null);
-    //      }
-    //    } catch (NoSuchMethodException | IllegalAccessException e) {
-    //      LOGGER.debug("Unable to shutdown Derby's embedded driver", e);
-    //    } catch (InvocationTargetException e) {
-    //      if (e.getCause() instanceof SQLException
-    //          && ((SQLException) e.getCause()).getSQLState().equals("XJ015")) {
-    //        // A successful shutdown always results in an SQLException to indicate that Derby has shut down and that
-    //        // there is no other exception.
-    //        LOGGER.debug("(XJ015): Derby system shutdown.");
-    //      } else {
-    //        LOGGER.debug("Unable to shutdown Derby's embedded driver on the DerbyArtifactLifecycleListener", e);
-    //      }
-    //    }
-  }
-
-  private boolean hasDeclaredMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
-    try {
-      return clazz.getDeclaredMethod(methodName, parameterTypes) != null;
-    } catch (NoSuchMethodException ex) {
-      return false;
     }
   }
 }

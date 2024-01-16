@@ -15,7 +15,6 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.hamcrest.core.IsNot.not;
 
 import org.mule.extension.db.internal.lifecycle.DB2ArtifactLifecycleListener;
-import org.mule.extension.db.internal.lifecycle.DbCompositeLifecycleListener;
 import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.util.Arrays;

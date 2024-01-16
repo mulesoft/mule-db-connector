@@ -6,21 +6,16 @@
  */
 package org.mule.extension.db.internal.lifecycle;
 
-import static java.beans.Introspector.flushCaches;
 import static java.lang.Boolean.getBoolean;
-import static java.sql.DriverManager.deregisterDriver;
 import static java.sql.DriverManager.getDrivers;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.sdk.api.artifact.lifecycle.ArtifactDisposalContext;
-import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;

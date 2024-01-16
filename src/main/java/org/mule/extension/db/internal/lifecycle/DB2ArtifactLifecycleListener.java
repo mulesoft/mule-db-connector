@@ -6,26 +6,23 @@
  */
 package org.mule.extension.db.internal.lifecycle;
 
-import static java.beans.Introspector.flushCaches;
 import static java.lang.Boolean.getBoolean;
-import static java.sql.DriverManager.deregisterDriver;
 import static java.sql.DriverManager.getDrivers;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.sdk.api.artifact.lifecycle.ArtifactDisposalContext;
-import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.lang.reflect.Field;
 import java.sql.Driver;
-import java.util.Arrays;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Collections;
-import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 
-public class DB2ArtifactLifecycleListener implements ArtifactLifecycleListener {
+public class DB2ArtifactLifecycleListener extends AbstractDbArtifactLifecycleListener {
 
   private static final Logger LOGGER = getLogger(DB2ArtifactLifecycleListener.class);
   static final String[] DRIVER_NAMES = {"com.ibm.db2.jcc.DB2Driver"};
@@ -42,41 +39,25 @@ public class DB2ArtifactLifecycleListener implements ArtifactLifecycleListener {
     additionalCleaning(disposalContext, null);
   }
 
-  // TODO: W-14821871 Move this to a common class
-  private void deregisterDrivers(ArtifactDisposalContext disposalContext) {
-    Collections.list(getDrivers())
-        .stream()
-        .filter(d -> disposalContext.isArtifactOwnedClassLoader(d.getClass().getClassLoader()) ||
-            disposalContext.isExtensionOwnedClassLoader(d.getClass().getClassLoader()))
-        .filter(this::isDriver)
-        .forEach(driver -> {
-          try {
-            deregisterDriver(driver);
-            additionalCleaning(disposalContext, driver);
-          } catch (Exception e) {
-            LOGGER.warn("Can not deregister driver. This can cause a memory leak.", e);
-          }
-        });
-    cleanCaches(disposalContext);
-  }
-
-  // TODO: W-14821871 Move this to a common class
-  protected boolean isDriver(Driver driver) {
-    return Arrays.stream(DRIVER_NAMES).anyMatch(name -> name.equals(driver.getClass().getName()));
-  }
-
-  // TODO: W-14821871 Move this to a common class
-  protected void cleanCaches(ArtifactDisposalContext disposalContext) {
-    flushCaches();
-    ResourceBundle.clearCache(disposalContext.getArtifactClassLoader());
-    ResourceBundle.clearCache(disposalContext.getExtensionClassLoader());
-  }
-
   protected void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
     if (!AVOID_DISPOSE_TIMER_THREADS) {
       cancelTimerThreads(disposalContext.getExtensionOwnedThreads());
       cancelTimerThreads(disposalContext.getExtensionOwnedThreads());
     }
+  }
+
+  protected String[] getDriverNames() {
+    return DRIVER_NAMES;
+  }
+
+  @Override
+  protected Stream<Driver> getDriversStream() {
+    return Collections.list(getDrivers()).stream();
+  }
+
+  @Override
+  protected void unregisterDriver(Driver driver) throws SQLException {
+    DriverManager.deregisterDriver(driver);
   }
 
   private void cancelTimerThreads(Stream<Thread> threadStream) {

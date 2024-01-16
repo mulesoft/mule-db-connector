@@ -6,30 +6,29 @@
  */
 package org.mule.extension.db.internal.lifecycle;
 
-import static java.beans.Introspector.flushCaches;
 import static java.lang.Boolean.getBoolean;
-import static java.sql.DriverManager.deregisterDriver;
 import static java.sql.DriverManager.getDrivers;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import org.mule.sdk.api.artifact.lifecycle.ArtifactDisposalContext;
-import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 
-public class MySqlArtifactLifecycleListener implements ArtifactLifecycleListener {
+public class MySqlArtifactLifecycleListener extends AbstractDbArtifactLifecycleListener {
 
   private static final Logger LOGGER = getLogger(MySqlArtifactLifecycleListener.class);
   private static final String[] DRIVER_NAMES = {"com.mysql.jdbc.Driver", "com.mysql.cj.jdbc.Driver"};
@@ -47,37 +46,21 @@ public class MySqlArtifactLifecycleListener implements ArtifactLifecycleListener
     deregisterDrivers(artifactDisposalContext);
   }
 
-  // TODO: W-14821871 Move this to a common class
-  private void deregisterDrivers(ArtifactDisposalContext disposalContext) {
-    Collections.list(getDrivers())
-        .stream()
-        .filter(d -> disposalContext.isArtifactOwnedClassLoader(d.getClass().getClassLoader()) ||
-            disposalContext.isExtensionOwnedClassLoader(d.getClass().getClassLoader()))
-        .filter(this::isDriver)
-        .forEach(driver -> {
-          try {
-            deregisterDriver(driver);
-            additionalCleaning(disposalContext, driver);
-          } catch (Exception e) {
-            LOGGER.warn("Can not deregister driver. This can cause a memory leak.", e);
-          }
-        });
-    cleanCaches(disposalContext);
+  protected String[] getDriverNames() {
+    return DRIVER_NAMES;
   }
 
-  // TODO: W-14821871 Move this to a common class
-  private boolean isDriver(Driver driver) {
-    return Arrays.stream(DRIVER_NAMES).anyMatch(name -> name.equals(driver.getClass().getName()));
+  @Override
+  protected Stream<Driver> getDriversStream() {
+    return Collections.list(getDrivers()).stream();
   }
 
-  // TODO: W-14821871 Move this to a common class
-  private void cleanCaches(ArtifactDisposalContext disposalContext) {
-    flushCaches();
-    ResourceBundle.clearCache(disposalContext.getArtifactClassLoader());
-    ResourceBundle.clearCache(disposalContext.getExtensionClassLoader());
+  @Override
+  protected void unregisterDriver(Driver driver) throws SQLException {
+    DriverManager.deregisterDriver(driver);
   }
 
-  private void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
+  protected void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
     if (!AVOID_SHUTDOWN_CLEANUP_THREAD) {
       shutdownMySqlAbandonedConnectionCleanupThread(disposalContext);
     }

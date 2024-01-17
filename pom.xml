@@ -51,9 +51,6 @@
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
 
-        <munit.extensions.maven.plugin.version>1.2.0-rc3</munit.extensions.maven.plugin.version>
-        <munit.version>3.1.0-rc4</munit.version>
-        <mtf-tools.version>1.2.0-rc1</mtf-tools.version>
         <skipTests>false</skipTests>
         <skipTita>false</skipTita>
         <settingsFile>${java.io.tmpdir}/effective-settings.xml</settingsFile>
@@ -71,10 +68,15 @@
         <licensePath>LICENSE_HEADER_CPAL.txt</licensePath>
         <licenseYear>2023</licenseYear>
         <commons.lang.version>3.13.0</commons.lang.version>
-        <mule.sdk.api.version>0.7.0</mule.sdk.api.version>
         <commons-dbcp2.version>2.9.0</commons-dbcp2.version>
-        <mtf.javaopts></mtf.javaopts>
         <awaitility.version>3.1.6</awaitility.version>
+        <!-- JDK 17 Compatibility Props -->
+        <mule.sdk.api.version>0.7.0</mule.sdk.api.version>
+        <munit.version>3.1.0-rc5</munit.version>
+        <mtf.tools.version>1.2.0-rc1</mtf.tools.version>
+        <munit.extensions.maven.plugin.version>1.2.0-rc3</munit.extensions.maven.plugin.version>
+        <jacoco.version>0.8.10</jacoco.version>
+        <mtf.javaopts></mtf.javaopts>
     </properties>
 
     <dependencies>
@@ -587,7 +589,7 @@
                             <dependency>
                                 <groupId>com.mulesoft.munit</groupId>
                                 <artifactId>mtf-tools</artifactId>
-                                <version>${mtf-tools.version}</version>
+                                <version>${mtf.tools.version}</version>
                                 <classifier>mule-plugin</classifier>
                             </dependency>
                             <dependency>
@@ -811,7 +813,7 @@
                             <dependency>
                                 <groupId>com.mulesoft.munit</groupId>
                                 <artifactId>mtf-tools</artifactId>
-                                <version>${mtf-tools.version}</version>
+                                <version>${mtf.tools.version}</version>
                                 <classifier>mule-plugin</classifier>
                             </dependency>
                             <dependency>
@@ -1026,7 +1028,7 @@
                             <dependency>
                                 <groupId>com.mulesoft.munit</groupId>
                                 <artifactId>mtf-tools</artifactId>
-                                <version>${mtf-tools.version}</version>
+                                <version>${mtf.tools.version}</version>
                                 <classifier>mule-plugin</classifier>
                             </dependency>
                             <dependency>
@@ -1252,7 +1254,7 @@
                             <dependency>
                                 <groupId>com.mulesoft.munit</groupId>
                                 <artifactId>mtf-tools</artifactId>
-                                <version>${mtf-tools.version}</version>
+                                <version>${mtf.tools.version}</version>
                                 <classifier>mule-plugin</classifier>
                             </dependency>
                             <dependency>
@@ -1534,7 +1536,7 @@
                             <dependency>
                                 <groupId>com.mulesoft.munit</groupId>
                                 <artifactId>mtf-tools</artifactId>
-                                <version>${mtf-tools.version}</version>
+                                <version>${mtf.tools.version}</version>
                                 <classifier>mule-plugin</classifier>
                             </dependency>
                             <dependency>

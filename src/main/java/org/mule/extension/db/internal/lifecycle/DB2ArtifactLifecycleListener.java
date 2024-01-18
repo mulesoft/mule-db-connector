@@ -42,7 +42,7 @@ public class DB2ArtifactLifecycleListener extends DbArtifactLifecycleListenerCom
   public void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
     if (!AVOID_DISPOSE_TIMER_THREADS) {
       cancelTimerThreads(disposalContext.getExtensionOwnedThreads());
-      cancelTimerThreads(disposalContext.getExtensionOwnedThreads());
+      cancelTimerThreads(disposalContext.getArtifactOwnedThreads());
     }
   }
 

@@ -30,7 +30,7 @@ import javax.management.ObjectName;
 
 import org.slf4j.Logger;
 
-public class OracleArtifactLifecycleListener extends AbstractDbArtifactLifecycleListener {
+public class OracleArtifactLifecycleListener extends DbArtifactLifecycleListenerCommons {
 
   private static final Logger LOGGER = getLogger(OracleArtifactLifecycleListener.class);
   private static final String[] DRIVER_NAMES = {"oracle.jdbc.OracleDriver"};
@@ -53,21 +53,21 @@ public class OracleArtifactLifecycleListener extends AbstractDbArtifactLifecycle
     deregisterDrivers(artifactDisposalContext);
   }
 
-  protected String[] getDriverNames() {
+  public String[] getDriverNames() {
     return DRIVER_NAMES;
   }
 
   @Override
-  protected Stream<Driver> getDriversStream() {
+  public Stream<Driver> getDriversStream() {
     return Collections.list(getDrivers()).stream();
   }
 
   @Override
-  protected void unregisterDriver(Driver driver) throws SQLException {
+  public void unregisterDriver(Driver driver) throws SQLException {
     DriverManager.deregisterDriver(driver);
   }
 
-  protected void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
+  public void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
     checkingVersionsWithLeaksKnownSolvedInNewerVersions(driver);
     if (!AVOID_REMOVE_LOGGER_FORMATTER) {
       removeOracleSimpleFormatter(disposalContext);

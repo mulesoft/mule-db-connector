@@ -42,7 +42,9 @@ public class DB2LeakTriggerer implements Runnable {
       LOGGER.debug("The exception is the expected behavior. The Timer thread should have been launched. ");
     }
     await().until(() -> getAllStackTraces().keySet().stream()
-        .filter(thread -> thread.getName().startsWith("Timer-"))
+        .filter(thread -> DB2ArtifactLifecycleListenerTestCase.DRIVER_THREAD_NAMES
+            .stream()
+            .anyMatch(name -> thread.getName().startsWith(name)))
         .anyMatch(thread -> thread.getContextClassLoader() == threadClassloader
             || thread.getContextClassLoader() == parentClassloader));
   }

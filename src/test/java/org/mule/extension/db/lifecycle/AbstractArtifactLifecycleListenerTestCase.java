@@ -72,7 +72,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
 
   abstract String getPackagePrefix();
 
-  abstract String getDriverThreadName();
+  abstract List<String> getDriverThreadNames();
 
   protected Boolean enableLibraryReleaseChecking() {
     return true;
@@ -91,14 +91,14 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
   @Before
   public void getPreviousThreads() throws Exception {
     previousThreads = getAllStackTraces().keySet().stream()
-        .filter(thread -> thread.getName().startsWith(getDriverThreadName())).collect(Collectors.toList());
+        .filter(thread -> getDriverThreadNames().contains(thread.getName())).collect(Collectors.toList());
   }
 
   @After
   public void checkPreviousThreads() throws Exception {
     if (!previousThreads.isEmpty()) {
       assertThat(getAllStackTraces().keySet().stream()
-          .filter(thread -> thread.getName().startsWith(getDriverThreadName())).collect(Collectors.toList()),
+          .filter(thread -> getDriverThreadNames().contains(thread.getName())).collect(Collectors.toList()),
                  containsInAnyOrder(previousThreads.toArray()));
     }
   }

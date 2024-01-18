@@ -44,9 +44,9 @@ public class MySqlLeakTriggerer implements Runnable {
     }
     ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
     await().until(() -> getAllStackTraces().keySet().stream()
-        .filter(thread -> thread.getName().startsWith("mysql-cj-abandoned-connection-cleanup"))
+        .filter(thread -> thread.getName().startsWith("mysql-cj-abandoned-connection-cleanup") //v8
+            || thread.getName().startsWith("Abandoned connection cleanup thread")) //v6
         .anyMatch(thread -> thread.getContextClassLoader() == threadClassloader
             || thread.getContextClassLoader() == parentClassloader));
-
   }
 }

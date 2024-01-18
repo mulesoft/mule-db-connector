@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 
-public class DerbyArtifactLifecycleListener extends AbstractDbArtifactLifecycleListener {
+public class DerbyArtifactLifecycleListener extends DbArtifactLifecycleListenerCommons {
 
   private static final Logger LOGGER = getLogger(DerbyArtifactLifecycleListener.class);
   private static final String DRIVER_PACKAGE = "org.apache.derby.jdbc";
@@ -35,23 +35,23 @@ public class DerbyArtifactLifecycleListener extends AbstractDbArtifactLifecycleL
     deregisterDrivers(artifactDisposalContext);
   }
 
-  protected String[] getDriverNames() {
+  public String[] getDriverNames() {
     return DRIVER_NAMES;
   }
 
-  protected void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
+  public void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
     if (isDriver(driver) && !AVOID_SHUTDOWN_CONNECTION) {
       leakPreventionForDerbyEmbeddedDriver(driver);
     }
   }
 
   @Override
-  protected Stream<Driver> getDriversStream() {
+  public Stream<Driver> getDriversStream() {
     return Collections.list(getDrivers()).stream();
   }
 
   @Override
-  protected void unregisterDriver(Driver driver) throws SQLException {
+  public void unregisterDriver(Driver driver) throws SQLException {
     DriverManager.deregisterDriver(driver);
   }
 

@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 
-public class DB2ArtifactLifecycleListener extends AbstractDbArtifactLifecycleListener {
+public class DB2ArtifactLifecycleListener extends DbArtifactLifecycleListenerCommons {
 
   private static final Logger LOGGER = getLogger(DB2ArtifactLifecycleListener.class);
   static final String[] DRIVER_NAMES = {"com.ibm.db2.jcc.DB2Driver"};
@@ -39,24 +39,24 @@ public class DB2ArtifactLifecycleListener extends AbstractDbArtifactLifecycleLis
     additionalCleaning(disposalContext, null);
   }
 
-  protected void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
+  public void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
     if (!AVOID_DISPOSE_TIMER_THREADS) {
       cancelTimerThreads(disposalContext.getExtensionOwnedThreads());
       cancelTimerThreads(disposalContext.getExtensionOwnedThreads());
     }
   }
 
-  protected String[] getDriverNames() {
+  public String[] getDriverNames() {
     return DRIVER_NAMES;
   }
 
   @Override
-  protected Stream<Driver> getDriversStream() {
+  public Stream<Driver> getDriversStream() {
     return Collections.list(getDrivers()).stream();
   }
 
   @Override
-  protected void unregisterDriver(Driver driver) throws SQLException {
+  public void unregisterDriver(Driver driver) throws SQLException {
     DriverManager.deregisterDriver(driver);
   }
 

@@ -7,6 +7,7 @@
 package org.mule.extension.db.lifecycle;
 
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
@@ -19,6 +20,8 @@ import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.hamcrest.Matcher;
 import org.junit.runner.RunWith;
@@ -28,7 +31,9 @@ import org.junit.runners.Parameterized;
 public class DB2ArtifactLifecycleListenerTestCase extends AbstractArtifactLifecycleListenerTestCase {
 
   public static final String DRIVER_PACKAGE = "com.ibm.db2";
-  public static final String DRIVER_THREAD_NAME = "Timer-";
+
+  public static final List<String> DRIVER_THREAD_NAMES =
+      Arrays.asList(new String[] {"Timer-"});
 
   public DB2ArtifactLifecycleListenerTestCase(String groupId, String artifactId, String version) {
     super(groupId, artifactId, version);
@@ -50,8 +55,8 @@ public class DB2ArtifactLifecycleListenerTestCase extends AbstractArtifactLifecy
   }
 
   @Override
-  public String getDriverThreadName() {
-    return DRIVER_THREAD_NAME;
+  public List<String> getDriverThreadNames() {
+    return DRIVER_THREAD_NAMES;
   }
 
   @Override
@@ -62,7 +67,10 @@ public class DB2ArtifactLifecycleListenerTestCase extends AbstractArtifactLifecy
   @Override
   protected Matcher<Iterable<? super Thread>> hasDriverThreadMatcher(ClassLoader target, boolean negateMatcher) {
     Matcher<Thread> isNotInPreviousThreads = not(isIn(previousThreads));
-    Matcher<Thread> nameStartsWithTimer = hasProperty("name", startsWith("Timer-"));
+    //Matcher<Thread> nameStartsWithTimer = hasProperty("name", startsWith("Timer-"));
+    Matcher<Thread> nameStartsWithTimer = anyOf(getDriverThreadNames().stream()
+        .map(name -> hasProperty("name", startsWith(name)))
+        .collect(Collectors.toList()));
     Matcher<Thread> classLoaderMatcher = hasProperty("contextClassLoader", equalTo(target));
     Matcher<Iterable<? super Thread>> combinedMatcher =
         hasItem(allOf(isNotInPreviousThreads, nameStartsWithTimer, classLoaderMatcher));

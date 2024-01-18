@@ -11,7 +11,6 @@ import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isIn;
 import static org.hamcrest.core.IsNot.not;
 
@@ -22,6 +21,7 @@ import java.sql.DriverManager;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.hamcrest.Matcher;
@@ -33,7 +33,9 @@ import org.junit.runners.Parameterized;
 public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLifecycleListenerTestCase {
 
   public static final String DRIVER_PACKAGE = "org.apache.derby";
-  public static final String DRIVER_THREAD_NAME = "derby.rawStoreDaemon";
+  public static final List<String> DRIVER_THREAD_NAMES =
+      Arrays.asList(new String[] {"derby.rawStoreDaemon"});
+
 
   @Before
   /* The thread that Derby creates when using the in-memory base, does not contain information of the contextClassloader
@@ -46,9 +48,9 @@ public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLife
         .anyMatch(d -> d.getClass().getName().contains("derby")));
     DriverManager.getConnection("jdbc:derby:previousDB;create=true;user=me;password=mine");
     await().until(() -> getAllStackTraces().keySet().stream()
-        .anyMatch(thread -> thread.getName().startsWith(getDriverThreadName())));
+        .anyMatch(thread -> getDriverThreadNames().contains(thread.getName())));
     previousThreads = getAllStackTraces().keySet().stream()
-        .filter(thread -> thread.getName().startsWith(getDriverThreadName())).collect(Collectors.toList());
+        .filter(thread -> getDriverThreadNames().contains(thread.getName())).collect(Collectors.toList());
   }
 
   public DerbyArtifactLifecycleListenerTestCase(String groupId, String artifactId, String version) {
@@ -72,8 +74,8 @@ public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLife
   }
 
   @Override
-  public String getDriverThreadName() {
-    return DRIVER_THREAD_NAME;
+  public List<String> getDriverThreadNames() {
+    return DRIVER_THREAD_NAMES;
   }
 
   @Override
@@ -85,7 +87,7 @@ public class DerbyArtifactLifecycleListenerTestCase extends AbstractArtifactLife
     Matcher<Iterable<? super Thread>> matcher =
         hasItem(
                 allOf(
-                      hasProperty("name", is(getDriverThreadName())),
+                      hasProperty("name", isIn(getDriverThreadNames())),
                       not(isIn(previousThreads))));
     return negateMatcher ? not(matcher) : matcher;
   }

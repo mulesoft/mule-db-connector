@@ -8,17 +8,13 @@ package org.mule.extension.db.lifecycle;
 
 import static java.lang.Thread.getAllStackTraces;
 import static org.awaitility.Awaitility.await;
-import static org.slf4j.LoggerFactory.getLogger;
 
 import java.sql.DriverManager;
 import java.util.Collections;
 
 import oracle.jdbc.diagnostics.Diagnostic;
-import org.slf4j.Logger;
 
 public class OracleLeakTriggerer implements Runnable {
-
-  private static final Logger LOGGER = getLogger(OracleLeakTriggerer.class);
 
   @Override
   public void run() {
@@ -31,7 +27,7 @@ public class OracleLeakTriggerer implements Runnable {
             || driver.getClass().getClassLoader() == parentClassloader)));
     Diagnostic.get("oracle.jdbc", 1000);
     await().until(() -> getAllStackTraces().keySet().stream()
-        .filter(thread -> thread.getName().startsWith("oracle.jdbc.diagnostics.Diagnostic.CLOCK"))
+        .filter(thread -> OracleArtifactLifecycleListenerTestCase.DRIVER_THREAD_NAMES.contains(thread.getName()))
         .anyMatch(thread -> thread.getContextClassLoader() == threadClassloader
             || thread.getContextClassLoader() == parentClassloader));
   }

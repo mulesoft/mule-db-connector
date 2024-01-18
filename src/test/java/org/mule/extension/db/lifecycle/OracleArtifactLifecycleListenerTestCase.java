@@ -9,7 +9,6 @@ package org.mule.extension.db.lifecycle;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isIn;
 import static org.hamcrest.core.IsNot.not;
 
@@ -18,6 +17,7 @@ import org.mule.sdk.api.artifact.lifecycle.ArtifactLifecycleListener;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.hamcrest.Matcher;
 import org.junit.runner.RunWith;
@@ -27,7 +27,9 @@ import org.junit.runners.Parameterized;
 public class OracleArtifactLifecycleListenerTestCase extends AbstractArtifactLifecycleListenerTestCase {
 
   public static final String DRIVER_PACKAGE = "oracle.jdbc";
-  public static final String DRIVER_TIMER_THREAD = "oracle.jdbc.diagnostics.Diagnostic.CLOCK";
+
+  public static final List<String> DRIVER_THREAD_NAMES =
+      Arrays.asList(new String[] {"oracle.jdbc.diagnostics.Diagnostic.CLOCK"});
 
   public OracleArtifactLifecycleListenerTestCase(String groupId, String artifactId, String version) {
     super(groupId, artifactId, version);
@@ -50,8 +52,8 @@ public class OracleArtifactLifecycleListenerTestCase extends AbstractArtifactLif
   }
 
   @Override
-  public String getDriverThreadName() {
-    return DRIVER_TIMER_THREAD;
+  public List<String> getDriverThreadNames() {
+    return DRIVER_THREAD_NAMES;
   }
 
   @Override
@@ -63,7 +65,7 @@ public class OracleArtifactLifecycleListenerTestCase extends AbstractArtifactLif
     Matcher<Iterable<? super Thread>> matcher =
         hasItem(
                 allOf(
-                      hasProperty("name", is(getDriverThreadName())),
+                      hasProperty("name", isIn(getDriverThreadNames())),
                       not(isIn(previousThreads))));
     return negateMatcher ? not(matcher) : matcher;
   }

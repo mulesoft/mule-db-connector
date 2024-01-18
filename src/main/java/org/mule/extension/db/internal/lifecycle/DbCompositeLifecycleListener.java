@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class DbCompositeLifecycleListener extends AbstractDbArtifactLifecycleListener {
+public class DbCompositeLifecycleListener extends DbArtifactLifecycleListenerCommons {
 
   private static final String AVOID_ARTIFACT_DISPOSERS_PROPERTY_NAME = "mule.db.connector.avoid.all.artifact.disposers";
   private static final boolean AVOID_ARTIFACT_DISPOSERS =
@@ -45,20 +45,20 @@ public class DbCompositeLifecycleListener extends AbstractDbArtifactLifecycleLis
   }
 
   @Override
-  protected Stream<Driver> getDriversStream() {
+  public Stream<Driver> getDriversStream() {
     return Collections.list(getDrivers()).stream();
   }
 
   @Override
-  protected void unregisterDriver(Driver driver) throws SQLException {
+  public void unregisterDriver(Driver driver) throws SQLException {
     DriverManager.deregisterDriver(driver);
   }
 
-  protected boolean isDriver(Driver driver) {
+  public boolean isDriver(Driver driver) {
     return Driver.class.isInstance(driver);
   }
 
-  protected void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
+  public void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
     return;
   }
 }

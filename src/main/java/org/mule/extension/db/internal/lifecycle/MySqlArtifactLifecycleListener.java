@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 
-public class MySqlArtifactLifecycleListener extends AbstractDbArtifactLifecycleListener {
+public class MySqlArtifactLifecycleListener extends DbArtifactLifecycleListenerCommons {
 
   private static final Logger LOGGER = getLogger(MySqlArtifactLifecycleListener.class);
   private static final String[] DRIVER_NAMES = {"com.mysql.jdbc.Driver", "com.mysql.cj.jdbc.Driver"};
@@ -46,21 +46,21 @@ public class MySqlArtifactLifecycleListener extends AbstractDbArtifactLifecycleL
     deregisterDrivers(artifactDisposalContext);
   }
 
-  protected String[] getDriverNames() {
+  public String[] getDriverNames() {
     return DRIVER_NAMES;
   }
 
   @Override
-  protected Stream<Driver> getDriversStream() {
+  public Stream<Driver> getDriversStream() {
     return Collections.list(getDrivers()).stream();
   }
 
   @Override
-  protected void unregisterDriver(Driver driver) throws SQLException {
+  public void unregisterDriver(Driver driver) throws SQLException {
     DriverManager.deregisterDriver(driver);
   }
 
-  protected void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
+  public void additionalCleaning(ArtifactDisposalContext disposalContext, Driver driver) {
     if (!AVOID_SHUTDOWN_CLEANUP_THREAD) {
       shutdownMySqlAbandonedConnectionCleanupThread(disposalContext);
     }

@@ -21,9 +21,11 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 
 /* TODO: W-14821871: This class should be abstract, but currently, if I change it, the abstract class will not be in the same classloader as the ArtifactLifecycleListener that is using it and a visibility error occurs.*/
-public class AbstractDbArtifactLifecycleListener implements ArtifactLifecycleListener {
+public class DbArtifactLifecycleListenerCommons implements ArtifactLifecycleListener {
 
-  private static final Logger LOGGER = getLogger(AbstractDbArtifactLifecycleListener.class);
+  protected DbArtifactLifecycleListenerCommons() {}
+
+  private static final Logger LOGGER = getLogger(DbArtifactLifecycleListenerCommons.class);
 
   /* TODO: W-14821871: This method is not implemented here because this class is not in the same classloader of the ArtifactLifecycleListener that uses it and therefore, the DriverManager.getDrivers() method returns a different listing if I run it here or run it inside the ArtifactLifecycleListener.*/
   protected Stream<Driver> getDriversStream() {

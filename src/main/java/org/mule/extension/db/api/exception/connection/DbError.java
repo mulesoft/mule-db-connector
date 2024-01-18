@@ -7,6 +7,7 @@
 package org.mule.extension.db.api.exception.connection;
 
 import org.mule.extension.db.internal.DbConnector;
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.extension.api.error.ErrorTypeDefinition;
 import org.mule.runtime.extension.api.error.MuleErrors;
 
@@ -19,6 +20,7 @@ import java.util.Optional;
  *  @deprecated since 1.9.4. Replace with equivalent on mule-db-client. To be removed in the next major (2.0).
  */
 @Deprecated
+@ExcludeFromGeneratedCoverage
 public enum DbError implements ErrorTypeDefinition<DbError> {
   /**
    * Generic error for a connectivity issue with the Database

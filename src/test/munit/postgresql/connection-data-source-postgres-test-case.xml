@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:mtf="http://www.mulesoft.org/schema/mule/mtf"
+      xmlns:spring="http://www.mulesoft.org/schema/mule/spring"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+        http://www.mulesoft.org/schema/mule/spring http://www.mulesoft.org/schema/mule/spring/current/mule-spring.xsd
+		http://www.mulesoft.org/schema/mule/mtf http://www.mulesoft.org/schema/mule/mtf/current/mule-mtf.xsd">
+
+    <munit:config name="connection-data-source-postgres-test-case.xml" minMuleVersion="4.4.0"/>
+
+    <spring:config files="_spring-config-postgres.xml" name="postgres-config-bean"/>
+
+    <db:config name="postgres-config-data-source">
+        <db:data-source-connection dataSourceRef="jdbcDataSourcePostgres" />
+    </db:config>
+
+    <munit:test name="connection-test">
+        <munit:execution>
+            <mtf:test-connectivity config-ref="postgres-config-data-source"/>
+        </munit:execution>
+    </munit:test>
+</mule>

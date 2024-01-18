@@ -12,4 +12,25 @@
             <db:pooling-profile/>
         </db:my-sql-connection>
     </db:config>
+
+    <db:config name="invalid-password-db-mysql-config">
+        <db:my-sql-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('mysql')]"
+                              user="root" password="invalidpassword" database="xe">
+            <db:pooling-profile/>
+        </db:my-sql-connection>
+    </db:config>
+
+    <db:config name="invalid-database-db-mysql-config">
+        <db:my-sql-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('mysql')]"
+                              user="root" password="password" database="INVALID">
+            <db:pooling-profile/>
+        </db:my-sql-connection>
+    </db:config>
+
+    <db:config name="invalid-host-db-mysql-config">
+        <db:my-sql-connection host="invalidHost" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('mysql')]"
+                              user="root" password="password" database="xe">
+            <db:pooling-profile/>
+        </db:my-sql-connection>
+    </db:config>
 </mule>

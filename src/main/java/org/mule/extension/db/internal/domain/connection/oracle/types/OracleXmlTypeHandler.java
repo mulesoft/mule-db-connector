@@ -8,6 +8,7 @@ package org.mule.extension.db.internal.domain.connection.oracle.types;
 
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.type.AbstractStructuredDbType;
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -20,6 +21,9 @@ import java.sql.SQLException;
  * Defines a structured data type handler for the {@link #ORACLE_XMLTYPE_CLASS} class, multiple name/id pairs will
  * extend this class to cover all possible scenarios
  */
+
+/*TODO: WE ARE NOT ABLE TO TEST THIS IN MTF UNTIL THEY ADD SUPPORT FOR ADDITIONAL DEPENDENCIES*/
+@ExcludeFromGeneratedCoverage
 public class OracleXmlTypeHandler extends AbstractStructuredDbType {
 
   private static final String XML_TYPE_INTERNAL_NAME = "SYS.XMLTYPE";

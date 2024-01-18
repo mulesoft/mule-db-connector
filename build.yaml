@@ -1,10 +1,42 @@
 projectType: extension
 additionalTestConfigs:
-  postgresql:
-    mavenAdditionalArgs: "-Dpostgresql"
-  mysql:
-    mavenAdditionalArgs: "-Dmysql"
-  mssql:
-    mavenAdditionalArgs: "-Dmssql"
-  oracle:
-    mavenAdditionalArgs: "-Doracle"
+  oracle_jdk8:
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Doracle -DminVersion=4.3.0"
+  postgresql_jdk8:
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dpostgresql -DminVersion=4.3.0"
+  mysql_jdk8:
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dmysql -DminVersion=4.3.0"
+  mssql_jdk8:
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dmssql -DminVersion=4.3.0"
+  derby_jdk8:
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dderby -DminVersion=4.3.0"
+  oracle_jdk11:
+    testJdkTool: OPEN-JDK11
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Doracle"
+  postgresql_jdk11:
+    testJdkTool: OPEN-JDK11
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dpostgresql"
+  mysql_jdk11:
+    testJdkTool: OPEN-JDK11
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dmysql"
+  mssql_jdk11:
+    testJdkTool: OPEN-JDK11
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dmssql"
+  derby_jdk11:
+    testJdkTool: OPEN-JDK11
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dderby"
+  oracle_jdk17:
+    testJdkTool: OPEN-JDK17
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.6.0-rc3 -DruntimeProduct=MULE_EE -Doracle"
+  postgresql_jdk17:
+    testJdkTool: OPEN-JDK17
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.6.0-rc3 -DruntimeProduct=MULE_EE -Dpostgresql"
+  mysql_jdk17:
+    testJdkTool: OPEN-JDK17
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.6.0-rc3 -DruntimeProduct=MULE_EE -Dmysql"
+  mssql_jdk17:
+    testJdkTool: OPEN-JDK17
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.6.0-rc3 -DruntimeProduct=MULE_EE -Dmssql"
+  derby_jdk17:
+    testJdkTool: OPEN-JDK17
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.6.0-rc3 -DruntimeProduct=MULE_EE -Dderby"

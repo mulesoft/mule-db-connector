@@ -6,6 +6,8 @@
  */
 package org.mule.extension.db.api.logger;
 
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +17,7 @@ import org.slf4j.LoggerFactory;
  *
  * @since 1.0
  */
+@ExcludeFromGeneratedCoverage
 public class MuleMySqlLogger {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MuleMySqlLogger.class);
@@ -26,6 +29,9 @@ public class MuleMySqlLogger {
   public MuleMySqlLogger(String name) {
     this.name = name;
   }
+
+
+  public MuleMySqlLogger() {}
 
   /**
    * {@inheritDoc}
@@ -151,5 +157,13 @@ public class MuleMySqlLogger {
    */
   public void logWarn(Object msg, Throwable e) {
     LOGGER.warn(msg.toString(), e);
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 }

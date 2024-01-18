@@ -14,7 +14,7 @@
     <groupId>org.mule.connectors</groupId>
     <artifactId>mule-db-connector</artifactId>
     <packaging>mule-extension</packaging>
-    <version>1.14.8-SNAPSHOT</version>
+    <version>1.14.8</version>
 
     <name>Database Connector</name>
     <description>A Mule extension that provides functionality for connecting to Databases through the JDBC standard</description>
@@ -22,19 +22,21 @@
     <properties>
         <c3p0Version>0.9.5.5</c3p0Version>
         <commonsCollectionsVersion>3.2.2</commonsCollectionsVersion>
-        <commonsDbUtilsVersion>1.7</commonsDbUtilsVersion>
-        <commonsLangVersion>3.12.0</commonsLangVersion>
+        <commonsDbUtilsVersion>1.8.0</commonsDbUtilsVersion>
         <commonsIoVersion>2.13.0</commonsIoVersion>
         <mockito-core.version>4.7.0</mockito-core.version>
         <junit.version>4.13.2</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
         <xmlunit.version>1.6</xmlunit.version>
-        <javax.transaction.version>1.3</javax.transaction.version>
         <xaPoolVersion>1.5.0</xaPoolVersion>
-        <cglibVersion>3.3.0</cglibVersion>
+        <net.bytebuddy.version>1.14.5</net.bytebuddy.version>
         <muleDbClientVersion>1.6.7</muleDbClientVersion>
         <muleExtensionsShadeVersion>1.0.4</muleExtensionsShadeVersion>
 
+        <jakarta.transaction.version>1.3.3</jakarta.transaction.version>
+        <jakarta.xml.bind.api.version>2.3.3</jakarta.xml.bind.api.version>
+        <com.sun.xml.bind.version>2.3.8</com.sun.xml.bind.version>
+        <com.sun.istack.version>3.0.12</com.sun.istack.version>
         <caffeineVersion>2.9.3</caffeineVersion>
         <derbyVersion>10.14.2.0</derbyVersion>
         <mySqlVersion>8.0.30</mySqlVersion>
@@ -42,34 +44,39 @@
         <oracle.driver.version>23.2.0.0</oracle.driver.version>
         <postgresql.version>42.6.0</postgresql.version>
 
-        <docker.maven.plugin.version>0.40.2</docker.maven.plugin.version>
+        <docker.maven.plugin.version>0.43.4</docker.maven.plugin.version>
         <maven-replacer-plugin.version>1.5.3</maven-replacer-plugin.version>
         <maven.help.plugin.version>3.3.0</maven.help.plugin.version>
-
         <maven.helper.plugin.version>3.3.0</maven.helper.plugin.version>
 
         <formatterConfigPath>formatter.xml</formatterConfigPath>
 
-        <munit.extensions.maven.plugin.version>1.1.3</munit.extensions.maven.plugin.version>
-        <munit.version>2.3.14</munit.version>
-
-        <mtf-tools.version>1.1.2</mtf-tools.version>
         <skipTests>false</skipTests>
         <skipTita>false</skipTita>
         <settingsFile>${java.io.tmpdir}/effective-settings.xml</settingsFile>
-        <spring-beans-version>5.3.2</spring-beans-version>
-        <spring-security-config-version>5.4.2</spring-security-config-version>
-        <spring-security-core-version>5.4.2</spring-security-core-version>
-        <spring-context-version>5.3.2</spring-context-version>
-        <spring-core-version>5.3.2</spring-core-version>
-        <mule-spring-module-version>1.3.7</mule-spring-module-version>
+        <spring-security-config-version>5.8.6</spring-security-config-version>
+        <spring-security-core-version>5.8.6</spring-security-core-version>
+        <spring-beans-version>5.3.29</spring-beans-version>
+        <spring-context-version>5.3.29</spring-context-version>
+        <spring-core-version>5.3.29</spring-core-version>
+        <mule-spring-module-version>1.3.11</mule-spring-module-version>
 
-        <mule.vm.version>2.0.0</mule.vm.version>
-
+        <mule.vm.version>2.0.1</mule.vm.version>
+        <jacoco.version>0.8.10</jacoco.version>
         <mulesoftLicenseVersion>1.4.0</mulesoftLicenseVersion>
         <license.maven.plugin.version>4.2</license.maven.plugin.version>
         <licensePath>LICENSE_HEADER_CPAL.txt</licensePath>
         <licenseYear>2023</licenseYear>
+        <commons.lang.version>3.13.0</commons.lang.version>
+        <commons-dbcp2.version>2.9.0</commons-dbcp2.version>
+        <awaitility.version>3.1.6</awaitility.version>
+        <!-- JDK 17 Compatibility Props -->
+        <mule.sdk.api.version>0.7.0</mule.sdk.api.version>
+        <munit.version>3.1.0-rc5</munit.version>
+        <mtf.tools.version>1.2.0-rc1</mtf.tools.version>
+        <munit.extensions.maven.plugin.version>1.2.0-rc3</munit.extensions.maven.plugin.version>
+        <jacoco.version>0.8.10</jacoco.version>
+        <mtf.javaopts></mtf.javaopts>
     </properties>
 
     <dependencies>
@@ -79,14 +86,19 @@
             <version>${muleDbClientVersion}</version>
         </dependency>
         <dependency>
-            <groupId>com.mchange</groupId>
-            <artifactId>c3p0</artifactId>
-            <version>${c3p0Version}</version>
+            <groupId>org.mule.sdk</groupId>
+            <artifactId>mule-sdk-api</artifactId>
+            <version>${mule.sdk.api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>${commonsLangVersion}</version>
+            <version>${commons.lang.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>${c3p0Version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -99,10 +111,9 @@
             <version>${commonsCollectionsVersion}</version>
         </dependency>
         <dependency>
-            <groupId>javax.transaction</groupId>
-            <artifactId>javax.transaction-api</artifactId>
-            <version>${javax.transaction.version}</version>
-            <scope>provided</scope>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
+            <version>${jakarta.transaction.version}</version>
         </dependency>
         <dependency>
             <groupId>com.experlog</groupId>
@@ -115,11 +126,10 @@
             <version>${caffeineVersion}</version>
         </dependency>
         <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>${cglibVersion}</version>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>${net.bytebuddy.version}</version>
         </dependency>
-
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -214,10 +224,60 @@
             <version>${postgresql.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>${jakarta.xml.bind.api.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>jakarta.activation</groupId>
+                    <artifactId>jakarta.activation-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>${com.sun.xml.bind.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-xjc</artifactId>
+            <version>${com.sun.xml.bind.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.istack</groupId>
+            <artifactId>istack-commons-runtime</artifactId>
+            <version>${com.sun.istack.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jdeps-plugin</artifactId>
+                <version>3.1.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jdkinternals</goal> <!-- verify main classes -->
+                            <goal>test-jdkinternals</goal> <!-- verify test classes -->
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <failOnWarning>true</failOnWarning>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>com.mycila</groupId>
                 <artifactId>license-maven-plugin</artifactId>
@@ -410,12 +470,12 @@
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>slf4j-api</artifactId>
-                                <version>2.0.0</version>
+                                <version>2.0.7</version>
                             </dependency>
                             <dependency>
                                 <groupId>org.slf4j</groupId>
                                 <artifactId>jcl-over-slf4j</artifactId>
-                                <version>2.0.3</version>
+                                <version>2.0.7</version>
                             </dependency>
                         </dependencies>
                         <executions>
@@ -463,7 +523,7 @@
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
-                                    <minMuleVersion>4.1.1</minMuleVersion>
+                                    <minMuleVersion>${minVersion}</minMuleVersion>
                                     <includeSnapshots>false</includeSnapshots>
                                 </discoverRuntimes>
                             </runtimeConfiguration>
@@ -495,8 +555,14 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco.exec
-                                </argLine>                            </argLines>
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-oracle.exec
+                                </argLine>
+                            </argLines>
+                            <environmentVariables>
+                                <!-- Toggles the JDK17 style flag -->
+                                <!-- ugly hack -->
+                                <_JAVA_OPTIONS>-XX:+PrintCommandLineFlags ${mtf.javaopts}</_JAVA_OPTIONS>
+                            </environmentVariables>
                         </configuration>
                         <executions>
                             <execution>
@@ -523,7 +589,7 @@
                             <dependency>
                                 <groupId>com.mulesoft.munit</groupId>
                                 <artifactId>mtf-tools</artifactId>
-                                <version>${mtf-tools.version}</version>
+                                <version>${mtf.tools.version}</version>
                                 <classifier>mule-plugin</classifier>
                             </dependency>
                             <dependency>
@@ -628,7 +694,7 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>mysql:latest</name>
+                                    <name>mysql:5.6</name>
                                     <alias>mysql-${mysql.db.port}</alias>
                                     <run>
                                         <containerNamePattern>%n-%i-%t</containerNamePattern>
@@ -706,7 +772,7 @@
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
-                                    <minMuleVersion>4.1.1</minMuleVersion>
+                                    <minMuleVersion>${minVersion}</minMuleVersion>
                                     <includeSnapshots>false</includeSnapshots>
                                 </discoverRuntimes>
                             </runtimeConfiguration>
@@ -718,7 +784,7 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-mysql.exec
                                 </argLine>
                             </argLines>
                         </configuration>
@@ -747,7 +813,7 @@
                             <dependency>
                                 <groupId>com.mulesoft.munit</groupId>
                                 <artifactId>mtf-tools</artifactId>
-                                <version>${mtf-tools.version}</version>
+                                <version>${mtf.tools.version}</version>
                                 <classifier>mule-plugin</classifier>
                             </dependency>
                             <dependency>
@@ -892,21 +958,50 @@
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
-                                    <minMuleVersion>4.1.1</minMuleVersion>
+                                    <minMuleVersion>${minVersion}</minMuleVersion>
                                     <includeSnapshots>false</includeSnapshots>
                                 </discoverRuntimes>
                             </runtimeConfiguration>
                             <sharedLibraries>
                                 <sharedLibrary>
+                                    <groupId>org.apache.commons</groupId>
+                                    <artifactId>commons-dbcp2</artifactId>
+                                </sharedLibrary>
+                                <sharedLibrary>
                                     <groupId>org.postgresql</groupId>
                                     <artifactId>postgresql</artifactId>
+                                </sharedLibrary>
+                                <sharedLibrary>
+                                    <groupId>org.springframework</groupId>
+                                    <artifactId>spring-beans</artifactId>
+                                </sharedLibrary>
+                                <sharedLibrary>
+                                    <groupId>org.springframework.security</groupId>
+                                    <artifactId>spring-security-config</artifactId>
+                                </sharedLibrary>
+                                <sharedLibrary>
+                                    <groupId>org.springframework.security</groupId>
+                                    <artifactId>spring-security-core</artifactId>
+                                </sharedLibrary>
+                                <sharedLibrary>
+                                    <groupId>org.springframework</groupId>
+                                    <artifactId>spring-context</artifactId>
+                                </sharedLibrary>
+                                <sharedLibrary>
+                                    <groupId>org.springframework</groupId>
+                                    <artifactId>spring-core</artifactId>
                                 </sharedLibrary>
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-postgresql.exec
                                 </argLine>
                             </argLines>
+                            <environmentVariables>
+                                <!-- Toggles the JDK17 style flag -->
+                                <!-- ugly hack -->
+                                <_JAVA_OPTIONS>-XX:+PrintCommandLineFlags ${mtf.javaopts}</_JAVA_OPTIONS>
+                            </environmentVariables>
                         </configuration>
                         <executions>
                             <execution>
@@ -933,14 +1028,50 @@
                             <dependency>
                                 <groupId>com.mulesoft.munit</groupId>
                                 <artifactId>mtf-tools</artifactId>
-                                <version>${mtf-tools.version}</version>
+                                <version>${mtf.tools.version}</version>
                                 <classifier>mule-plugin</classifier>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.apache.commons</groupId>
+                                <artifactId>commons-dbcp2</artifactId>
+                                <version>${commons-dbcp2.version}</version>
                             </dependency>
                             <dependency>
                                 <groupId>org.mule.connectors</groupId>
                                 <artifactId>mule-vm-connector</artifactId>
                                 <version>${mule.vm.version}</version>
                                 <classifier>mule-plugin</classifier>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.mule.modules</groupId>
+                                <artifactId>mule-spring-module</artifactId>
+                                <version>${mule-spring-module-version}</version>
+                                <classifier>mule-plugin</classifier>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.springframework</groupId>
+                                <artifactId>spring-beans</artifactId>
+                                <version>${spring-beans-version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.springframework.security</groupId>
+                                <artifactId>spring-security-config</artifactId>
+                                <version>${spring-security-config-version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.springframework.security</groupId>
+                                <artifactId>spring-security-core</artifactId>
+                                <version>${spring-security-core-version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.springframework</groupId>
+                                <artifactId>spring-context</artifactId>
+                                <version>${spring-context-version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.springframework</groupId>
+                                <artifactId>spring-core</artifactId>
+                                <version>${spring-core-version}</version>
                             </dependency>
                         </dependencies>
                     </plugin>
@@ -992,7 +1123,6 @@
             <id>derby</id>
             <build>
                 <plugins>
-                    <!--TODO: find derby image that works-->
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
@@ -1000,8 +1130,11 @@
                         <configuration>
                             <images>
                                 <image>
-                                    <name>adito/derby:latest</name>
+                                    <name>fabric-derby-mtf:derby-mtf</name>
                                     <alias>derby-${derby.db.port}</alias>
+                                    <build>
+                                        <contextDir>${project.basedir}/src/docker/derby</contextDir>
+                                    </build>
                                     <run>
                                         <containerNamePattern>%n-%i-%t</containerNamePattern>
                                         <env>
@@ -1022,10 +1155,7 @@
                                         <log>
                                             <enabled>true</enabled>
                                         </log>
-                                        <wait>
-                                            <log>database system is ready to accept connections</log>
-                                            <time>500000</time>
-                                        </wait>
+                                        <entryPoint>java -Dderby.stream.error.field=java.lang.System.out org.apache.derby.drda.NetworkServerControl start -h  0.0.0.0</entryPoint>
                                     </run>
                                 </image>
                             </images>
@@ -1078,7 +1208,7 @@
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
-                                    <minMuleVersion>4.1.1</minMuleVersion>
+                                    <minMuleVersion>${minVersion}</minMuleVersion>
                                     <includeSnapshots>false</includeSnapshots>
                                 </discoverRuntimes>
                             </runtimeConfiguration>
@@ -1090,9 +1220,14 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-derby.exec
                                 </argLine>
                             </argLines>
+                            <environmentVariables>
+                                <!-- Toggles the JDK17 style flag -->
+                                <!-- ugly hack -->
+                                <_JAVA_OPTIONS>-XX:+PrintCommandLineFlags ${mtf.javaopts}</_JAVA_OPTIONS>
+                            </environmentVariables>
                         </configuration>
                         <executions>
                             <execution>
@@ -1119,7 +1254,7 @@
                             <dependency>
                                 <groupId>com.mulesoft.munit</groupId>
                                 <artifactId>mtf-tools</artifactId>
-                                <version>${mtf-tools.version}</version>
+                                <version>${mtf.tools.version}</version>
                                 <classifier>mule-plugin</classifier>
                             </dependency>
                             <dependency>
@@ -1167,8 +1302,6 @@
                 </plugins>
             </build>
         </profile>
-
-
         <profile>
             <activation>
                 <property>
@@ -1256,7 +1389,7 @@
                 <dependency>
                     <groupId>mysql</groupId>
                     <artifactId>mysql-connector-java</artifactId>
-                    <version>5.1.49</version>
+                    <version>8.0.28</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
@@ -1273,6 +1406,7 @@
             <build>
                 <plugins>
                     <plugin>
+                        <!-- TODO: W-14720704 move docker image to nexys-->
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
                         <version>${docker.maven.plugin.version}</version>
@@ -1356,7 +1490,7 @@
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>
-                                    <minMuleVersion>4.1.1</minMuleVersion>
+                                    <minMuleVersion>${minVersion}</minMuleVersion>
                                     <includeSnapshots>false</includeSnapshots>
                                 </discoverRuntimes>
                             </runtimeConfiguration>
@@ -1368,9 +1502,14 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-munit.exec
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-mssql.exec
                                 </argLine>
                             </argLines>
+                            <environmentVariables>
+                                <!-- Toggles the JDK17 style flag -->
+                                <!-- ugly hack -->
+                                <_JAVA_OPTIONS>-XX:+PrintCommandLineFlags ${mtf.javaopts}</_JAVA_OPTIONS>
+                            </environmentVariables>
                         </configuration>
                         <executions>
                             <execution>
@@ -1397,7 +1536,7 @@
                             <dependency>
                                 <groupId>com.mulesoft.munit</groupId>
                                 <artifactId>mtf-tools</artifactId>
-                                <version>${mtf-tools.version}</version>
+                                <version>${mtf.tools.version}</version>
                                 <classifier>mule-plugin</classifier>
                             </dependency>
                             <dependency>
@@ -1477,5 +1616,4 @@
             <url>https://repository.mulesoft.org/nexus/content/repositories/public/</url>
         </pluginRepository>
     </pluginRepositories>
-
 </project>

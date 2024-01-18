@@ -8,6 +8,8 @@ package org.mule.extension.db.api.param;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.mule.runtime.extension.api.annotation.param.display.Placement.ADVANCED_TAB;
+
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.display.Placement;
@@ -19,6 +21,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @since 1.0
  */
+@ExcludeFromGeneratedCoverage
 public class QuerySettings {
 
   /**
@@ -56,6 +59,8 @@ public class QuerySettings {
   @Placement(tab = ADVANCED_TAB)
   private Integer maxRows;
 
+  public QuerySettings() {}
+
   public void copyInto(QuerySettings other) {
     other.queryTimeout = queryTimeout;
     other.queryTimeoutUnit = queryTimeoutUnit;
@@ -67,16 +72,34 @@ public class QuerySettings {
     return queryTimeout;
   }
 
+  public void setQueryTimeout(int queryTimeout) {
+    this.queryTimeout = queryTimeout;
+  }
+
   public TimeUnit getQueryTimeoutUnit() {
     return queryTimeoutUnit;
   }
+
+  public void setQueryTimeoutUnit(TimeUnit queryTimeoutUnit) {
+    this.queryTimeoutUnit = queryTimeoutUnit;
+  }
+
 
   public Integer getFetchSize() {
     return fetchSize;
   }
 
+  public void setFetchSize(Integer fetchSize) {
+    this.fetchSize = fetchSize;
+  }
+
+
   public Integer getMaxRows() {
     return maxRows;
+  }
+
+  public void setMaxRows(Integer maxRows) {
+    this.maxRows = maxRows;
   }
 
 }

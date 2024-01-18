@@ -6,6 +6,7 @@
  */
 package org.mule.extension.db.api.param;
 
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.extension.api.annotation.param.ExclusiveOptionals;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 import org.mule.runtime.extension.api.annotation.param.Optional;
@@ -41,12 +42,24 @@ public class BulkScript {
   @DisplayName("Script Path")
   private String file;
 
+  public BulkScript() {}
 
   public String getSql() {
     return sql;
   }
 
+  @ExcludeFromGeneratedCoverage
+  public void setSql(String sql) {
+    this.sql = sql;
+  }
+
+
   public String getFile() {
     return file;
+  }
+
+  @ExcludeFromGeneratedCoverage
+  public void setFile(String file) {
+    this.file = file;
   }
 }

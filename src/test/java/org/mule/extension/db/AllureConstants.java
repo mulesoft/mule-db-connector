@@ -16,4 +16,14 @@ public interface AllureConstants {
 
     }
   }
+
+  public interface MySqlFeature {
+
+    String MYSQL_FEATURE = "MySQL";
+
+    interface MySqlStories {
+
+      String MYSQL_RESOURCE_RELEASING = "MySQL Resource Releasing";
+    }
+  }
 }

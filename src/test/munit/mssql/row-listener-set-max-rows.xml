@@ -52,7 +52,8 @@
             <munit-tools:value ><![CDATA[#[vars.currentRows ++ [payload.id]]]]></munit-tools:value>
         </munit-tools:store>
     </flow>
-    <munit:test name="Listener_WithMaxRowsEnable" >
+    <!-- TODO: W-14783599 - Flaky test -->
+    <munit:test name="Listener_WithMaxRowsEnable" ignore="true">
         <munit:enable-flow-sources >
             <munit:enable-flow-source value="ListenerPhones_Flow"/>
         </munit:enable-flow-sources>

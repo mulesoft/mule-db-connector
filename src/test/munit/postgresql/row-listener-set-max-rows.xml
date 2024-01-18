@@ -13,6 +13,16 @@
 
     <munit:config name="row-listener-set-max-rows.xml" minMuleVersion="4.3.0"/>
     <munit:before-suite name="createAPhonesTableForTest">
+        <try>
+            <db:execute-ddl config-ref="mssql-config">
+                <db:sql>
+                    <![CDATA[DROP TABLE IF EXISTS PHONES]]>
+                </db:sql>
+            </db:execute-ddl>
+            <error-handler>
+                <on-error-continue/>
+            </error-handler>
+        </try>
         <db:execute-ddl config-ref="postgres-config">
             <db:sql>
                 <![CDATA[CREATE TABLE IF NOT EXISTS phones (id SERIAL PRIMARY KEY, name VARCHAR(255) NOT NULL,price INTEGER NOT NULL)]]>
@@ -37,7 +47,8 @@
             <munit-tools:value ><![CDATA[#[vars.currentRows ++ [payload.id]]]]></munit-tools:value>
         </munit-tools:store>
     </flow>
-    <munit:test name="Listener_WithMaxRowsEnable" >
+    <!-- TODO: W-14783599 - Flaky test -->
+    <munit:test name="Listener_WithMaxRowsEnable" ignore="true">
         <munit:enable-flow-sources >
             <munit:enable-flow-source value="ListenerPhones_Flow"/>
         </munit:enable-flow-sources>

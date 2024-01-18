@@ -30,3 +30,7 @@ hostkey.ser
 *.h2.db
 *.factorypath
 dependency-reduced-pom.xml
+myDB/
+previousDB/
+derbyLeakTriggererDB/
+J17_validation.sh

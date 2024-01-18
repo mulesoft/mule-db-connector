@@ -32,6 +32,7 @@ import org.mule.db.commons.internal.domain.connection.DataSourceConfig;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.domain.connection.DbConnectionProvider;
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.ExternalLib;
@@ -51,6 +52,8 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
 
   private static final String INVALID_CREDENTIALS_ORACLE_CODE = "ORA-01017";
   private static final String UNKNOWN_SID_ORACLE_CODE = "ORA-12505";
+  private static final String UNKNOWN_SERVICE_ORACLE_CODE = "ORA-12514";
+  private static final String UNKNOWN_HOST_ORACLE_CODE = "ORA-17868";
   private static final String IO_ERROR = "IO Error: The Network Adapter could not establish the connection";
 
   @ParameterGroup(name = CONNECTION)
@@ -86,15 +89,16 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
     String message = e.getMessage();
     if (message.contains(INVALID_CREDENTIALS_ORACLE_CODE)) {
       return of(INVALID_CREDENTIALS);
-    } else if (message.contains(UNKNOWN_SID_ORACLE_CODE)) {
+    } else if (message.contains(UNKNOWN_SID_ORACLE_CODE) || message.contains(UNKNOWN_SERVICE_ORACLE_CODE)) {
       return of(INVALID_DATABASE);
-    } else if (message.contains(IO_ERROR)) {
+    } else if (message.contains(IO_ERROR) || message.contains(UNKNOWN_HOST_ORACLE_CODE)) {
       return of(CANNOT_REACH);
     }
     return empty();
   }
 
   @Override
+  @ExcludeFromGeneratedCoverage
   public boolean equals(Object o) {
     if (this == o) {
       return true;

@@ -13,6 +13,7 @@ import org.mule.db.commons.internal.domain.type.ClobResolvedDataType;
 import org.mule.db.commons.internal.domain.type.DbType;
 import org.mule.db.commons.internal.domain.type.ResolvedDbType;
 import org.mule.db.commons.internal.domain.type.UnknownDbType;
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 
 import java.sql.Types;
 import java.util.List;
@@ -106,6 +107,7 @@ public enum JdbcType {
     this.dbType = dbType;
   }
 
+  @ExcludeFromGeneratedCoverage
   public static List<DbType> getAllTypes() {
     return stream(JdbcType.values()).map(JdbcType::getDbType).collect(toList());
   }

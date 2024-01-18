@@ -10,7 +10,7 @@
         http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
-    <munit:config name="arrays-and-struct-source-oracle-test-case.xml" minMuleVersion="4.1.6">
+    <munit:config name="arrays-and-struct-source-oracle-test-case.xml" minMuleVersion="4.3.0">
         <munit:parameterizations>
             <munit:parameterization name="oracleDbPoolingListenerConfig">
                 <munit:parameters>

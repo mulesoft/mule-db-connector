@@ -15,6 +15,12 @@
                     <munit:parameter propertyName="expectedErrorType" value=""/>
                 </munit:parameters>
             </munit:parameterization>
+            <munit:parameterization name="mssql-config-with-properties">
+                <munit:parameters>
+                    <munit:parameter propertyName="config" value="mssql-config-with-properties"/>
+                    <munit:parameter propertyName="expectedErrorType" value=""/>
+                </munit:parameters>
+            </munit:parameterization>
             <munit:parameterization name="mssql-config-invalid-host">
                 <munit:parameters>
                     <munit:parameter propertyName="config" value="mssql-config-invalid-host"/>
@@ -24,13 +30,13 @@
             <munit:parameterization name="mssql-config-invalid-password">
                 <munit:parameters>
                     <munit:parameter propertyName="config" value="mssql-config-invalid-password"/>
-                    <munit:parameter propertyName="expectedErrorType" value="DB:CONNECTIVITY"/>
+                    <munit:parameter propertyName="expectedErrorType" value="DB:INVALID_CREDENTIALS"/>
                 </munit:parameters>
             </munit:parameterization>
             <munit:parameterization name="mssql-config-invalid-database-name">
                 <munit:parameters>
                     <munit:parameter propertyName="config" value="mssql-config-invalid-database-name"/>
-                    <munit:parameter propertyName="expectedErrorType" value="DB:CONNECTIVITY"/>
+                    <munit:parameter propertyName="expectedErrorType" value="DB:INVALID_DATABASE"/>
                 </munit:parameters>
             </munit:parameterization>
         </munit:parameterizations>

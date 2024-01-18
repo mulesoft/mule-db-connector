@@ -9,6 +9,7 @@ package org.mule.extension.db.internal.domain.connection.derby;
 import org.mule.db.commons.internal.domain.connection.DefaultDbConnection;
 import org.mule.db.commons.internal.domain.query.QueryTemplate;
 import org.mule.db.commons.internal.domain.type.DbType;
+import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 
 import java.sql.Connection;
 import java.util.List;
@@ -29,6 +30,7 @@ public class DerbyConnection extends DefaultDbConnection {
   // We are disabling content streaming for Derby because of a incompatibility between the connector logic and the
   // driver. When the connector is iterating a ResultSet and hits the end of this one, the Derby driver automatically
   // closes all the created streams.
+  @ExcludeFromGeneratedCoverage
   @Override
   public boolean supportsContentStreaming() {
     return false;

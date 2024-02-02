@@ -60,6 +60,7 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
   private OracleConnectionParameters oracleConnectionParameters;
 
   Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache = new ConcurrentHashMap<>();
+  private final Map<String, String> resolvedDbTypeNamesCache = new ConcurrentHashMap<>();
 
   @Override
   public void initialise() throws InitialisationException {
@@ -81,7 +82,7 @@ public class OracleDbConnectionProvider extends DbConnectionProvider {
   @Override
   protected DbConnection createDbConnection(Connection connection) throws Exception {
     return new OracleDbConnection(connection, super.resolveCustomTypes(), resolvedDbTypesCache,
-                                  super.cachedTemplates);
+                                  super.cachedTemplates, resolvedDbTypeNamesCache);
   }
 
   @Override

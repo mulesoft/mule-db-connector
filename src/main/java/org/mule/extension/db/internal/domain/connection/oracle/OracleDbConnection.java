@@ -79,13 +79,16 @@ public class OracleDbConnection extends DefaultDbConnection {
   private static final int PARAM_NAME_COLUMN_INDEX = 4;
 
   private final Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache;
+  private final Map<String, String> resolvedDbTypeNamesCache;
 
 
   public OracleDbConnection(Connection jdbcConnection, List<DbType> customDataTypes,
                             Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache,
-                            Cache<String, QueryTemplate> cachedTemplates) {
+                            Cache<String, QueryTemplate> cachedTemplates,
+                            Map<String, String> resolvedDbTypeNamesCache) {
     super(jdbcConnection, customDataTypes, cachedTemplates);
     this.resolvedDbTypesCache = resolvedDbTypesCache;
+    this.resolvedDbTypeNamesCache = resolvedDbTypeNamesCache;
   }
 
   /**
@@ -168,7 +171,8 @@ public class OracleDbConnection extends DefaultDbConnection {
 
   @Override
   protected void resolveLobs(String typeName, Object[] attributes, StructAndArrayTypeResolver typeResolver) throws SQLException {
-    Map<Integer, ResolvedDbType> dataTypes = getLobFieldsDataTypeInfo(typeResolver.resolveType(typeName));
+    Map<Integer, ResolvedDbType> dataTypes =
+        getLobFieldsDataTypeInfo(typeResolver.resolveType(typeName, resolvedDbTypeNamesCache));
 
     for (Map.Entry<Integer, ResolvedDbType> entry : dataTypes.entrySet()) {
       int index = entry.getKey();

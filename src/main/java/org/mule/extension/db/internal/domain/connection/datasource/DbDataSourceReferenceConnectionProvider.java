@@ -38,12 +38,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DbDataSourceReferenceConnectionProvider extends DataSourceReferenceConnectionProvider {
 
   private final Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache = new ConcurrentHashMap<>();
+  private final Map<String, String> resolvedDbTypeNamesCache = new ConcurrentHashMap<>();
 
   @Override
   protected DbConnection createDbConnection(Connection connection) throws Exception {
     if (isOracle(connection)) {
       return new OracleDbConnection(connection, super.resolveCustomTypes(), resolvedDbTypesCache,
-                                    cachedTemplates);
+                                    cachedTemplates, resolvedDbTypeNamesCache);
     } else {
       return super.createDbConnection(connection);
     }

@@ -35,11 +35,13 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DbGenericConnectionProvider extends GenericConnectionProvider {
 
   private final Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache = new ConcurrentHashMap<>();
+  private final Map<String, String> resolvedDbTypeNamesCache = new ConcurrentHashMap<>();
 
   @Override
   protected DbConnection createDbConnection(Connection connection) throws Exception {
     if (isOracle(connection)) {
-      return new OracleDbConnection(connection, resolveCustomTypes(), resolvedDbTypesCache, cachedTemplates);
+      return new OracleDbConnection(connection, resolveCustomTypes(), resolvedDbTypesCache, cachedTemplates,
+                                    resolvedDbTypeNamesCache);
     } else {
       return super.createDbConnection(connection);
     }

@@ -1,7 +1,7 @@
 projectType: extension
 additionalTestConfigs:
   oracle_jdk8:
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Doracle --DruntimeVersion=4.4.0"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Doracle -DruntimeVersion=4.4.0"
 #  postgresql_jdk8:
 #    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dpostgresql -DminVersion=4.3.0"
 #  mysql_jdk8:

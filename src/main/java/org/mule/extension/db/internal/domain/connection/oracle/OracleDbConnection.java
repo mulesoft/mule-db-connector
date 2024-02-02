@@ -168,7 +168,10 @@ public class OracleDbConnection extends DefaultDbConnection {
 
   @Override
   protected void resolveLobs(String typeName, Object[] attributes, StructAndArrayTypeResolver typeResolver) throws SQLException {
-    Map<Integer, ResolvedDbType> dataTypes = getLobFieldsDataTypeInfo(typeResolver.resolveType(typeName));
+    Map<Integer, ResolvedDbType> dataTypes = getLobFieldsDataTypeInfo(typeName);
+    if(dataTypes.size()==0){
+      dataTypes = getLobFieldsDataTypeInfo(typeResolver.resolveType(typeName));
+    }
 
     for (Map.Entry<Integer, ResolvedDbType> entry : dataTypes.entrySet()) {
       int index = entry.getKey();

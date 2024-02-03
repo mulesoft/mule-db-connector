@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import oracle.jdbc.OracleConnection;
@@ -79,13 +80,13 @@ public class OracleDbConnection extends DefaultDbConnection {
   private static final int PARAM_NAME_COLUMN_INDEX = 4;
 
   private final Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache;
-  private final Map<String, String> resolvedDbTypeNamesCache;
+  private final ConcurrentHashMap<String, String> resolvedDbTypeNamesCache;
 
 
   public OracleDbConnection(Connection jdbcConnection, List<DbType> customDataTypes,
                             Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache,
                             Cache<String, QueryTemplate> cachedTemplates,
-                            Map<String, String> resolvedDbTypeNamesCache) {
+                            ConcurrentHashMap<String, String> resolvedDbTypeNamesCache) {
     super(jdbcConnection, customDataTypes, cachedTemplates);
     this.resolvedDbTypesCache = resolvedDbTypesCache;
     this.resolvedDbTypeNamesCache = resolvedDbTypeNamesCache;

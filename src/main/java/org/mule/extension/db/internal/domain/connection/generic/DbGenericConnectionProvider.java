@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DbGenericConnectionProvider extends GenericConnectionProvider {
 
   private final Map<String, Map<Integer, ResolvedDbType>> resolvedDbTypesCache = new ConcurrentHashMap<>();
-  private final Map<String, String> resolvedDbTypeNamesCache = new ConcurrentHashMap<>();
+  private final ConcurrentHashMap<String, String> resolvedDbTypeNamesCache = new ConcurrentHashMap<>();
 
   @Override
   protected DbConnection createDbConnection(Connection connection) throws Exception {

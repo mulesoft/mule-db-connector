@@ -217,7 +217,41 @@ VALUES (
         </munit:execution>
         <munit:validation>
             <db:select config-ref="dbConfigMySQL">
-                <db:sql>SELECT * FROM data_types_table</db:sql>
+                <db:sql>SELECT
+                    col_clob,
+                    col_time,
+                    col_double,
+                    col_tinyint,
+                    col_date,
+                    col_integer,
+                    col_nchar,
+                    col_binary,
+                    col_real,
+                    col_bit,
+                    col_blob,
+                    col_timestamp,
+                    col_longnvarchar,
+                    col_varbinary,
+                    col_longvarchar,
+                    col_rowid,
+                    col_datalink,
+                    col_char,
+                    col_distinct,
+                    col_longvarbinary,
+                    col_varchar,
+                    col_smallint,
+                    col_numeric,
+                    col_decimal,
+                    col_unknown,
+                    col_java_object,
+                    col_nvarchar,
+                    col_nclob,
+                    col_other,
+                    col_bigint,
+                    col_boolean,
+                    col_float
+                    FROM data_types_table;
+                </db:sql>
             </db:select>
             <munit-tools:assert-equals actual="#[payload[0]]" expected='#[
                 {

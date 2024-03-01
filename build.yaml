@@ -33,7 +33,7 @@ additionalTestConfigs:
 #    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.6.1-rc1 -DruntimeProduct=MULE_EE -Dpostgresql -D-Mmule.tx.error.when.timeout=false"
   mysql_jdk17:
     testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.6.1-rc1 -DruntimeProduct=MULE_EE -Dmysql -D-Mmule.tx.error.when.timeout=false"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.6.1-rc1 -DruntimeProduct=MULE_EE -Dmysql -Dmule.tx.error.when.timeout=false"
 #  mssql_jdk17:
 #    testJdkTool: OPEN-JDK17
 #    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.6.1-rc1 -DruntimeProduct=MULE_EE -Dmssql -D-Mmule.tx.error.when.timeout=false"

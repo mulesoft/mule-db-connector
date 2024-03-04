@@ -130,7 +130,8 @@ public class OracleCreateArrayTestCase extends AbstractDbFunctionTestCase {
     when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(dataTypeName);
 
     OracleDbConnection oracleConnection = new OracleDbConnection(delegate, new ArrayList<>(), new ConcurrentHashMap<>(),
-                                                                 newBuilder().maximumSize(CACHE_MAXIMUM_SIZE).build());
+                                                                 newBuilder().maximumSize(CACHE_MAXIMUM_SIZE).build(),
+                                                                 new ConcurrentHashMap<>());
 
     oracleConnection.createArray(udtName, values);
 

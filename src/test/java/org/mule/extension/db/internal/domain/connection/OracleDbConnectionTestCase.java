@@ -82,7 +82,8 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(USER_TYPE_DBNAME);
 
     OracleDbConnection cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache,
-                                                    newBuilder().maximumSize(CACHE_MAXIMUM_SIZE).build());
+                                                    newBuilder().maximumSize(CACHE_MAXIMUM_SIZE).build(),
+                                                    new ConcurrentHashMap<>());
     cnx.createArray(USER_TYPE_NAME, params);
     assertThat(dbTypeCache.containsKey(USER_TYPE_NAME), is(true));
     assertThat(dbTypeCache.get(USER_TYPE_NAME).get(0).getName(), is(USER_TYPE_DBNAME));
@@ -101,7 +102,7 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(USER_TYPE_DBNAME);
 
     cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache,
-                                 newBuilder().maximumSize(CACHE_MAXIMUM_SIZE).build());
+                                 newBuilder().maximumSize(CACHE_MAXIMUM_SIZE).build(), new ConcurrentHashMap<>());
     cnx.createArray(USER_TYPE_NAME, params);
 
     assertThat(dbTypeCache.containsKey(USER_TYPE_NAME), is(true));
@@ -123,7 +124,7 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
     when(resultSet.getString(ATTR_TYPE_NAME_PARAM)).thenReturn(USER_TYPE_DBNAME_B);
 
     cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache,
-                                 newBuilder().maximumSize(CACHE_MAXIMUM_SIZE).build());
+                                 newBuilder().maximumSize(CACHE_MAXIMUM_SIZE).build(), new ConcurrentHashMap<>());
     cnx.createArray(USER_TYPE_NAME_B, params);
 
     assertThat(dbTypeCache.containsKey(USER_TYPE_NAME_B), is(true));
@@ -145,7 +146,8 @@ public class OracleDbConnectionTestCase extends AbstractMuleTestCase {
 
     Map<String, Map<Integer, ResolvedDbType>> dbTypeCache = new ConcurrentHashMap<>();
     OracleDbConnection cnx = new OracleDbConnection(delegate, Collections.emptyList(), dbTypeCache,
-                                                    newBuilder().maximumSize(CACHE_MAXIMUM_SIZE * 10).build());
+                                                    newBuilder().maximumSize(CACHE_MAXIMUM_SIZE * 10).build(),
+                                                    new ConcurrentHashMap<>());
 
     cnx.getTables();
 

@@ -27,16 +27,16 @@ additionalTestConfigs:
     mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dderby"
   oracle_jdk17:
     testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.6.0-rc3 -DruntimeProduct=MULE_EE -Doracle"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -DruntimeProduct=MULE_EE -Doracle"
   postgresql_jdk17:
     testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.6.0-rc3 -DruntimeProduct=MULE_EE -Dpostgresql"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -DruntimeProduct=MULE_EE -Dpostgresql"
   mysql_jdk17:
     testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.6.0-rc3 -DruntimeProduct=MULE_EE -Dmysql"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -DruntimeProduct=MULE_EE -Dmysql"
   mssql_jdk17:
     testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.6.0-rc3 -DruntimeProduct=MULE_EE -Dmssql"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -DruntimeProduct=MULE_EE -Dmssql"
   derby_jdk17:
     testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.6.0-rc3 -DruntimeProduct=MULE_EE -Dderby"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -DruntimeProduct=MULE_EE -Dderby"

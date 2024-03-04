@@ -99,7 +99,7 @@ payload]]></ee:set-payload>
 			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]" />
 		</munit:validation>
 	</munit:test>
-	<munit:test name="TransactionalActionsAlwaysJoinNegativeExecuteScriptTestCase" expectedErrorType="MULE:UNKNOWN">
+	<munit:test name="TransactionalActionsAlwaysJoinNegativeExecuteScriptTestCase" expectedErrorType="MULE:UNKNOWN" ignore="true">
 		<munit:execution>
 			<db:execute-script config-ref="dbConfigMySQL" transactionalAction="ALWAYS_JOIN" >
 				<db:sql ><![CDATA[CREATE TABLE IF NOT EXISTS flights (

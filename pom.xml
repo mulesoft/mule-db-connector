@@ -555,7 +555,7 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-oracle.exec-Mmule.tx.error.when.timeout=false
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-oracle.exec -M-Dmule.tx.error.when.timeout=false
                                 </argLine>
                             </argLines>
                             <environmentVariables>
@@ -784,7 +784,7 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-mysql.exec-Mmule.tx.error.when.timeout=false
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-mysql.exec -M-Dmule.tx.error.when.timeout=false
                                 </argLine>
                             </argLines>
                         </configuration>
@@ -994,7 +994,7 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-postgresql.exec-Mmule.tx.error.when.timeout=false
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-postgresql.exec -M-Dmule.tx.error.when.timeout=false
                                 </argLine>
                             </argLines>
                             <environmentVariables>
@@ -1220,7 +1220,7 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-derby.exec-Mmule.tx.error.when.timeout=false
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-derby.exec -M-Dmule.tx.error.when.timeout=false
                                 </argLine>
                             </argLines>
                             <environmentVariables>
@@ -1502,7 +1502,7 @@
                             </sharedLibraries>
                             <argLines>
                                 <argLine>
-                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-mssql.exec-Mmule.tx.error.when.timeout=false
+                                    -javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${jacoco.version}/org.jacoco.agent-${jacoco.version}-runtime.jar=destfile=${session.executionRootDirectory}/target/jacoco-mssql.exec -M-Dmule.tx.error.when.timeout=false
                                 </argLine>
                             </argLines>
                             <environmentVariables>

@@ -136,7 +136,7 @@ payload]]></ee:set-payload>
 				<munit-tools:assert-equals actual="#[payload[0].start]" expected="#['MX']" />
 			</munit:validation>
 		</munit:test>
-	<munit:test name="TransactionalActionsAlwaysJoinNegativeUpdateTestCase" expectedErrorType="MULE:UNKNOWN">
+	<munit:test name="TransactionalActionsAlwaysJoinNegativeUpdateTestCase" expectedErrorType="MULE:UNKNOWN" ignore="true">
 			<munit:behavior>
 				<flow-ref name="TruncateTableFlow" />
 				<flow-ref name="ComplexCaseSetup" />

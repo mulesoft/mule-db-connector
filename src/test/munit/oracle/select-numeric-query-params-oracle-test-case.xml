@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+
+    <munit:config name="select-numeric-query-param-test-case.xml" minMuleVersion="4.3.0">
+        <munit:parameterizations>
+            <munit:parameterization name="oracleInsecureConnectionWithNoPoolingProfile">
+                <munit:parameters>
+                    <munit:parameter propertyName="config" value="oracleDbConfig"/>
+                </munit:parameters>
+            </munit:parameterization>
+        </munit:parameterizations>
+    </munit:config>
+
+    <munit:before-test name="createATableNumericTest">
+        <try>
+            <db:execute-script config-ref="${config}">
+                <db:sql>DROP TABLE NUMERIC_TEST</db:sql>
+            </db:execute-script>
+            <error-handler>
+                <on-error-continue enableNotifications="true" logException="false">
+                </on-error-continue>
+            </error-handler>
+        </try>
+        <db:execute-ddl config-ref="${config}">
+            <db:sql>create table NUMERIC_TEST(NUMERIC_COLUMN NUMBER(6,2))</db:sql>
+        </db:execute-ddl>
+    </munit:before-test>
+
+    <munit:test name="testNumberParameterAsString" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+        <munit:execution>
+            <db:select config-ref="${config}">
+                <db:sql>SELECT NUMERIC_COLUMN FROM NUMERIC_TEST WHERE (NUMERIC_COLUMN = :parameter1)</db:sql>
+                <db:input-parameters><![CDATA[#[{ 'parameter1': '12345.12345'}]]]></db:input-parameters>
+            </db:select>
+        </munit:execution>
+
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[0]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="testNumberParameterAsNumber" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+        <munit:execution>
+            <db:select config-ref="${config}">
+                <db:sql>SELECT NUMERIC_COLUMN FROM NUMERIC_TEST WHERE (NUMERIC_COLUMN = :parameter1)</db:sql>
+                <db:input-parameters><![CDATA[#[{ 'parameter1': 12345.12345}]]]></db:input-parameters>
+            </db:select>
+        </munit:execution>
+
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[0]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:after-test name="dropTableNumericTest">
+        <try>
+            <db:execute-script config-ref="${config}">
+                <db:sql>DROP TABLE NUMERIC_TEST</db:sql>
+            </db:execute-script>
+            <error-handler>
+                <on-error-continue enableNotifications="true" logException="false">
+                </on-error-continue>
+            </error-handler>
+        </try>
+    </munit:after-test>
+
+</mule>

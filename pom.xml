@@ -20,7 +20,7 @@
     <description>A Mule extension that provides functionality for connecting to Databases through the JDBC standard</description>
 
     <properties>
-        <c3p0Version>0.9.5.5</c3p0Version>
+        <c3p0Version>0.10.1</c3p0Version>
         <commonsCollectionsVersion>3.2.2</commonsCollectionsVersion>
         <commonsDbUtilsVersion>1.8.0</commonsDbUtilsVersion>
         <commonsIoVersion>2.13.0</commonsIoVersion>

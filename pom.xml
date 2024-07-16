@@ -39,7 +39,7 @@
         <com.sun.istack.version>3.0.12</com.sun.istack.version>
         <caffeineVersion>2.9.3</caffeineVersion>
         <derbyVersion>10.14.2.0</derbyVersion>
-        <mySqlVersion>8.0.30</mySqlVersion>
+        <mySqlVersion>8.0.33</mySqlVersion>
         <mssqlVersion>7.0.0.jre8</mssqlVersion>
         <oracle.driver.version>23.2.0.0</oracle.driver.version>
         <postgresql.version>42.6.0</postgresql.version>

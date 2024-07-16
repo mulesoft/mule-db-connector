@@ -1,0 +1,57 @@
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+
+    <munit:config name="select-timestamp-with-local-timezone-test-case.xml" minMuleVersion="4.3.0" />
+
+    <munit:before-test name="createATableWithLOBs">
+        <db:execute-ddl config-ref="oracleDbConfig">
+            <db:sql><![CDATA[CREATE TABLE EMPLOYEES(employee_id NUMBER,last_name VARCHAR2(50), start_time TIMESTAMP, end_time TIMESTAMP)]]></db:sql>
+        </db:execute-ddl>
+        <db:insert config-ref="oracleDbConfig">
+            <db:sql ><![CDATA[INSERT INTO EMPLOYEES VALUES (101, 'Burton', '01-Jan-11', '30-Jun-11')]]></db:sql>
+        </db:insert>
+        <db:insert config-ref="oracleDbConfig">
+            <db:sql ><![CDATA[INSERT INTO EMPLOYEES VALUES (100, 'Ames', '01-Jan-10', '30-Jun-11')]]></db:sql>
+        </db:insert>
+        <db:insert config-ref="oracleDbConfig">
+            <db:sql ><![CDATA[INSERT INTO EMPLOYEES VALUES (102, 'Tr', '01-Jan-2023', '30-Jun-2023')]]></db:sql>
+        </db:insert>
+    </munit:before-test>
+    <munit:test name="select-timestamp-whit-local-timezone-test-suiteTest">
+        <munit:execution >
+            <set-variable value="2022-10-05T15:39:20.045" variableName="watermark"/>
+            <db:select config-ref="oracleDbConfig">
+                <db:sql ><![CDATA[SELECT employee_id, start_time
+FROM EMPLOYEES
+WHERE start_time > CAST(TO_TIMESTAMP_TZ(:watermark, 'YYYY-MM-DD"T"HH24:MI:SS.FF') AS TIMESTAMP WITH LOCAL TIME ZONE)
+ORDER BY start_time ASC]]></db:sql>
+                <db:input-parameters ><![CDATA[#[{
+"watermark": vars.watermark
+}]]]></db:input-parameters>
+            </db:select>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:after-test name="dropTable">
+        <try>
+            <db:execute-script config-ref="oracleDbConfig">
+                <db:sql><![CDATA[DROP TABLE EMPLOYEES]]></db:sql>
+            </db:execute-script>
+            <error-handler>
+                <on-error-continue enableNotifications="true" logException="false">
+                </on-error-continue>
+            </error-handler>
+        </try>
+    </munit:after-test>
+
+</mule>

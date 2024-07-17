@@ -14,7 +14,7 @@
 
 	<munit:config name="select-clob-java-oracle-test-case.xml" minMuleVersion="4.3.0" />
 
-	<munit:before-test name="createATableWithLOBs">
+	<munit:before-test name="createATableWithCLOBs">
 		<db:execute-ddl config-ref="oracleDbConfig">
 			<db:sql><![CDATA[CREATE TABLE CLOBTEST(Name VARCHAR2(50), SampleText CLOB)]]></db:sql>
 		</db:execute-ddl>

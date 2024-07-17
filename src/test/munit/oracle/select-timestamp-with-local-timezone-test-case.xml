@@ -10,7 +10,7 @@
 
     <munit:config name="select-timestamp-with-local-timezone-test-case.xml" minMuleVersion="4.3.0" />
 
-    <munit:before-test name="createATableWithLOBs">
+    <munit:before-test name="createATableEmployees">
         <db:execute-ddl config-ref="oracleDbConfig">
             <db:sql><![CDATA[CREATE TABLE EMPLOYEES(employee_id NUMBER,last_name VARCHAR2(50), start_time TIMESTAMP, end_time TIMESTAMP)]]></db:sql>
         </db:execute-ddl>
@@ -42,7 +42,7 @@ ORDER BY start_time ASC]]></db:sql>
         </munit:validation>
     </munit:test>
 
-    <munit:after-test name="dropTable">
+    <munit:after-test name="dropTable_employees">
         <try>
             <db:execute-script config-ref="oracleDbConfig">
                 <db:sql><![CDATA[DROP TABLE EMPLOYEES]]></db:sql>

@@ -64,7 +64,7 @@ output text/plain
 		</munit:validation>
 	</munit:test>
 
-	<munit:after-test name="dropTable">
+	<munit:after-test name="dropTable_CLOBTEST">
 		<try>
 			<db:execute-script config-ref="oracleDbConfig">
 				<db:sql><![CDATA[DROP TABLE CLOBTEST]]></db:sql>

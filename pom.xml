@@ -29,7 +29,7 @@
         <hamcrest.version>2.2</hamcrest.version>
         <xmlunit.version>1.6</xmlunit.version>
         <xaPoolVersion>1.5.0</xaPoolVersion>
-        <net.bytebuddy.version>1.14.5</net.bytebuddy.version>
+        <net.bytebuddy.version>1.14.19</net.bytebuddy.version>
         <muleDbClientVersion>2.0.0-SNAPSHOT</muleDbClientVersion>
         <muleExtensionsShadeVersion>1.0.4</muleExtensionsShadeVersion>
 

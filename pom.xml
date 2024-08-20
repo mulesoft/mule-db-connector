@@ -14,7 +14,7 @@
     <groupId>org.mule.connectors</groupId>
     <artifactId>mule-db-connector</artifactId>
     <packaging>mule-extension</packaging>
-    <version>1.14.10-SNAPSHOT</version>
+    <version>1.14.12</version>
 
     <name>Database Connector</name>
     <description>A Mule extension that provides functionality for connecting to Databases through the JDBC standard</description>
@@ -30,7 +30,7 @@
         <xmlunit.version>1.6</xmlunit.version>
         <xaPoolVersion>1.5.0</xaPoolVersion>
         <net.bytebuddy.version>1.14.5</net.bytebuddy.version>
-        <muleDbClientVersion>1.6.9</muleDbClientVersion>
+        <muleDbClientVersion>1.6.13</muleDbClientVersion>
         <muleExtensionsShadeVersion>1.0.4</muleExtensionsShadeVersion>
 
         <jakarta.transaction.version>1.3.3</jakarta.transaction.version>

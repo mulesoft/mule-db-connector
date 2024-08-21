@@ -39,4 +39,4 @@ additionalTestConfigs:
 #    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -DruntimeProduct=MULE_EE -Dmssql"
 #  derby_jdk17:
     testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -DruntimeProduct=MULE_EE -Dderby"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -DruntimeProduct=MULE_EE -Dderby -DfailIfNoMunitTests=false"

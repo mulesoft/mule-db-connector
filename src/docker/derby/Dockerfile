@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre
+FROM openjdk:17-slim
 
 ENV DERBY_VERSION=10.16.1.1
 ENV DERBY_HOME=/derby

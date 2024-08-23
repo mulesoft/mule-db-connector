@@ -10,7 +10,7 @@
         http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
 		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
-    <munit:config name="select-numeric-query-param-test-case.xml" minMuleVersion="4.3.0">
+    <munit:config name="select-numeric-query-params-oracle-test-case.xml" minMuleVersion="4.3.0">
         <munit:parameterizations>
             <munit:parameterization name="oracleInsecureConnectionWithNoPoolingProfile">
                 <munit:parameters>

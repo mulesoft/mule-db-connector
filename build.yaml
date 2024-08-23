@@ -1,42 +1,42 @@
 projectType: extension
 additionalTestConfigs:
   oracle_jdk8:
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Doracle -DruntimeVersion=4.8.0-rc1 -DruntimeProduct=MULE_EE -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Doracle -DruntimeVersion=4.8.0-rc1 -DskipTita"
   postgresql_jdk8:
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dpostgresql -DruntimeVersion=4.8.0-rc1 -DruntimeProduct=MULE_EE -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dpostgresql -DruntimeVersion=4.8.0-rc1  -DskipTita"
   mysql_jdk8:
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dmysql -DruntimeVersion=4.8.0-rc1 -DruntimeProduct=MULE_EE -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dmysql -DruntimeVersion=4.8.0-rc1  -DskipTita"
   mssql_jdk8:
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dmssql -DruntimeVersion=4.8.0-rc1 -DruntimeProduct=MULE_EE -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dmssql -DruntimeVersion=4.8.0-rc1  -DskipTita"
   derby_jdk8:
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dderby -DruntimeVersion=4.8.0-rc1 -DruntimeProduct=MULE_EE -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dderby -DruntimeVersion=4.8.0-rc1  -DskipTita"
   oracle_jdk11:
     testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1 -DruntimeProduct=MULE_EE  -Doracle -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1   -Doracle -DskipTita"
   postgresql_jdk11:
     testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1 -DruntimeProduct=MULE_EE -Dpostgresql -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1  -Dpostgresql -DskipTita"
   mysql_jdk11:
     testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1 -DruntimeProduct=MULE_EE -Dmysql -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1  -Dmysql -DskipTita"
   mssql_jdk11:
     testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1 -DruntimeProduct=MULE_EE -Dmssql -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1  -Dmssql -DskipTita"
   derby_jdk11:
     testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1 -DruntimeProduct=MULE_EE -Dderby -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1  -Dderby -DskipTita"
   oracle_jdk17:
     testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1 -DruntimeProduct=MULE_EE -Doracle -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1  -Doracle -DskipTita"
   postgresql_jdk17:
     testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1 -DruntimeProduct=MULE_EE -Dpostgresql -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1  -Dpostgresql -DskipTita"
   mysql_jdk17:
     testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1 -DruntimeProduct=MULE_EE -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1 -Dmysql -DskipTita"
   mssql_jdk17:
     testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1 -DruntimeProduct=MULE_EE -Dmssql -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1  -Dmssql -DskipTita"
   derby_jdk17:
     testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1 -DruntimeProduct=MULE_EE -Dderby -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1  -Dderby -DskipTita"

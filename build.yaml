@@ -12,7 +12,7 @@ additionalTestConfigs:
     mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dderby -DruntimeVersion=4.8.0-rc1 -DruntimeProduct=MULE_EE -DskipTita"
   oracle_jdk11:
     testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1-DruntimeProduct=MULE_EE  -Doracle -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1 -DruntimeProduct=MULE_EE  -Doracle -DskipTita"
   postgresql_jdk11:
     testJdkTool: OPEN-JDK11
     mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DruntimeVersion=4.8.0-rc1 -DruntimeProduct=MULE_EE -Dpostgresql -DskipTita"

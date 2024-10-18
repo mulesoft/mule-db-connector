@@ -431,6 +431,13 @@
                         <configuration>
                             <images>
                                 <image>
+                                    <name>oracle-ssl</name>
+                                    <alias>oracle-ssl</alias>
+                                    <build>
+                                        <dockerFileDir>${project.basedir}/src/test/resources/docker/oracle-ssl</dockerFileDir>
+                                    </build>
+                                </image>
+                                <image>
                                     <name>oracle-db-mtls</name>
                                     <alias>oracle-db-mtls</alias>
                                     <build>

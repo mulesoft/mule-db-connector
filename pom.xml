@@ -1130,6 +1130,33 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy</id>
+                                <phase>test-compile</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.apache</groupId>
+                                            <artifactId>db-derby</artifactId>
+                                            <version>10.16.1.1</version>
+                                            <type>tar.gz</type>
+                                            <classifier>bin</classifier>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${project.basedir}/src/docker/derby</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
                         <version>${docker.maven.plugin.version}</version>

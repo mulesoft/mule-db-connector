@@ -12,7 +12,7 @@
 
     <munit:config name="stored-procedure-clob-parameter-UDT-oracle-test-case" minMuleVersion="4.3.0"/>
     <munit:before-suite name="createStoreProcedureUDT">
-        <db:execute-ddl config-ref="${config}">
+        <db:execute-ddl config-ref="oracleDbClobUDTPoolingConfig">
             <db:sql><![CDATA[CREATE TABLE my_table(id NUMBER PRIMARY KEY,large_text CLOB)]]></db:sql>
         </db:execute-ddl>
         <db:execute-ddl config-ref="oracleDbClobUDTPoolingConfig" >

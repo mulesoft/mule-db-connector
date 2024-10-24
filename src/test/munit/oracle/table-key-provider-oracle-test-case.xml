@@ -14,7 +14,7 @@
 
     <munit:config name="table-key-provider-oracle-test-case.xml" minMuleVersion="4.4.0"/>
     <db:config name="oracleDbMetadataConfig">
-        <db:oracle-connection host="localhost" port="${oracle.db.port}" serviceName="XEPDB1" user="system" password="oracle">
+        <db:oracle-connection host="0.0.0.0" port="${oracle.db.port}" serviceName="XEPDB1" user="system" password="oracle">
             <db:pooling-profile/>
         </db:oracle-connection>
     </db:config>

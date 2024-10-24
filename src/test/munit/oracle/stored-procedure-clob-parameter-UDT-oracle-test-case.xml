@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <munit:config name="stored-procedure-clob-parameter-UDT-oracle-test-case" minMuleVersion="4.3.0"/>
+    <munit:before-suite name="createStoreProcedureUDT">
+        <db:execute-ddl config-ref="oracleDbClobUDTPoolingConfig">
+            <db:sql><![CDATA[CREATE TABLE my_table(id NUMBER PRIMARY KEY,large_text CLOB)]]></db:sql>
+        </db:execute-ddl>
+        <db:execute-ddl config-ref="oracleDbClobUDTPoolingConfig" >
+            <db:sql ><![CDATA[CREATE OR REPLACE PACKAGE BODY pkg_dgtl_clm_task AS
+  PROCEDURE prc_mytable(arec_notepad_rec IN notepad_rec) IS
+  BEGIN
+    INSERT INTO my_table (id, large_text)
+    VALUES (arec_notepad_rec.id, arec_notepad_rec.large_text);
+  END prc_mytable;
+END pkg_dgtl_clm_task;]]></db:sql>
+        </db:execute-ddl>
+        <db:execute-ddl config-ref="oracleDbClobUDTPoolingConfig" >
+            <db:sql ><![CDATA[create or replace PACKAGE pkg_dgtl_clm_task IS
+    TYPE notepad_rec IS RECORD
+                        (
+                            id  my_table.id%TYPE,
+                            large_text CLOB
+                        );
+    PROCEDURE prc_mytable(arec_notepad_rec IN notepad_rec);
+END pkg_dgtl_clm_task;]]></db:sql>
+        </db:execute-ddl>
+    </munit:before-suite>
+    <munit:test name="storeProcedureExecutionWithClobInUDT" ignore="#[java!org::mule::extension::db::DbMunitUtils::isTestIgnored('oracle')]">
+        <munit:execution>
+            <ee:transform>
+                <ee:message />
+                <ee:variables >
+                    <ee:set-variable variableName="in_notepad_rec" ><![CDATA[import * from dw::core::Strings
+output application/java
+---
+Db::prepareStruct("PKG_DGTL_CLM_TASK.NOTEPAD_REC", [
+      1,
+	  "adsfasdfadsfasdfasdfasdfasdfasdfsdfsadf"
+])]]></ee:set-variable>
+                </ee:variables>
+            </ee:transform>
+            <db:stored-procedure config-ref="oracleDbClobUDTPoolingConfig">
+                <db:sql ><![CDATA[{call pkg_dgtl_clm_task.prc_mytable(:arec_notepad_rec)}]]></db:sql>
+                <db:input-parameters ><![CDATA[#[{arec_notepad_rec: vars.in_notepad_rec}]]]></db:input-parameters>
+                <db:output-parameters >
+                </db:output-parameters>
+            </db:stored-procedure>
+        </munit:execution>
+    </munit:test>
+
+    <munit:after-suite name="deleteStoreProcedureUDT">
+        <db:execute-script config-ref="oracleDbClobUDTPoolingConfig">
+            <db:sql><![CDATA[drop package pkg_dgtl_clm_task;
+drop table my_table]]></db:sql>
+        </db:execute-script>
+    </munit:after-suite>
+</mule>

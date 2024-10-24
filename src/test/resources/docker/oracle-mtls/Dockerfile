@@ -1,4 +1,4 @@
-FROM kyleaure/oracle-18.4.0-expanded:1.0.full.ssl
+FROM oracle-ssl
 
 COPY setup/ /tmp/setup/
 COPY startup/ /opt/oracle/scripts/startup
@@ -13,4 +13,5 @@ EXPOSE 1521 1522
 USER oracle
 CMD ["/bin/sh","-c", "exec $ORACLE_BASE/$RUN_FILE"]
 
-# Currently tagged in DockerHub as: kyleaure/oracle-ssl-18.4.0-xe-prebuilt:2.0
+
+

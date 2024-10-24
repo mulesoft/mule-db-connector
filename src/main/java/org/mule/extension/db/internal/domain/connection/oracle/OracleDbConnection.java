@@ -73,6 +73,10 @@ public class OracleDbConnection extends DefaultDbConnection {
   public static final String QUERY_TYPE_ATTRS =
       "SELECT ATTR_NO, ATTR_TYPE_NAME FROM ALL_TYPE_ATTRS WHERE TYPE_NAME = ? AND ATTR_TYPE_NAME IN ('CLOB', 'BLOB')";
 
+
+  public static final String QUERY_PKG_ATTRS =
+      "SELECT ATTR_NO, ATTR_TYPE_NAME FROM ALL_PLSQL_TYPE_ATTRS WHERE PACKAGE_NAME = ? AND ATTR_TYPE_NAME IN ('CLOB', 'BLOB')";
+
   private static final String QUERY_OWNER_CONDITION = " AND OWNER = ?";
 
   private static final int PROCEDURE_SCHEM_COLUMN_INDEX = 2;
@@ -210,12 +214,18 @@ public class OracleDbConnection extends DefaultDbConnection {
       Optional<String> owner = getOwnerFrom(typeName);
       String type = getTypeSimpleName(typeName);
 
-      String query = QUERY_TYPE_ATTRS + (owner.isPresent() ? QUERY_OWNER_CONDITION : "");
+      String query;
+      if (owner.isPresent()) {
+        query = QUERY_TYPE_ATTRS + QUERY_OWNER_CONDITION + " UNION ALL " + QUERY_PKG_ATTRS;
+      } else {
+        query = QUERY_TYPE_ATTRS;
+      }
 
       try (PreparedStatement ps = this.prepareStatement(query)) {
         ps.setString(1, type);
         if (owner.isPresent()) {
           ps.setString(2, owner.get());
+          ps.setString(3, owner.get());
         }
 
         try (ResultSet resultSet = ps.executeQuery()) {

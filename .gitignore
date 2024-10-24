@@ -25,6 +25,7 @@ objectstore/
 temp/
 muleEmbeddedDB/
 activemq-data/
+directory/
 testdir/
 hostkey.ser
 *.h2.db
@@ -34,3 +35,4 @@ myDB/
 previousDB/
 derbyLeakTriggererDB/
 J17_validation.sh
+db-derby-10.16.1.1-bin.tar.gz

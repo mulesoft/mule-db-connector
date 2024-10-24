@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
     <bean id="oracleDataSourceXA"  class="oracle.jdbc.xa.client.OracleXADataSource">
         <property name="URL"
-                  value="jdbc:oracle:thin:@//localhost:${oracle.port}/XEPDB1"/>
+                  value="jdbc:oracle:thin:@//0.0.0.0:${oracle.port}/XEPDB1"/>
         <property name="user" value="system"/>
         <property name="password" value="oracle"/>
     </bean>

@@ -1,7 +1,9 @@
-FROM oracle-ssl
+FROM gvenzl/oracle-xe:21.3.0-full-faststart
 
 COPY setup/ /tmp/setup/
 COPY startup/ /opt/oracle/scripts/startup
+
+ENV ORACLE_ADMIN=/opt/oracle/homes/OraDBHome21cXE/network/admin
 
 USER root
 RUN chmod 777 /tmp/setup/enable_ssl.sh

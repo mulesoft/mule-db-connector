@@ -1,5 +1,5 @@
 # TODO update to use gvenzl/oracle-free to test Oracle 23c
-FROM gvenzl/oracle-xe:21.3.0-full-faststart
+FROM gvenzl/oracle-xe:21.3.0-full
 
 COPY setup/ /tmp/setup/
 COPY startup/ /container-entrypoint-startdb.d

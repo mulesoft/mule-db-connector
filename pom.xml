@@ -72,9 +72,9 @@
         <awaitility.version>3.1.6</awaitility.version>
         <!-- JDK 17 Compatibility Props -->
         <mule.sdk.api.version>0.8.0</mule.sdk.api.version>
-        <munit.version>3.3.0-SNAPSHOT</munit.version>
+        <munit.version>3.3.1</munit.version>
         <mtf.tools.version>1.2.0</mtf.tools.version>
-        <munit.extensions.maven.plugin.version>1.4.0-SNAPSHOT</munit.extensions.maven.plugin.version>
+        <munit.extensions.maven.plugin.version>1.4.0</munit.extensions.maven.plugin.version>
         <jacoco.version>0.8.10</jacoco.version>
         <mtf.javaopts></mtf.javaopts>
     </properties>

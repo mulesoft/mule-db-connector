@@ -10,6 +10,7 @@ import static org.mule.db.commons.api.param.JdbcType.BLOB;
 import static org.mule.db.commons.api.param.JdbcType.CLOB;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getOwnerFrom;
 import static org.mule.extension.db.internal.domain.connection.oracle.OracleConnectionUtils.getTypeSimpleName;
+import static org.mule.extension.db.internal.domain.connection.oracle.OracleDbConnection.QUERY_PKG_ATTRS;
 
 import static com.github.benmanes.caffeine.cache.Caffeine.newBuilder;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -84,7 +85,8 @@ public class OracleCreateStructTestCase extends AbstractDbFunctionTestCase {
 
     when(preparedStatement.executeQuery()).thenReturn(resultSet);
     if (owner.isPresent()) {
-      when(delegate.prepareStatement(QUERY_TYPE_ATTRS + QUERY_OWNER_CONDITION)).thenReturn(preparedStatement);
+      when(delegate.prepareStatement(QUERY_TYPE_ATTRS + QUERY_OWNER_CONDITION + " UNION ALL " + QUERY_PKG_ATTRS))
+          .thenReturn(preparedStatement);
     } else {
       when(delegate.prepareStatement(QUERY_TYPE_ATTRS)).thenReturn(preparedStatement);
     }

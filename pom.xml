@@ -64,7 +64,7 @@
         <mule.vm.version>2.0.1</mule.vm.version>
         <jacoco.version>0.8.10</jacoco.version>
         <mulesoftLicenseVersion>1.4.0</mulesoftLicenseVersion>
-        <license.maven.plugin.version>4.2</license.maven.plugin.version>
+        <license.maven.plugin.version>4.6</license.maven.plugin.version>
         <licensePath>LICENSE_HEADER_CPAL.txt</licensePath>
         <licenseYear>2023</licenseYear>
         <commons.lang.version>3.13.0</commons.lang.version>

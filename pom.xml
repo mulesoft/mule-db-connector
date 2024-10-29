@@ -44,7 +44,7 @@
         <oracle.driver.version>23.2.0.0</oracle.driver.version>
         <postgresql.version>42.6.0</postgresql.version>
 
-        <docker.maven.plugin.version>0.43.4</docker.maven.plugin.version>
+        <docker.maven.plugin.version>0.45.1</docker.maven.plugin.version>
         <maven-replacer-plugin.version>1.5.3</maven-replacer-plugin.version>
         <maven.help.plugin.version>3.3.0</maven.help.plugin.version>
         <maven.helper.plugin.version>3.3.0</maven.helper.plugin.version>

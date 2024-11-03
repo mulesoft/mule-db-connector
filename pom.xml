@@ -37,7 +37,7 @@
         <jakarta.xml.bind.api.version>2.3.3</jakarta.xml.bind.api.version>
         <com.sun.xml.bind.version>2.3.8</com.sun.xml.bind.version>
         <com.sun.istack.version>3.0.12</com.sun.istack.version>
-        <caffeineVersion>2.9.3</caffeineVersion>
+        <caffeineVersion>3.1.8</caffeineVersion>
         <derbyVersion>10.14.2.0</derbyVersion>
         <mySqlVersion>8.0.30</mySqlVersion>
         <mssqlVersion>7.0.0.jre8</mssqlVersion>

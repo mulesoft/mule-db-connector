@@ -24,7 +24,7 @@
             <db:sql ><![CDATA[INSERT INTO EMPLOYEES VALUES (102, 'Tr', '01-Jan-2023', '30-Jun-2023')]]></db:sql>
         </db:insert>
     </munit:before-test>
-    <munit:test name="select-timestamp-whit-local-timezone-test-suiteTest">
+    <munit:test name="select-timestamp-whit-local-timezone-test-Test">
         <munit:execution >
             <set-variable value="2022-10-05T15:39:20.045" variableName="watermark"/>
             <db:select config-ref="oracleDbConfig">
@@ -35,6 +35,19 @@ ORDER BY start_time ASC]]></db:sql>
                 <db:input-parameters ><![CDATA[#[{
 "watermark": vars.watermark
 }]]]></db:input-parameters>
+            </db:select>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="select-with-timestamp-parameter-type-Test">
+        <munit:execution >
+            <set-variable value="2010-01-01 00:00:00" variableName="watermark"/>
+            <db:select config-ref="oracleDbConfig">
+                <db:sql ><![CDATA[SELECT * FROM EMPLOYEES WHERE TO_CHAR(start_time, 'YYYY-MM-DD HH24:MI:SS') = :aStartTime]]></db:sql>
+                <db:input-parameters ><![CDATA[#[{"aStartTime": vars.watermark}]]]></db:input-parameters>
             </db:select>
         </munit:execution>
         <munit:validation>

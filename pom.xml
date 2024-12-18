@@ -71,7 +71,7 @@
         <commons-dbcp2.version>2.9.0</commons-dbcp2.version>
         <awaitility.version>3.1.6</awaitility.version>
         <!-- JDK 17 Compatibility Props -->
-        <mule.sdk.api.version>0.8.0</mule.sdk.api.version>
+        <mule.sdk.api.version>0.11.0-20241025</mule.sdk.api.version>
         <munit.version>3.3.2</munit.version>
         <mtf.tools.version>1.2.0</mtf.tools.version>
         <munit.extensions.maven.plugin.version>1.4.0</munit.extensions.maven.plugin.version>

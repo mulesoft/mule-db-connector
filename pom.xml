@@ -642,7 +642,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <version>3.3.0</version>
+                        <version>3.9.0</version>
                         <configuration>
                             <debug>false</debug>
                             <streamLogs>true</streamLogs>
@@ -828,7 +828,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <version>3.3.0</version>
+                        <version>3.9.0</version>
                         <configuration>
                             <debug>false</debug>
                             <streamLogs>true</streamLogs>
@@ -1079,7 +1079,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <version>3.3.0</version>
+                        <version>3.9.0</version>
                         <configuration>
                             <debug>false</debug>
                             <streamLogs>true</streamLogs>
@@ -1297,7 +1297,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <version>3.3.0</version>
+                        <version>3.9.0</version>
                         <configuration>
                             <debug>false</debug>
                             <streamLogs>true</streamLogs>
@@ -1579,7 +1579,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <version>3.3.0</version>
+                        <version>3.9.0</version>
                         <configuration>
                             <debug>false</debug>
                             <streamLogs>true</streamLogs>

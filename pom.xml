@@ -69,7 +69,7 @@
         <licenseYear>2023</licenseYear>
         <commons.lang.version>3.13.0</commons.lang.version>
         <commons-dbcp2.version>2.9.0</commons-dbcp2.version>
-        <awaitility.version>3.1.6</awaitility.version>
+        <awaitility.version>4.2.2</awaitility.version>
         <!-- JDK 17 Compatibility Props -->
         <mule.sdk.api.version>0.8.0</mule.sdk.api.version>
         <munit.version>3.3.2</munit.version>

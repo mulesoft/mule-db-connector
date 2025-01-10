@@ -24,7 +24,7 @@
         <commonsCollectionsVersion>3.2.2</commonsCollectionsVersion>
         <commonsDbUtilsVersion>1.8.0</commonsDbUtilsVersion>
         <commonsIoVersion>2.17.0</commonsIoVersion>
-        <mockito-core.version>4.7.0</mockito-core.version>
+        <mockito-core.version>5.15.2</mockito-core.version>
         <junit.version>4.13.2</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
         <xmlunit.version>1.6</xmlunit.version>

@@ -55,7 +55,7 @@
         <skipTita>false</skipTita>
         <settingsFile>${java.io.tmpdir}/effective-settings.xml</settingsFile>
         <spring-security-config-version>5.8.6</spring-security-config-version>
-        <spring-security-core-version>5.8.6</spring-security-core-version>
+        <spring-security-core-version>5.8.16</spring-security-core-version>
         <spring-beans-version>5.3.31</spring-beans-version>
         <spring-context-version>5.3.31</spring-context-version>
         <spring-core-version>5.3.31</spring-core-version>

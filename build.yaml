@@ -1,4 +1,5 @@
 projectType: extension
+mavenTestGoal: install -Dmaven.javadoc.skip -Dtest=none -DfailIfNoTests=false
 additionalTestConfigs:
   oracle_jdk17:
     testJdkTool: OPEN-JDK17

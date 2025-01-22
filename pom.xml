@@ -41,6 +41,7 @@
         <derbyVersion>10.14.2.0</derbyVersion>
         <mySqlVersion>8.0.30</mySqlVersion>
         <mssqlVersion>7.0.0.jre8</mssqlVersion>
+        <oracle.driver.artifactId>ojdbc8</oracle.driver.artifactId>
         <oracle.driver.version>23.6.0.24.10</oracle.driver.version>
         <postgresql.version>42.6.0</postgresql.version>
 
@@ -215,7 +216,7 @@
         </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc17</artifactId>
+            <artifactId>${oracle.driver.artifactId}</artifactId>
             <version>${oracle.driver.version}</version>
             <scope>provided</scope>
         </dependency>

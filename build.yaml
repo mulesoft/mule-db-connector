@@ -2,4 +2,4 @@ projectType: extension
 additionalTestConfigs:
   oracle_jdk17:
     testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -Doracle -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -Doracle -DskipTita -Doracle.driver.artifactId=ojdbc17 -Doracle.driver.version=23.6.0.24.10"

@@ -3,4 +3,4 @@ mavenTestGoal: install -Dmaven.javadoc.skip -Dtest=none -DfailIfNoTests=false
 additionalTestConfigs:
   oracle_jdk17:
     testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -Doracle -DskipTita -Doracle.driver.artifactId=ojdbc17 -Doracle.driver.version=23.6.0.24.10"
+    mavenAdditionalArgs: "-DminVersion=4.6.0 -Doracle -DskipTita -Dmunit.oracle.driver.artifactId=ojdbc17 -Dmunit.oracle.driver.version=23.6.0.24.10"

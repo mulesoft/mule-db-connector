@@ -23,7 +23,7 @@
         <c3p0Version>0.9.5.5</c3p0Version>
         <commonsCollectionsVersion>3.2.2</commonsCollectionsVersion>
         <commonsDbUtilsVersion>1.8.0</commonsDbUtilsVersion>
-        <commonsIoVersion>2.17.0</commonsIoVersion>
+        <commonsIoVersion>2.18.0</commonsIoVersion>
         <mockito-core.version>4.7.0</mockito-core.version>
         <junit.version>4.13.2</junit.version>
         <hamcrest.version>2.2</hamcrest.version>

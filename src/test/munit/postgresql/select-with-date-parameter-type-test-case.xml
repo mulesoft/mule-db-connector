@@ -1,0 +1,57 @@
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+        http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+		http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+
+    <munit:config name="select-with-date-parameter-type_postgresql-test-case.xml" minMuleVersion="4.3.0" />
+    <munit:before-suite name="createEmployeesTableForSuite">
+        <try>
+            <db:execute-ddl config-ref="postgres-config">
+                <db:sql>
+                    <![CDATA[DROP TABLE IF EXISTS EMPLOYEES]]>
+                </db:sql>
+            </db:execute-ddl>
+            <error-handler>
+                <on-error-continue/>
+            </error-handler>
+        </try>
+        <db:execute-ddl config-ref="postgres-config">
+            <db:sql>
+                <![CDATA[CREATE TABLE EMPLOYEES (employee_id SERIAL PRIMARY KEY,last_name VARCHAR(50),start_time DATE,end_time TIMESTAMP)]]>
+            </db:sql>
+        </db:execute-ddl>
+        <db:insert config-ref="postgres-config">
+            <db:sql><![CDATA[INSERT INTO EMPLOYEES VALUES (1, 'Smith', '2024-01-01', '2024-01-01 17:00:00')]]></db:sql>
+        </db:insert>
+        <db:insert config-ref="postgres-config">
+            <db:sql><![CDATA[INSERT INTO EMPLOYEES VALUES (2, 'Johnson', '2024-02-15', '2024-02-15 09:30:00')]]></db:sql>
+        </db:insert>
+        <db:insert config-ref="postgres-config">
+            <db:sql><![CDATA[INSERT INTO EMPLOYEES VALUES (3, 'Williams', '2024-03-10', '2024-03-10 12:45:00')]]></db:sql>
+        </db:insert>
+    </munit:before-suite>
+    <munit:after-suite name="deleteEmployeesTable">
+        <db:execute-ddl config-ref="postgres-config">
+            <db:sql>
+                <![CDATA[DROP TABLE IF EXISTS EMPLOYEES]]>
+            </db:sql>
+        </db:execute-ddl>
+    </munit:after-suite>
+    <munit:test name="select-date-datatype-test-suiteTest">
+        <munit:execution >
+            <set-variable value="2024-02-15" variableName="a_date"/>
+            <db:select config-ref="postgres-config">
+                <db:sql ><![CDATA[SELECT * FROM EMPLOYEES WHERE start_time = :a_date]]></db:sql>
+                <db:input-parameters ><![CDATA[#[{"a_date": vars.a_date}]]]></db:input-parameters>
+            </db:select>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]"/>
+        </munit:validation>
+    </munit:test>
+</mule>

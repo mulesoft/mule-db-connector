@@ -514,6 +514,7 @@
                         <version>${munit.extensions.maven.plugin.version}</version>
                         <configuration>
                             <munitFailIfNoTests>false</munitFailIfNoTests>
+                            <minMuleVersionConfig>CONNECTOR</minMuleVersionConfig>
                             <systemPropertyVariables>
                                 <oracle.db.port>${oracle.db.port}</oracle.db.port>
                                 <oracle.db.mtls.port>${oracle.db.mtls.port}</oracle.db.mtls.port>
@@ -764,6 +765,7 @@
                         <version>${munit.extensions.maven.plugin.version}</version>
                         <configuration>
                             <munitFailIfNoTests>false</munitFailIfNoTests>
+                            <minMuleVersionConfig>CONNECTOR</minMuleVersionConfig>
                             <systemPropertyVariables>
                                 <mysql.db.port>${mysql.db.port}</mysql.db.port>
                                 <mssql.db.port>${mssql.db.port}</mssql.db.port>
@@ -951,6 +953,7 @@
                         <version>${munit.extensions.maven.plugin.version}</version>
                         <configuration>
                             <munitFailIfNoTests>false</munitFailIfNoTests>
+                            <minMuleVersionConfig>CONNECTOR</minMuleVersionConfig>
                             <systemPropertyVariables>
                                 <postgresql.db.port>${postgresql.db.port}</postgresql.db.port>
                             </systemPropertyVariables>
@@ -1229,6 +1232,7 @@
                         <version>${munit.extensions.maven.plugin.version}</version>
                         <configuration>
                             <munitFailIfNoTests>false</munitFailIfNoTests>
+                            <minMuleVersionConfig>CONNECTOR</minMuleVersionConfig>
                             <systemPropertyVariables>
                                 <derby.db.port>${derby.db.port}</derby.db.port>
                             </systemPropertyVariables>
@@ -1511,6 +1515,7 @@
                         <version>${munit.extensions.maven.plugin.version}</version>
                         <configuration>
                             <munitFailIfNoTests>false</munitFailIfNoTests>
+                            <minMuleVersionConfig>CONNECTOR</minMuleVersionConfig>
                             <systemPropertyVariables>
                                 <mssql.db.port>${mssql.db.port}</mssql.db.port>
                             </systemPropertyVariables>

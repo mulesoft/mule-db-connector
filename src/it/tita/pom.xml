@@ -11,7 +11,7 @@
     <name>DB Connector - Integration Tests</name>
 
     <properties>
-        <tita.version>4.7.1</tita.version>
+        <tita.version>4.15.0</tita.version>
         <hamcrest.version>1.3</hamcrest.version>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>

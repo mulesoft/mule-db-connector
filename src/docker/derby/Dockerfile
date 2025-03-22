@@ -1,4 +1,4 @@
-FROM openjdk:17-slim
+FROM openjdk:17.0.2-slim
 
 ENV DERBY_VERSION=10.16.1.1
 

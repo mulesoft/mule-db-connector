@@ -1,42 +1,6 @@
 projectType: extension
+mavenTestGoal: install -Dmaven.javadoc.skip -Dtest=none -DfailIfNoTests=false
 additionalTestConfigs:
-  oracle_jdk8:
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Doracle -DminVersion=4.3.0 -DskipTita"
-  postgresql_jdk8:
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dpostgresql -DminVersion=4.3.0 -DskipTita"
-  mysql_jdk8:
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dmysql -DminVersion=4.3.0 -DskipTita"
-  mssql_jdk8:
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dmssql -DminVersion=4.3.0 -DskipTita"
-  derby_jdk8:
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dderby -DminVersion=4.3.0 -DskipTita"
-  oracle_jdk11:
-    testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Doracle -DskipTita"
-  postgresql_jdk11:
-    testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dpostgresql -DskipTita"
-  mysql_jdk11:
-    testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dmysql -DskipTita"
-  mssql_jdk11:
-    testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dmssql -DskipTita"
-  derby_jdk11:
-    testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dderby -DskipTita"
   oracle_jdk17:
     testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -Doracle -DskipTita"
-  postgresql_jdk17:
-    testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -Dpostgresql -DskipTita"
-  mysql_jdk17:
-    testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -Dmysql -DskipTita"
-  mssql_jdk17:
-    testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -Dmssql -DskipTita"
-  derby_jdk17:
-    testJdkTool: OPEN-JDK17
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -Dderby -DskipTita"
+    mavenAdditionalArgs: "-DminVersion=4.6.0 -Doracle -DskipTita -Dmunit.oracle.driver.artifactId=ojdbc17 -Dmunit.oracle.driver.version=23.6.0.24.10"

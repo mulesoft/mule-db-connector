@@ -82,4 +82,12 @@ public class TypeClassifier {
   public void setJdbcType(JdbcType type) {
     this.type = type;
   }
+
+  public JdbcType getType() {
+    return type;
+  }
+
+  public void setType(JdbcType type) {
+    this.type = type;
+  }
 }

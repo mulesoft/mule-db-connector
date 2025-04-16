@@ -12,19 +12,19 @@ additionalTestConfigs:
     mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dderby -DminVersion=4.3.0 -DskipTita"
   oracle_jdk11:
     testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Doracle -DskipTita -DruntimeVersion=4.8.5"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Doracle -DskipTita -DruntimeVersion=4.8.4"
   postgresql_jdk11:
     testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dpostgresql -DskipTita -DruntimeVersion=4.8.5"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dpostgresql -DskipTita -DruntimeVersion=4.8.4"
   mysql_jdk11:
     testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dmysql -DskipTita -DruntimeVersion=4.8.5"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dmysql -DskipTita -DruntimeVersion=4.8.4"
   mssql_jdk11:
     testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dmssql -DskipTita -DruntimeVersion=4.8.5"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dmssql -DskipTita -DruntimeVersion=4.8.4"
   derby_jdk11:
     testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dderby -DskipTita -DruntimeVersion=4.8.5"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dderby -DskipTita -DruntimeVersion=4.8.4"
   oracle_jdk17:
     testJdkTool: OPEN-JDK17
     mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -Doracle -DskipTita"

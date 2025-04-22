@@ -87,6 +87,7 @@ public class TypeClassifier {
     return type;
   }
 
+  @ExcludeFromGeneratedCoverage
   public void setType(JdbcType type) {
     this.type = type;
   }

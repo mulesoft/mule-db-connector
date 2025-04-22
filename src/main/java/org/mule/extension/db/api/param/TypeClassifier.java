@@ -80,7 +80,7 @@ public class TypeClassifier {
 
   @ExcludeFromGeneratedCoverage
   public void setJdbcType(JdbcType type) {
-    this.type = type;
+    setType(type);
   }
 
   public JdbcType getType() {

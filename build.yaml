@@ -10,21 +10,23 @@ additionalTestConfigs:
     mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dmssql -DminVersion=4.3.0 -DskipTita"
   derby_jdk8:
     mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dderby -DminVersion=4.3.0 -DskipTita"
+    # In all jdk11 configurations, the runtime is set to 4.8.x until W-17842670 is fixed
+    # Because of this, the discovery configuration is bypassed and we need to specify runtimeProduct as MULE_EE
   oracle_jdk11:
     testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Doracle -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Doracle -DskipTita -DruntimeVersion=4.8.5 -DruntimeProduct=MULE_EE"
   postgresql_jdk11:
     testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dpostgresql -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dpostgresql -DskipTita -DruntimeVersion=4.8.5"
   mysql_jdk11:
     testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dmysql -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dmysql -DskipTita -DruntimeVersion=4.8.5"
   mssql_jdk11:
     testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dmssql -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dmssql -DskipTita -DruntimeVersion=4.8.5"
   derby_jdk11:
     testJdkTool: OPEN-JDK11
-    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.3.0 -Dderby -DskipTita"
+    mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -Dderby -DskipTita -DruntimeVersion=4.8.5"
   oracle_jdk17:
     testJdkTool: OPEN-JDK17
     mavenAdditionalArgs: "-Dtest=none -DfailIfNoTests=false -DminVersion=4.6.0 -Doracle -DskipTita"

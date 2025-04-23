@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+      xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+                        http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+                        http://www.mulesoft.org/schema/mule/munit-tools http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+                        http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+
+    <munit:config name="db-stored-procedure-output-param-test" minMuleVersion="4.3.0"/>
+    <munit:before-test name="createStoreProcedureExpressions">
+        <db:execute-ddl config-ref="oracleDbConfig">
+            <db:sql><![CDATA[BEGIN
+     EXECUTE IMMEDIATE 'DROP PROCEDURE simple_proc';
+ EXCEPTION
+     WHEN OTHERS THEN
+         NULL;
+ END;]]></db:sql>
+        </db:execute-ddl>
+        <db:execute-ddl config-ref="oracleDbConfig">
+            <db:sql><![CDATA[CREATE OR REPLACE PROCEDURE simple_proc (
+     p_input IN VARCHAR,
+     p_output OUT VARCHAR
+ ) AS
+ BEGIN
+     p_output := p_input;
+ END;]]></db:sql>
+        </db:execute-ddl>
+    </munit:before-test>
+
+    <munit:test name="use-expressions-to-set-output-parameter" description="Test to check if the output parameter is set correctly">
+        <munit:execution>
+            <db:stored-procedure config-ref="oracleDbConfig" outputParameters='#[
+            %dw 2.0
+output application/java
+---
+[{
+	key: "p_output",
+	typeClassifier: {
+		"type": "VARCHAR"
+	} as Object {class : "org.mule.extension.db.api.param.ParameterType"}
+}]
+]'>
+                <db:sql><![CDATA[{call simple_proc(:p_input, :p_output)}]]></db:sql>
+                <db:input-parameters><![CDATA[#[output application/java
+ ---
+ {
+     'p_input': 'test'
+ }]]]></db:input-parameters>
+            </db:stored-procedure>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[payload.p_output]" expected="test"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:test name="use-expressions-to-set-output-parameter-without-class" description="Test to check if the output parameter is set correctly">
+        <munit:execution>
+            <db:stored-procedure config-ref="oracleDbConfig" outputParameters='#[
+            %dw 2.0
+output application/java
+---
+[{
+	key: "p_output",
+	typeClassifier: {
+		"type": "VARCHAR"
+	}
+}]
+]'>
+                <db:sql><![CDATA[{call simple_proc(:p_input, :p_output)}]]></db:sql>
+                <db:input-parameters><![CDATA[#[output application/java
+ ---
+ {
+     'p_input': 'test'
+ }]]]></db:input-parameters>
+            </db:stored-procedure>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-equals actual="#[payload.p_output]" expected="test"/>
+        </munit:validation>
+    </munit:test>
+
+    <munit:after-suite name="deleteStoreProcedureExpressions">
+        <db:execute-ddl config-ref="oracleDbConfig">
+            <db:sql><![CDATA[BEGIN
+     EXECUTE IMMEDIATE 'DROP PROCEDURE simple_proc';
+ EXCEPTION
+     WHEN OTHERS THEN
+         NULL;
+ END;]]></db:sql>
+        </db:execute-ddl>
+    </munit:after-suite>
+
+</mule>

@@ -21,6 +21,7 @@
 
     <properties>
         <c3p0Version>0.9.5.5</c3p0Version>
+        <commonsCollectionsVersion>4.5.0</commonsCollectionsVersion>
         <commonsDbUtilsVersion>1.8.0</commonsDbUtilsVersion>
         <commonsIoVersion>2.17.0</commonsIoVersion>
         <mockito-core.version>4.7.0</mockito-core.version>
@@ -104,6 +105,12 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commonsIoVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>${commonsCollectionsVersion}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>jakarta.transaction</groupId>

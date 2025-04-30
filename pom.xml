@@ -21,7 +21,7 @@
 
     <properties>
         <c3p0Version>0.9.5.5</c3p0Version>
-        <commonsCollectionsVersion>4.5.0</commonsCollectionsVersion>
+        <commons-collections4.version>4.5.0</commons-collections4.version>
         <commonsDbUtilsVersion>1.8.0</commonsDbUtilsVersion>
         <commonsIoVersion>2.17.0</commonsIoVersion>
         <mockito-core.version>4.7.0</mockito-core.version>
@@ -109,7 +109,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>${commonsCollectionsVersion}</version>
+            <version>${commons-collections4.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

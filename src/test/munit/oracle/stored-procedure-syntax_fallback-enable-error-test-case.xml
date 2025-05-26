@@ -30,8 +30,8 @@
         </db:execute-ddl>
     </munit:before-test>
 
-    <munit:test name="bad-sql-syntax-error"
-                description=""
+    <munit:test name="bad-sql-syntax-error-with-fallback-is-enable"
+                description="When the fallback flag is enabled, an attempt to execute the query is expected, for this scenario a Query Execution error is expected."
                 expectedErrorType="DB:QUERY_EXECUTION">
         <munit:behavior >
             <set-variable value="#[java!org::mule::extension::db::DbMunitUtils::setDbSystemProperty('mule.db.commons.defaultParamTypeResolver.enable.fallback','true')]" variableName="setProperty" />

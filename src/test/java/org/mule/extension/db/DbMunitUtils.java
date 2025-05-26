@@ -41,4 +41,8 @@ public class DbMunitUtils {
 
     return availableProperties.containsKey(port) ? availableProperties.getProperty(port) : DEFAULT_PORT;
   }
+
+  public static void setDbSystemProperty(String name, String value) {
+    System.setProperty(name, value);
+  }
 }

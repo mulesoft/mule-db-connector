@@ -66,5 +66,6 @@ output application/java
          NULL;
  END;]]></db:sql>
         </db:execute-ddl>
+        <set-variable value="#[java!org::mule::extension::db::DbMunitUtils::setDbSystemProperty('mule.db.commons.defaultParamTypeResolver.enable.fallback',false)]" variableName="recoveryProperty" />
     </munit:after-suite>
 </mule>

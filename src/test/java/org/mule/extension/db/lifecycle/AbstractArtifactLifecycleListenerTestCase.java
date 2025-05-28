@@ -59,7 +59,7 @@ public abstract class AbstractArtifactLifecycleListenerTestCase {
 
   // Parameterized
   protected AbstractArtifactLifecycleListenerTestCase(String groupId, String artifactId, String artifactVersion) {
-    LOGGER.info("Parameters: {0}, {1}, {2}", groupId, artifactId, artifactVersion);
+    LOGGER.info("Parameters: {}, {}, {}", groupId, artifactId, artifactVersion);
     this.groupId = groupId;
     this.artifactId = artifactId;
     this.artifactVersion = artifactVersion;

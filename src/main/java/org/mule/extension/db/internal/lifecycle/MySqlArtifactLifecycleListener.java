@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Stream;
 
@@ -90,14 +91,10 @@ public class MySqlArtifactLifecycleListener extends DbArtifactLifecycleListenerC
    * @param cleanupThreadsClass The AbandonedConnectionCleanupThread class object
    */
   private void cleanMySqlCleanupThreadsThreadFactory(Class<?> cleanupThreadsClass) {
-    // In new mysql driver versions (at least 8), the executor service is wrapped inside a delegate class
-    // (DelegatedExecutorService) that exposes only the ExecutorService interface. In order to clean the threadPoolExecutor
-    // classloader reference, it has to be extracted manually though reflection from each delegate/wrapper class.
-    // Hierarchy leading to real ThreadPoolExecutor is: AbandonedConnectionCleanupThread.cleanupThreadExecutorService ->
-    // class DelegatedExecutorService.e -> class ThreadPoolExecutor.
-    // Note that the field 'cleanupThreadExcecutorService' is mispelled. There's actually a typo in MySql driver code.
     try {
-      Method checkedShutdown = cleanupThreadsClass.getMethod("checkedShutdown", null);
+      ClassLoader mainContextClassLoader = Thread.currentThread().getContextClassLoader();
+      
+      Method checkedShutdown = cleanupThreadsClass.getMethod("checkedShutdown");
       checkedShutdown.invoke(null);
 
       if (getJavaVersion() <= 11.0F) {
@@ -106,7 +103,7 @@ public class MySqlArtifactLifecycleListener extends DbArtifactLifecycleListenerC
         part with versions 5 and 8).
         I'll keep this code only to avoid memory leaks in versions older than 5
         because I couldn't reproduce the situation in which this code is necessary.
-         */
+        */
         Field cleanupExecutorServiceField = cleanupThreadsClass
             .getDeclaredField("cleanupThreadExcecutorService");
         cleanupExecutorServiceField.setAccessible(true);
@@ -118,12 +115,32 @@ public class MySqlArtifactLifecycleListener extends DbArtifactLifecycleListenerC
         ThreadPoolExecutor realExecutorService =
             (ThreadPoolExecutor) realExecutorServiceField.get(delegateCleanupExecutorService);
 
-        // Set cleanup thread executor service thread factory to one whose classloader is the system one
-        realExecutorService.setThreadFactory(Executors.defaultThreadFactory());
+        ThreadFactory mainContextThreadFactory = r -> {
+          Thread t = new Thread(r);
+          t.setContextClassLoader(mainContextClassLoader);
+          return t;
+        };
+
+        realExecutorService.setThreadFactory(mainContextThreadFactory);
+      } else {
+
+        Field executorField = cleanupThreadsClass.getDeclaredField("cleanupThreadExecutorService");
+        executorField.setAccessible(true);
+        ExecutorService executor = (ExecutorService) executorField.get(null);
+        
+        if (executor != null) {
+          ExecutorService newExecutor = Executors.newSingleThreadExecutor(r -> {
+            Thread t = new Thread(r);
+            t.setContextClassLoader(mainContextClassLoader);
+            return t;
+          });
+
+          executorField.set(null, newExecutor);
+        }
       }
       LOGGER.debug("MySql AbandonedConnectionCleanupThread shutdown.");
-    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {
-      LOGGER.debug("Error cleaning threadFactory from AbandonedConnectionCleanupThread executor service");
+    } catch (Exception e) {
+      LOGGER.debug("Error cleaning threadFactory from AbandonedConnectionCleanupThread executor service", e);
     }
   }
 

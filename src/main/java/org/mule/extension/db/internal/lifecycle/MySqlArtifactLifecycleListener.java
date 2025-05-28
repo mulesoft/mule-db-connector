@@ -93,7 +93,7 @@ public class MySqlArtifactLifecycleListener extends DbArtifactLifecycleListenerC
   private void cleanMySqlCleanupThreadsThreadFactory(Class<?> cleanupThreadsClass) {
     try {
       ClassLoader mainContextClassLoader = Thread.currentThread().getContextClassLoader();
-      
+
       Method checkedShutdown = cleanupThreadsClass.getMethod("checkedShutdown");
       checkedShutdown.invoke(null);
 
@@ -127,7 +127,7 @@ public class MySqlArtifactLifecycleListener extends DbArtifactLifecycleListenerC
         Field executorField = cleanupThreadsClass.getDeclaredField("cleanupThreadExecutorService");
         executorField.setAccessible(true);
         ExecutorService executor = (ExecutorService) executorField.get(null);
-        
+
         if (executor != null) {
           ExecutorService newExecutor = Executors.newSingleThreadExecutor(r -> {
             Thread t = new Thread(r);

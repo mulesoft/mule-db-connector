@@ -18,7 +18,7 @@
     </http:listener-config>
 
     <db:config name="Database_Config">
-        <db:oracle-connection host="localhost" port="${db.port}" user="system" password="oracle" serviceName="XEPDB1">
+        <db:oracle-connection host="localhost" port="${db.port}" user="system" password="oracleoracleoracle123" serviceName="XEPDB1">
             <db:pooling-profile maxPoolSize="3" maxWait="1" />
         </db:oracle-connection>
     </db:config>

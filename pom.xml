@@ -448,7 +448,7 @@
                                     <run>
                                         <containerNamePattern>%n-%i-%t</containerNamePattern>
                                         <env>
-                                            <ORACLE_PASSWORD>oracle</ORACLE_PASSWORD>
+                                            <ORACLE_PASSWORD>oracleoracleoracle123</ORACLE_PASSWORD>
                                         </env>
                                         <ports>
                                             <port>oracle.db.port:1521</port>

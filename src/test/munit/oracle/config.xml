@@ -15,7 +15,7 @@
     </db:config>
 
     <db:config name="oracleDbConfigInvalidPassword">
-        <db:oracle-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('oracle')]" serviceName="XEPDB1" user="system" password="INVALID">
+        <db:oracle-connection host="0.0.0.0" port="#[java!org::mule::extension::db::DbMunitUtils::getDbPort('oracle')]" serviceName="XEPDB1" user="system" password="INVALIDINVALIDINVALID123">
         </db:oracle-connection>
     </db:config>
 

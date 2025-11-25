@@ -41,6 +41,10 @@ public class QuerySettings {
   @Placement(tab = ADVANCED_TAB)
   private TimeUnit queryTimeoutUnit = SECONDS;
 
+  @Parameter
+  @Placement(tab = ADVANCED_TAB)
+  private boolean useColumnNumbers = false;
+
   /**
    * Indicates how many rows to fetch from the database when rows are read from a resultSet. This property is required when
    * streaming is {@code true}; in that case a default value (10) is used.
@@ -102,4 +106,11 @@ public class QuerySettings {
     this.maxRows = maxRows;
   }
 
+  public boolean isUseColumnNumbers() {
+    return useColumnNumbers;
+  }
+
+  public void setUseColumnNumbers(boolean useColumnNumbers) {
+    this.useColumnNumbers = useColumnNumbers;
+  }
 }

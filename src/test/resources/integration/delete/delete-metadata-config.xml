@@ -5,13 +5,43 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
-    <flow name="deleteMetadata">
+    <flow name="deleteOutputMetadata">
+        <db:delete config-ref="dbConfig">
+            <db:sql>DELETE FROM PLANET WHERE name = 'Mars'</db:sql>
+        </db:delete>
+    </flow>
+
+    <flow name="deleteNoParametersInputMetadata">
+        <db:delete config-ref="dbConfig">
+            <db:sql>DELETE FROM PLANET WHERE name = 'Mars'</db:sql>
+        </db:delete>
+    </flow>
+
+    <flow name="deleteParameterizedInputMetadata">
         <db:delete config-ref="dbConfig">
             <db:sql>DELETE FROM PLANET WHERE name = :name</db:sql>
         </db:delete>
     </flow>
 
-    <flow name="bulkDeleteMetadata">
+    <flow name="deleteWithExpressionInputMetadata">
+        <db:delete config-ref="dbConfig">
+            <db:sql>DELETE FROM PLANET WHERE name = #[mel:payload]</db:sql>
+        </db:delete>
+    </flow>
+
+    <flow name="bulkDeleteOutputMetadata">
+        <db:bulk-delete config-ref="dbConfig">
+            <db:sql>DELETE FROM PLANET WHERE name = 'Mars'</db:sql>
+        </db:bulk-delete>
+    </flow>
+
+    <flow name="bulkDeleteNoParametersInputMetadata">
+        <db:bulk-delete config-ref="dbConfig">
+            <db:sql>DELETE FROM PLANET WHERE name = 'Mars'</db:sql>
+        </db:bulk-delete>
+    </flow>
+
+    <flow name="bulkDeleteParameterizedInputMetadata">
         <db:bulk-delete config-ref="dbConfig">
             <db:sql>DELETE FROM PLANET WHERE name = :name</db:sql>
         </db:bulk-delete>

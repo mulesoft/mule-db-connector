@@ -5,16 +5,46 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
-    <flow name="updateMetadata">
+    <flow name="updateOutputMetadata">
         <db:update config-ref="dbConfig">
             <db:sql>update PLANET set NAME='Mercury' where POSITION=4</db:sql>
         </db:update>
     </flow>
 
-    <flow name="bulkUpdateMetadata">
+    <flow name="bulkUpdateOutputMetadata">
         <db:bulk-update config-ref="dbConfig">
             <db:sql>update PLANET set NAME='Mercury' where NAME= :name</db:sql>
         </db:bulk-update>
+    </flow>
+
+    <flow name="bulkUpdateNoParametersInputMetadata">
+        <db:bulk-update config-ref="dbConfig">
+            <db:sql>update Planet set position = 1 where name = 'Mars'</db:sql>
+        </db:bulk-update>
+    </flow>
+
+    <flow name="bulkUpdateParameterizedInputMetadata">
+        <db:bulk-update config-ref="dbConfig">
+            <db:sql>update PLANET set NAME='Mercury' where NAME= :name</db:sql>
+        </db:bulk-update>
+    </flow>
+
+    <flow name="updateNoParametersInputMetadata">
+        <db:update config-ref="dbConfig">
+            <db:sql>update Planet set position = 1 where name = 'Mars'</db:sql>
+        </db:update>
+    </flow>
+
+    <flow name="updateParameterizedInputMetadata">
+        <db:update config-ref="dbConfig">
+            <db:sql>update PLANET set NAME= :name where NAME='Mars'</db:sql>
+        </db:update>
+    </flow>
+
+    <flow name="updateWithExpressionInputMetadata">
+        <db:update config-ref="dbConfig">
+            <db:sql>update PLANET set NAME='#[mel:data]' where POSITION=#[mel:type]</db:sql>
+        </db:update>
     </flow>
 
 </mule>

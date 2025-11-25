@@ -45,7 +45,7 @@ public class StoredProcedureMetadataTestCase extends AbstractDbMetadataIntegrati
   @Test
   public void storedProcedureOutputMetadata() throws Exception {
     MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata =
-        getMetadata("storedOutputMetadata", "{ call getTestRecords() }");
+        getMetadata("storedProcedureOutputMetadata", null);
     assertThat(metadata.isSuccess(), is(true));
     MetadataType output = metadata.get().getModel().getOutput().getType();
     assertThat(output, is(typeBuilder.objectType().build()));
@@ -53,7 +53,7 @@ public class StoredProcedureMetadataTestCase extends AbstractDbMetadataIntegrati
 
   @Test
   public void storedProcedureSingleParameterInputMetadata() throws Exception {
-    MetadataType parameters = getParameterValuesMetadata("storedMixedParametersInputMetadata", null);
+    MetadataType parameters = getParameterValuesMetadata("storedProcedureSingleParameterInputMetadata", null);
 
     assertThat(parameters, is(instanceOf(ObjectType.class)));
     assertFieldOfType(((ObjectType) parameters), "description", testDatabase.getDescriptionFieldMetaDataType());

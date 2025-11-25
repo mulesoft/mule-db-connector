@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns="http://www.mulesoft.org/schema/mule/core" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<munit:config name="select-with-column-numbers-test-case.xml" minMuleVersion="4.3.0" />
+	<munit:before-suite name="SelectWithColumnNumbersBefore_Suite" >
+		<flow-ref name="CreateTableInDatabaseFlow"/>
+	</munit:before-suite>
+	
+	<munit:test name="SelectWithDuplicateColumnsUsingColumnNumbersTestCase">
+		<munit:behavior>
+			<flow-ref name="TruncateTableFlow" />
+			<flow-ref name="SimpleCaseSetupFlow"/>
+		</munit:behavior>
+		<munit:execution>
+			<db:select config-ref="dbConfigMySQL" useColumnNumbers="true">
+				<db:sql ><![CDATA[SELECT start, start FROM flights WHERE start = "NY";]]></db:sql>
+			</db:select>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation>
+			<!-- Verify that results use column numbers as keys (1, 2) instead of column names -->
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]" message="Should return one row" />
+			<munit-tools:assert-equals actual="#[payload[0].'1']" expected='#["NY"]' message='First column (key "1") must be "NY"' />
+			<munit-tools:assert-equals actual="#[payload[0].'2']" expected='#["NY"]' message='Second column (key "2") must be "NY"' />
+			<!-- Verify that column numbers are present as keys -->
+			<munit-tools:assert-equals actual="#[sizeOf(payload[0])]" expected="#[2]" message="Result should have exactly 2 keys (column numbers 1 and 2)" />
+		</munit:validation>
+	</munit:test>
+	
+	<munit:test name="SelectMultipleColumnsUsingColumnNumbersTestCase">
+		<munit:behavior>
+			<flow-ref name="TruncateTableFlow" />
+			<flow-ref name="ComplexCaseSetup"/>
+		</munit:behavior>
+		<munit:execution>
+			<db:select config-ref="dbConfigMySQL" useColumnNumbers="true">
+				<db:sql ><![CDATA[SELECT start, destination FROM flights WHERE start = "NY";]]></db:sql>
+			</db:select>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]" message="Should return one row" />
+			<!-- Verify column numbers are used as keys -->
+			<munit-tools:assert-equals actual="#[payload[0].'1']" expected='#["NY"]' message='First column (key "1") must be "NY"' />
+			<munit-tools:assert-equals actual="#[payload[0].'2']" expected='#["BR"]' message='Second column (key "2") must be "BR"' />
+		</munit:validation>
+	</munit:test>
+	
+	<munit:test name="QuerySingleWithDuplicateColumnsUsingColumnNumbersTestCase">
+		<munit:behavior>
+			<flow-ref name="TruncateTableFlow" />
+			<flow-ref name="SimpleCaseSetupFlow"/>
+		</munit:behavior>
+		<munit:execution>
+			<db:query-single config-ref="dbConfigMySQL" useColumnNumbers="true">
+				<db:sql ><![CDATA[SELECT start, start FROM flights WHERE start = "NY";]]></db:sql>
+			</db:query-single>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation>
+			<!-- Verify that querySingle returns a single map with column numbers as keys -->
+			<munit-tools:assert-equals actual="#[payload.'1']" expected='#["NY"]' message='First column (key "1") must be "NY"' />
+			<munit-tools:assert-equals actual="#[payload.'2']" expected='#["NY"]' message='Second column (key "2") must be "NY"' />
+			<!-- Verify that column numbers are present as keys -->
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[2]" message="Result should have exactly 2 keys (column numbers 1 and 2)" />
+		</munit:validation>
+	</munit:test>
+	
+	<munit:test name="QuerySingleMultipleColumnsUsingColumnNumbersTestCase">
+		<munit:behavior>
+			<flow-ref name="TruncateTableFlow" />
+			<flow-ref name="ComplexCaseSetup"/>
+		</munit:behavior>
+		<munit:execution>
+			<db:query-single config-ref="dbConfigMySQL" useColumnNumbers="true">
+				<db:sql ><![CDATA[SELECT start, destination FROM flights WHERE start = "AR";]]></db:sql>
+			</db:query-single>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation>
+			<!-- Verify column numbers are used as keys for querySingle -->
+			<munit-tools:assert-equals actual="#[payload.'1']" expected='#["AR"]' message='First column (key "1") must be "AR"' />
+			<munit-tools:assert-equals actual="#[payload.'2']" expected='#["CL"]' message='Second column (key "2") must be "CL"' />
+		</munit:validation>
+	</munit:test>
+	
+	<munit:test name="SelectWithColumnNumbersAndJoinTestCase">
+		<munit:behavior>
+			<flow-ref name="TruncateTableFlow" />
+			<flow-ref name="ComplexCaseSetup"/>
+		</munit:behavior>
+		<munit:execution>
+			<db:select config-ref="dbConfigMySQL" useColumnNumbers="true">
+				<db:sql ><![CDATA[SELECT f1.start, f2.destination FROM flights f1, flights f2 WHERE f1.id = 1 AND f2.id = 2;]]></db:sql>
+			</db:select>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]" message="Should return one row" />
+			<!-- Verify column numbers are used even with JOIN -->
+			<munit-tools:assert-equals actual="#[payload[0].'1']" expected='#["NY"]' message='First column (key "1") must be "NY"' />
+			<munit-tools:assert-equals actual="#[payload[0].'2']" expected='#["CL"]' message='Second column (key "2") must be "CL"' />
+		</munit:validation>
+	</munit:test>
+	
+	<munit:after-suite name="SelectWithColumnNumbersAfter_Suite" >
+		<flow-ref name="DropFlightsTable" />
+	</munit:after-suite>
+
+</mule>
+

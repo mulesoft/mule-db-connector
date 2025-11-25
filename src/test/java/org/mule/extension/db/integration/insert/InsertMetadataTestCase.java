@@ -35,7 +35,7 @@ public class InsertMetadataTestCase extends AbstractDbMetadataIntegrationTestCas
   @Test
   public void insertOutputMetadata() throws Exception {
     MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata =
-        getMetadata("insertMetadata", "INSERT INTO PLANET(POSITION, NAME) VALUES (777, 'Mercury')");
+        getMetadata("insertOutputMetadata", null);
 
     assertOutputPayload(metadata, typeLoader.load(StatementResult.class));
   }
@@ -43,7 +43,7 @@ public class InsertMetadataTestCase extends AbstractDbMetadataIntegrationTestCas
   @Test
   public void bulkInsertOutputMetadata() throws Exception {
     MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata =
-        getMetadata("bulkInsertMetadata", "INSERT INTO PLANET(POSITION, NAME) VALUES (777, :name)");
+        getMetadata("bulkInsertOutputMetadata", null);
 
     assertOutputPayload(metadata, typeLoader.load(int[].class));
   }
@@ -51,18 +51,14 @@ public class InsertMetadataTestCase extends AbstractDbMetadataIntegrationTestCas
   @Test
   public void bulkInsertNoParametersInputMetadata() throws Exception {
     MetadataType parameters =
-        getParameterValuesMetadata("bulkInsertMetadata", "INSERT INTO PLANET(POSITION, NAME) VALUES (777, 'Mercury')");
+        getParameterValuesMetadata("bulkInsertNoParametersInputMetadata", null);
     assertThat(parameters, is(instanceOf(NullType.class)));
   }
 
   @Test
   public void bulkInsertParameterizedInputMetadata() throws Exception {
-    MetadataType parameters;
-    if (dbType == ORACLE) {
-      parameters = getParameterValuesMetadata("bulkInsertMetadata", "INSERT INTO PLANET(NAME) VALUES (:name)");
-    } else {
-      parameters = getParameterValuesMetadata("bulkInsertMetadata", "INSERT INTO PLANET(POSITION, NAME) VALUES (777, :name)");
-    }
+    String flowName = dbType == ORACLE ? "bulkInsertParameterizedInputMetadataOracle" : "bulkInsertParameterizedInputMetadata";
+    MetadataType parameters = getParameterValuesMetadata(flowName, null);
 
     assertThat(parameters, is(instanceOf(ArrayType.class)));
     assertThat(((ArrayType) parameters).getType(), is(instanceOf(ObjectType.class)));
@@ -74,19 +70,14 @@ public class InsertMetadataTestCase extends AbstractDbMetadataIntegrationTestCas
   @Test
   public void insertNoParametersInputMetadata() throws Exception {
     MetadataType parameters =
-        getInputMetadata("insertMetadata", "INSERT INTO PLANET(POSITION, NAME) VALUES (777, 'Mercury')");
+        getInputMetadata("insertNoParametersInputMetadata", null);
     assertThat(parameters, is(instanceOf(NullType.class)));
   }
 
   @Test
   public void insertParameterizedInputMetadata() throws Exception {
-    MetadataType parameters;
-
-    if (dbType == ORACLE) {
-      parameters = getInputMetadata("insertMetadata", "INSERT INTO PLANET(NAME) VALUES (:name)");
-    } else {
-      parameters = getInputMetadata("insertMetadata", "INSERT INTO PLANET(POSITION, NAME) VALUES (777, :name)");
-    }
+    String flowName = dbType == ORACLE ? "insertParameterizedInputMetadataOracle" : "insertParameterizedInputMetadata";
+    MetadataType parameters = getInputMetadata(flowName, null);
 
     assertThat(parameters, is(instanceOf(ObjectType.class)));
     assertThat(((ObjectType) parameters).getFields().size(), equalTo(1));
@@ -96,7 +87,7 @@ public class InsertMetadataTestCase extends AbstractDbMetadataIntegrationTestCas
   @Test
   public void insertWithExpressionInputMetadata() throws Exception {
     MetadataType parameters =
-        getInputMetadata("insertMetadata", "INSERT INTO PLANET(POSITION, NAME) VALUES (777, #[mel:payload])");
+        getInputMetadata("insertWithExpressionInputMetadata", null);
     assertThat(parameters, is(typeBuilder.anyType().build()));
   }
 

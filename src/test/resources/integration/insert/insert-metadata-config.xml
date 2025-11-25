@@ -5,16 +5,58 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
             http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
 
-    <flow name="insertMetadata">
+    <flow name="insertOutputMetadata">
         <db:insert config-ref="dbConfig">
             <db:sql>INSERT INTO PLANET(POSITION, NAME) VALUES (777, 'Mercury')</db:sql>
         </db:insert>
     </flow>
 
-    <flow name="bulkInsertMetadata">
+    <flow name="bulkInsertOutputMetadata">
         <db:bulk-insert config-ref="dbConfig">
             <db:sql>INSERT INTO PLANET(POSITION, NAME) VALUES (777, :name)</db:sql>
         </db:bulk-insert>
+    </flow>
+
+    <flow name="bulkInsertNoParametersInputMetadata">
+        <db:bulk-insert config-ref="dbConfig">
+            <db:sql>INSERT INTO PLANET(POSITION, NAME) VALUES (777, 'Mercury')</db:sql>
+        </db:bulk-insert>
+    </flow>
+
+    <flow name="bulkInsertParameterizedInputMetadata">
+        <db:bulk-insert config-ref="dbConfig">
+            <db:sql>INSERT INTO PLANET(POSITION, NAME) VALUES (777, :name)</db:sql>
+        </db:bulk-insert>
+    </flow>
+
+    <flow name="bulkInsertParameterizedInputMetadataOracle">
+        <db:bulk-insert config-ref="dbConfig">
+            <db:sql>INSERT INTO PLANET(NAME) VALUES (:name)</db:sql>
+        </db:bulk-insert>
+    </flow>
+
+    <flow name="insertNoParametersInputMetadata">
+        <db:insert config-ref="dbConfig">
+            <db:sql>INSERT INTO PLANET(POSITION, NAME) VALUES (777, 'Mercury')</db:sql>
+        </db:insert>
+    </flow>
+
+    <flow name="insertParameterizedInputMetadata">
+        <db:insert config-ref="dbConfig">
+            <db:sql>INSERT INTO PLANET(POSITION, NAME) VALUES (777, :name)</db:sql>
+        </db:insert>
+    </flow>
+
+    <flow name="insertParameterizedInputMetadataOracle">
+        <db:insert config-ref="dbConfig">
+            <db:sql>INSERT INTO PLANET(NAME) VALUES (:name)</db:sql>
+        </db:insert>
+    </flow>
+
+    <flow name="insertWithExpressionInputMetadata">
+        <db:insert config-ref="dbConfig">
+            <db:sql>INSERT INTO PLANET(POSITION, NAME) VALUES (777, #[mel:payload])</db:sql>
+        </db:insert>
     </flow>
 
 </mule>

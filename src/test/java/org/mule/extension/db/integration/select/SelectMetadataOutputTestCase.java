@@ -37,12 +37,12 @@ public class SelectMetadataOutputTestCase extends AbstractDbMetadataIntegrationT
 
   @Test
   public void selectAll() throws Exception {
-    assertPlanetObjectType(getSelectOutputMetadata("select * from PLANET"));
+    assertPlanetObjectType(getSelectOutputMetadata("selectAll"));
   }
 
   @Test
   public void selectSome() throws Exception {
-    ObjectType record = getSelectOutputMetadata("select ID, POSITION from PLANET");
+    ObjectType record = getSelectOutputMetadata("selectSome");
 
     assertThat(record.getFields().size(), equalTo(2));
     assertFieldOfType(record, "ID", testDatabase.getIdFieldMetaDataType());
@@ -52,7 +52,7 @@ public class SelectMetadataOutputTestCase extends AbstractDbMetadataIntegrationT
 
   @Test
   public void selectJoin() throws Exception {
-    ObjectType record = getSelectOutputMetadata("select NAME, NAME as NAME2 from PLANET");
+    ObjectType record = getSelectOutputMetadata("selectJoin");
 
     assertThat(record.getFields().size(), equalTo(2));
     assertFieldOfType(record, "NAME", typeBuilder.stringType().build());
@@ -62,7 +62,7 @@ public class SelectMetadataOutputTestCase extends AbstractDbMetadataIntegrationT
   @Test
   public void selectInvalidJoin() throws Exception {
     MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata =
-        getMetadata("selectMetadata", "select NAME, NAME from PLANET");
+        getMetadata("selectInvalidJoin", null);
     assertThat(metadata.isSuccess(), is(false));
     assertThat(metadata.getFailures(), hasSize(1));
     MetadataFailure failure = metadata.getFailures().get(0);
@@ -70,8 +70,9 @@ public class SelectMetadataOutputTestCase extends AbstractDbMetadataIntegrationT
     assertThat(failure.getMessage(), is(DUPLICATE_COLUMN_LABEL_ERROR));
   }
 
-  private ObjectType getSelectOutputMetadata(String query) {
-    MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata = getMetadata("selectMetadata", query);
+  private ObjectType getSelectOutputMetadata(String flowName) {
+    // Pass null to use the query configuration from the XML flow
+    MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata = getMetadata(flowName, null);
     assertThat(metadata.isSuccess(), is(true));
     ArrayType output = (ArrayType) metadata.get().getModel().getOutput().getType();
     return (ObjectType) output.getType();

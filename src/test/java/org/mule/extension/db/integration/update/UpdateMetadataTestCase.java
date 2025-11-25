@@ -40,7 +40,7 @@ public class UpdateMetadataTestCase extends AbstractDbMetadataIntegrationTestCas
   @Test
   public void updateOutputMetadata() throws Exception {
     MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata =
-        getMetadata("updateMetadata", "update PLANET set NAME='Mercury' where POSITION=4");
+        getMetadata("updateOutputMetadata", null);
 
     assertOutputPayload(metadata, typeLoader.load(StatementResult.class));
   }
@@ -48,7 +48,7 @@ public class UpdateMetadataTestCase extends AbstractDbMetadataIntegrationTestCas
   @Test
   public void bulkUpdateOutputMetadata() throws Exception {
     MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata =
-        getMetadata("bulkUpdateMetadata", "update PLANET set NAME='Mercury' where NAME= :name");
+        getMetadata("bulkUpdateOutputMetadata", null);
 
     assertOutputPayload(metadata, typeLoader.load(int[].class));
   }
@@ -56,14 +56,14 @@ public class UpdateMetadataTestCase extends AbstractDbMetadataIntegrationTestCas
   @Test
   public void bulkUpdateNoParametersInputMetadata() throws Exception {
     MetadataType parameters =
-        getParameterValuesMetadata("bulkUpdateMetadata", "update Planet set position = 1 where name = 'Mars'");
+        getParameterValuesMetadata("bulkUpdateNoParametersInputMetadata", null);
     assertThat(parameters, is(instanceOf(NullType.class)));
   }
 
   @Test
   public void bulkUpdateParameterizedInputMetadata() throws Exception {
     MetadataType parameters =
-        getParameterValuesMetadata("bulkUpdateMetadata", "update PLANET set NAME='Mercury' where NAME= :name");
+        getParameterValuesMetadata("bulkUpdateParameterizedInputMetadata", null);
 
     assertThat(parameters, is(instanceOf(ArrayType.class)));
     assertThat(((ArrayType) parameters).getType(), is(instanceOf(ObjectType.class)));
@@ -75,14 +75,14 @@ public class UpdateMetadataTestCase extends AbstractDbMetadataIntegrationTestCas
   @Test
   public void updateNoParametersInputMetadata() throws Exception {
     MetadataType parameters =
-        getInputMetadata("updateMetadata", "update Planet set position = 1 where name = 'Mars'");
+        getInputMetadata("updateNoParametersInputMetadata", null);
     assertThat(parameters, is(instanceOf(NullType.class)));
   }
 
   @Test
   public void updateParameterizedInputMetadata() throws Exception {
     MetadataType parameters =
-        getInputMetadata("updateMetadata", "update PLANET set NAME= :name where NAME='Mars'");
+        getInputMetadata("updateParameterizedInputMetadata", null);
 
     assertThat(parameters, is(instanceOf(ObjectType.class)));
     assertThat(((ObjectType) parameters).getFields().size(), equalTo(1));
@@ -92,7 +92,7 @@ public class UpdateMetadataTestCase extends AbstractDbMetadataIntegrationTestCas
   @Test
   public void updateWithExpressionInputMetadata() throws Exception {
     MetadataType parameters =
-        getInputMetadata("updateMetadata", "update PLANET set NAME='#[mel:data]' where POSITION=#[mel:type]");
+        getInputMetadata("updateWithExpressionInputMetadata", null);
     assertThat(parameters, is(typeBuilder.anyType().build()));
   }
 

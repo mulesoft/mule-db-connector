@@ -37,7 +37,6 @@ public abstract class StatementDefinition<T extends StatementDefinition> extends
   @Text
   @DisplayName(SQL_QUERY_TEXT)
   @Placement(order = 1)
-  @MetadataKeyId
   protected String sql;
 
   /**

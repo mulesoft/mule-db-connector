@@ -43,7 +43,8 @@ public class SelectMetadataInputTestCase extends AbstractDbMetadataIntegrationTe
 
   @Test
   public void returnsNullSelectMetadataUnParameterizedQuery() throws Exception {
-    MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata = getMetadata("selectMetadata", "select * from PLANET");
+    MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata =
+        getMetadata("returnsNullSelectMetadataUnParameterizedQuery", null);
 
     assertThat(metadata.isSuccess(), is(true));
     assertThat(metadata.get().getModel().getAllParameterModels().stream()
@@ -56,8 +57,7 @@ public class SelectMetadataInputTestCase extends AbstractDbMetadataIntegrationTe
   public void returnsAnySelectInputMetadataFromNotSupportedParameterizedQuery() throws Exception {
 
     MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata =
-        getMetadata("selectMetadata",
-                    "select * from PLANET where id = #[mel:payload.id] and name = #[mel:message.outboundProperties.updateCount]");
+        getMetadata("returnsAnySelectInputMetadataFromNotSupportedParameterizedQuery", null);
 
     assertThat(metadata.isSuccess(), is(true));
     assertThat(metadata.get().getModel().getAllParameterModels().stream()
@@ -69,8 +69,8 @@ public class SelectMetadataInputTestCase extends AbstractDbMetadataIntegrationTe
   @Test
   public void returnsSelectInputMetadataFromBeanParameterizedQuery() throws Exception {
     assumeThat(dbType, is(not(MYSQL))); // MySQL does not return correct metadata.
-    MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata = getMetadata("selectMetadata",
-                                                                                       "select * from PLANET where id = :id and name = :name");
+    MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata =
+        getMetadata("returnsSelectInputMetadataFromBeanParameterizedQuery", null);
 
     assertThat(metadata.isSuccess(), is(true));
     ObjectType type = (ObjectType) metadata.get().getModel().getAllParameterModels().stream()

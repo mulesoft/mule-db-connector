@@ -32,7 +32,7 @@ public class DeleteMetadataTestCase extends AbstractDbMetadataIntegrationTestCas
   @Test
   public void deleteOutputMetadata() throws Exception {
     MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata =
-        getMetadata("deleteMetadata", "DELETE FROM PLANET WHERE name = 'Mars'");
+        getMetadata("deleteOutputMetadata", null);
 
     assertOutputPayload(metadata, typeLoader.load(int.class));
   }
@@ -40,7 +40,7 @@ public class DeleteMetadataTestCase extends AbstractDbMetadataIntegrationTestCas
   @Test
   public void bulkDeleteOutputMetadata() throws Exception {
     MetadataResult<ComponentMetadataDescriptor<OperationModel>> metadata =
-        getMetadata("bulkDeleteMetadata", "DELETE FROM PLANET WHERE name = 'Mars'");
+        getMetadata("bulkDeleteOutputMetadata", null);
 
     assertOutputPayload(metadata, typeLoader.load(int[].class));
   }
@@ -48,7 +48,7 @@ public class DeleteMetadataTestCase extends AbstractDbMetadataIntegrationTestCas
   @Test
   public void bulkDeleteNoParametersInputMetadata() throws Exception {
     MetadataType parametersTypes =
-        getParameterValuesMetadata("bulkDeleteMetadata", "DELETE FROM PLANET WHERE name = 'Mars'");
+        getParameterValuesMetadata("bulkDeleteNoParametersInputMetadata", null);
 
     assertThat(parametersTypes, is(instanceOf(NullType.class)));
   }
@@ -56,7 +56,7 @@ public class DeleteMetadataTestCase extends AbstractDbMetadataIntegrationTestCas
   @Test
   public void bulkDeleteParameterizedInputMetadata() throws Exception {
     MetadataType parametersTypes =
-        getParameterValuesMetadata("bulkDeleteMetadata", "DELETE FROM PLANET WHERE name = :name");
+        getParameterValuesMetadata("bulkDeleteParameterizedInputMetadata", null);
 
     assertThat(parametersTypes, is(instanceOf(ArrayType.class)));
     assertThat(((ArrayType) parametersTypes).getType(), is(instanceOf(ObjectType.class)));
@@ -68,14 +68,14 @@ public class DeleteMetadataTestCase extends AbstractDbMetadataIntegrationTestCas
   @Test
   public void deleteNoParametersInputMetadata() throws Exception {
     MetadataType parametersTypes =
-        getInputMetadata("deleteMetadata", "DELETE FROM PLANET WHERE name = 'Mars'");
+        getInputMetadata("deleteNoParametersInputMetadata", null);
     assertThat(parametersTypes, is(instanceOf(NullType.class)));
   }
 
   @Test
   public void deleteParameterizedInputMetadata() throws Exception {
     MetadataType parametersTypes =
-        getInputMetadata("deleteMetadata", "DELETE FROM PLANET WHERE name = :name");
+        getInputMetadata("deleteParameterizedInputMetadata", null);
 
     assertThat(parametersTypes, is(instanceOf(ObjectType.class)));
     assertThat(((ObjectType) parametersTypes).getFields().size(), equalTo(1));
@@ -85,7 +85,7 @@ public class DeleteMetadataTestCase extends AbstractDbMetadataIntegrationTestCas
   @Test
   public void deleteWithExpressionInputMetadata() throws Exception {
     MetadataType parametersTypes =
-        getInputMetadata("deleteMetadata", "DELETE FROM PLANET WHERE name = #[mel:payload]");
+        getInputMetadata("deleteWithExpressionInputMetadata", null);
     assertThat(parametersTypes, is(typeBuilder.anyType().build()));
   }
 }

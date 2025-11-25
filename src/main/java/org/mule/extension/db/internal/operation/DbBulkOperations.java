@@ -10,7 +10,7 @@ import org.mule.db.commons.AbstractDbConnector;
 import org.mule.db.commons.internal.domain.connection.DbConnection;
 import org.mule.db.commons.internal.operation.BulkOperations;
 import org.mule.db.commons.internal.operation.OperationErrorTypeProvider;
-import org.mule.extension.db.internal.metadata.DbInputMetadataResolverBulkQueryDefinition;
+import org.mule.extension.db.internal.metadata.DbInputMetadataResolverStatementDefinition;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.extension.api.annotation.error.Throws;
@@ -67,7 +67,7 @@ public class DbBulkOperations implements Initialisable {
    * @throws SQLException if an error is produced
    */
   public int[] bulkInsert(@DisplayName("Input Parameters") @Content @Placement(
-      order = 1) @TypeResolver(DbInputMetadataResolverBulkQueryDefinition.class) List<Map<String, Object>> bulkInputParameters,
+      order = 1) @TypeResolver(DbInputMetadataResolverStatementDefinition.class) List<Map<String, Object>> bulkInputParameters,
                           @ParameterGroup(name = QUERY_GROUP) @MetadataKeyId BulkQueryDefinition query,
                           @Config AbstractDbConnector connector,
                           @Connection DbConnection connection,
@@ -91,7 +91,7 @@ public class DbBulkOperations implements Initialisable {
    * @throws SQLException if an error is produced
    */
   public int[] bulkUpdate(@DisplayName("Input Parameters") @Content @Placement(
-      order = 1) @TypeResolver(DbInputMetadataResolverBulkQueryDefinition.class) List<Map<String, Object>> bulkInputParameters,
+      order = 1) @TypeResolver(DbInputMetadataResolverStatementDefinition.class) List<Map<String, Object>> bulkInputParameters,
                           @ParameterGroup(name = QUERY_GROUP) @MetadataKeyId BulkQueryDefinition query,
                           @Config AbstractDbConnector connector,
                           @Connection DbConnection connection,
@@ -114,7 +114,7 @@ public class DbBulkOperations implements Initialisable {
    * @throws SQLException if an error is produced
    */
   public int[] bulkDelete(@DisplayName("Input Parameters") @Content @Placement(
-      order = 1) @TypeResolver(DbInputMetadataResolverBulkQueryDefinition.class) List<Map<String, Object>> bulkInputParameters,
+      order = 1) @TypeResolver(DbInputMetadataResolverStatementDefinition.class) List<Map<String, Object>> bulkInputParameters,
                           @ParameterGroup(name = QUERY_GROUP) @MetadataKeyId BulkQueryDefinition query,
                           @Config AbstractDbConnector connector,
                           @Connection DbConnection connection,

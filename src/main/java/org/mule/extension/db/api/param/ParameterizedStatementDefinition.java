@@ -9,7 +9,7 @@ package org.mule.extension.db.api.param;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
-import org.mule.extension.db.internal.metadata.DbInputMetadataResolverQueryDefinition;
+import org.mule.extension.db.internal.metadata.DbInputMetadataResolverStatementDefinition;
 import org.mule.extension.db.internal.util.ExcludeFromGeneratedCoverage;
 import org.mule.runtime.api.util.Reference;
 import org.mule.runtime.extension.api.annotation.metadata.TypeResolver;
@@ -45,7 +45,7 @@ public abstract class ParameterizedStatementDefinition<T extends ParameterizedSt
   @Content
   @Optional
   @NullSafe
-  @TypeResolver(DbInputMetadataResolverQueryDefinition.class)
+  @TypeResolver(DbInputMetadataResolverStatementDefinition.class)
   @Placement(order = 2)
   @DisplayName("Input Parameters")
   @Example("#[{'name': \"Max\", 'nickname': \"The Mule\", 'company': \"MuleSoft\"}]")

@@ -6,7 +6,7 @@
  */
 package org.mule.extension.db.internal.metadata;
 
-import org.mule.extension.db.api.param.QueryDefinition;
+import org.mule.extension.db.api.param.StatementDefinition;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.runtime.api.connection.ConnectionException;
 import org.mule.runtime.api.metadata.MetadataContext;
@@ -14,11 +14,14 @@ import org.mule.runtime.api.metadata.MetadataResolvingException;
 import org.mule.runtime.api.metadata.resolving.InputTypeResolver;
 
 /**
- * Input metadata resolver for QueryDefinition that supports column numbers.
- * Resolves the input parameter types for parameterized queries.
+ * Input metadata resolver for StatementDefinition that supports column numbers.
+ * Resolves the input parameter types for all statement types including:
+ * - Parameterized queries (QueryDefinition)
+ * - Bulk operations (BulkQueryDefinition)
+ * - Stored procedures (StoredProcedureCall)
  */
-public class DbInputMetadataResolverQueryDefinition extends BaseInputMetadataResolverStatementDefinition
-    implements InputTypeResolver<QueryDefinition> {
+public class DbInputMetadataResolverStatementDefinition extends BaseInputMetadataResolverStatementDefinition
+    implements InputTypeResolver<StatementDefinition<?>> {
 
   @Override
   public String getCategoryName() {
@@ -31,8 +34,8 @@ public class DbInputMetadataResolverQueryDefinition extends BaseInputMetadataRes
   }
 
   @Override
-  public MetadataType getInputMetadata(MetadataContext context, QueryDefinition queryDefinition)
+  public MetadataType getInputMetadata(MetadataContext context, StatementDefinition statementDefinition)
       throws MetadataResolvingException, ConnectionException {
-    return resolveInputMetadata(context, queryDefinition);
+    return resolveInputMetadata(context, statementDefinition);
   }
 }

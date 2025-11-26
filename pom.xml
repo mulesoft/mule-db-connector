@@ -355,32 +355,32 @@
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.mule.runtime.plugins</groupId>-->
-<!--                <artifactId>mule-extensions-shade-plugin</artifactId>-->
-<!--                <version>${muleExtensionsShadeVersion}</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>shade</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <artifactSet>-->
-<!--                        <includes combine.children="append">-->
-<!--                            <include>org.mule.connectors:mule-db-client</include>-->
-<!--                        </includes>-->
-<!--                    </artifactSet>-->
-<!--                    <relocations>-->
-<!--                        <relocation>-->
-<!--                            <pattern>org.mule.db.commons</pattern>-->
-<!--                            <shadedPattern>org.mule.db.commons.shaded</shadedPattern>-->
-<!--                        </relocation>-->
-<!--                    </relocations>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.mule.runtime.plugins</groupId>
+                <artifactId>mule-extensions-shade-plugin</artifactId>
+                <version>${muleExtensionsShadeVersion}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <artifactSet>
+                        <includes combine.children="append">
+                            <include>org.mule.connectors:mule-db-client</include>
+                        </includes>
+                    </artifactSet>
+                    <relocations>
+                        <relocation>
+                            <pattern>org.mule.db.commons</pattern>
+                            <shadedPattern>org.mule.db.commons.shaded</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -694,7 +694,6 @@
                         <artifactId>docker-maven-plugin</artifactId>
                         <version>${docker.maven.plugin.version}</version>
                         <configuration>
-                            <dockerHost>unix:///Users/cristian.chan/.colima/default/docker.sock</dockerHost>
                             <images>
                                 <image>
                                     <name>mysql:5.6</name>
@@ -882,7 +881,6 @@
                         <artifactId>docker-maven-plugin</artifactId>
                         <version>${docker.maven.plugin.version}</version>
                         <configuration>
-                            <dockerHost>unix:///Users/cristian.chan/.colima/default/docker.sock</dockerHost>
                             <images>
                                 <image>
                                     <name>postgres:latest</name>
@@ -1162,7 +1160,6 @@
                         <artifactId>docker-maven-plugin</artifactId>
                         <version>${docker.maven.plugin.version}</version>
                         <configuration>
-                            <dockerHost>unix:///Users/cristian.chan/.colima/default/docker.sock</dockerHost>
                             <images>
                                 <image>
                                     <name>fabric-derby-mtf:derby-mtf</name>
@@ -1448,8 +1445,6 @@
                         <artifactId>docker-maven-plugin</artifactId>
                         <version>${docker.maven.plugin.version}</version>
                         <configuration>
-                            <dockerHost>unix:///Users/cristian.chan/.colima/default/docker.sock</dockerHost>
-
                             <images>
                                 <image>
                                     <name>mcr.microsoft.com/mssql/server:2019-latest</name>

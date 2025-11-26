@@ -45,7 +45,7 @@ public class MigrationUtils {
       return null;
     }
     return new QuerySettings(querySettings.getQueryTimeout(), querySettings.getQueryTimeoutUnit(), querySettings.getFetchSize(),
-                             querySettings.getMaxRows());
+                             querySettings.getMaxRows(), querySettings.isUseColumnNumbers());
   }
 
   public static BulkQueryDefinition mapBulkQueryDefinition(org.mule.extension.db.api.param.BulkQueryDefinition queryDefinition) {
@@ -170,10 +170,14 @@ public class MigrationUtils {
     List<OutputParameter> outputParameterTypes = spCall.getOutputParameters().stream()
         .map(x -> new OutputParameter(x.getKey(), mapTypeClassifier(x.getTypeClassifier()))).collect(Collectors.toList());
 
-    return new StoredProcedureCall(spCall.getSql(), parameterTypes, spCall.getInputParameters(), spCall.getInOutParameters(),
-                                   outputParameterTypes, spCall.getQueryTimeout(), spCall.getQueryTimeoutUnit(),
-                                   spCall.getFetchSize(), spCall.getMaxRows());
+    StoredProcedureCall storedProcedureCall =
+        new StoredProcedureCall(spCall.getSql(), parameterTypes, spCall.getInputParameters(), spCall.getInOutParameters(),
+                                outputParameterTypes, spCall.getQueryTimeout(), spCall.getQueryTimeoutUnit(),
+                                spCall.getFetchSize(), spCall.getMaxRows());
 
+    storedProcedureCall.setUseColumnNumbers(spCall.isUseColumnNumbers());
+
+    return storedProcedureCall;
   }
 
   public static QueryDefinition mapQueryDefinition(org.mule.extension.db.api.param.QueryDefinition queryDefinition) {
@@ -185,7 +189,8 @@ public class MigrationUtils {
 
     return new QueryDefinition(queryDefinition.getSql(), parameterTypes, queryDefinition.getInputParameters(),
                                queryDefinition.getQueryTimeout(), queryDefinition.getQueryTimeoutUnit(),
-                               queryDefinition.getFetchSize(), queryDefinition.getMaxRows());
+                               queryDefinition.getFetchSize(), queryDefinition.getMaxRows(),
+                               queryDefinition.isUseColumnNumbers());
   }
 
   public static DataSourceConfig mapDataSourceConfig(org.mule.extension.db.internal.domain.connection.DataSourceConfig dsConfig) {

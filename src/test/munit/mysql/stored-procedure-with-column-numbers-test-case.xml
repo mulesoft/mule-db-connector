@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+      xmlns="http://www.mulesoft.org/schema/mule/core" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<munit:config name="stored-procedure-with-column-numbers-test-case.xml" minMuleVersion="4.3.0" />
+
+	<munit:before-suite name="StoredProcedureWithColumnNumbersBefore_Suite" >
+		<!-- Create table for stored procedure tests -->
+		<db:execute-ddl config-ref="dbConfigMySQL">
+			<db:sql><![CDATA[DROP TABLE IF EXISTS flights]]></db:sql>
+		</db:execute-ddl>
+		<db:execute-ddl config-ref="dbConfigMySQL">
+			<db:sql><![CDATA[CREATE TABLE flights (id INT PRIMARY KEY AUTO_INCREMENT, start VARCHAR(50), destination VARCHAR(50))]]></db:sql>
+		</db:execute-ddl>
+
+		<!-- Create stored procedure that returns result set with duplicate column names -->
+		<db:execute-ddl config-ref="dbConfigMySQL">
+			<db:sql><![CDATA[DROP PROCEDURE IF EXISTS get_flights_duplicate_columns]]></db:sql>
+		</db:execute-ddl>
+		<db:execute-ddl config-ref="dbConfigMySQL">
+			<db:sql><![CDATA[CREATE PROCEDURE get_flights_duplicate_columns()
+BEGIN
+    SELECT start, start FROM flights WHERE start = 'NY';
+END]]></db:sql>
+		</db:execute-ddl>
+
+		<!-- Create stored procedure that returns multiple columns -->
+		<db:execute-ddl config-ref="dbConfigMySQL">
+			<db:sql><![CDATA[DROP PROCEDURE IF EXISTS get_flights_multiple_columns]]></db:sql>
+		</db:execute-ddl>
+		<db:execute-ddl config-ref="dbConfigMySQL">
+			<db:sql><![CDATA[CREATE PROCEDURE get_flights_multiple_columns(IN p_start VARCHAR(50))
+BEGIN
+    SELECT start, destination FROM flights WHERE start = p_start;
+END]]></db:sql>
+		</db:execute-ddl>
+
+		<!-- Insert test data -->
+		<db:insert config-ref="dbConfigMySQL">
+			<db:sql><![CDATA[INSERT INTO flights (start, destination) VALUES ('NY', 'BR')]]></db:sql>
+		</db:insert>
+		<db:insert config-ref="dbConfigMySQL">
+			<db:sql><![CDATA[INSERT INTO flights (start, destination) VALUES ('AR', 'CL')]]></db:sql>
+		</db:insert>
+	</munit:before-suite>
+
+	<munit:test name="StoredProcedureWithDuplicateColumnsUsingColumnNumbersTestCase">
+		<munit:execution>
+			<db:stored-procedure config-ref="dbConfigMySQL" useColumnNumbers="true">
+				<db:sql><![CDATA[{call get_flights_duplicate_columns()}]]></db:sql>
+			</db:stored-procedure>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload.resultSet1]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation>
+			<!-- Verify that stored procedure result uses column numbers as keys -->
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]" message="Should return one row" />
+			<munit-tools:assert-equals actual="#[payload[0].'1']" expected='#["NY"]' message='First column (key "1") must be "NY"' />
+			<munit-tools:assert-equals actual="#[payload[0].'2']" expected='#["NY"]' message='Second column (key "2") must be "NY"' />
+			<!-- Verify that column numbers are present as keys -->
+			<munit-tools:assert-equals actual="#[sizeOf(payload[0])]" expected="#[2]" message="Result should have exactly 2 keys (column numbers 1 and 2)" />
+		</munit:validation>
+	</munit:test>
+
+	<munit:test name="StoredProcedureMultipleColumnsUsingColumnNumbersTestCase">
+		<munit:execution>
+			<db:stored-procedure config-ref="dbConfigMySQL" useColumnNumbers="true">
+				<db:sql><![CDATA[{call get_flights_multiple_columns(:p_start)}]]></db:sql>
+				<db:input-parameters><![CDATA[#[output application/java
+---
+{
+    'p_start': 'NY'
+}]]]></db:input-parameters>
+			</db:stored-procedure>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload.resultSet1]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-equals actual="#[sizeOf(payload)]" expected="#[1]" message="Should return one row" />
+			<!-- Verify column numbers are used as keys -->
+			<munit-tools:assert-equals actual="#[payload[0].'1']" expected='#["NY"]' message='First column (key "1") must be "NY"' />
+			<munit-tools:assert-equals actual="#[payload[0].'2']" expected='#["BR"]' message='Second column (key "2") must be "BR"' />
+		</munit:validation>
+	</munit:test>
+
+	<munit:test name="StoredProcedureWithColumnNumbersAndOutputParamTestCase">
+		<munit:execution>
+			<db:stored-procedure config-ref="dbConfigMySQL" useColumnNumbers="true">
+				<db:sql><![CDATA[{call get_flights_multiple_columns(:p_start)}]]></db:sql>
+				<db:input-parameters><![CDATA[#[output application/java
+---
+{
+    'p_start': 'AR'
+}]]]></db:input-parameters>
+			</db:stored-procedure>
+			<ee:transform>
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload.resultSet1]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</munit:execution>
+		<munit:validation>
+			<!-- Verify stored procedure with input params uses column numbers -->
+			<munit-tools:assert-equals actual="#[payload[0].'1']" expected='#["AR"]' message='First column (key "1") must be "AR"' />
+			<munit-tools:assert-equals actual="#[payload[0].'2']" expected='#["CL"]' message='Second column (key "2") must be "CL"' />
+		</munit:validation>
+	</munit:test>
+
+	<munit:after-suite name="StoredProcedureWithColumnNumbersAfter_Suite" >
+		<!-- Drop stored procedures -->
+		<db:execute-ddl config-ref="dbConfigMySQL">
+			<db:sql><![CDATA[DROP PROCEDURE IF EXISTS get_flights_duplicate_columns]]></db:sql>
+		</db:execute-ddl>
+		<db:execute-ddl config-ref="dbConfigMySQL">
+			<db:sql><![CDATA[DROP PROCEDURE IF EXISTS get_flights_multiple_columns]]></db:sql>
+		</db:execute-ddl>
+		<!-- Drop table -->
+		<db:execute-ddl config-ref="dbConfigMySQL">
+			<db:sql><![CDATA[DROP TABLE IF EXISTS flights]]></db:sql>
+		</db:execute-ddl>
+	</munit:after-suite>
+
+</mule>

@@ -30,7 +30,7 @@
         <xmlunit.version>1.6</xmlunit.version>
         <xaPoolVersion>1.5.0</xaPoolVersion>
         <net.bytebuddy.version>1.14.5</net.bytebuddy.version>
-        <muleDbClientVersion>2.0.20251111-SNAPSHOT</muleDbClientVersion>
+        <muleDbClientVersion>2.0.0-SNAPSHOT</muleDbClientVersion>
         <muleExtensionsShadeVersion>1.0.4</muleExtensionsShadeVersion>
 
         <jakarta.transaction.version>1.3.3</jakarta.transaction.version>
@@ -465,7 +465,6 @@
                                     </run>
                                 </image>
                             </images>
-                            <dockerHost>unix:///Users/cristian.chan/.colima/default/docker.sock</dockerHost>
                             <verbose>true</verbose>
                         </configuration>
                         <dependencies>
@@ -773,7 +772,7 @@
                                 <mysql.db.port>${mysql.db.port}</mysql.db.port>
                                 <mssql.db.port>${mssql.db.port}</mssql.db.port>
                             </systemPropertyVariables>
-                            <munitTest>mysql/select-with-column-numbers-test-case.xml</munitTest>
+                            <munitTest>mysql/.*.xml</munitTest>
                             <runtimeConfiguration>
                                 <discoverRuntimes>
                                     <product>EE</product>

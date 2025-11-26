@@ -43,7 +43,8 @@ public class QuerySettings {
 
   @Parameter
   @Placement(tab = ADVANCED_TAB)
-  private boolean useColumnNumbers = false;
+  @Optional(defaultValue = "false")
+  private boolean useColumnNumbers;
 
   /**
    * Indicates how many rows to fetch from the database when rows are read from a resultSet. This property is required when

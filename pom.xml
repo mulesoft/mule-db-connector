@@ -1350,7 +1350,6 @@
                         <artifactId>docker-maven-plugin</artifactId>
                         <version>${docker.maven.plugin.version}</version>
                         <configuration>
-<!--                            <dockerHost>unix:///Users/cristian.chan/.colima/default/docker.sock</dockerHost>-->
                             <images>
                                 <image>
                                     <name>mysql:latest</name>
